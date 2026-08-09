@@ -132,6 +132,29 @@ never reaches state, and the data changes while stalled.
 pass and is classified rigid, which would emit a k-padded miter for an elastic
 interface. Unknown should default to elastic. Not yet done.
 
+## Fourth result: the existing checkers, measured
+
+[`experiments/cec_check/`](experiments/cec_check/NOTES.md) runs the real tools at
+the correct transform from `toy_miter/`. Every checker got a positive control
+first, so a FAIL means it rejected a correct transform.
+
+| Checker | control | ref vs opt (latency +1) |
+|---|---|---|
+| `yosys-abc cec` | equivalent ✓ | **cannot build the miter** |
+| `yosys-abc dsec` | equivalent ✓ | **NOT EQUIVALENT** |
+| **EQY** | PASS ✓ | **FAIL**, 1/1 partitions |
+| padded miter | — | **PASSED, unbounded** |
+
+They fail for *different* reasons, and that is the point. `cec` does not answer
+"no" — it cannot construct the comparison (`Networks have different number of
+latches. Miter computation has failed.`). `dsec` and EQY *can* set up the
+comparison and correctly answer no, because the designs are genuinely not
+cycle-for-cycle equivalent.
+
+None of them can express equivalence modulo k cycles, so a pipeline gated on any
+of them can only ever reject a latency change. **That is the routing decision in
+the abstract, now measured rather than asserted.**
+
 ## Next
 
 1. Discharge stream equivalence **unbounded** with a strengthening invariant, or

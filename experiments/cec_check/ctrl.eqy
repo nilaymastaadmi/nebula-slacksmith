@@ -1,0 +1,11 @@
+[gold]
+read_verilog -sv mac_ref.v
+prep -top mac_ref
+
+[gate]
+read_verilog -sv mac_ref_copy_src.v
+prep -top mac_ref
+
+[strategy sat]
+use sat
+depth 5

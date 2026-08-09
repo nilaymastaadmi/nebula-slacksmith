@@ -1,0 +1,12 @@
+[gold]
+read_verilog -sv mac_ref.v
+prep -top mac_ref
+
+[gate]
+read_verilog -sv mac_opt.v
+rename mac_opt mac_ref
+prep -top mac_ref
+
+[strategy sat]
+use sat
+depth 5
