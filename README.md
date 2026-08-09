@@ -107,12 +107,37 @@ Automatically choosing between them from the interface is the core technical
 idea, and it is now motivated by a measured false negative rather than an
 argument.
 
+## Third result: the obligation is now chosen automatically
+
+[`experiments/classify/`](experiments/classify/NOTES.md) picks the obligation
+from the interface, in three passes — lexical, structural, formal.
+
+| Module | Lexical | Structural | Formal | Verdict |
+|---|---|---|---|---|
+| `mac_ref` | no candidate | — | — | **RIGID** |
+| `mac_vr_ref` | `out_ready` | reaches `$dff.D` | PASSED | **ELASTIC** |
+| `alias_names` (`vld`/`rdy`) | `o_rdy` | reaches `$dff.D` | PASSED | **ELASTIC** |
+| `axi_style` (AXI prefixes) | `m_axis_tready` | reaches `$dff.D` | PASSED | **ELASTIC** |
+| `costume_ready` | `out_ready` | **REJECTED** | **FAILED** | **RIGID** |
+
+Pass 3 proves **output stability under back-pressure** — valid held with ready
+low must leave data and valid unchanged — so the verdict is a discharged
+obligation rather than a heuristic.
+
+`costume_ready` is the case that earns the machinery: handshake-shaped ports, not
+elastic. Both later passes reject it by *independent* arguments — the signal
+never reaches state, and the data changes while stalled.
+
+**Known unsafe direction:** exotic flow control (credit-based) misses the lexical
+pass and is classified rigid, which would emit a k-padded miter for an elastic
+interface. Unknown should default to elastic. Not yet done.
+
 ## Next
 
 1. Discharge stream equivalence **unbounded** with a strengthening invariant, or
    record it as permanently bounded and say so.
-2. **Automatic interface classification** — detect the protocol from the port
-   list and pick the obligation without being told. The two-branch generator.
+2. Generate the pass-3 wrapper from the port list (currently template-bound), and
+   add the input-side no-loss obligation to complete the elastic contract.
 3. Confirm **EQY rejects** the rigid K=1 pair — "we ran it, here is the error"
    beats a citation.
 4. Build the corpus for the four-checker matrix. **That is the paper**, and it
