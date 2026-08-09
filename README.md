@@ -155,6 +155,33 @@ None of them can express equivalence modulo k cycles, so a pipeline gated on any
 of them can only ever reject a latency change. **That is the routing decision in
 the abstract, now measured rather than asserted.**
 
+## Fifth result: simulation accepts what formal refutes
+
+[`experiments/sim_check/`](experiments/sim_check/NOTES.md) is the fourth checker
+and the dangerous direction — not rejecting correct transforms, but **accepting
+invalid ones.** It is also what agentic RTL tools actually gate on: RTLScout's
+primary gate is a Verilator testbench.
+
+| Mutant | SIM lazy | SIM aggr | FORMAL | |
+|---|---|---|---|---|
+| `mut0_correct` | PASS | PASS | **PASSED** | control ✅ |
+| `mut1_stale_c` | **PASS** | FAIL | **FAILED** | escaped the lazy testbench |
+| `mut2_rare` | **PASS** | **PASS** | **FAILED** | **escaped both** |
+| `mut3_trunc` | FAIL | FAIL | **FAILED** | simulation worked |
+
+`mut1_stale_c` is the classic pipelining bug — stage 2 adding the current `c` to
+a product one cycle old. It is invisible to a testbench that holds `c` constant,
+which is precisely what a directed MAC test looks like. **The verdict tracks
+stimulus quality, not bug severity** — so a simulation-gated error rate measures
+the testbench, not the model.
+
+`mut2_rare` survived 20,000 random vectors in both regimes and formal refuted it
+instantly.
+
+**Honest limit: n=3, hand-picked. That is a mechanism, not a statistic.** The
+real number needs a corpus of model-proposed rewrites, stratified, with
+Clopper–Pearson intervals and a power calculation.
+
 ## Next
 
 1. Discharge stream equivalence **unbounded** with a strengthening invariant, or
