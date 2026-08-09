@@ -1,0 +1,15 @@
+# Generated formal intermediates — regenerate with run.sh, don't commit
+*.smt2
+*.aig
+*.aiger
+*.vcd
+*.yslog
+
+# Solver logs ARE committed as evidence; everything else under work/ is not
+experiments/*/work/*
+!experiments/*/work/*.log
+!experiments/*/work/mac_opt_bad.v
+
+__pycache__/
+*.pyc
+.venv/

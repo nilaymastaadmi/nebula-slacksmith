@@ -1,0 +1,38 @@
+# SymbiYosys config -- for when you have sby installed locally.
+# The run.sh in this directory does the same three experiments using only
+# stock yosys + yosys-smtbmc + yosys-abc, so it works without sby.
+#
+# Three tasks deliberately, because they answer three different questions:
+#   bmc   -- is the property true up to depth N?         (bounded, finds bugs)
+#   prove -- is it true for all time, by k-induction?    (may need invariants)
+#   pdr   -- is it true for all time, by IC3/PDR?        (no manual invariants)
+#
+# Report all three outcomes separately. A timeout is NOT a pass.
+
+[tasks]
+bmc
+prove
+pdr
+
+[options]
+bmc:   mode bmc
+bmc:   depth 24
+prove: mode prove
+prove: depth 24
+pdr:   mode prove
+
+[engines]
+bmc:   smtbmc z3
+prove: smtbmc z3
+pdr:   abc pdr
+
+[script]
+read_verilog -formal -sv mac_ref.v
+read_verilog -formal -sv mac_opt.v
+read_verilog -formal -sv miter.sv
+prep -top miter
+
+[files]
+mac_ref.v
+mac_opt.v
+miter.sv
