@@ -79,14 +79,42 @@ need scoping in the report — owning them reads better than being caught:
 Also outstanding: the benchmark needs **generated clocks and multi-ratio dividers**
 in the frozen SDC — both are explicit organizer requirements currently unmet.
 
+## Second result: the obligation must depend on the interface
+
+[`experiments/vr_miter/`](experiments/vr_miter/NOTES.md) points the *same*
+k-padded obligation at a valid/ready pair with back-pressure. It is **refuted in
+0 seconds** — and the design is correct. Stream equivalence proves the same pair
+holds.
+
+| Obligation | BMC(20) | k-induction |
+|---|---|---|
+| k-padded (wrong for this interface) | **REFUTED** | refuted |
+| stream equivalence (right) | **PROVED BOUNDED** | unresolved |
+
+The first assertion to break is *valid alignment*, not data: under back-pressure
+the two designs hold different numbers of in-flight transactions, so no fixed
+cycle offset exists. **A tool emitting a k-padded obligation for a valid/ready
+interface reports a correct transform as broken.**
+
+That gives the two-branch rule its evidence:
+
+```
+rigid interface        -> k-padded miter       (proved unbounded)
+valid/ready interface  -> stream equivalence   (proved bounded)
+```
+
+Automatically choosing between them from the interface is the core technical
+idea, and it is now motivated by a measured false negative rather than an
+argument.
+
 ## Next
 
-1. Repeat the miter on a **valid/ready** pair; confirm it gives a false negative
-   under back-pressure. That failure motivates the two-branch obligation generator.
-2. Deeper pipelines (K=2,3) without a multiplier, to separate latency scaling
-   from solver hardness.
-3. Confirm **EQY rejects** the K=1 pair — "we ran it, here is the error" beats a
-   citation.
+1. Discharge stream equivalence **unbounded** with a strengthening invariant, or
+   record it as permanently bounded and say so.
+2. **Automatic interface classification** — detect the protocol from the port
+   list and pick the obligation without being told. The two-branch generator.
+3. Confirm **EQY rejects** the rigid K=1 pair — "we ran it, here is the error"
+   beats a citation.
 4. Build the corpus for the four-checker matrix. **That is the paper**, and it
    stands alone even if the optimizer improves nothing.
 
