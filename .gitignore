@@ -13,3 +13,7 @@ experiments/*/work/*
 __pycache__/
 *.pyc
 .venv/
+
+# guildly agent workspace (linked project) — not part of the repo
+.guildly/
+PROMPT.md
