@@ -1,0 +1,30 @@
+=== sby -f miter.sby prove (k-induction, depth 40) ===
+
+basecase: ...steps 0 through 39 checked...
+basecase: Status: passed
+basecase: engine_0 (smtbmc z3) returned pass for basecase
+
+induction: Trying induction in step 3..
+induction: Trying induction in step 2..
+induction: Trying induction in step 1..
+induction: Trying induction in step 0..
+induction: Temporal induction failed!
+induction: Assert failed in miter_mapped: status_match
+induction: Status: failed
+induction: engine_0 (smtbmc z3) returned FAIL for induction
+
+DONE (UNKNOWN, rc=4)
+
+RESULT: base case PASS (consistent with bmc.log); single-step induction
+FAILS, specifically and only on status_match (state_inv, rd_en_match,
+ctrl_match were not the failing property). Root cause, not treated as a
+verdict on the transform: clk and clk_div are both raw primary inputs to
+this local harness with no declared ratio between them -- no real clkdiv
+instance feeds it, unlike bench_top. Single-step induction must hold under
+ANY relative clk/clk_div timing, including physically-impossible ones the
+real design never sees. status_r is a one-cycle-stale snapshot captured on
+clk; an adversarial, unconstrained clk_div plausibly produces a torn
+snapshot single-step induction can't rule out on its own. Left as a known
+harness limitation, not smoothed over -- see pdr.log for the actual
+unbounded result, and NOTES.md "Next" for the proper fix (wire a real
+clkdiv instance into the harness).

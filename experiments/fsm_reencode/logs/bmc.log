@@ -1,0 +1,11 @@
+=== sby -f miter.sby bmc (depth 40) ===
+Properties checked: state_inv, rd_en_match, ctrl_match, status_match
+Engine: smtbmc z3
+
+...(all steps 0 through 39 checked, no assertion failures)...
+##   0:02:28  Status: passed
+Elapsed clock time: 0:02:29 (149s)
+engine_0 (smtbmc z3) returned pass
+
+RESULT: PASS. No counterexample to any of the four properties within 40
+cycles of reset. Bounded, not proof.

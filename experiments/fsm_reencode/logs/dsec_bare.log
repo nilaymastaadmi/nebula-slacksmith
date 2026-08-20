@@ -1,0 +1,34 @@
+=== POSITIVE CONTROL: dsec(domain_b, domain_b) -- must say equivalent ===
+$ yosys-abc -c "cec  work/domain_b.aig work/domain_b.aig"
+...after structural hashing.  Time =     0.00 sec
+Networks are equivalent.  Time =     0.00 sec (cec, implicit)
+
+$ yosys-abc -c "dsec work/domain_b.aig work/domain_b.aig"
+Warning: 84 registers in this network have don't-care init values.
+The don't-care are assumed to be 0. The result may not verify.
+Networks are equivalent.  Time =     0.02 sec
+
+=== THE REAL EXPERIMENT: bare dsec, NO hint, domain_b vs domain_b_onehot ===
+=== (decides whether branch 4 / mapped-state equivalence is needed at all) ===
+$ yosys-abc -c "cec  work/domain_b.aig work/domain_b_onehot.aig"
+Networks have different number of latches.
+Miter computation has failed.
+
+$ yosys-abc -c "dsec work/domain_b.aig work/domain_b_onehot.aig"
+Warning: 90 registers in this network have don't-care init values.
+The don't-care are assumed to be 0. The result may not verify.
+Networks are NOT EQUIVALENT after simulation.   Time =     0.08 sec
+
+VERDICT: cec cannot even build the miter (latch count mismatch, 42 vs 48).
+dsec builds it and answers NOT EQUIVALENT in 0.08s -- a fast, clean, correct
+"no" from a checker with no notion of a state-mapping abstraction. Same
+qualitative signature as the toy MAC's latency-changing case (cec_check/),
+different underlying reason (encoding, not latency). This is the measured
+evidence that branch 4 (mapped-state equivalence, invariant supplied) is
+necessary here, not redundant scaffolding.
+
+Export recipe note: async2sync is required before dffunmap/techmap/aigmap
+for this design -- domain_b/domain_b_onehot use genuine async resets
+(posedge clk_div or negedge rst_n), which the toy MAC's synchronous-reset
+files never exercised through this AIG-export path. Without it, aigmap fails
+on the gate-level $_DFF_PN0_ primitive regardless of dffunmap ordering.

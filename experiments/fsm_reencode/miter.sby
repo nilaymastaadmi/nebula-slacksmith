@@ -1,0 +1,37 @@
+# SymbiYosys config for the mapped-state equivalence proof of fsm_reencode
+# applied to domain_b. Same three-task convention as toy_miter/miter.sby:
+#   bmc   -- true up to depth N?              (bounded, finds bugs)
+#   prove -- true for all time, k-induction?  (state_inv is the strengthening lemma)
+#   pdr   -- true for all time, IC3/PDR?      (no manual invariant needed)
+# A timeout is not a pass. Report all three, per property, separately.
+
+[tasks]
+bmc
+prove
+pdr
+
+[options]
+bmc:   mode bmc
+bmc:   depth 40
+prove: mode prove
+prove: depth 40
+pdr:   mode prove
+
+[engines]
+bmc:   smtbmc z3
+prove: smtbmc z3
+pdr:   abc pdr
+
+[script]
+read_verilog -formal -sv domain_b_fv.v
+read_verilog -formal -sv domain_b_onehot_fv.v
+read_verilog -formal -sv miter_mapped.sv
+prep -top miter_mapped
+
+[files]
+domain_b_fv.v
+domain_b_onehot_fv.v
+decode_state.vh
+domain_b.v
+domain_b_onehot.v
+miter_mapped.sv

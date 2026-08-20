@@ -1,0 +1,22 @@
+=== sby -f miter.sby pdr (IC3/PDR, abc pdr engine) ===
+
+Proved output 3 in frame 4 (converged).
+Starting new anytime pass, reusing clauses.
+Proved output 2 in frame 0.
+All outputs solved or timed out in frame 2.
+
+Block =  179  Oblig = 22993  Clause =  6001  Call = 646549 (sat=93.3%)
+SAT solving  = 26.14 sec (73.19%)
+Property proved.  Time = 35.72 sec
+Counter-example is not available.
+engine_0 (abc pdr) returned PASS
+
+DONE (PASS, rc=0)
+Elapsed: 0:00:36 (36s)
+
+RESULT: PROVEN, UNBOUNDED. All four properties (state_inv, rd_en_match,
+ctrl_match, status_match) hold for all time. PDR/IC3 discovers its own
+strengthening invariants automatically and closes completely where
+single-step k-induction (prove.log) could not on its own. This is the
+verdict: fsm_reencode(domain_b, state_r, onehot) is PROVEN, discharged by
+PDR, in 35.7 seconds.
