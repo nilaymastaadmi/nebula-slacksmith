@@ -1,0 +1,11 @@
+=== eqy -f parallel.eqy (domain_b_onehot vs domain_b_onehot_parallel, UNSCOPED, full 10-bit input domain) ===
+Successfully proved: status.0-7, retry_r, payload_r, lfsr_r, do_emit, b2c_r, b2c_ctrl (14/24)
+Failed to prove (10/24): status_r, state_r, rd_en, nstate, ld_pl, inc_ret,
+  do_acc, clr_ret, acc_r, a2b_rd_en
+DONE (FAIL, rc=2). Elapsed 2s.
+
+VERDICT: correctly failed. The 10 failing partitions are exactly nstate and
+everything downstream of it -- the predicted divergence chain for illegal
+multi-hot state_r inputs (see NOTES.md Step 2). Not a tooling problem; EQY
+found a real counterexample outside the one-hot subspace. The scoped claim
+(state_r assumed one-hot) is proven separately -- see miter_scoped.sby logs.

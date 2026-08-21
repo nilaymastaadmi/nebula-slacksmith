@@ -1,0 +1,7 @@
+=== sby -f miter_scoped.sby pdr (IC3/PDR) ===
+Property proved. Time = 38.27 sec. Counter-example is not available.
+engine_0 (abc pdr) returned PASS. DONE (PASS, rc=0).
+RESULT: PROVEN, UNBOUNDED, under the explicit precondition that state_r is
+one-hot on both designs (proven separately and unbounded for domain_b_onehot
+in experiments/fsm_reencode/). Verdict: mux_priority_to_parallel(domain_b_onehot)
+is PROVEN, discharged by PDR, in 38.3 seconds.

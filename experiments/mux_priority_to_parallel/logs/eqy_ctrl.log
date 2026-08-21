@@ -1,0 +1,3 @@
+=== eqy -f ctrl.eqy (domain_b_onehot vs itself) ===
+21/21 partitions proved equivalent. Successfully proved designs equivalent.
+DONE (PASS, rc=0). Elapsed 1s.

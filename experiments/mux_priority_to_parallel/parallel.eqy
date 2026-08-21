@@ -1,0 +1,12 @@
+[gold]
+read_verilog -sv domain_b_onehot.v
+prep -top domain_b_onehot
+
+[gate]
+read_verilog -sv domain_b_onehot_parallel.v
+rename domain_b_onehot_parallel domain_b_onehot
+prep -top domain_b_onehot
+
+[strategy sat]
+use sat
+depth 5

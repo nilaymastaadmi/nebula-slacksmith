@@ -1,0 +1,11 @@
+[gold]
+read_verilog -sv domain_b_onehot.v
+prep -top domain_b_onehot
+
+[gate]
+read_verilog -sv domain_b_onehot_copy_src.v
+prep -top domain_b_onehot
+
+[strategy sat]
+use sat
+depth 5

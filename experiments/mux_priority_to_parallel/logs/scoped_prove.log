@@ -1,0 +1,10 @@
+=== sby -f miter_scoped.sby prove (k-induction, depth 40) ===
+basecase: Status: passed (0:00:53)
+induction: Temporal induction failed! Assert failed: status_match
+DONE (UNKNOWN, rc=4)
+RESULT: base case PASS; single-step induction fails on status_match, same
+property and same root cause as experiments/fsm_reencode/logs/prove.log --
+no real clkdiv instance constrains the clk/clk_div ratio in this local
+harness. Reproduced across two independent transforms now, confirming the
+diagnosis rather than a one-off artifact. See pdr.log for the unbounded
+result.

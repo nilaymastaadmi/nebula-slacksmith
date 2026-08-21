@@ -1,0 +1,5 @@
+=== sby -f miter_scoped.sby bmc (depth 40) ===
+Properties: state_match, rd_en_match, ctrl_match, status_match
+Assumptions: reset alignment, state_r one-hot on both ref and opt each cycle
+Status: passed. Elapsed 0:00:53 (53s).
+RESULT: PASS to depth 40 under the scoped (one-hot) precondition.

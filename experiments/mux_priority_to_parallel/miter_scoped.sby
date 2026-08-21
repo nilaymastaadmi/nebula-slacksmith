@@ -1,0 +1,32 @@
+# SymbiYosys config for the scoped equivalence proof of
+# mux_priority_to_parallel(domain_b_onehot). Same three-task convention as
+# experiments/fsm_reencode/miter.sby and experiments/toy_miter/miter.sby.
+
+[tasks]
+bmc
+prove
+pdr
+
+[options]
+bmc:   mode bmc
+bmc:   depth 40
+prove: mode prove
+prove: depth 40
+pdr:   mode prove
+
+[engines]
+bmc:   smtbmc z3
+prove: smtbmc z3
+pdr:   abc pdr
+
+[script]
+read_verilog -formal -sv domain_b_onehot_raw_fv.v
+read_verilog -formal -sv domain_b_onehot_parallel_fv.v
+read_verilog -formal -sv miter_scoped.sv
+prep -top miter_scoped
+
+[files]
+decode_state.vh
+domain_b_onehot_raw_fv.v
+domain_b_onehot_parallel_fv.v
+miter_scoped.sv
