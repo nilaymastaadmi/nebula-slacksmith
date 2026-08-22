@@ -1,0 +1,16 @@
+=== sby -f miter.sby prove (k-induction, depth 40), bounded attempt ===
+induction: steps 24 down to 0 tried, ~1 minute total.
+induction: Temporal induction failed! Assert failed: clamped_match (step 0)
+induction: Status: failed
+basecase: still running at step 8 when stopped at 150s, showing the same
+per-step slowdown as bmc.log -- consistent, not a separate issue.
+
+RESULT: induction fails on clamped_match, a DIFFERENT root cause than the
+prior two transforms' status_match failures (this proof is entirely within
+the clk domain -- no clk/clk_div cross-domain assertion exists here at all,
+so that diagnosis does not apply). Likely cause: clamped_match compares
+against a PADDED (one-cycle-delayed) reference, and single-step induction
+has no separate same-cycle auxiliary lemma to lean on the way state_inv
+served fsm_reencode -- a classical difficulty with Burch-Dill-style
+latency-shifted equivalence proofs, not a new tooling gap. See pdr.log for
+the unbounded result.

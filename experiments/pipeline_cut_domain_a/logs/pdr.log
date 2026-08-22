@@ -1,0 +1,13 @@
+=== sby -f miter.sby pdr (IC3/PDR) ===
+Proved output 0 in frame 6. Property proved. Time = 174.42 sec.
+Counter-example is not available. engine_0 (abc pdr) returned PASS.
+DONE (PASS, rc=0). Elapsed 0:02:55 (175s).
+
+RESULT: PROVEN, UNBOUNDED, via PDR, in under 3 minutes -- notably where
+bmc/prove (SMT-based) struggled on the same multiplier-bearing cone. This
+is the REVERSE of the project's own day-one toy finding ("PDR hung >440s,
+SMT proved it in under a second"): here SMT struggled and PDR closed it.
+Confirms engine performance on multiplication-bearing properties is not a
+fixed, predictable ordering -- exactly why this project races multiple
+engines rather than picking one a priori. Verdict: pipeline_cut_rigid
+(domain_a) is PROVEN, discharged by PDR, in 174.4 seconds.

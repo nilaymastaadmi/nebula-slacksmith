@@ -1,0 +1,32 @@
+# SymbiYosys config for the k-padded miter proof of pipeline_cut_rigid
+# applied to domain_a. Same three-task convention as toy_miter/miter.sby,
+# experiments/fsm_reencode/miter.sby, experiments/mux_priority_to_parallel/
+# miter_scoped.sby.
+
+[tasks]
+bmc
+prove
+pdr
+
+[options]
+bmc:   mode bmc
+bmc:   depth 40
+prove: mode prove
+prove: depth 40
+pdr:   mode prove
+
+[engines]
+bmc:   smtbmc z3
+prove: smtbmc z3
+pdr:   abc pdr
+
+[script]
+read_verilog -formal -sv domain_a_clamped_comb_fv.v
+read_verilog -formal -sv domain_a_clamped_pipelined_fv.v
+read_verilog -formal -sv miter_pipeline_domain_a.sv
+prep -top miter_pipeline_domain_a
+
+[files]
+domain_a_clamped_comb_fv.v
+domain_a_clamped_pipelined_fv.v
+miter_pipeline_domain_a.sv

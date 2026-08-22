@@ -1,0 +1,9 @@
+=== sby -f miter.sby bmc (depth 40) ===
+Steps 0-6: <1s each. Step 7: 53s. Step 8: ~60s (waiting for solver >1min).
+Step 9: similar, still climbing. STOPPED DELIBERATELY at ~3 minutes, not a
+failure -- the per-step cost trend made depth 40 clearly infeasible in
+reasonable time. First proof in this project whose cone includes a real
+multiplier (sample_r * coeff_r); this is the predicted difficulty from the
+project's own day-one toy finding, materializing on real RTL for the first
+time, at a width (8-bit) smaller than anything like AES would be.
+No orphaned solver process left behind (checked, confirmed clean).
