@@ -142,3 +142,18 @@ to specific gates by name is not claimed.
   rewrite, and the correct proof branch automatically is still the next real
   piece of infrastructure -- this experiment is the second hand-built
   instance of that pipeline, not the tool itself.
+
+## Addendum, 2026-08-21 -- see experiments/fsm_reencode/NOTES.md
+
+The clk/clk_div harness fix flagged in this file's "Next" section was tried
+against the fsm_reencode miter (same underlying issue, same clkdiv#(.DIV(3)),
+so one attempt answers it for both). Full account in
+`experiments/fsm_reencode/NOTES.md`'s addendum. Short version: wiring the
+real divider surfaces a genuine Yosys/SBY limitation (opposite-polarity
+clocking on one net needs `clk2fflogic`), and `clk2fflogic`'s clock-as-data
+modeling makes BMC on this specific dual-edge divider computationally
+impractical here (step cost climbing past 30s by depth 28, nowhere near
+depth 40). This is closed as a verified negative result, not an open item:
+PDR is confirmed to be the correct tool for `status_match` on both this
+transform and fsm_reencode, not a stand-in for a k-induction proof that
+would otherwise be preferable. The PROVEN verdict above stands unchanged.

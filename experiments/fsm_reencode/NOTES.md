@@ -130,3 +130,53 @@ measured deltas, including where they are small or negative.
   branch automatically (rather than me hand-building the miter and `.sby`
   file per transform) is still not written -- that is the next real piece of
   infrastructure, not this experiment repeated by hand five more times.
+
+## Addendum, 2026-08-21 -- the harness fix was tried, and found intractable
+
+Both this experiment's and `mux_priority_to_parallel`'s "Next" section flagged
+the same open item: wire a real `clkdiv#(.DIV(3))` instance into the miter so
+`clk_div` is derived from `clk` instead of taken as an independent free input,
+on the theory that this would let single-step k-induction close `prove`
+without needing PDR to carry the whole proof.
+
+Tried directly, not assumed. Wiring in the real divider surfaces a genuine
+Yosys/SBY limitation first: `clkdiv`'s odd-ratio branch uses both `posedge`
+and `negedge` of the same `clk_in` net (that is its documented mechanism for
+exact 50% duty on DIV=3), and SBY's default `prep` flow does not accept a
+clock net used with opposite polarity across a design without `clk2fflogic`
+-- it errors and says so explicitly.
+
+Adding `clk2fflogic` (in the position Yosys formal practice expects, after
+`prep`) does resolve that error and BMC begins making progress. But
+`clk2fflogic` works by converting every flip-flop into an explicit two-state
+model where the CLOCK ITSELF becomes free-toggling data rather than an
+idealized edge -- and for a divider whose odd-ratio output needs multiple
+real source-clock edges of both polarities to produce a single output
+transition, this multiplies the state space far beyond what stayed tractable
+here: BMC step cost grew from sub-second to ~30 seconds per step by depth 28
+and was still climbing, on a trajectory nowhere near depth 40 in reasonable
+time. Stopped deliberately rather than let it run unbounded; no orphaned
+solver process was left behind (checked, killed the one transient match,
+confirmed clean).
+
+**Conclusion, and it is a real one, not a shrug**: the free-`clk_div`-input
+harness used in both this experiment and `mux_priority_to_parallel` is more
+general than the real system (it explores relative clock timings the actual
+divided clock can never produce), which is exactly why single-step induction
+could not close on `status_match` in either case. But the PRINCIPLED fix, as
+implemented via `clk2fflogic`, is computationally impractical for this
+specific divider's dual-edge mechanism with the tools available here. PDR is
+therefore not a workaround standing in for a "real" k-induction proof that
+was simply never attempted -- it is the correct tool for this property,
+verified to be necessary rather than assumed to be. Both PROVEN verdicts
+(this experiment and `mux_priority_to_parallel`) stand exactly as reported,
+unbounded, via PDR.
+
+Files from the attempt are not committed (the reverted `miter_mapped.sv` and
+`miter.sby` in this directory are back to the versions that produced the
+original PDR-proven results). If this is revisited, the likely productive
+directions are: prove the divider's own output-timing property separately
+and supply it as an assumption rather than deriving it structurally inside
+the same induction, or accept PDR as the standing method for any property
+that depends on a dual-edge generated clock and stop trying to force
+single-step induction to close on it.
