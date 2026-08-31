@@ -59,11 +59,45 @@ import subprocess
 import sys
 
 
+# v2 file set (2026-08-31 benchmark growth). Order is load-bearing: ABC's
+# technology mapping is sensitive to file processing order, established by
+# measurement when this tool was first validated.
 BENCH_TOP_FILES = [
+    "aes/aes_core.v", "aes/aes_encipher_block.v", "aes/aes_decipher_block.v",
+    "aes/aes_key_mem.v", "aes/aes_sbox.v", "aes/aes_inv_sbox.v",
+    "rv32i_core.v", "rv32_load.v", "aes_load.v",
     "async_fifo.v", "bench_top.v", "clkdiv.v",
     "domain_a.v", "domain_b.v", "domain_c.v", "domain_d.v", "domain_e.v",
     "sync2ff.v",
 ]
+
+# Cell families excluded from technology mapping, matching standard sky130
+# flow practice (OpenLane excludes the same families by default).
+#
+# Measured, not assumed: on the v2 benchmark ABC selected
+# sky130_fd_sc_hd__lpflow_isobufsrc_1 on a high-fanout net and OpenSTA
+# reported a 12.391 ns delay through that ONE cell, 38% of a 33 ns critical
+# path. Excluding these families dropped WNS from -27.37 to -22.54 (4.83 ns)
+# with no RTL change whatsoever. lpflow cells are low-power isolation and
+# power-gating cells; they are not intended as general logic and ABC was
+# picking them on area cost. Leaving them in means reporting a synthesis
+# artifact as a timing result.
+#
+# The list is derived from the liberty at run time rather than hardcoded, so
+# it stays correct if the library changes.
+DONT_USE_PATTERNS = ("lpflow", "probe")
+
+
+def dont_use_flags(liberty_path):
+    """Return ABC -dont_use flags for every excluded cell present in the liberty."""
+    try:
+        with open(liberty_path, "r", encoding="utf-8", errors="replace") as f:
+            text = f.read()
+    except OSError:
+        return ""
+    cells = set(re.findall(r"cell \((sky130_fd_sc_hd__[a-z0-9_]+)\)", text))
+    excluded = sorted(c for c in cells if any(p in c for p in DONT_USE_PATTERNS))
+    return " ".join(f"-dont_use {c}" for c in excluded)
 
 
 def run(cmd, **kw):
@@ -79,7 +113,7 @@ def synth_bench_top(yosys_bin, rtl_dir, files, liberty, workdir, mapped_name, ex
         f"hierarchy -check -top {extra_yosys_top}; "
         f"synth -top {extra_yosys_top}; "
         f"dfflibmap -liberty {liberty}; "
-        f"abc -liberty {liberty}; "
+        f"abc -liberty {liberty} {dont_use_flags(liberty)}; "
         f"write_verilog -noattr {mapped_path}"
     )
     proc = run([yosys_bin, "-p", script])
@@ -212,7 +246,7 @@ def main():
         f"hierarchy -check -top {args.top}; "
         f"synth -top {args.top}; "
         f"dfflibmap -liberty {liberty}; "
-        f"abc -liberty {liberty}; "
+        f"abc -liberty {liberty} {dont_use_flags(liberty)}; "
         f"write_verilog -noattr {mapped_path}"
     )
     proc = run([args.yosys_bin, "-p", script])
