@@ -122,19 +122,15 @@ Third-party content: the AES-128 core is `secworks/aes`, BSD-2-Clause, vendored 
 
 The SDC is **written once and frozen** before any optimization runs. The agent never edits constraints, and timing exceptions including multi-cycle paths are excluded from the transform set entirely, so no reported improvement can come from relaxing the measurement.
 
-Generated-clock `-edges` for the odd dividers were derived by hand from the divider's edge arithmetic and then cross-checked three independent ways: the hand trace, an Icarus simulation, and OpenSTA's own `report_clock_properties` reading the finished SDC. All three agree to the decimal (`clk_b_div3` 16.5/16.5 of 33 ns; `clk_d_div5` 32.5/32.5 of 65 ns).
+Generated-clock `-edges` for the odd dividers were derived from the divider's edge arithmetic (`rise @ 2*DIV`, `fall @ 2*(DIV + (DIV+1)/2) - 1`, `next rise @ 4*DIV`, so `DIV=3` gives `{6 9 12}`) and cross-checked three independent ways: the hand trace, an Icarus simulation, and OpenSTA's `report_clock_properties`. All three agree to the decimal.
 
-For odd `DIV` the output rises when the later phase flag rises and falls when the earlier falls, giving master-edge indices `rise @ 2*DIV`, `fall @ 2*(DIV + (DIV+1)/2) - 1`, `next rise @ 4*DIV`, so `DIV=3` gives `{6 9 12}` and `DIV=5` gives `{10 15 20}`.
-
-A single `set_clock_groups -asynchronous` over the five domains is also what exempts every synchronizer path from ordinary setup/hold analysis: those paths tolerate metastability rather than meeting a same-domain check. No per-path exception is used anywhere, and **no `set_multicycle_path` appears in the file at all**, because a multicycle exception manufactures slack without changing the design.
+One `set_clock_groups -asynchronous` over the five domains is also what exempts every synchronizer path from ordinary setup/hold analysis. No per-path exception is used anywhere, and **no `set_multicycle_path` appears in the file at all**, because a multicycle exception manufactures slack without changing the design.
 
 Three findings changed how we report every number (`docs/measurement-methodology.md`):
 
 **A single library cell was worth 4.83 ns of pure artifact.** The first critical path put 19.5 ns of 33.0 ns in *two cells*. That is drive, not logic depth, so we investigated before reporting it, and `abc -D 8000` produced a byte-identical netlist, ruling out mapping effort. The culprit was `sky130_fd_sc_hd__lpflow_isobufsrc_1`, a low-power isolation cell ABC selected on area cost. Excluding the `lpflow` and `probe` families, as standard sky130 flows do, moved WNS from **−27.37 to −22.54 with zero RTL change**.
 
-**The measurement tool has a zero noise floor.** Swapping a module for *itself* returns 0.000 delta on every path group, so every nonzero delta is real and reproducible.
-
-**Local RTL changes have non-local timing effects.** Given that null control, the +1.398 ns a `domain_b`-only change produces on `clk_a` is not noise; it is ABC's global mapping moving an unrelated group. **Reporting rule adopted:** a transform's effect is the delta in the group it touches, and movement elsewhere is reported separately, never folded into the claimed benefit.
+**The measurement tool has a zero noise floor**: swapping a module for *itself* returns 0.000 delta on every path group. **But local RTL changes have non-local effects.** Given that null control, the +1.398 ns a `domain_b`-only change produces on `clk_a` is not noise, it is ABC's global mapping moving an unrelated group. **Reporting rule adopted:** a transform's effect is the delta in the group it touches, and movement elsewhere is reported separately, never folded into the claimed benefit.
 
 ### 5.1 Setting a closure target that means something
 
@@ -346,13 +342,11 @@ Core level (`rv32i_core` alone, transform is 100% of the design; reset false-pat
 | P3 | 6,700 | −12.65 | 6.62 |
 | P6 | 6,864 | **−7.88** | 6.38 |
 
-Expressed as frequency, which is what deliverable 5 asks for: at core level a 10 ns constraint with −9.84 ns of violation means a required period of 19.84 ns, so **F_max 50.4 MHz for the baseline core and 55.9 MHz with P6**, an 11.0% improvement. At design level the 8 ns `clk_a` constraint with −20.667 ns gives a required period of 28.67 ns, **F_max 34.9 MHz**, which is an upper bound given the missing buffer-insertion pass noted in §5. Under the measurement-derived closure targets of `sdc/bench_top_v2.sdc` (§5.1) the same baseline **meets** `clk_a` at +1.333 ns, and the remaining violated groups are `clk_a_div2` (−0.543 ns) and the two AES-bound domains `clk_b` and `clk_e` (−4.957 ns each).
+As frequency, which is what deliverable 5 asks for: at core level a 10 ns constraint with −9.84 ns of violation means a required period of 19.84 ns, so **F_max 50.4 MHz baseline and 55.9 MHz with P6**, an 11.0% improvement.
 
-**The rankings invert between contexts.** By core timing the best transform is P6 (+1.96 ns); at design level P6 is the worst (−1.615 ns), and the only design-level winner is P2, which is nearly neutral at core level. Two real mechanisms: the core's critical path is not the design's (inside `bench_top` the binding path runs through the wrapper's async-read memory and its fanout, not the ALU cone), plus the non-local remapping quantified in §5.
+**The rankings invert between contexts.** By core timing the best transform is P6 (+1.96 ns); at design level P6 is the **worst** (−1.615 ns), and the only design-level winner is P2, which is nearly neutral at core level. Two real mechanisms: the core's critical path is not the design's (inside `bench_top` the binding path runs through the wrapper's async-read memory and its fanout, not the ALU cone), plus the non-local remapping quantified in §5. We report both contexts for all four transforms, because a report quoting only the core table would name P6 the best transform and one quoting only the design table would name it the worst.
 
-We report both contexts for all four transforms. A report quoting only the core table would name P6 the best transform; one quoting only the design table would name it the worst.
-
-Power is vector-free at default switching activity: a relative comparison between variants, not an absolute silicon figure. At design level power is flat at 223–224 mW across all variants, because a 351-cell change is 0.6% of a 55K design and below the method's resolution. We report that as a null rather than as a 1 mW difference.
+Power is vector-free at default switching activity: relative between variants, not an absolute silicon figure. At design level it is flat at 223 to 224 mW across all variants, because a 351-cell change is 0.6% of a 55K design and below the method's resolution. That is reported as a null rather than as a 1 mW difference. The area cost that *is* resolvable is `repair_design`'s **+20.2%** (§7.2).
 
 ---
 

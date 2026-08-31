@@ -117,6 +117,12 @@ That is **bound exhaustion**, not refutation. The `round_key` partition
 carries the whole 1,920-flop `key_mem` array as state, and `depth 5` is not
 enough to relate it.
 
+Re-running the whole batch-2 obligation at **depth 40** does not fix it: every
+other partition proves in about a second, and `round_key` alone runs past a
+**1,800 s** wall without a verdict. So A2 is not "nearly proved"; the
+obligation as EQY partitions it is expensive in a way more depth does not
+solve, and a better obligation is needed rather than a bigger budget.
+
 **The bug.** EQY prints `Failed to prove equivalence` for both outcomes, and
 `tools/gate_proposal.py` matched on that string and called it REFUTED:
 
