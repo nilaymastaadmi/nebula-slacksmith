@@ -28,7 +28,7 @@ Usage:
   python3 tools/gate_proposal.py --proposal experiments/llm_proposer/proposals/P1.json \\
       --rtl rtl/rv32i_core.v --workdir ~/gates/P1 [--depth 20] [--timeout 300]
 """
-import argparse, io, json, os, re, subprocess, sys
+import argparse, glob, io, json, os, re, subprocess, sys
 
 CORE_OUTPUTS = [
     ("imem_addr", 32), ("dmem_addr", 32), ("dmem_wdata", 32),
@@ -158,7 +158,45 @@ def main():
         if m:
             res["G4"] = "PROVEN"
         elif f:
-            res["G4"] = f"REFUTED ({f.group(1)}/{f.group(2)} partitions unproven)"
+            # EQY says "Failed to prove equivalence" for BOTH a real
+            # counterexample and a strategy that simply ran out of depth. Those
+            # are different verdicts and conflating them reports UNRESOLVED as
+            # REFUTED, which is the error this project cares most about.
+            # Found 2026-08-31: batch 2's A2 was reported REFUTED when its
+            # partition log said "Reached maximum number of time steps", while
+            # all 128 tmp_round_key partitions it feeds had been PROVEN.
+            # So the failing partitions are classified from their own logs.
+            failed = re.findall(
+                r"Failed to prove equivalence of partition (\S+)", out)
+            bounded, refuted, unknown = [], [], []
+            for part in failed:
+                logs = glob.glob(os.path.join(
+                    wd, "prop", "strategies", part, "*", "run.log"))
+                txt = ""
+                for lg in logs:
+                    try:
+                        with open(lg, encoding="utf-8", errors="replace") as fh:
+                            txt += fh.read()
+                    except OSError:
+                        pass
+                if re.search(r"Assert failed|model found: FAIL", txt):
+                    refuted.append(part)
+                elif "Reached maximum number of time steps" in txt:
+                    bounded.append(part)
+                else:
+                    unknown.append(part)
+            res["G4_failed_partitions"] = failed
+            res["G4_counterexample"] = refuted
+            res["G4_depth_exhausted"] = bounded
+            if refuted:
+                res["G4"] = (f"REFUTED ({len(refuted)} partition(s) with a "
+                             f"counterexample, {f.group(2)} total)")
+            elif bounded or unknown:
+                res["G4"] = (f"UNRESOLVED ({len(bounded) + len(unknown)} "
+                             f"partition(s) hit the strategy bound, no "
+                             f"counterexample found)")
+            else:
+                res["G4"] = "UNRESOLVED"
         else:
             res["G4"] = "UNRESOLVED"
         print(json.dumps(res, indent=2))

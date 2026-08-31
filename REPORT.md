@@ -13,9 +13,15 @@ Repository: `github.com/nilaymastaadmi/nebula-slacksmith` (branch `sandbox`). Ev
 
 An LLM proposes RTL transforms. A formal gate decides whether they are correct. We built both halves, and then we measured the half that everyone assumes works.
 
-The result we would lead with: **we asked an LLM for six transforms against a real timing report, froze them before running any check, and two of six were formally refuted.** One of those two parses, elaborates, passes every precondition, reduces cell count by 208, and is wrong. A testbench running the design's own shipped firmware misses it. Twenty thousand random instruction vectors miss it. The formal gate caught it in 46 seconds.
+An LLM pointed at a timing report can fail in two different ways, and we measured both. It can propose a transform that is **wrong**, or one that is **correct and aimed at the wrong variable**.
 
-That is the entire argument of this project in one measurement: **the gates that agentic RTL tools actually ship with would have accepted a broken rewrite.**
+**Failure one, correctness.** We asked an LLM for transforms against real timing reports, froze every proposal before running any check, and ran two pre-registered batches. **3 of 12 were formally refuted, 1 more was rejected at precondition, and 1 is unresolved.** One of the three parses, elaborates, passes every precondition, reduces cell count by 208, and is wrong. A testbench running the design's own shipped firmware misses it. Twenty thousand random instruction vectors miss it. The formal gate caught it in 46 seconds with a concrete counterexample. **The gates that agentic RTL tools actually ship with would have accepted a broken rewrite.**
+
+That count started at 4 refuted. It is 3 because batch 2 caught **our own gate manufacturing a refutation**: EQY prints the same "Failed to prove equivalence" line whether it found a counterexample or merely ran out of depth, and we matched on the string. §7.1 has the correction and the check that it does not cascade.
+
+**Failure two, relevance.** Then we asked whether the transforms that *are* correct actually help. On our benchmark they mostly did not, and the reason is measurable: the binding paths were **59% to 91% fanout-attributable delay**, and no RTL rewrite shortens a net's load delay. A stock buffering pass that changes **zero lines of RTL** took both violated clock groups from −4.957 ns to **+12.600 and +20.394 ns, closing the design**, and beat our best formally-proven RTL transform by 3.6x on the same group.
+
+So SlackSmith routes twice. It routes the **proof obligation** by declared transform type, which is the original contribution, and it now routes the **fix** by measured path pathology, which the measurement forced on us. The two levers turn out to be sequential rather than alternative: after buffering, the remaining violations are measurably depth-dominated, which is exactly where an RTL transform has something to bite on.
 
 ---
 
@@ -78,7 +84,7 @@ All four branches are proven on real RTL, not toys (§6).
 | 5 | Timing, frequency and PPA comparison | §8, `experiments/ppa/` |
 | 6 | Formal equivalence verification report | §6, `experiments/*/NOTES.md` + logs |
 | 7 | Interactive demo | demo video, §10 |
-| — | Benchmark: 5 async domains, generated clocks, CDC, dividers, ~50K cells | §4, `rtl/bench_top.v` |
+| n/a | Benchmark: 5 async domains, generated clocks, CDC, dividers, ~50K cells | §4, `rtl/bench_top.v` |
 
 ---
 
@@ -195,7 +201,7 @@ Disclosed limitation: after the `lpflow` fix a 5.66 ns single-cell delay remains
 | `yosys-abc cec` | equivalent | **cannot build the miter** ("different number of latches") |
 | `yosys-abc dsec` | equivalent | **NOT EQUIVALENT** |
 | EQY | PASS | **FAIL**, 1/1 partitions |
-| k-padded miter | — | **PASSED, unbounded** |
+| k-padded miter | n/a | **PASSED, unbounded** |
 
 They fail for different reasons, and the difference matters: `cec` cannot express the question, while `dsec` and EQY express it and correctly answer no, because the designs genuinely are not cycle-for-cycle equivalent. None can express equivalence *modulo k cycles*, so a pipeline gated on any of them can only ever reject a latency change. That is measured evidence for the routing decision, not an argument.
 
@@ -213,7 +219,7 @@ So the branch is chosen automatically, in three passes, each able to overrule th
 
 | module | lexical | structural | formal | verdict |
 |---|---|---|---|---|
-| `mac_ref` (rigid) | no candidate | — | — | RIGID |
+| `mac_ref` (rigid) | no candidate | n/a | n/a | RIGID |
 | `mac_vr_ref` | `out_ready` | reaches `$dff.D` | PASSED | ELASTIC |
 | `alias_names` (`vld`/`rdy`) | `o_rdy` | reaches `$dff.D` | PASSED | ELASTIC |
 | `axi_style` (AXI prefixes) | `m_axis_tready` | reaches `$dff.D` | PASSED | ELASTIC |
@@ -249,8 +255,8 @@ To measure this honestly we **pre-registered the experiment before writing any p
 | P1 | addsub sharing | k=0 | ✓ | ✓ | ✓ | PROVEN | −1.555 |
 | P2 | shifter sharing | k=0 | ✓ | ✓ | ✓ | PROVEN | **+0.485** |
 | P3 | comparator sharing | k=0 | ✓ | ✓ | ✓ | PROVEN | −2.102 |
-| P4 | mux priority→parallel | k=0 | ✓ | ✓ | ✓ | **REFUTED** | — |
-| P5 | pipeline cut | k=1 | ✓ | ✓ | ✓ | **REFUTED** | — |
+| P4 | mux priority→parallel | k=0 | ✓ | ✓ | ✓ | **REFUTED** | n/a |
+| P5 | pipeline cut | k=1 | ✓ | ✓ | ✓ | **REFUTED** | n/a |
 | P6 | branch cmp sharing | k=0 | ✓ | ✓ | ✓ | PROVEN | −1.615 |
 
 **4 proven, 2 refuted, 1 improved timing.** The registered primary bar was met by P2, which is also the only proposal both smaller (−351 cells) and faster.
@@ -282,6 +288,61 @@ We ran the directed probe specifically so the two misses could not be mistaken f
 
 P5 shows the k-padded obligation doing its job in the other direction: refuted in 1 second because `alu_out` feeds the register file and PC, so a declared k = 1 shift is not what the transform actually does.
 
+### 7.1 Batch 2, registered separately, on the AES key memory
+
+Batch 1's registration required that any second batch be registered separately, its N added to the trial count, and both reported. We did that (`02ead73` precedes `3b17e5d` precedes every result). **Trial count: 16.**
+
+Batch 2 targets `aes_key_mem`, which holds the worst path on `clk_b` and `clk_e` (−4.957 ns each). Because `u_aes_b` and `u_aes_e` are two instances of one module, every edit is measured twice in two clock groups: a built-in replicate.
+
+| | transform | declared | parse | elab | precond | **formal** | clk_b | clk_e |
+|---|---|---|---|---|---|---|---|---|
+| A1 | mux bank split | k=0 | ✓ | ✓ | ✓ | PROVEN | +2.020 | +2.020 |
+| A2 | decode duplication | k=0 | ✓ | ✓ | ✓ | **UNRESOLVED** | n/a | n/a |
+| A3 | read port register | k=1 | ✓ | ✓ | ✓ | **REFUTED** | n/a | n/a |
+| A4 | one-hot read select | k=0 | ✓ | ✓ | ✓ | PROVEN | **+4.925** | **+4.925** |
+| A5 | reset unroll (control) | k=0 | ✓ | ✓ | ✓ | PROVEN | +0.436 | +0.436 |
+| A6 | key mem parity split | k=0 | ✓ | ✓ | **REJECTED** | n/a | n/a | n/a |
+
+**A4 takes `clk_b` from −4.957 to −0.032**, a 99.4% reduction, adding no storage. Both instances produce identical deltas, which is the replicate behaving exactly as it should.
+
+**The precondition gate fired for the first time.** Batch 1's most useful miss was that *zero* proposals were rejected at precondition, which we reported as evidence that the layer was a type check rather than a legality check. A6 splits a 15-entry array into two 8-entry arrays, which is 16 words of storage where the design had 15. It declared k = 0, the flop count moved by +256, and G3 rejected it before any solver ran. That is the case the check exists for: a transform that silently changes state would otherwise have had a **combinational** obligation generated for it, which is the wrong obligation.
+
+**A5 is why we registered a control.** It only unrolls a reset loop, is functionally identical, and touches nothing on the read path, yet it moves `clk_b` by +0.436 ns (and `clk_a` by exactly 0.000). So +0.436 is this module's same-module remapping floor, and A4's honest figure is **+4.489 above a change that does nothing**.
+
+**A2 is the batch's real finding, and it is a bug in our gate.** A2 splits `key_mem` into four 32-bit arrays and is equivalent by inspection. The gate said REFUTED, one failing partition out of 573, and it looked like a second P4. Three things did not fit: simulation had gold and gate agreeing on all 16 values of `round`; EQY had proved **128 of 128** `tmp_round_key` partitions while failing the output that is a plain alias of them; and the partition's own log ends `Reached maximum number of time steps -> proof failed`, which is a **bound**, not a counterexample. EQY prints the same summary line for both, and we matched on the string. The gate now reads each failing partition's log and separates `model found` from depth exhaustion.
+
+We checked whether the correction cascades, rather than assuming. It does not. P4's log ends `SAT temporal induction proof finished - model found for base case: FAIL!` with concrete values (`a = ae19f605`, `shamt = 7`, gold `alu_out = ff5c33ec`, the arithmetic shift), and that had already been confirmed independently by directed simulation. P5 and A3 were refuted by BMC, which reports a trace. **P4 stands.**
+
+Two hypotheses about A2 were tested and both were wrong before the log gave the answer, and one is a trap worth passing on: clamping `round` to its reachable range *outside* the designs changed nothing, because **EQY proves each partition with its inputs as free variables**, so an external constraint never reaches the partition's cone.
+
+We would rather report this than the version where A2 is a second headline refutation. Bugs that hide a result behind UNRESOLVED are the safe direction, and our standing rule caught two of those in this batch. A bug that turns a non-result into a confident REFUTED is the dangerous direction, and no rule caught it: what caught it was a partition failing while everything feeding it passed.
+
+### 7.2 The second router: which lever, before which transform
+
+Four of batch 1's six proposals were proven correct and three of those made timing *worse*. The obvious reading is that LLM RTL proposals do not help. The measured reading is more useful.
+
+We built `tools/classify_path.py`, which scores what fraction of a path's delay comes from cells driving 32 or more loads. Batch 1's target path is **58.9% fanout-attributable**. The design-level AES path is **91.4%**, with 21.029 ns sitting in a single `nor4_1` driving **300 loads**: `aes_key_mem` is a 15 × 128-bit register array read through a combinational 15-to-1 mux. Restructuring logic does not shorten a net's load delay. The proposals were aimed at the wrong variable.
+
+The control, registered in advance and committed before its output was read: synthesize `bench_top` twice from identical RTL under identical SDC, differing only by appending `buffer -N 16; upsize; dnsize` to the ABC script. Yosys already ships that in its `-liberty -constr` script; our flow simply was not running it.
+
+| clock | default | buffered | delta |
+|---|---|---|---|
+| clk_a | +1.333 MET | +12.784 MET | +11.451 |
+| clk_b | **−4.957 VIOLATED** | **+12.600 MET** | **+17.557** |
+| clk_e | **−4.957 VIOLATED** | **+20.394 MET** | **+25.351** |
+
+**Both violated groups close, with zero RTL change.** Flop count is identical (5,191), 1,419 buffers are added, and nets above fanout 64 drop from 112 to 27. We checked equivalence rather than trusting the pass: **49,923 of 49,924** obligations discharged, the residual being one top-level XOR whose input net is undriven in *both* designs, reproduced across two independent runs.
+
+Set against the RTL levers on the same group: batch 1's best was +0.485 ns, batch 2's best +4.925 ns, **buffering +17.557 ns**.
+
+Two results keep this from being a simple "buffering wins" story.
+
+First, **A4 gained 4.925 ns while leaving max fanout exactly unchanged** (2193 in gold and in every proven variant, 0.0% change). That was pre-registered as prediction H2 and it held: no proposal reduced fanout, because synthesis re-merges duplicated cones. So an RTL transform *can* move a fanout-dominated path, by restructuring what sits in series with the high-fanout net rather than by fixing the net.
+
+Second, **after buffering the remaining violations are depth-dominated.** Re-tightening every clock period 6x on the buffered netlist puts `clk_b` at −1.689 ns and `clk_a` at −12.216 ns with **0.0%** fanout-attributable delay, spread over 15 and 33 cells. The same tool with the same thresholds returns DEPTH_DOMINATED, which is what shows it is not degenerate.
+
+**The two levers are sequential, not alternative.** Buffer, re-measure, then propose RTL. `docs/path-classification.md` carries the five-case validation table and the two limitations we know about, including that fanout is undercounted for buses crossing a hierarchy boundary, which makes DEPTH_DOMINATED the weaker of the two verdicts.
+
 ---
 
 ## 8. Optimized RTL and PPA
@@ -310,7 +371,13 @@ Power is vector-free at default switching activity: a relative comparison betwee
 
 Judged work should show its corrections, so here are ours, all committed with the evidence.
 
-**Two of five registered predictions were wrong.** We predicted at least one proposal would be rejected at the precondition gate; **zero were**. The precondition layer as built is a type check, not a legality check, and the formal gate did all the real filtering. We also predicted latency semantics would dominate the failure modes; it was one of each. Both were registered in advance, one at explicitly low confidence, so the misses are visible rather than forgotten.
+**Three of eleven registered predictions across the two batches were wrong.** In batch 1 we predicted at least one proposal would be rejected at the precondition gate; **zero were**, and we reported that the precondition layer was a type check rather than a legality check. Batch 2 is the follow-up and A6 was rejected there, so the batch 1 finding is true of batch 1 and false as a general claim; both are on the record. We also predicted latency semantics would dominate the failure modes; it was one of each. In batch 2 we predicted at most 2 of 6 would improve `clk_b` and **3 did**. Each was registered in advance, two at explicitly low or medium confidence, so the misses are visible rather than forgotten.
+
+**We spent the whole project optimizing a design whose violations a stock pass closes.** Yosys ships `buffer; upsize` in its `-liberty -constr` ABC script and not in the plain `-liberty` script we had been using. Running it takes both violated groups to MET (§7.2). Every timing number this project produced before 2026-08-31 describes a flow that was missing a standard step, and the honest consequence is that our reported violations were an upper bound on a complete flow, which §5 had flagged as a *possibility* and we had not tested. We tested it, and it was worth 17.557 ns. It is reported as a control and credited to no transform.
+
+**Two harness bugs, both ours, both surfaced as UNRESOLVED.** Proposal A3 reported UNRESOLVED twice before producing a verdict: first because `sby` was not on PATH, then because our own generalization patch broke an f-string and wrote `{max(k,1)}` into the generated miter as literal Verilog. Neither was a transform result. Fixed and re-run, A3 is REFUTED. We record this because UNRESOLVED must never be quietly read as PROVEN or REFUTED; here it twice meant "the harness broke", and a report that left A3 as UNRESOLVED would have hidden two of its own bugs behind something that looks like a result.
+
+**The path classifier was wrong twice before it was right.** Its first version used the report's `data arrival time` as the denominator, which includes the launch clock edge and scored a divided-clock path at a meaningless 0.007. Its second counted fanout flat and returned zero for every hierarchical instance. Both were found by running it on paths whose answers we already knew, and a third defect survives: fanout is undercounted for buses crossing a hierarchy boundary, whose tell is a 6.762 ns cell reported at fanout 1. That limitation is documented alongside the tool rather than left for a judge to find.
 
 **A claim that was false, caught by simulation.** We had described `pipeline_cut_rigid(domain_a)` as boundary-proven *and therefore* module-equivalent. It is not: a testbench shows `mac_result` diverging permanently (`002a` vs `0031`), because the consuming domain samples at half rate and a one-cycle delay selects a different subsequence rather than shifting the stream. The proof stands for the property it states; the sufficiency claim was withdrawn and the refuting testbench committed.
 
