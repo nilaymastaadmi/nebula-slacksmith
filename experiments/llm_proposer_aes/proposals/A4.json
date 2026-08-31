@@ -1,0 +1,19 @@
+{
+  "id": "A4",
+  "target_module": "aes_key_mem",
+  "target_file": "rtl/aes/aes_key_mem.v",
+  "transform_type": "onehot_read_select",
+  "declared_latency_delta_k": 0,
+  "obligation_branch": "eqy_combinational_equivalence",
+  "registered_outputs": [
+    "round_key",
+    "ready",
+    "sboxw"
+  ],
+  "rationale": "Replace the indexed read mux with a one-hot AND-OR reduction over the 15 entries.",
+  "variant_file": "experiments/llm_proposer_aes/proposals/aes_key_mem_A4.v",
+  "target_path_group": [
+    "clk_b",
+    "clk_e"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "A5",
+  "target_module": "aes_key_mem",
+  "target_file": "rtl/aes/aes_key_mem.v",
+  "transform_type": "reset_unroll",
+  "declared_latency_delta_k": 0,
+  "obligation_branch": "eqy_combinational_equivalence",
+  "registered_outputs": [
+    "round_key",
+    "ready",
+    "sboxw"
+  ],
+  "rationale": "Replace the reset for-loop over key_mem with 15 explicit assignments. Registered as the attribution control: functionally identical and not on any critical cone.",
+  "variant_file": "experiments/llm_proposer_aes/proposals/aes_key_mem_A5.v",
+  "target_path_group": [
+    "clk_b",
+    "clk_e"
+  ]
+}

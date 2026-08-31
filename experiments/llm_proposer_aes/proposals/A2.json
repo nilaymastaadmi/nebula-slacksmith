@@ -1,0 +1,19 @@
+{
+  "id": "A2",
+  "target_module": "aes_key_mem",
+  "target_file": "rtl/aes/aes_key_mem.v",
+  "transform_type": "decode_duplication",
+  "declared_latency_delta_k": 0,
+  "obligation_branch": "eqy_combinational_equivalence",
+  "registered_outputs": [
+    "round_key",
+    "ready",
+    "sboxw"
+  ],
+  "rationale": "Split key_mem into four independent 32-bit-wide arrays, each with its own read block, to divide the read-decode fanout four ways.",
+  "variant_file": "experiments/llm_proposer_aes/proposals/aes_key_mem_A2.v",
+  "target_path_group": [
+    "clk_b",
+    "clk_e"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "A6",
+  "target_module": "aes_key_mem",
+  "target_file": "rtl/aes/aes_key_mem.v",
+  "transform_type": "key_mem_parity_split",
+  "declared_latency_delta_k": 0,
+  "obligation_branch": "eqy_combinational_equivalence",
+  "registered_outputs": [
+    "round_key",
+    "ready",
+    "sboxw"
+  ],
+  "rationale": "Split key_mem into even-round and odd-round arrays of 8 entries each, selected by round[0].",
+  "variant_file": "experiments/llm_proposer_aes/proposals/aes_key_mem_A6.v",
+  "target_path_group": [
+    "clk_b",
+    "clk_e"
+  ]
+}

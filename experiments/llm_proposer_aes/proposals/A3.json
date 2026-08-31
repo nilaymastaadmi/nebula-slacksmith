@@ -1,0 +1,19 @@
+{
+  "id": "A3",
+  "target_module": "aes_key_mem",
+  "target_file": "rtl/aes/aes_key_mem.v",
+  "transform_type": "read_port_register",
+  "declared_latency_delta_k": 1,
+  "obligation_branch": "k_padded_miter",
+  "registered_outputs": [
+    "round_key",
+    "ready",
+    "sboxw"
+  ],
+  "rationale": "Register the round_key read port, cutting the combinational path from the key memory into the encipher round logic. Declared k=1 rigid: round_key is asserted one cycle later.",
+  "variant_file": "experiments/llm_proposer_aes/proposals/aes_key_mem_A3.v",
+  "target_path_group": [
+    "clk_b",
+    "clk_e"
+  ]
+}
