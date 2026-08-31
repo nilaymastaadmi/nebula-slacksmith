@@ -28,7 +28,7 @@ Usage:
   python3 tools/gate_proposal.py --proposal experiments/llm_proposer/proposals/P1.json \\
       --rtl rtl/rv32i_core.v --workdir ~/gates/P1 [--depth 20] [--timeout 300]
 """
-import argparse, json, os, re, subprocess, sys
+import argparse, io, json, os, re, subprocess, sys
 
 CORE_OUTPUTS = [
     ("imem_addr", 32), ("dmem_addr", 32), ("dmem_wdata", 32),
@@ -74,22 +74,43 @@ def main():
     ap.add_argument("--depth", type=int, default=20)
     ap.add_argument("--timeout", type=int, default=300)
     ap.add_argument("--repo", default=".")
+    # Batch 2 (experiments/llm_proposer_aes) targets a different module with
+    # a different port list. Every default below is the batch-1 rv32i_core
+    # setting, so batch 1 reproduces unchanged.
+    ap.add_argument("--module", default="rv32i_core")
+    ap.add_argument("--clk", default="clk")
+    ap.add_argument("--rst", default="rst_n")
+    ap.add_argument("--outputs", default=None)
+    ap.add_argument("--inputs", default="imem_data:32,dmem_rdata:32")
     a = ap.parse_args()
 
     wd = os.path.expanduser(a.workdir)
     os.makedirs(wd, exist_ok=True)
     p = json.load(open(a.proposal, encoding="utf-8"))
     src = open(a.rtl, encoding="utf-8").read()
-    res = {"id": p["id"], "def_id": p["def_id"], "declared_k": p["latency_delta_k"]}
+    # Batch 2 JSONs use different key spellings. They are accepted here rather
+    # than edited, because rewriting a frozen proposal file after the freeze
+    # commit would weaken the freeze even though no gate has run yet.
+    def_id = p.get("def_id") or p.get("transform_type")
+    k = p.get("latency_delta_k", p.get("declared_latency_delta_k"))
+    if k is None:
+        raise SystemExit("proposal declares no latency delta")
+    res = {"id": p["id"], "def_id": def_id, "declared_k": k}
 
+    mod = a.module
     gold = os.path.join(wd, "gold.v")
     gate = os.path.join(wd, "gate.v")
-    open(gold, "w", encoding="utf-8").write(src.replace("module rv32i_core", "module rv32i_core_gold", 1))
-    open(gate, "w", encoding="utf-8").write(splice(src, p).replace("module rv32i_core", "module rv32i_core_gate", 1))
+    if p.get("variant_file"):
+        # Batch 2 proposals are complete rewritten modules, not splices.
+        gate_src = io.open(os.path.join(a.repo, p["variant_file"]), encoding="utf-8").read()
+    else:
+        gate_src = splice(src, p)
+    open(gold, "w", encoding="utf-8").write(src.replace("module " + mod, "module " + mod + "_gold", 1))
+    open(gate, "w", encoding="utf-8").write(gate_src.replace("module " + mod, "module " + mod + "_gate", 1))
 
     # ---- G1 / G2
-    gs, _ = stats(a.yosys, gold, "rv32i_core_gold", wd, "gold")
-    ts, tlog = stats(a.yosys, gate, "rv32i_core_gate", wd, "gate")
+    gs, _ = stats(a.yosys, gold, mod + "_gold", wd, "gold")
+    ts, tlog = stats(a.yosys, gate, mod + "_gate", wd, "gate")
     if ts is None:
         res.update(G1="FAIL", note=f"yosys could not read/elaborate; see {tlog}")
         print(json.dumps(res, indent=2)); return
@@ -101,7 +122,6 @@ def main():
         print(json.dumps(res, indent=2)); return
 
     # ---- G3 declared-latency consistency
-    k = p["latency_delta_k"]
     d = ts["dff"] - gs["dff"]
     if k == 0 and d != 0:
         res["G3"] = f"FAIL(declared k=0 but flop count changed by {d:+d})"
@@ -124,9 +144,9 @@ def main():
     if k == 0:
         eqy_cfg = os.path.join(wd, "prop.eqy")
         open(eqy_cfg, "w", encoding="utf-8").write(
-            "[gold]\nread_verilog gold.v\nprep -top rv32i_core_gold\n\n"
-            "[gate]\nread_verilog gate.v\nrename rv32i_core_gate rv32i_core_gold\n"
-            "prep -top rv32i_core_gold\n\n"
+            "[gold]\nread_verilog gold.v\nprep -top " + mod + "_gold\n\n"
+            "[gate]\nread_verilog gate.v\nrename " + mod + "_gate " + mod + "_gold\n"
+            "prep -top " + mod + "_gold\n\n"
             "[strategy sat]\nuse sat\ndepth 5\n")
         eqy = os.path.expanduser("~/tools/oss-cad-suite/bin/eqy")
         r = sh([eqy, "-f", "prop.eqy"], cwd=wd, timeout=a.timeout)
@@ -144,7 +164,18 @@ def main():
         print(json.dumps(res, indent=2))
         return
 
-    outs = CORE_OUTPUTS
+    def parse_ports(spec):
+        out = []
+        for tok in spec.split(","):
+            tok = tok.strip()
+            if tok:
+                n, _, w = tok.partition(":")
+                out.append((n, int(w) if w else 1))
+        return out
+
+    outs = CORE_OUTPUTS if a.outputs is None else parse_ports(a.outputs)
+    ins = parse_ports(a.inputs)
+    clk, rst = a.clk, a.rst
     decl, inst_g, inst_t, cmp_lines, pipe = [], [], [], [], []
     for n, w in outs:
         rng = "" if w == 1 else f"[{w-1}:0] "
@@ -159,35 +190,39 @@ def main():
             cmp_lines.append(f"            eq_{n}: assert (gp_{n} == t_{n});")
     pipe_blk = ""
     if k > 0:
-        pipe_blk = ("    always @(posedge clk or negedge rst_n) begin\n"
-                    "        if (!rst_n) begin\n"
+        pipe_blk = ("    always @(posedge " + clk + " or negedge " + rst + ") begin\n"
+                    "        if (!" + rst + ") begin\n"
                     + "\n".join(f"            gp_{n} <= 0;" for n, _ in outs) +
                     "\n        end else begin\n" + "\n".join(pipe) + "\n        end\n    end\n")
     prime = ("    reg [3:0] pr;\n"
-             "    always @(posedge clk or negedge rst_n)\n"
-             f"        if (!rst_n) pr <= 0; else if (pr < {max(k,1)}) pr <= pr + 1;\n"
+             "    always @(posedge " + clk + " or negedge " + rst + ")\n"
+             f"        if (!{rst}) pr <= 0; else if (pr < {max(k,1)}) pr <= pr + 1;\n"
              f"    wire primed = (pr >= {max(k,1)});\n")
-    miter = f"""// generated by tools/gate_proposal.py for {p['id']} ({p['def_id']}), declared k={k}
+    in_decl = "".join(
+        "    input wire " + ("" if w == 1 else "[" + str(w - 1) + ":0] ") + n + "," + chr(10)
+        for n, w in ins)
+    in_conn = ", ".join("." + n + "(" + n + ")" for n, w in ins)
+    miter = f"""// generated by tools/gate_proposal.py for {p['id']} ({def_id}), declared k={k}
 module miter_prop (
-    input wire clk, input wire rst_n,
-    input wire [31:0] imem_data, input wire [31:0] dmem_rdata
+    input wire {clk}, input wire {rst},
+{in_decl}    input wire _unused_tie
 );
 {chr(10).join(decl)}
 
-    rv32i_core_gold u_g (
-        .clk(clk), .rst_n(rst_n), .imem_data(imem_data), .dmem_rdata(dmem_rdata),
+    {mod}_gold u_g (
+        .{clk}({clk}), .{rst}({rst}), {in_conn},
 {chr(10).join(inst_g)[:-1]}
     );
-    rv32i_core_gate u_t (
-        .clk(clk), .rst_n(rst_n), .imem_data(imem_data), .dmem_rdata(dmem_rdata),
+    {mod}_gate u_t (
+        .{clk}({clk}), .{rst}({rst}), {in_conn},
 {chr(10).join(inst_t)[:-1]}
     );
 
 {pipe_blk}{prime}
 `ifdef FORMAL
-    initial assume (!rst_n);
-    always @(posedge clk) begin
-        if (rst_n && primed) begin
+    initial assume (!{rst});
+    always @(posedge {clk}) begin
+        if ({rst} && primed) begin
 {chr(10).join(cmp_lines)}
         end
     end
