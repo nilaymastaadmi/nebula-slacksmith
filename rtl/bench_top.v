@@ -17,6 +17,24 @@
 //
 // Plain Verilog-2001.  No vendor primitives, no interfaces/structs/classes,
 // no initial blocks, no # delays, no $readmemh, no latches.
+//
+// v2 growth, 2026-08-31: the original skeleton synthesized to 3,584 cells
+// against the organizer requirement "~50K standard cells" (audit finding
+// K1). Three real workload blocks close that gap without touching any
+// domain module, the port list, or the frozen SDC:
+//
+//   u_rv32_a  (clk_a): rv32i_core + ROM/dmem wrapper (rv32_load.v), the
+//             project's own ISS-verified core running a real RV32I loop
+//   u_aes_b   (clk_b): AES-128 (secworks/aes, BSD-2, vendored rtl/aes/)
+//   u_aes_e   (clk_e): second AES-128 instance, keyed from live cfg inputs
+//
+// Every feed and every fold stays INSIDE one clock group (clk_a group,
+// clk_b group, clk_e group respectively), so the benchmark's CDC rule --
+// every crossing goes through a gray FIFO or a 2FF synchronizer -- is
+// untouched: these blocks add zero new cross-group paths. Folds are XORed
+// into the existing per-domain outputs so every block terminates in
+// observable, constrained timing paths and nothing is prunable. Ports are
+// byte-identical to v1, so sdc/bench_top.sdc applies verbatim.
 // ---------------------------------------------------------------------------
 module bench_top (
     // five independent asynchronous clocks + their async active-low resets
@@ -93,6 +111,8 @@ module bench_top (
     wire        e2a_empty;
 
     // ------------------------------------------------------------ domain A
+    wire [15:0] mac_result_int;
+
     domain_a u_domain_a (
         .clk        (clk_a),
         .clk_div    (clk_a_div2),
@@ -105,10 +125,25 @@ module bench_top (
         .a2b_wr_en  (a2b_wr_en),
         .a2b_wdata  (a2b_wdata),
         .a2b_full   (a2b_full),
-        .mac_result (mac_result_a)
+        .mac_result (mac_result_int)
     );
 
+    // v2 workload: RV32I core on clk_a, folded into domain A's output.
+    // Intra-group: clk_a launch into a port whose set_output_delay clock is
+    // the related clk_a_div2 -- a timed arc inside group A, not a crossing.
+    wire [15:0] rv_fold;
+
+    rv32_load u_rv32_a (
+        .clk      (clk_a),
+        .rst_n    (rst_a_n),
+        .fold_out (rv_fold)
+    );
+
+    assign mac_result_a = mac_result_int ^ rv_fold;
+
     // ------------------------------------------------------------ domain B
+    wire [7:0] status_b_int;
+
     domain_b u_domain_b (
         .clk       (clk_b),
         .clk_div   (clk_b_div3),
@@ -117,8 +152,25 @@ module bench_top (
         .a2b_rdata (a2b_rdata),
         .a2b_empty (a2b_empty),
         .b2c_ctrl  (b2c_ctrl),
-        .status    (status_b)
+        .status    (status_b_int)
     );
+
+    // v2 workload: AES-128 on clk_b, keyed and seeded from domain B's own
+    // clk_b-registered status, folded back into the same output. The
+    // repetitive key replication costs nothing for a timing benchmark;
+    // liveness comes from aes_load's rolling block register, which
+    // self-diversifies every cycle regardless of seed variety.
+    wire [31:0] aes_b_fold;
+
+    aes_load u_aes_b (
+        .clk      (clk_b),
+        .rst_n    (rst_b_n),
+        .key_in   ({16{status_b_int}}),
+        .seed_in  ({4{status_b_int}}),
+        .fold_out (aes_b_fold)
+    );
+
+    assign status_b = status_b_int ^ aes_b_fold[7:0];
 
     // ------------------------------------------------------------ domain C
     domain_c u_domain_c (
@@ -145,6 +197,8 @@ module bench_top (
     );
 
     // ------------------------------------------------------------ domain E
+    wire [7:0] cfg_status_int;
+
     domain_e u_domain_e (
         .clk            (clk_e),
         .clk_div        (clk_e_div2),
@@ -156,8 +210,22 @@ module bench_top (
         .e2a_wr_en      (e2a_wr_en),
         .e2a_wdata      (e2a_wdata),
         .e2a_full       (e2a_full),
-        .cfg_status     (cfg_status_e)
+        .cfg_status     (cfg_status_int)
     );
+
+    // v2 workload: second AES-128 on clk_e, keyed from the live cfg write
+    // port (real primary-input dependence), folded into domain E's output.
+    wire [31:0] aes_e_fold;
+
+    aes_load u_aes_e (
+        .clk      (clk_e),
+        .rst_n    (rst_e_n),
+        .key_in   ({4{cfg_wdata_e}}),
+        .seed_in  (cfg_wdata_e ^ {28'd0, cfg_addr_e}),
+        .fold_out (aes_e_fold)
+    );
+
+    assign cfg_status_e = cfg_status_int ^ aes_e_fold[7:0];
 
     // ----------------------------------------------- multi-bit CDC: A -> B
     // write: clk_a/2   read: clk_b/3
