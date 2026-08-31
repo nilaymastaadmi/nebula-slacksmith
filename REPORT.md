@@ -124,33 +124,17 @@ The SDC is **written once and frozen** before any optimization runs. The agent n
 
 Generated-clock `-edges` for the odd dividers were derived by hand from the divider's edge arithmetic and then cross-checked three independent ways: the hand trace, an Icarus simulation, and OpenSTA's own `report_clock_properties` reading the finished SDC. All three agree to the decimal (`clk_b_div3` 16.5/16.5 of 33 ns; `clk_d_div5` 32.5/32.5 of 65 ns).
 
-The derivation, since this is the part a reviewer should be able to check. For odd `DIV` the output rises when the later of the two phase flags rises and falls when the earlier falls, giving master-edge indices
+For odd `DIV` the output rises when the later phase flag rises and falls when the earlier falls, giving master-edge indices `rise @ 2*DIV`, `fall @ 2*(DIV + (DIV+1)/2) - 1`, `next rise @ 4*DIV`, so `DIV=3` gives `{6 9 12}` and `DIV=5` gives `{10 15 20}`.
 
-    rise @ 2*DIV      fall @ 2*(DIV + (DIV+1)/2) - 1      next rise @ 4*DIV
-
-so `DIV=3` → `{6 9 12}` and `DIV=5` → `{10 15 20}`:
-
-```tcl
-create_generated_clock -name clk_b_div3 -source [get_ports clk_b] \
-    -edges {6 9 12} [get_nets clk_b_div3]
-create_generated_clock -name clk_d_div5 -source [get_ports clk_d] \
-    -edges {10 15 20} [get_nets clk_d_div5]
-
-set_clock_groups -name async_domains -asynchronous \
-    -group {clk_a clk_a_div2} -group {clk_b clk_b_div3} \
-    -group {clk_c clk_c_div4} -group {clk_d clk_d_div5} \
-    -group {clk_e clk_e_div2}
-```
-
-That single `set_clock_groups` is also what correctly exempts every synchronizer path from ordinary setup/hold analysis: those paths are built to tolerate metastability, not to meet a same-domain check. No per-path exception is used anywhere, and **no `set_multicycle_path` appears in the file at all**, because a multicycle exception can manufacture slack without changing the design.
+A single `set_clock_groups -asynchronous` over the five domains is also what exempts every synchronizer path from ordinary setup/hold analysis: those paths tolerate metastability rather than meeting a same-domain check. No per-path exception is used anywhere, and **no `set_multicycle_path` appears in the file at all**, because a multicycle exception manufactures slack without changing the design.
 
 Three findings changed how we report every number (`docs/measurement-methodology.md`):
 
-**A single library cell was worth 4.83 ns of pure artifact.** The first critical path showed 19.5 ns of a 33.0 ns path sitting in *two cells*. That is drive, not logic depth, so we investigated before reporting it. `abc -D 8000` produced a byte-identical netlist, ruling out mapping effort. The culprit was `sky130_fd_sc_hd__lpflow_isobufsrc_1`, a low-power isolation cell ABC selected on area cost. Excluding the `lpflow` and `probe` families, as standard sky130 flows do, moved WNS from **−27.37 to −22.54 with zero RTL change**.
+**A single library cell was worth 4.83 ns of pure artifact.** The first critical path put 19.5 ns of 33.0 ns in *two cells*. That is drive, not logic depth, so we investigated before reporting it, and `abc -D 8000` produced a byte-identical netlist, ruling out mapping effort. The culprit was `sky130_fd_sc_hd__lpflow_isobufsrc_1`, a low-power isolation cell ABC selected on area cost. Excluding the `lpflow` and `probe` families, as standard sky130 flows do, moved WNS from **−27.37 to −22.54 with zero RTL change**.
 
-**The measurement tool has a zero noise floor.** Swapping a module for *itself* returns 0.000 delta on every path group. Synthesis and STA are deterministic here, so every nonzero delta is real and reproducible.
+**The measurement tool has a zero noise floor.** Swapping a module for *itself* returns 0.000 delta on every path group, so every nonzero delta is real and reproducible.
 
-**Local RTL changes have non-local timing effects.** Given the null control above, the +1.398 ns that a `domain_b`-only change produces on `clk_a` is not noise: it is ABC's global technology mapping moving an unrelated path group. **Reporting rule adopted:** a transform's effect is the delta in the group it touches; movement elsewhere is reported separately and never folded into the claimed benefit.
+**Local RTL changes have non-local timing effects.** Given that null control, the +1.398 ns a `domain_b`-only change produces on `clk_a` is not noise; it is ABC's global mapping moving an unrelated group. **Reporting rule adopted:** a transform's effect is the delta in the group it touches, and movement elsewhere is reported separately, never folded into the claimed benefit.
 
 ### 5.1 Setting a closure target that means something
 
@@ -178,9 +162,9 @@ It was found by reading a critical-path report and seeing the banned cell at 12.
 
 All affected numbers were re-measured. The `clk_a` baseline carried **4.62 ns** of artifact (−25.287 → −20.667), and the four proven transforms' deltas moved 40 to 50%. **The qualitative conclusion did not change**: P2 is still the only proposal that improves its touched path group and the other three still make it worse, so no conclusion had to be withdrawn. The corrected figures are what appear in §7 and §8.
 
-Worth stating because it is not intuitive: the exclusion is **not** uniformly beneficial. `clk_a` gains 4.62 ns while `clk_b` and `clk_e` each lose 1.97 ns, because constraining the mapper's cell choice also removes options from paths that were using those cells benignly.
+Worth stating because it is not intuitive: the exclusion is **not** uniformly beneficial. `clk_a` gains 4.62 ns while `clk_b` and `clk_e` each lose 1.97 ns, because constraining the mapper's cell choice also removes options from paths using those cells benignly.
 
-Disclosed limitation: after the `lpflow` fix a 5.66 ns single-cell delay remains, which is high fanout with no buffer-insertion pass. This flow stops at technology mapping; a repair or P&R step (OpenROAD `repair_design`) would address it. Our reported violations are therefore an upper bound.
+After the `lpflow` fix a 5.66 ns single-cell delay remained, which is high fanout with no buffer-insertion pass. We flagged that as a limitation and an upper bound. **§7.2 stops flagging it and measures it**, and it turned out to be the largest single number in this report.
 
 ---
 
@@ -371,6 +355,8 @@ Power is vector-free at default switching activity: a relative comparison betwee
 
 Judged work should show its corrections, so here are ours, all committed with the evidence.
 
+**Our gate manufactured a refutation, and that is the worst bug in this project.** It reported A2 as REFUTED when EQY had only run out of depth (§7.1). Every other bug below hid a real result behind an inconclusive verdict, which our standing rule "UNRESOLVED is never a verdict" is built to catch. This one ran the other way, turning a non-result into a confident claim, and no rule caught it. We found it by noticing a partition had failed while all 128 partitions feeding it had passed. The safeguard we were proud of only ever pointed in one direction.
+
 **Three of eleven registered predictions across the two batches were wrong.** In batch 1 we predicted at least one proposal would be rejected at the precondition gate; **zero were**, and we reported that the precondition layer was a type check rather than a legality check. Batch 2 is the follow-up and A6 was rejected there, so the batch 1 finding is true of batch 1 and false as a general claim; both are on the record. We also predicted latency semantics would dominate the failure modes; it was one of each. In batch 2 we predicted at most 2 of 6 would improve `clk_b` and **3 did**. Each was registered in advance, two at explicitly low or medium confidence, so the misses are visible rather than forgotten.
 
 **We spent the whole project optimizing a design whose violations a stock pass closes.** Yosys ships `buffer; upsize` in its `-liberty -constr` ABC script and not in the plain `-liberty` script we had been using. Running it takes both violated groups to MET (§7.2). Every timing number this project produced before 2026-08-31 describes a flow that was missing a standard step, and the honest consequence is that our reported violations were an upper bound on a complete flow, which §5 had flagged as a *possibility* and we had not tested. We tested it, and it was worth 17.557 ns. It is reported as a control and credited to no transform.
@@ -379,15 +365,9 @@ Judged work should show its corrections, so here are ours, all committed with th
 
 **The path classifier was wrong twice before it was right.** Its first version used the report's `data arrival time` as the denominator, which includes the launch clock edge and scored a divided-clock path at a meaningless 0.007. Its second counted fanout flat and returned zero for every hierarchical instance. Both were found by running it on paths whose answers we already knew, and a third defect survives: fanout is undercounted for buses crossing a hierarchy boundary, whose tell is a 6.762 ns cell reported at fanout 1. That limitation is documented alongside the tool rather than left for a judge to find.
 
-**A claim that was false, caught by simulation.** We had described `pipeline_cut_rigid(domain_a)` as boundary-proven *and therefore* module-equivalent. It is not: a testbench shows `mac_result` diverging permanently (`002a` vs `0031`), because the consuming domain samples at half rate and a one-cycle delay selects a different subsequence rather than shifting the stream. The proof stands for the property it states; the sufficiency claim was withdrawn and the refuting testbench committed.
+**A claim that was false, caught by simulation.** We described `pipeline_cut_rigid(domain_a)` as boundary-proven *and therefore* module-equivalent. It is not: a testbench shows `mac_result` diverging permanently (`002a` vs `0031`), because the consuming domain samples at half rate, so a one-cycle delay selects a different subsequence rather than shifting the stream. The proof stands for the property it states; the sufficiency claim was withdrawn and the refuting testbench committed.
 
-**A number that was nearly published six times too large.** P2's improvement first measured +5.105 ns against a baseline built by a slightly different flow. Rebuilt identically: **+0.485 ns**.
-
-**An interoperability gap that nearly hid our only success.** P2 is the one proposal using a Verilog `function`. Yosys names function temporaries with an embedded absolute path and colon, which OpenSTA's Verilog reader rejects, so a netlist that synthesized cleanly could not be timed at all (1,386 such names). `opt_clean -purge` fixes it. Without that fix the batch's single winner would have been recorded as unmeasurable.
-
-**A tool that a comment could break.** `remeasure.py` matched `//` as a module name, so `bench_top.v`'s own documentation counted as a second instantiation and the tool refused to run.
-
-**An attempted fix that did not work, and is reported as closed rather than pending.** Two proofs needed PDR where single-step k-induction failed. We tried wiring a real divider into the harness to fix it. That surfaces a genuine Yosys limitation (opposite-polarity clocking needs `clk2fflogic`), and `clk2fflogic`'s clock-as-data modelling then makes BMC on this dual-edge divider intractable: step cost climbed past 30 s by depth 28. **PDR is therefore confirmed as the correct tool for these properties, not a workaround** for a proof we never attempted.
+**Four more, briefly.** P2's improvement first measured **+5.105 ns** against a baseline built by a slightly different flow; rebuilt identically it is **+0.485 ns**. P2 was also nearly unmeasurable: Yosys names Verilog `function` temporaries with an embedded absolute path that OpenSTA's reader rejects (1,386 such names), so our only batch 1 winner would have been recorded as untimeable without `opt_clean -purge`. `remeasure.py` once matched `//` as a module name, so `bench_top.v`'s own comments counted as a second instantiation. And an attempted fix that failed is reported as closed rather than pending: wiring a real divider into the proof harness surfaces a genuine Yosys limitation (opposite-polarity clocking needs `clk2fflogic`, whose clock-as-data modelling then makes BMC on this dual-edge divider intractable, past 30 s per step by depth 28), so **PDR is confirmed as the correct tool for those properties, not a workaround** for a proof we never attempted.
 
 ---
 
