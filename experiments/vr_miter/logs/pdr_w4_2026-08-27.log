@@ -1,0 +1,274 @@
+SBY  4:07:54 [miter_vr_stream_pdr] Removing directory '/home/toshn/nebula/experiments/vr_miter_pdr_test/miter_vr_stream_pdr'.
+SBY  4:07:54 [miter_vr_stream_pdr] Copy '/home/toshn/nebula/experiments/vr_miter_pdr_test/mac_vr_ref.v' to '/home/toshn/nebula/experiments/vr_miter_pdr_test/miter_vr_stream_pdr/src/mac_vr_ref.v'.
+SBY  4:07:54 [miter_vr_stream_pdr] Copy '/home/toshn/nebula/experiments/vr_miter_pdr_test/mac_vr_opt.v' to '/home/toshn/nebula/experiments/vr_miter_pdr_test/miter_vr_stream_pdr/src/mac_vr_opt.v'.
+SBY  4:07:54 [miter_vr_stream_pdr] Copy '/home/toshn/nebula/experiments/vr_miter_pdr_test/miter_vr_stream.sv' to '/home/toshn/nebula/experiments/vr_miter_pdr_test/miter_vr_stream_pdr/src/miter_vr_stream.sv'.
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: abc pdr
+SBY  4:07:54 [miter_vr_stream_pdr] base: starting process "cd miter_vr_stream_pdr/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  4:07:54 [miter_vr_stream_pdr] base: finished (returncode=0)
+SBY  4:07:54 [miter_vr_stream_pdr] prep: starting process "cd miter_vr_stream_pdr/model; yosys -ql design_prep.log design_prep.ys"
+SBY  4:07:54 [miter_vr_stream_pdr] prep: finished (returncode=0)
+SBY  4:07:54 [miter_vr_stream_pdr] aig: starting process "cd miter_vr_stream_pdr/model; yosys -ql design_aiger.log design_aiger.ys"
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\a [0] like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\a [1] like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\a [2] like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\a [3] like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\b [0] like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\b [1] like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\b [2] like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\b [3] like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\c [0] like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\c [1] like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\c [2] like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\c [3] like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\c [4] like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\c [5] like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\c [6] like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\c [7] like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\clk like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\rst like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating undriven bit miter_vr_stream.\out_ready like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: Warning: Treating a total of 19 undriven bits in miter_vr_stream like $anyseq.
+SBY  4:07:54 [miter_vr_stream_pdr] aig: finished (returncode=0)
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: starting process "cd miter_vr_stream_pdr; yosys-abc -c 'read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw'"
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: ======== ABC command line "read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw"
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: Warning: The last 2 outputs are interpreted as constraints.
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: VarMax = 300. FrameMax = 10000. QueMax = 0. TimeMax = 119. MonoCNF = no. SkipGen = no. SolveAll = no.
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 1 : 0 1                                                                 1     2      0.00 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 2 : 0 4 6                                                               4     9      0.00 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 3 : 0 2 5 1                                                             0     9      0.01 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 4 : 0 4 6 7 7                                                           7    13      0.01 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 4 5 50 ~1                                                      5    31      0.04 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 4 5 100 ~1                                                     5    31      0.07 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 4 5 150 ~1                                                     5    31      0.10 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 4 5 200 ~1                                                     5    31      0.13 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 4 5 250 ~1                                                     5    31      0.16 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 4 5 300 ~1                                                     5    31      0.19 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 9 12 326 ~1                                                   12    38      0.21 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: Timing out on output 0 in frame 5 (retrying in next anytime pass).
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 9 12 326 ~1                                                    0    38      0.21 sec  T/O =  1  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 6 : 0 2 6 9 12 6 0 ~321                                                  0    38      0.23 sec  T/O =  1  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: All outputs solved or timed out in frame 6.
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: Starting new anytime pass, reusing clauses.
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 1 : 0 35 ~319                                                            0     0      0.00 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 2 : 0 2 33 ~319                                                          0     0      0.00 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 3 : 0 2 6 27 ~319                                                        0     0      0.01 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 4 : 0 2 6 9 18 ~319                                                      0     0      0.01 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 11 15 51 ~319                                                  6    20      0.02 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 12 21 98 ~319                                                  7    29      0.04 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 12 21 148 ~319                                                 4    29      0.06 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 12 21 198 ~319                                                 4    29      0.08 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 14 24 245 ~319                                                 6    32      0.10 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 14 24 295 ~319                                                 6    32      0.12 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 14 24 345 ~319                                                 6    32      0.15 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 14 25 395 ~319                                                 6    33      0.17 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 16 28 442 ~319                                                 6    36      0.18 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 16 28 492 ~319                                                 6    36      0.20 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 16 29 498 ~319                                                 6    36      0.21 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: Timing out on output 0 in frame 5 (retrying in next anytime pass).
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 16 29 498 ~319                                                 0    36      0.21 sec  T/O =  1  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 6 : 0 2 6 16 25 21 0 ~796                                                0    36      0.23 sec  T/O =  1  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: All outputs solved or timed out in frame 6.
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: Starting new anytime pass, reusing clauses.
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 1 : 0 70 ~794                                                            0     0      0.01 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 2 : 0 2 68 ~794                                                          0     0      0.01 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 3 : 0 2 6 62 ~794                                                        0     0      0.01 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 4 : 0 2 6 16 46 ~794                                                     0     0      0.02 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 16 25 69 ~794                                                  4    15      0.04 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 16 25 119 ~794                                                 4    15      0.06 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 18 28 166 ~794                                                 6    23      0.08 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 18 28 216 ~794                                                 6    23      0.11 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 18 28 266 ~794                                                 6    23      0.13 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 18 29 316 ~794                                                 6    30      0.16 sec  T/O =  0  PRV =  0
+SBY  4:07:54 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 18 29 366 ~794                                                 4    30      0.18 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 18 29 416 ~794                                                 4    30      0.21 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 18 29 466 ~794                                                 4    30      0.24 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 20 32 513 ~794                                                 6    33      0.27 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 20 32 563 ~794                                                 6    33      0.30 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 20 32 613 ~794                                                 6    33      0.33 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 20 32 663 ~794                                                 6    33      0.36 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 20 33 713 ~794                                                 6    33      0.39 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 20 33 763 ~794                                                 4    34      0.41 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 20 33 782 ~794                                                 4    34      0.42 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: Timing out on output 0 in frame 5 (retrying in next anytime pass).
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 20 33 782 ~794                                                 0    34      0.42 sec  T/O =  1  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 6 : 0 2 6 20 31 29 0 ~1547                                               0    34      0.46 sec  T/O =  1  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: All outputs solved or timed out in frame 6.
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: Starting new anytime pass, reusing clauses.
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 1 : 0 88 ~1541                                                           0     0      0.02 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 2 : 0 2 86 ~1541                                                         0     0      0.03 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 3 : 0 2 6 80 ~1541                                                       0     0      0.03 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 4 : 0 2 6 20 60 ~1541                                                    0     0      0.03 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 20 31 77 ~1541                                                 4    17      0.07 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 20 31 127 ~1541                                                4    17      0.09 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 20 31 177 ~1541                                                4    17      0.12 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 20 31 227 ~1541                                                4    17      0.15 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 22 34 274 ~1541                                                6    25      0.18 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 22 34 324 ~1541                                                6    25      0.21 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 22 34 374 ~1541                                                6    25      0.24 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 22 34 424 ~1541                                                6    25      0.28 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 22 35 474 ~1541                                                6    31      0.32 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 22 35 524 ~1541                                                4    31      0.36 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 22 35 574 ~1541                                                4    31      0.39 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 22 35 624 ~1541                                                4    31      0.42 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 22 35 674 ~1541                                                4    31      0.45 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 24 37 722 ~1541                                                4    33      0.50 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 24 38 771 ~1541                                                6    34      0.53 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 24 38 821 ~1541                                                6    34      0.57 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 24 38 871 ~1541                                                6    34      0.61 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 24 38 921 ~1541                                                6    34      0.65 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 24 38 971 ~1541                                                6    34      0.68 sec  T/O =  0  PRV =  0
+SBY  4:07:55 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 26 41 1019 ~1541                                               6    37      0.72 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 26 42 1068 ~1541                                               6    38      0.75 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 26 43 1118 ~1541                                               6    39      0.77 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 28 46 1165 ~1541                                               6    42      0.79 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 32 54 1209 ~1541                                               6    50      0.80 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 38 66 1250 ~1541                                               6    55      0.82 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 40 71 1286 ~1541                                               6    55      0.84 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: Timing out on output 0 in frame 5 (retrying in next anytime pass).
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 40 71 1286 ~1541                                               0    55      0.84 sec  T/O =  1  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 6 : 0 2 6 40 63 66 0 ~2761                                               0    55      0.96 sec  T/O =  1  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: All outputs solved or timed out in frame 6.
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: Starting new anytime pass, reusing clauses.
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 1 : 0 177 ~2751                                                          0     0      0.05 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 2 : 0 2 175 ~2751                                                        0     0      0.06 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 3 : 0 2 6 169 ~2751                                                      0     0      0.07 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 4 : 0 2 6 40 129 ~2751                                                   0     0      0.08 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 5 : 0 2 6 40 63 67 ~2751                                                 1     3      0.09 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 6 : 0 2 6 40 63 67 48 ~2751                                              4    20      0.16 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 6 : 0 2 6 40 63 67 98 ~2751                                              4    20      0.20 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 6 : 0 2 6 40 63 67 148 ~2751                                             4    20      0.24 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 6 : 0 2 6 40 63 67 198 ~2751                                             4    20      0.29 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 6 : 0 2 6 40 63 67 248 ~2751                                             4    20      0.34 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 6 : 0 2 6 40 65 83 288 ~2751                                             8    35      0.38 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 7 : 0 2 6 40 45 50 91 27 ~3019                                          10    49      0.56 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 7 : 0 2 6 40 45 63 120 55 ~3019                                          7    57      0.62 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 7 : 0 2 6 40 45 74 149 87 ~3019                                          5    65      0.65 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 7 : 0 2 6 40 45 74 149 88 ~3019                                          0    65      0.65 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 8 : 0 2 6 40 45 59 129 115 25 ~3014                                     12    67      0.74 sec  T/O =  0  PRV =  0
+SBY  4:07:56 [miter_vr_stream_pdr] engine_0: 8 : 0 2 6 40 45 59 129 118 32 ~3014                                      5    67      0.74 sec  T/O =  0  PRV =  0
+SBY  4:07:57 [miter_vr_stream_pdr] engine_0: 9 : 0 2 6 40 45 59 83 85 99 52 ~3014                                     8    67      0.87 sec  T/O =  0  PRV =  0
+SBY  4:07:57 [miter_vr_stream_pdr] engine_0: 9 : 0 2 6 40 45 59 83 90 120 89 ~3014                                    4    67      0.91 sec  T/O =  0  PRV =  0
+SBY  4:07:57 [miter_vr_stream_pdr] engine_0: 9 : 0 2 6 40 45 59 83 97 140 126 ~3014                                   4    67      0.94 sec  T/O =  0  PRV =  0
+SBY  4:07:57 [miter_vr_stream_pdr] engine_0: 9 : 0 2 6 40 45 59 83 102 160 163 ~3014                                  4    67      0.97 sec  T/O =  0  PRV =  0
+SBY  4:07:57 [miter_vr_stream_pdr] engine_0: 9 : 0 2 6 40 45 59 83 102 160 167 ~3014                                  0    67      0.98 sec  T/O =  0  PRV =  0
+SBY  4:07:57 [miter_vr_stream_pdr] engine_0: 10 : 0 2 6 40 45 59 82 66 99 203 46 ~3014                                 7    67      1.08 sec  T/O =  0  PRV =  0
+SBY  4:07:57 [miter_vr_stream_pdr] engine_0: 11 : 0 2 6 40 45 59 82 66 78 120 56 100 ~3014                            16    68      1.19 sec  T/O =  0  PRV =  0
+SBY  4:07:57 [miter_vr_stream_pdr] engine_0: 11 : 0 2 6 40 45 59 82 66 78 123 79 126 ~3014                            13    68      1.22 sec  T/O =  0  PRV =  0
+SBY  4:07:57 [miter_vr_stream_pdr] engine_0: 11 : 0 2 6 40 45 59 82 66 78 127 111 158 ~3014                            5    68      1.27 sec  T/O =  0  PRV =  0
+SBY  4:07:57 [miter_vr_stream_pdr] engine_0: 11 : 0 2 6 40 45 59 82 66 78 131 143 190 ~3014                            5    68      1.31 sec  T/O =  0  PRV =  0
+SBY  4:07:57 [miter_vr_stream_pdr] engine_0: 11 : 0 2 6 40 45 59 82 66 78 135 175 222 ~3014                            5    68      1.34 sec  T/O =  0  PRV =  0
+SBY  4:07:57 [miter_vr_stream_pdr] engine_0: 11 : 0 2 6 40 45 59 82 66 78 136 189 238 ~3014                            5    68      1.35 sec  T/O =  0  PRV =  0
+SBY  4:07:57 [miter_vr_stream_pdr] engine_0: 12 : 0 2 6 40 45 59 82 65 78 73 167 147 34 ~3096                          9    68      1.56 sec  T/O =  0  PRV =  0
+SBY  4:07:57 [miter_vr_stream_pdr] engine_0: 13 : 0 2 6 40 45 59 82 65 78 73 167 130 57 43 ~3077                      14    68      1.68 sec  T/O =  0  PRV =  0
+SBY  4:07:57 [miter_vr_stream_pdr] engine_0: 13 : 0 2 6 40 45 59 82 65 78 73 167 133 79 78 ~3077                       9    68      1.73 sec  T/O =  0  PRV =  0
+SBY  4:07:57 [miter_vr_stream_pdr] engine_0: 13 : 0 2 6 40 45 59 82 65 78 73 167 137 103 114 ~3077                     4    68      1.77 sec  T/O =  0  PRV =  0
+SBY  4:07:58 [miter_vr_stream_pdr] engine_0: 13 : 0 2 6 40 45 59 82 65 78 73 167 141 127 150 ~3077                     4    68      1.80 sec  T/O =  0  PRV =  0
+SBY  4:07:58 [miter_vr_stream_pdr] engine_0: 13 : 0 2 6 40 45 59 82 65 78 73 167 146 151 187 ~3077                     4    68      1.83 sec  T/O =  0  PRV =  0
+SBY  4:07:58 [miter_vr_stream_pdr] engine_0: 14 : 0 2 6 40 46 60 83 66 80 75 165 105 125 161 62 ~3077                 19    68      1.98 sec  T/O =  0  PRV =  0
+SBY  4:07:58 [miter_vr_stream_pdr] engine_0: 14 : 0 2 6 40 46 60 83 66 80 75 165 105 126 165 73 ~3077                  9    68      1.99 sec  T/O =  0  PRV =  0
+SBY  4:07:58 [miter_vr_stream_pdr] engine_0: 15 : 0 2 6 40 43 61 82 65 78 73 162 102 113 161 90 19 ~3094              13    68      2.15 sec  T/O =  0  PRV =  0
+SBY  4:07:58 [miter_vr_stream_pdr] engine_0: 15 : 0 2 6 40 43 61 82 65 78 73 162 102 113 164 114 45 ~3094             12    68      2.19 sec  T/O =  0  PRV =  0
+SBY  4:07:58 [miter_vr_stream_pdr] engine_0: 15 : 0 2 6 40 43 61 82 65 78 73 162 102 113 167 140 78 ~3094              8    68      2.23 sec  T/O =  0  PRV =  0
+SBY  4:07:58 [miter_vr_stream_pdr] engine_0: 15 : 0 2 6 40 43 61 82 65 78 73 162 102 113 170 168 112 ~3094             4    68      2.27 sec  T/O =  0  PRV =  0
+SBY  4:07:58 [miter_vr_stream_pdr] engine_0: 15 : 0 2 6 40 43 61 82 65 78 73 162 102 113 173 193 148 ~3094             4    68      2.30 sec  T/O =  0  PRV =  0
+SBY  4:07:58 [miter_vr_stream_pdr] engine_0: 15 : 0 2 6 40 43 61 82 65 78 73 162 102 113 177 214 186 ~3094             4    68      2.33 sec  T/O =  0  PRV =  0
+SBY  4:07:58 [miter_vr_stream_pdr] engine_0: 15 : 0 2 6 40 43 61 82 65 78 73 162 102 113 177 219 197 ~3094             4    68      2.34 sec  T/O =  0  PRV =  0
+SBY  4:07:58 [miter_vr_stream_pdr] engine_0: 16 : 0 2 6 40 43 61 82 65 78 73 157 98 113 82 153 130 148 ~3091           6    68      2.49 sec  T/O =  0  PRV =  0
+SBY  4:07:58 [miter_vr_stream_pdr] engine_0: 17 : ... 2 6 40 43 61 82 65 78 73 157 98 113 82 152 123 185 22 ~3091      8    68      2.61 sec  T/O =  0  PRV =  0
+SBY  4:07:58 [miter_vr_stream_pdr] engine_0: 17 : ... 2 6 40 43 61 82 65 78 73 157 98 113 82 152 128 211 56 ~3091      5    68      2.67 sec  T/O =  0  PRV =  0
+SBY  4:07:58 [miter_vr_stream_pdr] engine_0: 17 : ... 2 6 40 43 61 82 65 78 73 157 98 113 82 152 132 237 91 ~3091      3    68      2.70 sec  T/O =  0  PRV =  0
+SBY  4:07:58 [miter_vr_stream_pdr] engine_0: 17 : ... 6 40 43 61 82 65 78 73 157 98 113 82 152 136 264 126 ~3091       3    68      2.73 sec  T/O =  0  PRV =  0
+SBY  4:07:58 [miter_vr_stream_pdr] engine_0: 17 : ... 6 40 43 61 82 65 78 73 157 98 113 82 152 138 276 144 ~3091       3    68      2.75 sec  T/O =  0  PRV =  0
+SBY  4:07:59 [miter_vr_stream_pdr] engine_0: 18 : ... 40 43 61 82 65 78 74 158 99 114 84 154 107 257 136 50 ~3091     22    68      2.92 sec  T/O =  0  PRV =  0
+SBY  4:07:59 [miter_vr_stream_pdr] engine_0: 18 : ... 43 62 83 66 79 76 160 101 116 87 156 109 261 152 67 ~3091       20    68      2.95 sec  T/O =  0  PRV =  0
+SBY  4:07:59 [miter_vr_stream_pdr] engine_0: 18 : ... 43 62 83 66 79 76 160 101 116 87 156 109 261 163 82 ~3091        7    68      2.97 sec  T/O =  0  PRV =  0
+SBY  4:07:59 [miter_vr_stream_pdr] engine_0: 19 : ... 61 82 65 78 73 157 98 113 82 152 104 123 257 109 25 ~3102       10    68      3.20 sec  T/O =  0  PRV =  0
+SBY  4:07:59 [miter_vr_stream_pdr] engine_0: 19 : ... 61 82 65 78 73 157 98 113 82 152 104 123 258 110 30 ~3102        6    68      3.20 sec  T/O =  0  PRV =  0
+SBY  4:07:59 [miter_vr_stream_pdr] engine_0: Timing out on output 0 in frame 19 (retrying in next anytime pass).
+SBY  4:07:59 [miter_vr_stream_pdr] engine_0: 19 : ... 61 82 65 78 73 157 98 113 82 152 104 123 258 110 30 ~3102        0    68      3.20 sec  T/O =  1  PRV =  0
+SBY  4:07:59 [miter_vr_stream_pdr] engine_0: 20 : ... 61 82 65 78 73 157 98 113 82 152 103 122 256 91 30 4 ~3102       0    68      3.38 sec  T/O =  1  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: All outputs solved or timed out in frame 20.
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: Starting new anytime pass, reusing clauses.
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 1 : 0 456 ~3101                                                          0     0      0.43 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 2 : 0 2 454 ~3101                                                        0     0      0.44 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 3 : 0 2 3 451 ~3101                                                      0     0      0.45 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 4 : 0 2 3 4 447 ~3101                                                    0     0      0.46 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 5 : 0 2 3 4 4 443 ~3101                                                  0     0      0.47 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 6 : 0 2 3 4 4 3 440 ~3101                                                0     0      0.48 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 7 : 0 2 3 4 4 3 4 436 ~3101                                              0     0      0.49 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 8 : 0 2 3 4 4 3 4 2 434 ~3101                                            0     0      0.50 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 9 : 0 2 3 4 4 3 4 2 4 430 ~3101                                          0     0      0.51 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 10 : 0 2 3 4 4 3 4 2 4 3 427 ~3101                                        0     0      0.53 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 11 : 0 2 3 4 4 3 4 2 4 3 4 423 ~3101                                      0     0      0.54 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 12 : 0 2 3 4 4 3 4 2 4 3 4 3 420 ~3101                                    0     0      0.55 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 13 : 0 2 3 4 4 3 4 2 4 3 4 3 4 416 ~3101                                  0     0      0.56 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 14 : 0 2 3 4 4 3 4 2 4 3 4 3 4 5 411 ~3101                                0     0      0.57 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 15 : 0 2 3 4 4 3 4 2 4 3 4 3 4 5 17 394 ~3101                             0     0      0.58 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 16 : 0 2 3 4 4 3 4 2 4 3 4 3 4 5 17 29 365 ~3101                          0     0      0.60 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 17 : 0 2 3 4 4 3 4 2 4 3 4 3 4 5 17 29 33 332 ~3101                       0     0      0.62 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 18 : 0 2 3 4 4 3 4 2 4 3 4 3 4 5 17 29 33 218 114 ~3101                   0     0      0.64 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 19 : 0 2 3 4 4 3 4 2 4 3 4 3 4 5 17 29 33 222 99 70 ~3101                 4    23      0.71 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 19 : 0 2 3 4 4 3 4 2 4 3 4 3 4 5 17 29 33 223 117 111 ~3101               4    26      0.75 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 19 : 0 2 3 4 4 3 4 2 4 3 4 3 4 5 17 29 33 226 133 152 ~3101               4    32      0.78 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 19 : 0 2 3 4 4 3 4 2 4 3 4 3 4 5 17 29 33 226 133 154 ~3101               0    34      0.78 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 20 : 0 2 3 4 4 3 4 2 4 3 4 3 4 5 20 33 35 218 133 122 53 ~3111           21    41      0.96 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 20 : 0 2 3 4 4 3 4 2 4 3 4 3 4 5 20 33 35 223 148 140 69 ~3111           23    41      0.98 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 20 : 0 2 3 4 4 3 4 2 5 4 5 4 6 8 23 36 38 228 154 145 72 ~3111           28    41      1.00 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 20 : 0 2 3 4 4 3 4 2 5 4 5 4 6 8 23 36 38 228 160 157 115 ~3111           8    44      1.05 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 20 : 0 2 3 4 4 3 4 2 5 4 5 4 6 8 23 36 38 228 164 163 139 ~3111           7    44      1.07 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 21 : ... 2 3 4 4 3 4 2 4 3 4 3 4 5 16 31 22 206 70 100 217 38 ~3117      18    44      1.28 sec  T/O =  0  PRV =  0
+SBY  4:08:00 [miter_vr_stream_pdr] engine_0: 21 : ... 2 3 4 4 3 4 3 6 4 4 4 4 5 17 32 22 206 73 104 225 53 ~3117      23    44      1.30 sec  T/O =  0  PRV =  0
+SBY  4:08:01 [miter_vr_stream_pdr] engine_0: 22 : ... 3 4 4 3 4 3 6 3 4 4 4 5 17 31 22 207 69 89 221 64 14 ~3122      21    44      1.44 sec  T/O =  0  PRV =  0
+SBY  4:08:01 [miter_vr_stream_pdr] engine_0: 22 : ... 3 4 4 3 4 3 6 4 5 5 5 8 19 33 25 211 74 99 227 67 23 ~3122      22    44      1.46 sec  T/O =  0  PRV =  0
+SBY  4:08:01 [miter_vr_stream_pdr] engine_0: 22 : ... 3 4 4 3 4 3 6 4 5 5 5 8 19 33 25 211 74 99 230 99 57 ~3122       9    44      1.51 sec  T/O =  0  PRV =  0
+SBY  4:08:01 [miter_vr_stream_pdr] engine_0: 22 : ... 3 4 4 3 4 3 6 4 5 5 5 8 19 33 25 211 74 99 234 130 89 ~3122      6    44      1.55 sec  T/O =  0  PRV =  0
+SBY  4:08:01 [miter_vr_stream_pdr] engine_0: 22 : ... 4 4 3 4 3 6 4 5 5 5 8 19 33 25 211 74 99 240 158 124 ~3122       6    44      1.59 sec  T/O =  0  PRV =  0
+SBY  4:08:01 [miter_vr_stream_pdr] engine_0: 22 : ... 4 4 3 4 3 6 4 5 5 5 8 19 33 25 211 74 99 242 168 136 ~3122       7    44      1.60 sec  T/O =  0  PRV =  0
+SBY  4:08:01 [miter_vr_stream_pdr] engine_0: 23 : ... 4 3 4 3 5 3 4 4 4 5 16 32 22 50 166 64 72 203 133 67 ~3123       0    44      1.83 sec  T/O =  0  PRV =  0
+SBY  4:08:01 [miter_vr_stream_pdr] engine_0: 24 : ... 3 4 3 5 3 4 4 4 5 16 33 23 52 168 64 69 204 134 51 35 ~3123     18    44      1.92 sec  T/O =  0  PRV =  0
+SBY  4:08:01 [miter_vr_stream_pdr] engine_0: 24 : ... 3 4 3 5 3 4 4 4 5 16 34 23 53 168 64 71 207 139 66 49 ~3123     20    44      1.95 sec  T/O =  0  PRV =  0
+SBY  4:08:01 [miter_vr_stream_pdr] engine_0: 24 : ... 3 4 3 5 3 4 4 4 5 16 34 23 54 170 66 75 209 144 76 69 ~3123     20    44      1.98 sec  T/O =  0  PRV =  0
+SBY  4:08:01 [miter_vr_stream_pdr] engine_0: 24 : ... 4 3 5 3 4 4 4 5 16 34 23 54 170 66 75 209 152 85 111 ~3123       4    44      2.03 sec  T/O =  0  PRV =  0
+SBY  4:08:01 [miter_vr_stream_pdr] engine_0: 24 : ... 4 3 5 3 4 4 4 5 16 34 23 54 170 66 75 209 153 91 148 ~3123       3    44      2.07 sec  T/O =  0  PRV =  0
+SBY  4:08:01 [miter_vr_stream_pdr] engine_0: 25 : ... 4 3 4 3 4 4 4 5 16 32 21 51 166 61 62 45 122 35 70 81 ~3193      0    44      2.34 sec  T/O =  0  PRV =  0
+SBY  4:08:02 [miter_vr_stream_pdr] engine_0: 26 : ... 4 3 4 4 6 6 17 33 22 52 167 62 65 45 125 39 69 100 1 ~3193      21    44      2.42 sec  T/O =  0  PRV =  0
+SBY  4:08:02 [miter_vr_stream_pdr] engine_0: 26 : ... 4 3 4 4 6 6 17 34 23 53 170 63 67 46 126 40 70 107 17 ~3193     24    44      2.45 sec  T/O =  0  PRV =  0
+SBY  4:08:02 [miter_vr_stream_pdr] engine_0: 27 : ... 3 4 3 4 6 16 33 21 51 167 62 63 45 123 36 21 22 91 29 ~3167      4    44      2.62 sec  T/O =  0  PRV =  0
+SBY  4:08:02 [miter_vr_stream_pdr] engine_0: 28 : ... 33 21 51 167 61 63 44 123 36 21 15 90 64 -49 ~3171        0    44      2.77 sec  T/O =  0  PRV =  0
+SBY  4:08:02 [miter_vr_stream_pdr] engine_0: 29 : ... 22 52 168 63 65 46 125 39 27 20 96 68 22 -68 ~3171       22    44      2.84 sec  T/O =  0  PRV =  0
+SBY  4:08:02 [miter_vr_stream_pdr] engine_0: 29 : ... 22 52 168 63 65 48 127 42 29 21 98 73 30 -54 ~3171       23    44      2.86 sec  T/O =  0  PRV =  0
+SBY  4:08:02 [miter_vr_stream_pdr] engine_0: 29 : ... 22 52 168 63 65 48 127 42 29 21 98 73 43 -22 ~3171        3    44      2.92 sec  T/O =  0  PRV =  0
+SBY  4:08:02 [miter_vr_stream_pdr] engine_0: 30 : ... 51 167 61 63 43 121 36 21 16 89 14 21 29 -47 ~3176        0    44      3.08 sec  T/O =  0  PRV =  0
+SBY  4:08:02 [miter_vr_stream_pdr] engine_0: 31 : ... 54 168 63 63 43 121 36 21 16 91 17 23 33 4 -45 ~3176     23    44      3.15 sec  T/O =  0  PRV =  0
+SBY  4:08:02 [miter_vr_stream_pdr] engine_0: 31 : ... 55 169 63 63 43 121 36 21 16 91 17 23 35 6 -25 ~3176     19    44      3.17 sec  T/O =  0  PRV =  0
+SBY  4:08:02 [miter_vr_stream_pdr] engine_0: 32 : ... 169 62 64 43 121 36 21 16 90 17 18 19 2 4 -100 ~3201       0    44      3.31 sec  T/O =  0  PRV =  0
+SBY  4:08:02 [miter_vr_stream_pdr] engine_0: 33 : ... 62 64 43 121 36 21 16 90 17 18 19 2 4 16 -116 ~3201        0    44      3.34 sec  T/O =  0  PRV =  0
+SBY  4:08:03 [miter_vr_stream_pdr] engine_0: 34 : ... 62 64 43 121 36 21 16 90 17 18 19 3 4 17 1 -97 ~3201     19    44      3.40 sec  T/O =  0  PRV =  0
+SBY  4:08:03 [miter_vr_stream_pdr] engine_0: Proved output 0 in frame 34.
+SBY  4:08:03 [miter_vr_stream_pdr] engine_0: 35 : ... 64 43 121 36 21 16 90 15 17 17 2 4 0 0 0 -125 ~3173        0    44      3.51 sec  T/O =  0  PRV =  1
+SBY  4:08:03 [miter_vr_stream_pdr] engine_0: Block =   32  Oblig = 12716  Clause =  6791  Call =127789 (sat=70.1%)  Cex =   0  Start = 390
+SBY  4:08:03 [miter_vr_stream_pdr] engine_0: SAT solving =     5.15 sec ( 58.48 %)
+SBY  4:08:03 [miter_vr_stream_pdr] engine_0: unsat     =     1.35 sec ( 15.33 %)
+SBY  4:08:03 [miter_vr_stream_pdr] engine_0: sat       =     3.80 sec ( 43.15 %)
+SBY  4:08:03 [miter_vr_stream_pdr] engine_0: Generalize  =     3.13 sec ( 35.51 %)
+SBY  4:08:03 [miter_vr_stream_pdr] engine_0: Push clause =     2.42 sec ( 27.52 %)
+SBY  4:08:03 [miter_vr_stream_pdr] engine_0: Ternary sim =     0.09 sec (  1.01 %)
+SBY  4:08:03 [miter_vr_stream_pdr] engine_0: Containment =     0.08 sec (  0.92 %)
+SBY  4:08:03 [miter_vr_stream_pdr] engine_0: CNF compute =     0.20 sec (  2.26 %)
+SBY  4:08:03 [miter_vr_stream_pdr] engine_0: Refinement  =     0.00 sec (  0.00 %)
+SBY  4:08:03 [miter_vr_stream_pdr] engine_0: TOTAL       =     8.80 sec (100.00 %)
+SBY  4:08:03 [miter_vr_stream_pdr] engine_0: Property proved.  Time =     8.81 sec
+SBY  4:08:03 [miter_vr_stream_pdr] engine_0: Counter-example is not available.
+SBY  4:08:03 [miter_vr_stream_pdr] engine_0: finished (returncode=0)
+SBY  4:08:03 [miter_vr_stream_pdr] engine_0: Status returned by engine: PASS
+SBY  4:08:03 [miter_vr_stream_pdr] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:08 (8)
+SBY  4:08:03 [miter_vr_stream_pdr] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:08 (8)
+SBY  4:08:03 [miter_vr_stream_pdr] summary: engine_0 (abc pdr) returned PASS
+SBY  4:08:03 [miter_vr_stream_pdr] summary: engine_0 did not produce any traces
+SBY  4:08:03 [miter_vr_stream_pdr] DONE (PASS, rc=0)

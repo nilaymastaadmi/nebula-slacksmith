@@ -1,0 +1,249 @@
+SBY  4:27:12 [miter_real_cover_pdr] Removing directory '/home/toshn/nebula/experiments/sync_fifo_stream/miter_real_cover_pdr'.
+SBY  4:27:12 [miter_real_cover_pdr] Copy '/home/toshn/nebula/experiments/sync_fifo_stream/sync_fifo.v' to '/home/toshn/nebula/experiments/sync_fifo_stream/miter_real_cover_pdr/src/sync_fifo.v'.
+SBY  4:27:12 [miter_real_cover_pdr] Copy '/home/toshn/nebula/experiments/sync_fifo_stream/sync_fifo_pipelined.v' to '/home/toshn/nebula/experiments/sync_fifo_stream/miter_real_cover_pdr/src/sync_fifo_pipelined.v'.
+SBY  4:27:12 [miter_real_cover_pdr] Copy '/home/toshn/nebula/experiments/sync_fifo_stream/miter_sync_fifo_stream.sv' to '/home/toshn/nebula/experiments/sync_fifo_stream/miter_real_cover_pdr/src/miter_sync_fifo_stream.sv'.
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: abc pdr
+SBY  4:27:12 [miter_real_cover_pdr] base: starting process "cd miter_real_cover_pdr/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  4:27:12 [miter_real_cover_pdr] base: finished (returncode=0)
+SBY  4:27:12 [miter_real_cover_pdr] prep: starting process "cd miter_real_cover_pdr/model; yosys -ql design_prep.log design_prep.ys"
+SBY  4:27:12 [miter_real_cover_pdr] prep: finished (returncode=0)
+SBY  4:27:12 [miter_real_cover_pdr] aig: starting process "cd miter_real_cover_pdr/model; yosys -ql design_aiger.log design_aiger.ys"
+SBY  4:27:12 [miter_real_cover_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\clk like $anyseq.
+SBY  4:27:12 [miter_real_cover_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\wdata [0] like $anyseq.
+SBY  4:27:12 [miter_real_cover_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\wdata [1] like $anyseq.
+SBY  4:27:12 [miter_real_cover_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\wdata [2] like $anyseq.
+SBY  4:27:12 [miter_real_cover_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\wdata [3] like $anyseq.
+SBY  4:27:12 [miter_real_cover_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\wdata [4] like $anyseq.
+SBY  4:27:12 [miter_real_cover_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\wdata [5] like $anyseq.
+SBY  4:27:12 [miter_real_cover_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\wdata [6] like $anyseq.
+SBY  4:27:12 [miter_real_cover_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\wdata [7] like $anyseq.
+SBY  4:27:12 [miter_real_cover_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\rst_n like $anyseq.
+SBY  4:27:12 [miter_real_cover_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\rinc like $anyseq.
+SBY  4:27:12 [miter_real_cover_pdr] aig: Warning: Treating a total of 11 undriven bits in miter_sync_fifo_stream like $anyseq.
+SBY  4:27:12 [miter_real_cover_pdr] aig: finished (returncode=0)
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: starting process "cd miter_real_cover_pdr; yosys-abc -c 'read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw'"
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: ======== ABC command line "read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw"
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: Warning: The last 2 outputs are interpreted as constraints.
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: VarMax = 300. FrameMax = 10000. QueMax = 0. TimeMax = 119. MonoCNF = no. SkipGen = no. SolveAll = no.
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 1 : 0 1                                                                 1     2      0.01 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 2 : 0 9 13                                                              6    29      0.01 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 3 : 0 5 4 5 ~5                                                           0    29      0.01 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 4 : 0 5 4 4 1 ~5                                                         0    29      0.02 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 5 : 0 7 19 22 4 9 ~5                                                    18    35      0.03 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 5 : 0 7 22 38 33 24 ~5                                                  28    40      0.05 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 5 : 0 7 22 43 51 56 ~5                                                  27    43      0.06 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 5 : 0 7 22 55 70 90 ~5                                                   7    79      0.09 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 5 : 0 7 22 68 91 124 ~5                                                  6    93      0.12 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 5 : 0 7 22 72 97 136 ~5                                                  6    94      0.13 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 6 : 0 3 8 51 62 115 14 ~18                                               0    94      0.15 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 7 : 0 3 8 49 65 135 39 7 ~18                                            25    96      0.19 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 7 : 0 3 8 49 65 135 69 38 ~18                                           29    96      0.22 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 7 : 0 3 8 49 65 136 98 67 ~18                                           27    98      0.24 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 7 : 0 3 8 49 66 137 101 85 ~18                                          27   100      0.25 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: Timing out on output 0 in frame 7 (retrying in next anytime pass).
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 7 : 0 3 8 49 66 137 101 85 ~18                                           0   100      0.25 sec  T/O =  1  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 8 : 0 3 8 49 53 62 110 73 39 ~23                                         0   100      0.28 sec  T/O =  1  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: All outputs solved or timed out in frame 8.
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: Starting new anytime pass, reusing clauses.
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 1 : 0 222 ~40                                                            0     0      0.03 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 2 : 0 1 221 ~40                                                          0     0      0.03 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 3 : 0 1 1 220 ~40                                                        0     0      0.03 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 4 : 0 1 1 21 199 ~40                                                     0     0      0.03 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 5 : 0 1 1 21 21 178 ~40                                                  0     0      0.04 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 6 : 0 1 1 21 21 42 136 ~40                                               0     0      0.04 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 7 : 0 1 1 21 24 52 82 92 ~40                                             7    43      0.08 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 7 : 0 1 1 21 28 57 97 123 ~40                                            6    57      0.11 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 7 : 0 1 1 21 30 64 119 147 ~40                                           9    79      0.14 sec  T/O =  0  PRV =  0
+SBY  4:27:12 [miter_real_cover_pdr] engine_0: 7 : 0 1 1 21 33 70 139 171 ~40                                           7    83      0.17 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 7 : 0 1 1 21 35 75 149 199 ~40                                           8    94      0.19 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 8 : 0 1 1 21 21 46 118 148 94 ~80                                       13   105      0.28 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 8 : 0 1 1 21 21 46 119 158 104 ~80                                      13   108      0.29 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: Timing out on output 0 in frame 8 (retrying in next anytime pass).
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 8 : 0 1 1 21 21 46 119 158 104 ~80                                       0   108      0.29 sec  T/O =  1  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 9 : 0 1 1 21 21 39 87 144 87 15 ~114                                     0   108      0.32 sec  T/O =  1  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: All outputs solved or timed out in frame 9.
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: Starting new anytime pass, reusing clauses.
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 1 : 0 298 ~118                                                           0     0      0.05 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 2 : 0 1 297 ~118                                                         0     0      0.05 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 3 : 0 1 1 296 ~118                                                       0     0      0.05 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 4 : 0 1 1 21 275 ~118                                                    0     0      0.05 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 5 : 0 1 1 21 20 255 ~118                                                 0     0      0.05 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 6 : 0 1 1 21 20 8 247 ~118                                               0     0      0.06 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 7 : 0 1 1 21 20 8 44 203 ~118                                            0     0      0.06 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 8 : 0 1 1 21 20 8 44 111 92 ~118                                         0     0      0.07 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 9 : 0 1 1 21 20 8 45 122 106 34 ~118                                    12    39      0.12 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 9 : 0 1 1 21 20 8 46 126 128 68 ~118                                    12    48      0.15 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 9 : 0 1 1 21 20 8 47 136 151 92 ~118                                     9    56      0.18 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 9 : 0 1 1 21 20 8 48 141 179 121 ~118                                   10    70      0.22 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 9 : 0 1 1 21 20 8 50 152 195 149 ~118                                    9    84      0.25 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 9 : 0 1 1 21 20 8 51 161 217 172 ~118                                   10   104      0.28 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 9 : 0 1 1 21 20 8 52 168 240 201 ~118                                   11   118      0.32 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 9 : 0 1 1 21 20 8 54 178 263 227 ~118                                   10   130      0.35 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 9 : 0 1 1 21 20 8 55 188 285 252 ~118                                   11   134      0.39 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 9 : 0 1 1 21 20 8 57 199 303 279 ~118                                   10   134      0.42 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 9 : 0 1 1 21 20 8 58 208 327 304 ~118                                    9   138      0.46 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 9 : 0 1 1 21 20 8 59 213 340 320 ~118                                    9   138      0.48 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: Timing out on output 0 in frame 9 (retrying in next anytime pass).
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 9 : 0 1 1 21 20 8 59 213 340 320 ~118                                    0   138      0.48 sec  T/O =  1  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 10 : 0 1 1 21 20 8 35 70 280 287 59 ~177                                  0   138      0.58 sec  T/O =  1  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: All outputs solved or timed out in frame 10.
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: Starting new anytime pass, reusing clauses.
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 1 : 0 531 ~180                                                           0     0      0.13 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 2 : 0 1 530 ~180                                                         0     0      0.13 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 3 : 0 1 1 529 ~180                                                       0     0      0.13 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 4 : 0 1 1 21 508 ~180                                                    0     0      0.13 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 5 : 0 1 1 21 20 488 ~180                                                 0     0      0.13 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 6 : 0 1 1 21 20 6 482 ~180                                               0     0      0.14 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 7 : 0 1 1 21 20 6 6 476 ~180                                             0     0      0.14 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 8 : 0 1 1 21 20 6 6 22 454 ~180                                          0     0      0.14 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 9 : 0 1 1 21 20 6 6 22 142 312 ~180                                      0     0      0.15 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 10 : 0 1 1 21 20 6 6 23 149 280 78 ~180                                   8    33      0.21 sec  T/O =  0  PRV =  0
+SBY  4:27:13 [miter_real_cover_pdr] engine_0: 10 : 0 1 1 21 20 6 6 23 154 307 111 ~180                                 10    44      0.25 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 10 : 0 1 1 21 20 6 6 26 157 325 137 ~180                                  9    62      0.28 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 11 : 0 1 1 21 20 6 6 17 50 309 227 48 ~188                               11    72      0.39 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 11 : 0 1 1 21 20 6 6 17 52 315 254 71 ~188                               13    78      0.43 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 11 : 0 1 1 21 20 6 6 17 52 317 278 105 ~188                              12    82      0.46 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 11 : 0 1 1 21 20 6 6 17 55 326 298 130 ~188                               9    94      0.50 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 11 : 0 1 1 21 20 6 6 17 58 333 323 152 ~188                              11    99      0.53 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 11 : 0 1 1 21 20 6 6 17 61 339 345 179 ~188                              10   100      0.57 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 11 : 0 1 1 21 20 6 6 17 64 347 366 204 ~188                              10   114      0.61 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 11 : 0 1 1 21 20 6 6 17 67 353 391 230 ~188                              10   119      0.66 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 11 : 0 1 1 21 20 6 6 17 73 360 405 254 ~188                               9   121      0.69 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 11 : 0 1 1 21 20 6 6 17 76 369 427 273 ~188                               9   132      0.73 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 11 : 0 1 1 21 20 6 6 17 79 374 442 301 ~188                              10   145      0.77 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 11 : 0 1 1 21 20 6 6 17 82 378 464 328 ~188                               9   163      0.82 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 11 : 0 1 1 21 20 6 6 17 88 385 483 351 ~188                              10   164      0.86 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 11 : 0 1 1 21 20 6 6 17 88 387 501 386 ~188                               9   166      0.90 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 12 : 0 1 1 21 20 6 6 14 36 117 278 582 109 ~261                          10   166      1.10 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 12 : 0 1 1 21 20 6 6 14 36 117 282 606 131 ~261                          18   168      1.14 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 12 : 0 1 1 21 20 6 6 14 36 118 286 624 153 ~261                          14   169      1.17 sec  T/O =  0  PRV =  0
+SBY  4:27:14 [miter_real_cover_pdr] engine_0: 12 : 0 1 1 21 20 6 6 14 36 118 288 632 164 ~261                           8   170      1.19 sec  T/O =  0  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 13 : 0 1 1 21 20 6 5 14 36 91 194 253 460 168 ~274                        9   173      1.37 sec  T/O =  0  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: Timing out on output 0 in frame 13 (retrying in next anytime pass).
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 13 : 0 1 1 21 20 6 5 14 36 91 194 253 460 168 ~274                        0   173      1.37 sec  T/O =  1  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 14 : 0 1 1 21 20 6 5 14 36 88 156 216 452 194 24 ~276                     0   173      1.50 sec  T/O =  1  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: All outputs solved or timed out in frame 14.
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: Starting new anytime pass, reusing clauses.
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 1 : 0 728 ~279                                                           0     0      0.30 sec  T/O =  0  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 2 : 0 1 727 ~279                                                         0     0      0.30 sec  T/O =  0  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 3 : 0 1 1 726 ~279                                                       0     0      0.30 sec  T/O =  0  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 4 : 0 1 1 20 706 ~279                                                    0     0      0.30 sec  T/O =  0  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 5 : 0 1 1 20 19 687 ~279                                                 0     0      0.31 sec  T/O =  0  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 6 : 0 1 1 20 19 6 681 ~279                                               0     0      0.31 sec  T/O =  0  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 7 : 0 1 1 20 19 6 5 676 ~279                                             0     0      0.31 sec  T/O =  0  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 8 : 0 1 1 20 19 6 5 5 671 ~279                                           0     0      0.31 sec  T/O =  0  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 9 : 0 1 1 20 19 6 5 5 3 668 ~279                                         0     0      0.32 sec  T/O =  0  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 10 : 0 1 1 20 19 6 5 5 3 15 653 ~279                                      0     0      0.32 sec  T/O =  0  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 11 : 0 1 1 20 19 6 5 5 3 15 77 576 ~279                                   0     0      0.33 sec  T/O =  0  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 12 : 0 1 1 20 19 6 5 5 3 15 77 131 445 ~279                               0     0      0.35 sec  T/O =  0  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 13 : 0 1 1 20 19 6 5 5 3 15 80 142 277 208 ~279                          11    40      0.43 sec  T/O =  0  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 13 : 0 1 1 20 19 6 5 5 3 15 82 151 304 230 ~279                          10    55      0.49 sec  T/O =  0  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 13 : 0 1 1 20 19 6 5 5 3 15 86 162 316 253 ~279                          10    75      0.53 sec  T/O =  0  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 13 : 0 1 1 20 19 6 5 5 3 15 88 174 338 278 ~279                           9    82      0.58 sec  T/O =  0  PRV =  0
+SBY  4:27:15 [miter_real_cover_pdr] engine_0: 13 : 0 1 1 20 19 6 5 5 3 15 88 174 339 285 ~279                           7    84      0.59 sec  T/O =  0  PRV =  0
+SBY  4:27:16 [miter_real_cover_pdr] engine_0: 14 : 0 1 1 19 18 7 5 5 3 11 55 94 324 288 104 ~285                        9    97      0.76 sec  T/O =  0  PRV =  0
+SBY  4:27:16 [miter_real_cover_pdr] engine_0: 14 : 0 1 1 19 18 7 5 5 3 11 55 94 326 313 133 ~285                       10   105      0.80 sec  T/O =  0  PRV =  0
+SBY  4:27:16 [miter_real_cover_pdr] engine_0: 14 : 0 1 1 19 18 7 5 5 3 11 55 98 328 335 165 ~285                        7   120      0.85 sec  T/O =  0  PRV =  0
+SBY  4:27:16 [miter_real_cover_pdr] engine_0: 14 : 0 1 1 19 18 7 5 5 3 11 56 102 330 357 187 ~285                      12   129      0.90 sec  T/O =  0  PRV =  0
+SBY  4:27:16 [miter_real_cover_pdr] engine_0: 14 : 0 1 1 19 18 7 5 5 3 11 56 106 334 375 217 ~285                      11   130      0.95 sec  T/O =  0  PRV =  0
+SBY  4:27:16 [miter_real_cover_pdr] engine_0: 14 : 0 1 1 19 18 7 5 5 3 11 56 106 337 391 235 ~285                      11   137      0.98 sec  T/O =  0  PRV =  0
+SBY  4:27:16 [miter_real_cover_pdr] engine_0: 15 : 0 1 1 18 17 7 5 5 3 8 31 59 84 311 464 138 ~311                     10   144      1.20 sec  T/O =  0  PRV =  0
+SBY  4:27:16 [miter_real_cover_pdr] engine_0: 15 : 0 1 1 18 17 7 5 5 3 8 31 59 86 321 489 157 ~311                     17   145      1.24 sec  T/O =  0  PRV =  0
+SBY  4:27:16 [miter_real_cover_pdr] engine_0: 15 : 0 1 1 18 17 7 5 5 3 8 31 59 87 323 517 190 ~311                     14   148      1.30 sec  T/O =  0  PRV =  0
+SBY  4:27:16 [miter_real_cover_pdr] engine_0: 15 : 0 1 1 18 17 7 5 5 3 8 31 59 89 332 533 214 ~311                     11   156      1.34 sec  T/O =  0  PRV =  0
+SBY  4:27:16 [miter_real_cover_pdr] engine_0: 15 : 0 1 1 18 17 7 5 5 3 8 31 59 91 337 548 245 ~311                      8   167      1.40 sec  T/O =  0  PRV =  0
+SBY  4:27:16 [miter_real_cover_pdr] engine_0: 15 : 0 1 1 18 17 7 5 5 3 8 31 59 91 341 561 276 ~311                      6   169      1.45 sec  T/O =  0  PRV =  0
+SBY  4:27:16 [miter_real_cover_pdr] engine_0: 15 : 0 1 1 18 17 7 5 5 3 8 31 59 91 344 568 289 ~311                      9   170      1.47 sec  T/O =  0  PRV =  0
+SBY  4:27:16 [miter_real_cover_pdr] engine_0: 16 : 0 1 1 18 17 7 5 5 3 6 21 34 53 44 72 205 801 ~333                    9   170      1.70 sec  T/O =  0  PRV =  0
+SBY  4:27:17 [miter_real_cover_pdr] engine_0: 17 : 0 1 1 18 17 7 5 5 3 6 21 33 48 29 64 129 601 311 ~349               10   172      1.98 sec  T/O =  0  PRV =  0
+SBY  4:27:17 [miter_real_cover_pdr] engine_0: 17 : 0 1 1 18 17 7 5 5 3 6 21 33 48 29 65 131 611 327 ~349                8   173      2.00 sec  T/O =  0  PRV =  0
+SBY  4:27:17 [miter_real_cover_pdr] engine_0: 18 : 0 1 1 18 17 7 5 5 3 6 19 30 45 23 53 87 512 463 52 ~351             22   173      2.23 sec  T/O =  0  PRV =  0
+SBY  4:27:17 [miter_real_cover_pdr] engine_0: 18 : 0 1 1 18 17 7 5 5 3 6 19 30 45 23 53 87 516 490 81 ~351             31   173      2.27 sec  T/O =  0  PRV =  0
+SBY  4:27:17 [miter_real_cover_pdr] engine_0: 18 : 0 1 1 18 17 7 5 5 3 6 19 30 45 23 53 87 517 515 111 ~351            17   175      2.31 sec  T/O =  0  PRV =  0
+SBY  4:27:17 [miter_real_cover_pdr] engine_0: 18 : 0 1 1 18 17 7 5 5 3 6 19 30 45 23 53 91 520 541 138 ~351             9   176      2.36 sec  T/O =  0  PRV =  0
+SBY  4:27:17 [miter_real_cover_pdr] engine_0: 18 : 0 1 1 18 17 7 5 5 3 6 19 30 45 23 53 92 520 572 171 ~351             5   177      2.42 sec  T/O =  0  PRV =  0
+SBY  4:27:17 [miter_real_cover_pdr] engine_0: 18 : 0 1 1 18 17 7 5 5 3 6 19 30 45 23 53 92 520 577 178 ~351             3   177      2.43 sec  T/O =  0  PRV =  0
+SBY  4:27:17 [miter_real_cover_pdr] engine_0: 19 : 0 1 1 18 17 7 5 5 3 6 19 30 45 22 52 51 98 258 503 406 ~355         10   179      2.70 sec  T/O =  0  PRV =  0
+SBY  4:27:17 [miter_real_cover_pdr] engine_0: 19 : 0 1 1 18 17 7 5 5 3 6 19 30 45 22 52 51 98 259 515 426 ~355         14   180      2.74 sec  T/O =  0  PRV =  0
+SBY  4:27:18 [miter_real_cover_pdr] engine_0: 20 : ... 18 17 8 6 6 4 10 20 31 46 24 53 41 77 160 324 484 245 ~358      20   180      2.99 sec  T/O =  0  PRV =  0
+SBY  4:27:18 [miter_real_cover_pdr] engine_0: 20 : ... 18 17 8 6 6 4 10 20 31 46 24 54 43 79 163 328 503 268 ~358      15   182      3.03 sec  T/O =  0  PRV =  0
+SBY  4:27:18 [miter_real_cover_pdr] engine_0: 20 : ... 18 17 8 6 6 4 10 20 31 46 24 54 43 79 168 331 511 293 ~358       8   183      3.08 sec  T/O =  0  PRV =  0
+SBY  4:27:18 [miter_real_cover_pdr] engine_0: 20 : ... 18 17 8 6 6 4 10 20 31 46 24 54 43 79 171 335 518 315 ~358      10   185      3.12 sec  T/O =  0  PRV =  0
+SBY  4:27:18 [miter_real_cover_pdr] engine_0: 20 : ... 18 17 8 6 6 4 10 20 31 46 24 54 43 79 177 337 527 339 ~358       8   188      3.17 sec  T/O =  0  PRV =  0
+SBY  4:27:18 [miter_real_cover_pdr] engine_0: 20 : ... 18 17 8 6 6 4 10 20 31 46 24 54 43 79 177 338 528 346 ~358       6   188      3.18 sec  T/O =  0  PRV =  0
+SBY  4:27:18 [miter_real_cover_pdr] engine_0: 21 : ... 17 7 5 5 3 6 19 31 46 24 52 41 50 88 220 393 444 250 ~359       12   188      3.47 sec  T/O =  0  PRV =  0
+SBY  4:27:18 [miter_real_cover_pdr] engine_0: 21 : ... 17 7 5 5 3 6 19 31 46 24 52 41 50 88 220 393 460 281 ~359       11   188      3.52 sec  T/O =  0  PRV =  0
+SBY  4:27:18 [miter_real_cover_pdr] engine_0: 21 : ... 17 7 5 5 3 6 19 31 46 24 52 41 50 88 221 394 466 291 ~359        9   188      3.54 sec  T/O =  0  PRV =  0
+SBY  4:27:18 [miter_real_cover_pdr] engine_0: Timing out on output 0 in frame 21 (retrying in next anytime pass).
+SBY  4:27:18 [miter_real_cover_pdr] engine_0: 21 : ... 17 7 5 5 3 6 19 31 46 24 52 41 50 88 221 394 466 291 ~359        0   188      3.54 sec  T/O =  1  PRV =  0
+SBY  4:27:18 [miter_real_cover_pdr] engine_0: 22 : ... 17 7 5 5 3 6 19 31 46 24 52 41 46 77 179 225 71 29 802 ~362      0   188      3.74 sec  T/O =  1  PRV =  0
+SBY  4:27:19 [miter_real_cover_pdr] engine_0: All outputs solved or timed out in frame 22.
+SBY  4:27:19 [miter_real_cover_pdr] engine_0: Starting new anytime pass, reusing clauses.
+SBY  4:27:19 [miter_real_cover_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  4:27:19 [miter_real_cover_pdr] engine_0: 1 : 0 1697 ~362                                                          0     0      0.88 sec  T/O =  0  PRV =  0
+SBY  4:27:19 [miter_real_cover_pdr] engine_0: 2 : 0 1 1696 ~362                                                        0     0      0.89 sec  T/O =  0  PRV =  0
+SBY  4:27:19 [miter_real_cover_pdr] engine_0: 3 : 0 1 1 1695 ~362                                                      0     0      0.90 sec  T/O =  0  PRV =  0
+SBY  4:27:19 [miter_real_cover_pdr] engine_0: 4 : 0 1 1 18 1677 ~362                                                   0     0      0.90 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 5 : 0 1 1 18 17 1660 ~362                                                0     0      0.91 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 6 : 0 1 1 18 17 7 1653 ~362                                              0     0      0.92 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 7 : 0 1 1 18 17 7 5 1648 ~362                                            0     0      0.93 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 8 : 0 1 1 18 17 7 5 5 1643 ~362                                          0     0      0.94 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 9 : 0 1 1 18 17 7 5 5 3 1640 ~362                                        0     0      0.95 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 10 : 0 1 1 18 17 7 5 5 3 6 1634 ~362                                      0     0      0.95 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 11 : 0 1 1 18 17 7 5 5 3 6 19 1615 ~362                                   0     0      0.97 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 12 : 0 1 1 18 17 7 5 5 3 6 19 31 1584 ~362                                0     0      0.98 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 13 : 0 1 1 18 17 7 5 5 3 6 19 31 46 1538 ~362                             0     0      0.99 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 14 : 0 1 1 18 17 7 5 5 3 6 19 31 46 24 1514 ~362                          0     0      1.01 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 15 : 0 1 1 18 17 7 5 5 3 6 19 31 46 24 52 1462 ~362                       0     0      1.02 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 16 : 0 1 1 18 17 7 5 5 3 6 19 31 46 24 52 41 1421 ~362                    0     0      1.04 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 17 : 0 1 1 18 17 7 5 5 3 6 19 31 46 24 52 41 46 1375 ~362                 0     0      1.07 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 18 : 0 1 1 18 17 7 5 5 3 6 19 31 46 24 52 41 46 77 1298 ~362              0     0      1.09 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 19 : 0 1 1 18 17 7 5 5 3 6 19 31 46 24 52 41 46 77 177 1121 ~362          0     0      1.13 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 20 : ... 1 18 17 7 5 5 3 6 19 31 46 24 52 41 46 77 177 225 896 ~362       0     0      1.19 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 21 : ... 18 17 7 5 5 3 6 19 31 46 24 52 41 46 77 181 232 77 846 ~362      9    43      1.30 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 21 : ... 18 17 7 5 5 3 6 19 31 46 24 52 41 46 78 181 234 79 864 ~362      7    52      1.33 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 22 : ... 17 7 5 5 3 6 19 31 46 24 52 41 42 73 148 190 70 33 943 ~362      8    82      1.62 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 22 : ... 17 7 5 5 3 6 19 31 46 24 52 41 42 73 151 192 77 39 969 ~362     10   106      1.68 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 22 : ... 17 7 5 5 3 6 19 31 46 24 52 41 42 73 155 195 81 43 994 ~362      8   112      1.73 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 22 : ... 7 5 5 3 6 19 31 46 24 52 41 42 73 159 198 87 54 1018 ~362        8   123      1.78 sec  T/O =  0  PRV =  0
+SBY  4:27:20 [miter_real_cover_pdr] engine_0: 22 : ... 7 5 5 3 6 19 31 46 24 52 41 42 73 161 200 90 58 1040 ~362       10   127      1.82 sec  T/O =  0  PRV =  0
+SBY  4:27:21 [miter_real_cover_pdr] engine_0: 23 : ... 9 5 5 3 6 19 31 46 24 52 41 32 45 83 52 33 28 287 1020 ~366     29   130      2.19 sec  T/O =  0  PRV =  0
+SBY  4:27:21 [miter_real_cover_pdr] engine_0: 23 : ... 9 5 5 3 7 19 31 46 24 52 41 32 45 83 52 35 28 292 1037 ~366     24   136      2.22 sec  T/O =  0  PRV =  0
+SBY  4:27:21 [miter_real_cover_pdr] engine_0: 24 : ... 5 5 3 7 19 31 46 24 52 41 31 44 80 32 13 9 185 458 735 ~367      6   136      2.53 sec  T/O =  0  PRV =  0
+SBY  4:27:21 [miter_real_cover_pdr] engine_0: 25 : ... 5 3 7 19 31 46 24 52 41 31 44 80 32 11 6 8 27 146 1184 ~365      0   136      2.74 sec  T/O =  0  PRV =  0
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: 26 : ... 7 19 31 46 24 52 41 31 44 80 32 11 6 8 27 144 678 506 ~365       0   136      2.91 sec  T/O =  0  PRV =  0
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: 27 : ... 19 31 46 24 52 41 31 44 80 32 11 6 8 27 146 688 483 73 ~365     18   142      3.12 sec  T/O =  0  PRV =  0
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: 27 : ... 31 46 24 52 41 31 44 80 32 11 6 8 27 147 692 512 103 ~365       18   144      3.17 sec  T/O =  0  PRV =  0
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: 27 : ... 31 46 24 52 41 31 44 80 32 11 6 8 27 147 697 538 135 ~365       16   151      3.22 sec  T/O =  0  PRV =  0
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: 27 : ... 31 46 24 52 41 31 44 80 32 11 6 8 27 147 697 570 169 ~365        6   155      3.29 sec  T/O =  0  PRV =  0
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: 27 : ... 31 46 24 52 41 31 44 80 32 11 6 8 27 147 697 603 203 ~365        6   162      3.35 sec  T/O =  0  PRV =  0
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: 27 : ... 31 46 24 52 41 31 44 80 32 11 6 8 27 147 697 635 238 ~365        6   166      3.42 sec  T/O =  0  PRV =  0
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: 27 : ... 31 46 24 52 41 31 44 80 32 11 6 8 27 147 697 667 271 ~365        6   170      3.48 sec  T/O =  0  PRV =  0
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: 27 : ... 31 46 24 52 41 31 44 80 32 11 6 8 27 147 697 697 303 ~365        7   173      3.54 sec  T/O =  0  PRV =  0
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: 28 : ... 7 19 31 45 24 52 41 31 44 80 33 11 6 8 6 0 0 0 0 1569 ~371       0   173      3.80 sec  T/O =  0  PRV =  0
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: Proved output 0 in frame 1 (converged).
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: Block =   25  Oblig =  9671  Clause =  5322  Call =117951 (sat=58.8%)  Cex =   0  Start = 358
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: SAT solving =     6.64 sec ( 64.17 %)
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: unsat     =     1.56 sec ( 15.02 %)
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: sat       =     5.09 sec ( 49.14 %)
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: Generalize  =     3.25 sec ( 31.36 %)
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: Push clause =     3.65 sec ( 35.21 %)
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: Ternary sim =     0.11 sec (  1.08 %)
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: Containment =     0.04 sec (  0.43 %)
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: CNF compute =     0.25 sec (  2.42 %)
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: Refinement  =     0.00 sec (  0.00 %)
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: TOTAL       =    10.35 sec (100.00 %)
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: Property proved.  Time =    10.36 sec
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: Counter-example is not available.
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: finished (returncode=0)
+SBY  4:27:22 [miter_real_cover_pdr] engine_0: Status returned by engine: PASS
+SBY  4:27:22 [miter_real_cover_pdr] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:10 (10)
+SBY  4:27:22 [miter_real_cover_pdr] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:10 (10)
+SBY  4:27:22 [miter_real_cover_pdr] summary: engine_0 (abc pdr) returned PASS
+SBY  4:27:22 [miter_real_cover_pdr] summary: engine_0 did not produce any traces
+SBY  4:27:22 [miter_real_cover_pdr] DONE (PASS, rc=0)

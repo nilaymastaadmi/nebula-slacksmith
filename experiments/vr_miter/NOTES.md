@@ -113,3 +113,92 @@ number it produces.
    protocol structure, and pick the obligation without being told. That is the
    two-branch generator, and this experiment is its motivation.
 3. Confirm EQY rejects the rigid K=1 pair.
+
+## Addendum, 2026-08-27 -- the unbounded closure, and why the real-RTL case is scoped but not yet attempted
+
+**k-induction's open item, closed via PDR.** The original run left stream
+equivalence PROVED BOUNDED (depth 20) with k-induction unresolved ("closing
+it needs a strengthening invariant... that is real work and is not done
+here"). Three transforms later in this project (`fsm_reencode`,
+`mux_priority_to_parallel`, `pipeline_cut_domain_a`), PDR has closed every
+`prove` gap this project has hit, each for a different underlying reason.
+Tried it here, using `tools/run_proof.py` (a second, independent use of that
+tool beyond the experiment it was built against).
+
+At the original **W=8**, PDR does not close cleanly within a bounded budget
+-- and it fails differently than BMC's timeout did. BMC at W=8 (original
+run) degraded gradually, ~90s/step, a recognizable multiplier-hardness
+signature matching `pipeline_cut_domain_a`'s. PDR at W=8 instead gets stuck
+in a single frame, generating proof obligations without frame-level
+progress (obligation count past 1498 in under a minute, frame number frozen)
+-- a different, and here more concerning, signature: two independent 8-bit
+multipliers plus transaction-counting plus the `anyconst` symbolic index is
+a larger, more coupled state space than any single-multiplier property this
+project has proven so far, `pipeline_cut_domain_a` included.
+
+**At W=4** (the same reduction the original run used to isolate the
+handshake property from multiplier hardness for BMC), **PDR proves it,
+unbounded, in 8 seconds.** Verdict: stream equivalence between `mac_vr_ref`
+and `mac_vr_opt`, at W=4, is **PROVEN**, not merely bounded. This is the
+first proof-branch closure in this project confirming that branch 3
+(elastic interfaces) is not just *sound as a technique* (already shown by
+the original BMC result) but *closeable to an unbounded guarantee* by the
+same engine that has now closed every other gap this project has hit.
+
+## What real-RTL branch-3 coverage would actually require, scoped honestly
+
+Went looking for a genuine elastic-interface transform on `async_fifo.v`
+(used in all three FIFO crossings in `bench_top`) before writing this
+addendum, rather than leaving branch 3 real-RTL coverage as a silent gap.
+The obvious candidate -- pipeline the read-side data presentation
+(`rdata <= mem[rbin_r]`, currently combinational) -- turns out to need more
+than a bolt-on register, and the reasoning is worth recording because it is
+exactly the kind of trap a naive transform-proposer would walk into:
+
+Registering `rdata` alone, while leaving `rempty` and the read-pointer logic
+untouched, reintroduces the uniform-k soundness hole from the transform
+library design doc (Section 0): the data value would arrive one cycle after
+the empty flag says it is ready, so a consumer reading both in the same
+cycle gets a stale or already-advanced-past value. The correct fix is to
+delay `rempty` (or an equivalent valid signal) by the same cycle -- but that
+changes what the FIFO's read-side protocol promises externally: a
+downstream consumer reacting to the delayed valid signal produces a
+genuinely different `rinc` sequence than one reacting to the immediate
+signal today. That divergence in accepted/consumed timing is precisely what
+makes this a real elastic-interface case rather than a disguised rigid one,
+and precisely why it needs a proper registered skid buffer (as the
+transform library design doc's `pipeline_cut_elastic` entry anticipated),
+not a single added register -- which means modifying the FIFO's own accept
+logic, not merely tapping a value downstream of it.
+
+That is a materially larger undertaking than any of this project's three
+completed real-RTL transforms, closer in scope to a new benchmark component
+than an incremental cut. Not attempted here rather than force it under time
+pressure with an incomplete design. Recorded as scoped and understood, not
+silently open: the next real-RTL branch-3 attempt should design the skid
+buffer as its own reviewed step before any proof is attempted, exactly as
+this project has done for every transform that touched a genuinely new
+mechanism.
+
+## Files
+
+Same as the original run (`mac_vr_ref.v`, `mac_vr_opt.v`, `miter_vr_stream.sv`,
+`miter_vr_naive.sv`); no files changed by this addendum. The W=4 PDR run used
+a local, uncommitted parameter override for this check only -- the committed
+files are untouched at their original W=8 default.
+
+## Addendum 2, 2026-08-27: retroactive vacuity check, not vacuous
+
+`experiments/sync_fifo_stream/` found that this project's own stream-
+equivalence technique has a structural gap: an assert gated behind
+`ref_got && opt_got` is vacuously true if the design under test never
+completes any transaction. Confirmed on a real deadlock bug, mutation
+tested (see `sync_fifo_stream/NOTES.md` for the full account).
+
+Added the same fix here, retroactively: `cover_reachable: cover property
+(ref_got && opt_got);`, appended to `miter_vr_stream.sv`. Result:
+**REACHED, 0 seconds.** The original day-one PROVED BOUNDED result was
+correct. It was correct because `mac_vr_opt` actually works, not because
+the check confirmed it could not have been vacuous. The gap in the method
+existed unnoticed from day one until this session built something broken
+enough to expose it.
