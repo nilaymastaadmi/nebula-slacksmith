@@ -114,6 +114,14 @@ def synth_bench_top(yosys_bin, rtl_dir, files, liberty, workdir, mapped_name, ex
         f"synth -top {extra_yosys_top}; "
         f"dfflibmap -liberty {liberty}; "
         f"abc -liberty {liberty} {dont_use_flags(liberty)}; "
+        # opt_clean -purge strips named-but-unused wires. Required, not
+        # cosmetic: Yosys names Verilog function temporaries like
+        # \rev32$func$/abs/path/file.v:101$4454.i , and OpenSTA's Verilog
+        # reader rejects that escaped identifier with a syntax error. Found
+        # 2026-08-31 when the one LLM proposal using a function produced a
+        # netlist that synthesized cleanly and could not be timed at all
+        # (1,386 such names). -purge removes all of them and the netlist reads.
+        f"opt_clean -purge; "
         f"write_verilog -noattr {mapped_path}"
     )
     proc = run([yosys_bin, "-p", script])
@@ -209,7 +217,15 @@ def main():
     os.makedirs(variant_dir, exist_ok=True)
     with open(os.path.join(args.rtl_dir, f"{args.top}.v")) as f:
         text = f.read()
-    pattern = re.compile(rf"^(\s*)\S+\s+{re.escape(args.swap_instance)}\s*\(", re.M)
+    # The module-name token must be a real Verilog identifier, not "any
+    # non-space run". The original \S+ also matched the "//" of a comment, so
+    # a header comment mentioning the instance name counted as a second
+    # instantiation and the tool refused to run (found 2026-08-31 by hitting
+    # it: bench_top.v's own v2 header documents "u_rv32_a (clk_a): ..."). A
+    # tool that a documentation comment can break is a tool that will break
+    # at the worst moment.
+    pattern = re.compile(
+        rf"^(\s*)[A-Za-z_][A-Za-z0-9_]*\s+{re.escape(args.swap_instance)}\s*\(", re.M)
     new_text, n = pattern.subn(rf"\g<1>{args.swap_module} {args.swap_instance} (", text)
     if n != 1:
         print(f"error: expected exactly 1 match for instance {args.swap_instance!r} in {args.top}.v, found {n}", file=sys.stderr)
@@ -247,6 +263,14 @@ def main():
         f"synth -top {args.top}; "
         f"dfflibmap -liberty {liberty}; "
         f"abc -liberty {liberty} {dont_use_flags(liberty)}; "
+        # opt_clean -purge strips named-but-unused wires. Required, not
+        # cosmetic: Yosys names Verilog function temporaries like
+        # \rev32$func$/abs/path/file.v:101$4454.i , and OpenSTA's Verilog
+        # reader rejects that escaped identifier with a syntax error. Found
+        # 2026-08-31 when the one LLM proposal using a function produced a
+        # netlist that synthesized cleanly and could not be timed at all
+        # (1,386 such names). -purge removes all of them and the netlist reads.
+        f"opt_clean -purge; "
         f"write_verilog -noattr {mapped_path}"
     )
     proc = run([args.yosys_bin, "-p", script])

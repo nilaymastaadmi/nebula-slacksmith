@@ -1,0 +1,16 @@
+wrote /home/toshn/gates/P5/miter_prop.sby
+
+--- running bmc (timeout 400s) ---
+bmc: FAIL -- miter_prop.eq_dmem_addr, 1s
+  raw log: /home/toshn/gates/P5/miter_prop_bmc.raw.log
+
+--- running pdr (timeout 400s) ---
+pdr: FAIL -- miter_prop.eq_dmem_addr, 3s
+  raw log: /home/toshn/gates/P5/miter_prop_pdr.raw.log
+
+=== summary ===
+task     verdict    detail
+bmc      FAIL       miter_prop.eq_dmem_addr, 1s
+pdr      FAIL       miter_prop.eq_dmem_addr, 3s
+
+overall: no engine closed the property within budget -- not necessarily false, inspect raw logs

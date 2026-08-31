@@ -1,0 +1,1362 @@
+EQY 16:23:52 [prop] read_gold: starting process "yosys -ql prop/gold.log prop/gold.ys"
+EQY 16:23:52 [prop] read_gold: Warning: Replacing memory \regs with list of registers. See gold.v:246
+EQY 16:23:52 [prop] read_gate: starting process "yosys -ql prop/gate.log prop/gate.ys"
+EQY 16:23:52 [prop] read_gate: Warning: Replacing memory \regs with list of registers. See gate.v:243
+EQY 16:23:52 [prop] read_gold: finished (returncode=0)
+EQY 16:23:52 [prop] read_gate: finished (returncode=0)
+EQY 16:23:52 [prop] combine: starting process "yosys -ql prop/combine.log prop/combine.ys"
+EQY 16:23:52 [prop] combine: finished (returncode=0)
+EQY 16:23:52 [prop] partition: starting process "cd prop; yosys -ql partition.log partition.ys"
+EQY 16:23:52 [prop] partition: finished (returncode=0)
+EQY 16:23:53 [prop] run: starting process "make -C prop -f strategies.mk"
+EQY 16:23:53 [prop] run: make: Entering directory '/home/toshn/gates/P4/prop'
+EQY 16:23:53 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.a'..
+EQY 16:23:53 [prop] run: Proved equivalence of partition 'rv32i_core_gold.a' using strategy 'sat'
+EQY 16:23:53 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.alt'..
+EQY 16:23:53 [prop] run: Proved equivalence of partition 'rv32i_core_gold.alt' using strategy 'sat'
+EQY 16:23:53 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.alu_b'..
+EQY 16:23:53 [prop] run: Proved equivalence of partition 'rv32i_core_gold.alu_b' using strategy 'sat'
+EQY 16:23:53 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.alu_out'..
+EQY 16:23:54 [prop] run: Could not prove equivalence of partition 'rv32i_core_gold.alu_out' using strategy 'sat'
+EQY 16:23:54 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.b'..
+EQY 16:23:55 [prop] run: Proved equivalence of partition 'rv32i_core_gold.b' using strategy 'sat'
+EQY 16:23:55 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.branch_taken'..
+EQY 16:23:55 [prop] run: Proved equivalence of partition 'rv32i_core_gold.branch_taken' using strategy 'sat'
+EQY 16:23:55 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.byte_off.0'..
+EQY 16:23:55 [prop] run: Proved equivalence of partition 'rv32i_core_gold.byte_off.0' using strategy 'sat'
+EQY 16:23:55 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.byte_off.1'..
+EQY 16:23:55 [prop] run: Proved equivalence of partition 'rv32i_core_gold.byte_off.1' using strategy 'sat'
+EQY 16:23:55 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.commit_we'..
+EQY 16:23:55 [prop] run: Proved equivalence of partition 'rv32i_core_gold.commit_we' using strategy 'sat'
+EQY 16:23:55 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.0'..
+EQY 16:23:55 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.0' using strategy 'sat'
+EQY 16:23:55 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.1'..
+EQY 16:23:55 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.1' using strategy 'sat'
+EQY 16:23:55 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.10'..
+EQY 16:23:55 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.10' using strategy 'sat'
+EQY 16:23:55 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.11'..
+EQY 16:23:55 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.11' using strategy 'sat'
+EQY 16:23:55 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.12'..
+EQY 16:23:56 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.12' using strategy 'sat'
+EQY 16:23:56 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.13'..
+EQY 16:23:56 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.13' using strategy 'sat'
+EQY 16:23:56 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.14'..
+EQY 16:23:56 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.14' using strategy 'sat'
+EQY 16:23:56 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.15'..
+EQY 16:23:56 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.15' using strategy 'sat'
+EQY 16:23:56 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.16'..
+EQY 16:23:56 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.16' using strategy 'sat'
+EQY 16:23:56 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.17'..
+EQY 16:23:56 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.17' using strategy 'sat'
+EQY 16:23:56 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.18'..
+EQY 16:23:56 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.18' using strategy 'sat'
+EQY 16:23:56 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.19'..
+EQY 16:23:56 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.19' using strategy 'sat'
+EQY 16:23:56 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.2'..
+EQY 16:23:56 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.2' using strategy 'sat'
+EQY 16:23:56 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.20'..
+EQY 16:23:56 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.20' using strategy 'sat'
+EQY 16:23:56 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.21'..
+EQY 16:23:57 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.21' using strategy 'sat'
+EQY 16:23:57 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.22'..
+EQY 16:23:57 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.22' using strategy 'sat'
+EQY 16:23:57 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.23'..
+EQY 16:23:57 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.23' using strategy 'sat'
+EQY 16:23:57 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.24'..
+EQY 16:23:57 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.24' using strategy 'sat'
+EQY 16:23:57 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.25'..
+EQY 16:23:57 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.25' using strategy 'sat'
+EQY 16:23:57 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.26'..
+EQY 16:23:57 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.26' using strategy 'sat'
+EQY 16:23:57 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.27'..
+EQY 16:23:57 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.27' using strategy 'sat'
+EQY 16:23:57 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.28'..
+EQY 16:23:57 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.28' using strategy 'sat'
+EQY 16:23:57 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.29'..
+EQY 16:23:58 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.29' using strategy 'sat'
+EQY 16:23:58 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.3'..
+EQY 16:23:58 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.3' using strategy 'sat'
+EQY 16:23:58 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.30'..
+EQY 16:23:58 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.30' using strategy 'sat'
+EQY 16:23:58 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.31'..
+EQY 16:23:58 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.31' using strategy 'sat'
+EQY 16:23:58 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.4'..
+EQY 16:23:58 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.4' using strategy 'sat'
+EQY 16:23:58 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.5'..
+EQY 16:23:58 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.5' using strategy 'sat'
+EQY 16:23:58 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.6'..
+EQY 16:23:58 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.6' using strategy 'sat'
+EQY 16:23:58 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.7'..
+EQY 16:23:58 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.7' using strategy 'sat'
+EQY 16:23:58 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.8'..
+EQY 16:23:58 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.8' using strategy 'sat'
+EQY 16:23:58 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_addr.9'..
+EQY 16:23:58 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_addr.9' using strategy 'sat'
+EQY 16:23:58 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_wdata'..
+EQY 16:23:59 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_wdata' using strategy 'sat'
+EQY 16:23:59 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_we'..
+EQY 16:23:59 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_we' using strategy 'sat'
+EQY 16:23:59 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.dmem_wstrb'..
+EQY 16:23:59 [prop] run: Proved equivalence of partition 'rv32i_core_gold.dmem_wstrb' using strategy 'sat'
+EQY 16:23:59 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.funct3.0'..
+EQY 16:23:59 [prop] run: Proved equivalence of partition 'rv32i_core_gold.funct3.0' using strategy 'sat'
+EQY 16:23:59 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.funct3.1'..
+EQY 16:23:59 [prop] run: Proved equivalence of partition 'rv32i_core_gold.funct3.1' using strategy 'sat'
+EQY 16:23:59 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.funct3.2'..
+EQY 16:23:59 [prop] run: Proved equivalence of partition 'rv32i_core_gold.funct3.2' using strategy 'sat'
+EQY 16:23:59 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.funct7.0'..
+EQY 16:23:59 [prop] run: Proved equivalence of partition 'rv32i_core_gold.funct7.0' using strategy 'sat'
+EQY 16:23:59 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.funct7.1'..
+EQY 16:23:59 [prop] run: Proved equivalence of partition 'rv32i_core_gold.funct7.1' using strategy 'sat'
+EQY 16:23:59 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.funct7.2'..
+EQY 16:23:59 [prop] run: Proved equivalence of partition 'rv32i_core_gold.funct7.2' using strategy 'sat'
+EQY 16:23:59 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.funct7.3'..
+EQY 16:23:59 [prop] run: Proved equivalence of partition 'rv32i_core_gold.funct7.3' using strategy 'sat'
+EQY 16:23:59 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.funct7.4'..
+EQY 16:23:59 [prop] run: Proved equivalence of partition 'rv32i_core_gold.funct7.4' using strategy 'sat'
+EQY 16:23:59 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.funct7.5'..
+EQY 16:24:00 [prop] run: Proved equivalence of partition 'rv32i_core_gold.funct7.5' using strategy 'sat'
+EQY 16:24:00 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.funct7.6'..
+EQY 16:24:00 [prop] run: Proved equivalence of partition 'rv32i_core_gold.funct7.6' using strategy 'sat'
+EQY 16:24:00 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.halt_r'..
+EQY 16:24:00 [prop] run: Proved equivalence of partition 'rv32i_core_gold.halt_r' using strategy 'sat'
+EQY 16:24:00 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.halted'..
+EQY 16:24:00 [prop] run: Proved equivalence of partition 'rv32i_core_gold.halted' using strategy 'sat'
+EQY 16:24:00 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.0'..
+EQY 16:24:00 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.0' using strategy 'sat'
+EQY 16:24:00 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.1'..
+EQY 16:24:00 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.1' using strategy 'sat'
+EQY 16:24:00 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.10'..
+EQY 16:24:00 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.10' using strategy 'sat'
+EQY 16:24:00 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.11'..
+EQY 16:24:00 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.11' using strategy 'sat'
+EQY 16:24:00 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.12'..
+EQY 16:24:00 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.12' using strategy 'sat'
+EQY 16:24:00 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.13'..
+EQY 16:24:00 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.13' using strategy 'sat'
+EQY 16:24:00 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.14'..
+EQY 16:24:00 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.14' using strategy 'sat'
+EQY 16:24:00 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.15'..
+EQY 16:24:00 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.15' using strategy 'sat'
+EQY 16:24:00 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.16'..
+EQY 16:24:01 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.16' using strategy 'sat'
+EQY 16:24:01 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.17'..
+EQY 16:24:01 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.17' using strategy 'sat'
+EQY 16:24:01 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.18'..
+EQY 16:24:01 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.18' using strategy 'sat'
+EQY 16:24:01 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.19'..
+EQY 16:24:01 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.19' using strategy 'sat'
+EQY 16:24:01 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.2'..
+EQY 16:24:01 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.2' using strategy 'sat'
+EQY 16:24:01 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.20'..
+EQY 16:24:01 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.20' using strategy 'sat'
+EQY 16:24:01 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.21'..
+EQY 16:24:01 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.21' using strategy 'sat'
+EQY 16:24:01 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.22'..
+EQY 16:24:01 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.22' using strategy 'sat'
+EQY 16:24:01 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.23'..
+EQY 16:24:01 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.23' using strategy 'sat'
+EQY 16:24:01 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.24'..
+EQY 16:24:01 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.24' using strategy 'sat'
+EQY 16:24:01 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.25'..
+EQY 16:24:01 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.25' using strategy 'sat'
+EQY 16:24:01 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.26'..
+EQY 16:24:01 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.26' using strategy 'sat'
+EQY 16:24:01 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.27'..
+EQY 16:24:02 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.27' using strategy 'sat'
+EQY 16:24:02 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.28'..
+EQY 16:24:02 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.28' using strategy 'sat'
+EQY 16:24:02 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.29'..
+EQY 16:24:02 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.29' using strategy 'sat'
+EQY 16:24:02 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.3'..
+EQY 16:24:02 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.3' using strategy 'sat'
+EQY 16:24:02 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.30'..
+EQY 16:24:02 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.30' using strategy 'sat'
+EQY 16:24:02 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.31'..
+EQY 16:24:02 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.31' using strategy 'sat'
+EQY 16:24:02 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.4'..
+EQY 16:24:02 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.4' using strategy 'sat'
+EQY 16:24:02 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.5'..
+EQY 16:24:02 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.5' using strategy 'sat'
+EQY 16:24:02 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.6'..
+EQY 16:24:02 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.6' using strategy 'sat'
+EQY 16:24:02 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.7'..
+EQY 16:24:02 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.7' using strategy 'sat'
+EQY 16:24:02 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.8'..
+EQY 16:24:02 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.8' using strategy 'sat'
+EQY 16:24:02 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imem_addr.9'..
+EQY 16:24:02 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imem_addr.9' using strategy 'sat'
+EQY 16:24:02 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.0'..
+EQY 16:24:03 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.0' using strategy 'sat'
+EQY 16:24:03 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.1'..
+EQY 16:24:03 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.1' using strategy 'sat'
+EQY 16:24:03 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.10'..
+EQY 16:24:03 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.10' using strategy 'sat'
+EQY 16:24:03 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.11'..
+EQY 16:24:03 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.11' using strategy 'sat'
+EQY 16:24:03 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.12'..
+EQY 16:24:03 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.12' using strategy 'sat'
+EQY 16:24:03 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.13'..
+EQY 16:24:03 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.13' using strategy 'sat'
+EQY 16:24:03 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.14'..
+EQY 16:24:03 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.14' using strategy 'sat'
+EQY 16:24:03 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.15'..
+EQY 16:24:03 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.15' using strategy 'sat'
+EQY 16:24:03 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.16'..
+EQY 16:24:03 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.16' using strategy 'sat'
+EQY 16:24:03 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.17'..
+EQY 16:24:03 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.17' using strategy 'sat'
+EQY 16:24:03 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.18'..
+EQY 16:24:03 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.18' using strategy 'sat'
+EQY 16:24:03 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.19'..
+EQY 16:24:04 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.19' using strategy 'sat'
+EQY 16:24:04 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.2'..
+EQY 16:24:04 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.2' using strategy 'sat'
+EQY 16:24:04 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.20'..
+EQY 16:24:04 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.20' using strategy 'sat'
+EQY 16:24:04 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.21'..
+EQY 16:24:04 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.21' using strategy 'sat'
+EQY 16:24:04 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.22'..
+EQY 16:24:04 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.22' using strategy 'sat'
+EQY 16:24:04 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.23'..
+EQY 16:24:04 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.23' using strategy 'sat'
+EQY 16:24:04 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.24'..
+EQY 16:24:04 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.24' using strategy 'sat'
+EQY 16:24:04 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.25'..
+EQY 16:24:04 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.25' using strategy 'sat'
+EQY 16:24:04 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.26'..
+EQY 16:24:04 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.26' using strategy 'sat'
+EQY 16:24:04 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.27'..
+EQY 16:24:04 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.27' using strategy 'sat'
+EQY 16:24:04 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.28'..
+EQY 16:24:04 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.28' using strategy 'sat'
+EQY 16:24:04 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.29'..
+EQY 16:24:04 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.29' using strategy 'sat'
+EQY 16:24:04 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.3'..
+EQY 16:24:05 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.3' using strategy 'sat'
+EQY 16:24:05 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.30'..
+EQY 16:24:05 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.30' using strategy 'sat'
+EQY 16:24:05 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.31'..
+EQY 16:24:05 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.31' using strategy 'sat'
+EQY 16:24:05 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.4'..
+EQY 16:24:05 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.4' using strategy 'sat'
+EQY 16:24:05 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.5'..
+EQY 16:24:05 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.5' using strategy 'sat'
+EQY 16:24:05 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.6'..
+EQY 16:24:05 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.6' using strategy 'sat'
+EQY 16:24:05 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.7'..
+EQY 16:24:05 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.7' using strategy 'sat'
+EQY 16:24:05 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.8'..
+EQY 16:24:05 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.8' using strategy 'sat'
+EQY 16:24:05 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_b.9'..
+EQY 16:24:05 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_b.9' using strategy 'sat'
+EQY 16:24:05 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.0'..
+EQY 16:24:05 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.0' using strategy 'sat'
+EQY 16:24:05 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.1'..
+EQY 16:24:05 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.1' using strategy 'sat'
+EQY 16:24:05 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.10'..
+EQY 16:24:06 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.10' using strategy 'sat'
+EQY 16:24:06 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.11'..
+EQY 16:24:06 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.11' using strategy 'sat'
+EQY 16:24:06 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.12'..
+EQY 16:24:06 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.12' using strategy 'sat'
+EQY 16:24:06 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.13'..
+EQY 16:24:06 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.13' using strategy 'sat'
+EQY 16:24:06 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.14'..
+EQY 16:24:06 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.14' using strategy 'sat'
+EQY 16:24:06 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.15'..
+EQY 16:24:06 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.15' using strategy 'sat'
+EQY 16:24:06 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.16'..
+EQY 16:24:06 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.16' using strategy 'sat'
+EQY 16:24:06 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.17'..
+EQY 16:24:06 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.17' using strategy 'sat'
+EQY 16:24:06 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.18'..
+EQY 16:24:06 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.18' using strategy 'sat'
+EQY 16:24:06 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.19'..
+EQY 16:24:06 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.19' using strategy 'sat'
+EQY 16:24:06 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.2'..
+EQY 16:24:06 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.2' using strategy 'sat'
+EQY 16:24:06 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.20'..
+EQY 16:24:06 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.20' using strategy 'sat'
+EQY 16:24:06 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.21'..
+EQY 16:24:07 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.21' using strategy 'sat'
+EQY 16:24:07 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.22'..
+EQY 16:24:07 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.22' using strategy 'sat'
+EQY 16:24:07 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.23'..
+EQY 16:24:07 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.23' using strategy 'sat'
+EQY 16:24:07 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.24'..
+EQY 16:24:07 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.24' using strategy 'sat'
+EQY 16:24:07 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.25'..
+EQY 16:24:07 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.25' using strategy 'sat'
+EQY 16:24:07 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.26'..
+EQY 16:24:07 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.26' using strategy 'sat'
+EQY 16:24:07 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.27'..
+EQY 16:24:07 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.27' using strategy 'sat'
+EQY 16:24:07 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.28'..
+EQY 16:24:07 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.28' using strategy 'sat'
+EQY 16:24:07 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.29'..
+EQY 16:24:07 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.29' using strategy 'sat'
+EQY 16:24:07 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.3'..
+EQY 16:24:07 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.3' using strategy 'sat'
+EQY 16:24:07 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.30'..
+EQY 16:24:07 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.30' using strategy 'sat'
+EQY 16:24:07 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.31'..
+EQY 16:24:07 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.31' using strategy 'sat'
+EQY 16:24:07 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.4'..
+EQY 16:24:08 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.4' using strategy 'sat'
+EQY 16:24:08 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.5'..
+EQY 16:24:08 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.5' using strategy 'sat'
+EQY 16:24:08 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.6'..
+EQY 16:24:08 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.6' using strategy 'sat'
+EQY 16:24:08 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.7'..
+EQY 16:24:08 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.7' using strategy 'sat'
+EQY 16:24:08 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.8'..
+EQY 16:24:08 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.8' using strategy 'sat'
+EQY 16:24:08 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_i.9'..
+EQY 16:24:08 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_i.9' using strategy 'sat'
+EQY 16:24:08 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.0'..
+EQY 16:24:08 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.0' using strategy 'sat'
+EQY 16:24:08 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.1'..
+EQY 16:24:08 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.1' using strategy 'sat'
+EQY 16:24:08 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.10'..
+EQY 16:24:08 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.10' using strategy 'sat'
+EQY 16:24:08 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.11'..
+EQY 16:24:08 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.11' using strategy 'sat'
+EQY 16:24:08 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.12'..
+EQY 16:24:08 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.12' using strategy 'sat'
+EQY 16:24:08 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.13'..
+EQY 16:24:08 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.13' using strategy 'sat'
+EQY 16:24:08 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.14'..
+EQY 16:24:09 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.14' using strategy 'sat'
+EQY 16:24:09 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.15'..
+EQY 16:24:09 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.15' using strategy 'sat'
+EQY 16:24:09 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.16'..
+EQY 16:24:09 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.16' using strategy 'sat'
+EQY 16:24:09 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.17'..
+EQY 16:24:09 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.17' using strategy 'sat'
+EQY 16:24:09 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.18'..
+EQY 16:24:09 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.18' using strategy 'sat'
+EQY 16:24:09 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.19'..
+EQY 16:24:09 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.19' using strategy 'sat'
+EQY 16:24:09 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.2'..
+EQY 16:24:09 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.2' using strategy 'sat'
+EQY 16:24:09 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.20'..
+EQY 16:24:09 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.20' using strategy 'sat'
+EQY 16:24:09 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.21'..
+EQY 16:24:09 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.21' using strategy 'sat'
+EQY 16:24:09 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.22'..
+EQY 16:24:09 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.22' using strategy 'sat'
+EQY 16:24:09 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.23'..
+EQY 16:24:09 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.23' using strategy 'sat'
+EQY 16:24:09 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.24'..
+EQY 16:24:10 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.24' using strategy 'sat'
+EQY 16:24:10 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.25'..
+EQY 16:24:10 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.25' using strategy 'sat'
+EQY 16:24:10 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.26'..
+EQY 16:24:10 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.26' using strategy 'sat'
+EQY 16:24:10 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.27'..
+EQY 16:24:10 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.27' using strategy 'sat'
+EQY 16:24:10 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.28'..
+EQY 16:24:10 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.28' using strategy 'sat'
+EQY 16:24:10 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.29'..
+EQY 16:24:10 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.29' using strategy 'sat'
+EQY 16:24:10 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.3'..
+EQY 16:24:10 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.3' using strategy 'sat'
+EQY 16:24:10 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.30'..
+EQY 16:24:10 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.30' using strategy 'sat'
+EQY 16:24:10 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.31'..
+EQY 16:24:10 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.31' using strategy 'sat'
+EQY 16:24:10 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.4'..
+EQY 16:24:10 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.4' using strategy 'sat'
+EQY 16:24:10 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.5'..
+EQY 16:24:10 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.5' using strategy 'sat'
+EQY 16:24:10 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.6'..
+EQY 16:24:10 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.6' using strategy 'sat'
+EQY 16:24:10 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.7'..
+EQY 16:24:11 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.7' using strategy 'sat'
+EQY 16:24:11 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.8'..
+EQY 16:24:11 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.8' using strategy 'sat'
+EQY 16:24:11 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_j.9'..
+EQY 16:24:11 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_j.9' using strategy 'sat'
+EQY 16:24:11 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.0'..
+EQY 16:24:11 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.0' using strategy 'sat'
+EQY 16:24:11 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.1'..
+EQY 16:24:11 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.1' using strategy 'sat'
+EQY 16:24:11 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.10'..
+EQY 16:24:11 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.10' using strategy 'sat'
+EQY 16:24:11 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.11'..
+EQY 16:24:11 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.11' using strategy 'sat'
+EQY 16:24:11 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.12'..
+EQY 16:24:11 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.12' using strategy 'sat'
+EQY 16:24:11 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.13'..
+EQY 16:24:11 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.13' using strategy 'sat'
+EQY 16:24:11 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.14'..
+EQY 16:24:11 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.14' using strategy 'sat'
+EQY 16:24:11 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.15'..
+EQY 16:24:11 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.15' using strategy 'sat'
+EQY 16:24:11 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.16'..
+EQY 16:24:11 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.16' using strategy 'sat'
+EQY 16:24:11 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.17'..
+EQY 16:24:12 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.17' using strategy 'sat'
+EQY 16:24:12 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.18'..
+EQY 16:24:12 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.18' using strategy 'sat'
+EQY 16:24:12 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.19'..
+EQY 16:24:12 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.19' using strategy 'sat'
+EQY 16:24:12 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.2'..
+EQY 16:24:12 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.2' using strategy 'sat'
+EQY 16:24:12 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.20'..
+EQY 16:24:12 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.20' using strategy 'sat'
+EQY 16:24:12 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.21'..
+EQY 16:24:12 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.21' using strategy 'sat'
+EQY 16:24:12 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.22'..
+EQY 16:24:12 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.22' using strategy 'sat'
+EQY 16:24:12 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.23'..
+EQY 16:24:12 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.23' using strategy 'sat'
+EQY 16:24:12 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.24'..
+EQY 16:24:12 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.24' using strategy 'sat'
+EQY 16:24:12 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.25'..
+EQY 16:24:12 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.25' using strategy 'sat'
+EQY 16:24:12 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.26'..
+EQY 16:24:12 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.26' using strategy 'sat'
+EQY 16:24:12 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.27'..
+EQY 16:24:12 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.27' using strategy 'sat'
+EQY 16:24:12 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.28'..
+EQY 16:24:13 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.28' using strategy 'sat'
+EQY 16:24:13 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.29'..
+EQY 16:24:13 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.29' using strategy 'sat'
+EQY 16:24:13 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.3'..
+EQY 16:24:13 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.3' using strategy 'sat'
+EQY 16:24:13 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.30'..
+EQY 16:24:13 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.30' using strategy 'sat'
+EQY 16:24:13 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.31'..
+EQY 16:24:13 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.31' using strategy 'sat'
+EQY 16:24:13 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.4'..
+EQY 16:24:13 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.4' using strategy 'sat'
+EQY 16:24:13 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.5'..
+EQY 16:24:13 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.5' using strategy 'sat'
+EQY 16:24:13 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.6'..
+EQY 16:24:13 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.6' using strategy 'sat'
+EQY 16:24:13 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.7'..
+EQY 16:24:13 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.7' using strategy 'sat'
+EQY 16:24:13 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.8'..
+EQY 16:24:13 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.8' using strategy 'sat'
+EQY 16:24:13 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_s.9'..
+EQY 16:24:13 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_s.9' using strategy 'sat'
+EQY 16:24:13 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.0'..
+EQY 16:24:14 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.0' using strategy 'sat'
+EQY 16:24:14 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.1'..
+EQY 16:24:14 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.1' using strategy 'sat'
+EQY 16:24:14 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.10'..
+EQY 16:24:14 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.10' using strategy 'sat'
+EQY 16:24:14 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.11'..
+EQY 16:24:14 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.11' using strategy 'sat'
+EQY 16:24:14 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.12'..
+EQY 16:24:14 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.12' using strategy 'sat'
+EQY 16:24:14 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.13'..
+EQY 16:24:14 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.13' using strategy 'sat'
+EQY 16:24:14 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.14'..
+EQY 16:24:14 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.14' using strategy 'sat'
+EQY 16:24:14 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.15'..
+EQY 16:24:14 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.15' using strategy 'sat'
+EQY 16:24:14 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.16'..
+EQY 16:24:14 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.16' using strategy 'sat'
+EQY 16:24:14 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.17'..
+EQY 16:24:14 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.17' using strategy 'sat'
+EQY 16:24:14 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.18'..
+EQY 16:24:14 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.18' using strategy 'sat'
+EQY 16:24:14 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.19'..
+EQY 16:24:15 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.19' using strategy 'sat'
+EQY 16:24:15 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.2'..
+EQY 16:24:15 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.2' using strategy 'sat'
+EQY 16:24:15 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.20'..
+EQY 16:24:15 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.20' using strategy 'sat'
+EQY 16:24:15 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.21'..
+EQY 16:24:15 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.21' using strategy 'sat'
+EQY 16:24:15 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.22'..
+EQY 16:24:15 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.22' using strategy 'sat'
+EQY 16:24:15 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.23'..
+EQY 16:24:15 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.23' using strategy 'sat'
+EQY 16:24:15 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.24'..
+EQY 16:24:15 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.24' using strategy 'sat'
+EQY 16:24:15 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.25'..
+EQY 16:24:15 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.25' using strategy 'sat'
+EQY 16:24:15 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.26'..
+EQY 16:24:15 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.26' using strategy 'sat'
+EQY 16:24:15 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.27'..
+EQY 16:24:15 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.27' using strategy 'sat'
+EQY 16:24:15 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.28'..
+EQY 16:24:15 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.28' using strategy 'sat'
+EQY 16:24:15 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.29'..
+EQY 16:24:15 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.29' using strategy 'sat'
+EQY 16:24:15 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.3'..
+EQY 16:24:16 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.3' using strategy 'sat'
+EQY 16:24:16 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.30'..
+EQY 16:24:16 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.30' using strategy 'sat'
+EQY 16:24:16 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.31'..
+EQY 16:24:16 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.31' using strategy 'sat'
+EQY 16:24:16 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.4'..
+EQY 16:24:16 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.4' using strategy 'sat'
+EQY 16:24:16 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.5'..
+EQY 16:24:16 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.5' using strategy 'sat'
+EQY 16:24:16 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.6'..
+EQY 16:24:16 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.6' using strategy 'sat'
+EQY 16:24:16 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.7'..
+EQY 16:24:16 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.7' using strategy 'sat'
+EQY 16:24:16 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.8'..
+EQY 16:24:16 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.8' using strategy 'sat'
+EQY 16:24:16 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.imm_u.9'..
+EQY 16:24:16 [prop] run: Proved equivalence of partition 'rv32i_core_gold.imm_u.9' using strategy 'sat'
+EQY 16:24:16 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.0'..
+EQY 16:24:16 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.0' using strategy 'sat'
+EQY 16:24:16 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.1'..
+EQY 16:24:16 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.1' using strategy 'sat'
+EQY 16:24:16 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.10'..
+EQY 16:24:16 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.10' using strategy 'sat'
+EQY 16:24:16 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.11'..
+EQY 16:24:17 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.11' using strategy 'sat'
+EQY 16:24:17 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.12'..
+EQY 16:24:17 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.12' using strategy 'sat'
+EQY 16:24:17 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.13'..
+EQY 16:24:17 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.13' using strategy 'sat'
+EQY 16:24:17 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.14'..
+EQY 16:24:17 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.14' using strategy 'sat'
+EQY 16:24:17 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.15'..
+EQY 16:24:17 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.15' using strategy 'sat'
+EQY 16:24:17 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.16'..
+EQY 16:24:17 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.16' using strategy 'sat'
+EQY 16:24:17 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.17'..
+EQY 16:24:17 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.17' using strategy 'sat'
+EQY 16:24:17 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.18'..
+EQY 16:24:17 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.18' using strategy 'sat'
+EQY 16:24:17 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.19'..
+EQY 16:24:17 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.19' using strategy 'sat'
+EQY 16:24:17 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.2'..
+EQY 16:24:17 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.2' using strategy 'sat'
+EQY 16:24:17 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.20'..
+EQY 16:24:17 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.20' using strategy 'sat'
+EQY 16:24:17 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.21'..
+EQY 16:24:18 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.21' using strategy 'sat'
+EQY 16:24:18 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.22'..
+EQY 16:24:18 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.22' using strategy 'sat'
+EQY 16:24:18 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.23'..
+EQY 16:24:18 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.23' using strategy 'sat'
+EQY 16:24:18 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.24'..
+EQY 16:24:18 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.24' using strategy 'sat'
+EQY 16:24:18 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.25'..
+EQY 16:24:18 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.25' using strategy 'sat'
+EQY 16:24:18 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.26'..
+EQY 16:24:18 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.26' using strategy 'sat'
+EQY 16:24:18 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.27'..
+EQY 16:24:18 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.27' using strategy 'sat'
+EQY 16:24:18 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.28'..
+EQY 16:24:18 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.28' using strategy 'sat'
+EQY 16:24:18 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.29'..
+EQY 16:24:18 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.29' using strategy 'sat'
+EQY 16:24:18 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.3'..
+EQY 16:24:18 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.3' using strategy 'sat'
+EQY 16:24:18 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.30'..
+EQY 16:24:18 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.30' using strategy 'sat'
+EQY 16:24:18 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.31'..
+EQY 16:24:19 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.31' using strategy 'sat'
+EQY 16:24:19 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.4'..
+EQY 16:24:19 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.4' using strategy 'sat'
+EQY 16:24:19 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.5'..
+EQY 16:24:19 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.5' using strategy 'sat'
+EQY 16:24:19 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.6'..
+EQY 16:24:19 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.6' using strategy 'sat'
+EQY 16:24:19 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.7'..
+EQY 16:24:19 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.7' using strategy 'sat'
+EQY 16:24:19 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.8'..
+EQY 16:24:19 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.8' using strategy 'sat'
+EQY 16:24:19 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.insn.9'..
+EQY 16:24:19 [prop] run: Proved equivalence of partition 'rv32i_core_gold.insn.9' using strategy 'sat'
+EQY 16:24:19 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.ld_byte'..
+EQY 16:24:19 [prop] run: Proved equivalence of partition 'rv32i_core_gold.ld_byte' using strategy 'sat'
+EQY 16:24:19 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.ld_half'..
+EQY 16:24:20 [prop] run: Proved equivalence of partition 'rv32i_core_gold.ld_half' using strategy 'sat'
+EQY 16:24:20 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.load_out'..
+EQY 16:24:20 [prop] run: Proved equivalence of partition 'rv32i_core_gold.load_out' using strategy 'sat'
+EQY 16:24:20 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.mem_addr'..
+EQY 16:24:20 [prop] run: Proved equivalence of partition 'rv32i_core_gold.mem_addr' using strategy 'sat'
+EQY 16:24:20 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.next_pc'..
+EQY 16:24:20 [prop] run: Proved equivalence of partition 'rv32i_core_gold.next_pc' using strategy 'sat'
+EQY 16:24:20 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.opcode.0'..
+EQY 16:24:20 [prop] run: Proved equivalence of partition 'rv32i_core_gold.opcode.0' using strategy 'sat'
+EQY 16:24:20 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.opcode.1'..
+EQY 16:24:21 [prop] run: Proved equivalence of partition 'rv32i_core_gold.opcode.1' using strategy 'sat'
+EQY 16:24:21 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.opcode.2'..
+EQY 16:24:21 [prop] run: Proved equivalence of partition 'rv32i_core_gold.opcode.2' using strategy 'sat'
+EQY 16:24:21 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.opcode.3'..
+EQY 16:24:21 [prop] run: Proved equivalence of partition 'rv32i_core_gold.opcode.3' using strategy 'sat'
+EQY 16:24:21 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.opcode.4'..
+EQY 16:24:21 [prop] run: Proved equivalence of partition 'rv32i_core_gold.opcode.4' using strategy 'sat'
+EQY 16:24:21 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.opcode.5'..
+EQY 16:24:21 [prop] run: Proved equivalence of partition 'rv32i_core_gold.opcode.5' using strategy 'sat'
+EQY 16:24:21 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.opcode.6'..
+EQY 16:24:21 [prop] run: Proved equivalence of partition 'rv32i_core_gold.opcode.6' using strategy 'sat'
+EQY 16:24:21 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.pc'..
+EQY 16:24:21 [prop] run: Proved equivalence of partition 'rv32i_core_gold.pc' using strategy 'sat'
+EQY 16:24:21 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.pc_plus4'..
+EQY 16:24:21 [prop] run: Proved equivalence of partition 'rv32i_core_gold.pc_plus4' using strategy 'sat'
+EQY 16:24:21 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.rd.0'..
+EQY 16:24:21 [prop] run: Proved equivalence of partition 'rv32i_core_gold.rd.0' using strategy 'sat'
+EQY 16:24:21 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.rd.1'..
+EQY 16:24:22 [prop] run: Proved equivalence of partition 'rv32i_core_gold.rd.1' using strategy 'sat'
+EQY 16:24:22 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.rd.2'..
+EQY 16:24:22 [prop] run: Proved equivalence of partition 'rv32i_core_gold.rd.2' using strategy 'sat'
+EQY 16:24:22 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.rd.3'..
+EQY 16:24:22 [prop] run: Proved equivalence of partition 'rv32i_core_gold.rd.3' using strategy 'sat'
+EQY 16:24:22 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.rd.4'..
+EQY 16:24:22 [prop] run: Proved equivalence of partition 'rv32i_core_gold.rd.4' using strategy 'sat'
+EQY 16:24:22 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regfile_clk'..
+EQY 16:24:22 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regfile_clk' using strategy 'sat'
+EQY 16:24:22 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.1'..
+EQY 16:24:22 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.1' using strategy 'sat'
+EQY 16:24:22 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.10'..
+EQY 16:24:22 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.10' using strategy 'sat'
+EQY 16:24:22 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.11'..
+EQY 16:24:22 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.11' using strategy 'sat'
+EQY 16:24:22 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.12'..
+EQY 16:24:23 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.12' using strategy 'sat'
+EQY 16:24:23 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.13'..
+EQY 16:24:23 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.13' using strategy 'sat'
+EQY 16:24:23 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.14'..
+EQY 16:24:23 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.14' using strategy 'sat'
+EQY 16:24:23 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.15'..
+EQY 16:24:23 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.15' using strategy 'sat'
+EQY 16:24:23 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.16'..
+EQY 16:24:23 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.16' using strategy 'sat'
+EQY 16:24:23 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.17'..
+EQY 16:24:24 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.17' using strategy 'sat'
+EQY 16:24:24 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.18'..
+EQY 16:24:24 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.18' using strategy 'sat'
+EQY 16:24:24 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.19'..
+EQY 16:24:24 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.19' using strategy 'sat'
+EQY 16:24:24 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.2'..
+EQY 16:24:24 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.2' using strategy 'sat'
+EQY 16:24:24 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.20'..
+EQY 16:24:24 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.20' using strategy 'sat'
+EQY 16:24:24 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.21'..
+EQY 16:24:24 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.21' using strategy 'sat'
+EQY 16:24:24 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.22'..
+EQY 16:24:25 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.22' using strategy 'sat'
+EQY 16:24:25 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.23'..
+EQY 16:24:25 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.23' using strategy 'sat'
+EQY 16:24:25 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.24'..
+EQY 16:24:25 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.24' using strategy 'sat'
+EQY 16:24:25 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.25'..
+EQY 16:24:25 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.25' using strategy 'sat'
+EQY 16:24:25 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.26'..
+EQY 16:24:25 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.26' using strategy 'sat'
+EQY 16:24:25 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.27'..
+EQY 16:24:26 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.27' using strategy 'sat'
+EQY 16:24:26 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.28'..
+EQY 16:24:26 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.28' using strategy 'sat'
+EQY 16:24:26 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.29'..
+EQY 16:24:26 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.29' using strategy 'sat'
+EQY 16:24:26 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.3'..
+EQY 16:24:26 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.3' using strategy 'sat'
+EQY 16:24:26 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.30'..
+EQY 16:24:26 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.30' using strategy 'sat'
+EQY 16:24:26 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.31'..
+EQY 16:24:27 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.31' using strategy 'sat'
+EQY 16:24:27 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.4'..
+EQY 16:24:27 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.4' using strategy 'sat'
+EQY 16:24:27 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.5'..
+EQY 16:24:27 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.5' using strategy 'sat'
+EQY 16:24:27 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.6'..
+EQY 16:24:27 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.6' using strategy 'sat'
+EQY 16:24:27 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.7'..
+EQY 16:24:27 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.7' using strategy 'sat'
+EQY 16:24:27 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.8'..
+EQY 16:24:27 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.8' using strategy 'sat'
+EQY 16:24:27 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.regs.9'..
+EQY 16:24:28 [prop] run: Proved equivalence of partition 'rv32i_core_gold.regs.9' using strategy 'sat'
+EQY 16:24:28 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.0'..
+EQY 16:24:28 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.0' using strategy 'sat'
+EQY 16:24:28 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.1'..
+EQY 16:24:28 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.1' using strategy 'sat'
+EQY 16:24:28 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.10'..
+EQY 16:24:28 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.10' using strategy 'sat'
+EQY 16:24:28 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.11'..
+EQY 16:24:28 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.11' using strategy 'sat'
+EQY 16:24:28 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.12'..
+EQY 16:24:28 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.12' using strategy 'sat'
+EQY 16:24:28 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.13'..
+EQY 16:24:28 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.13' using strategy 'sat'
+EQY 16:24:28 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.14'..
+EQY 16:24:28 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.14' using strategy 'sat'
+EQY 16:24:28 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.15'..
+EQY 16:24:28 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.15' using strategy 'sat'
+EQY 16:24:28 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.16'..
+EQY 16:24:28 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.16' using strategy 'sat'
+EQY 16:24:28 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.17'..
+EQY 16:24:28 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.17' using strategy 'sat'
+EQY 16:24:28 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.18'..
+EQY 16:24:28 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.18' using strategy 'sat'
+EQY 16:24:28 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.19'..
+EQY 16:24:29 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.19' using strategy 'sat'
+EQY 16:24:29 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.2'..
+EQY 16:24:29 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.2' using strategy 'sat'
+EQY 16:24:29 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.20'..
+EQY 16:24:29 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.20' using strategy 'sat'
+EQY 16:24:29 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.21'..
+EQY 16:24:29 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.21' using strategy 'sat'
+EQY 16:24:29 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.22'..
+EQY 16:24:29 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.22' using strategy 'sat'
+EQY 16:24:29 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.23'..
+EQY 16:24:29 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.23' using strategy 'sat'
+EQY 16:24:29 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.24'..
+EQY 16:24:29 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.24' using strategy 'sat'
+EQY 16:24:29 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.25'..
+EQY 16:24:29 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.25' using strategy 'sat'
+EQY 16:24:29 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.26'..
+EQY 16:24:29 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.26' using strategy 'sat'
+EQY 16:24:29 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.27'..
+EQY 16:24:29 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.27' using strategy 'sat'
+EQY 16:24:29 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.28'..
+EQY 16:24:29 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.28' using strategy 'sat'
+EQY 16:24:29 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.29'..
+EQY 16:24:30 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.29' using strategy 'sat'
+EQY 16:24:30 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.3'..
+EQY 16:24:30 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.3' using strategy 'sat'
+EQY 16:24:30 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.30'..
+EQY 16:24:30 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.30' using strategy 'sat'
+EQY 16:24:30 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.31'..
+EQY 16:24:30 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.31' using strategy 'sat'
+EQY 16:24:30 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.4'..
+EQY 16:24:30 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.4' using strategy 'sat'
+EQY 16:24:30 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.5'..
+EQY 16:24:30 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.5' using strategy 'sat'
+EQY 16:24:30 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.6'..
+EQY 16:24:30 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.6' using strategy 'sat'
+EQY 16:24:30 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.7'..
+EQY 16:24:30 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.7' using strategy 'sat'
+EQY 16:24:30 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.8'..
+EQY 16:24:30 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.8' using strategy 'sat'
+EQY 16:24:30 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_insn.9'..
+EQY 16:24:30 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_insn.9' using strategy 'sat'
+EQY 16:24:30 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.0'..
+EQY 16:24:30 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.0' using strategy 'sat'
+EQY 16:24:30 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.1'..
+EQY 16:24:30 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.1' using strategy 'sat'
+EQY 16:24:30 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.10'..
+EQY 16:24:30 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.10' using strategy 'sat'
+EQY 16:24:30 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.11'..
+EQY 16:24:31 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.11' using strategy 'sat'
+EQY 16:24:31 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.12'..
+EQY 16:24:31 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.12' using strategy 'sat'
+EQY 16:24:31 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.13'..
+EQY 16:24:31 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.13' using strategy 'sat'
+EQY 16:24:31 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.14'..
+EQY 16:24:31 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.14' using strategy 'sat'
+EQY 16:24:31 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.15'..
+EQY 16:24:31 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.15' using strategy 'sat'
+EQY 16:24:31 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.16'..
+EQY 16:24:31 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.16' using strategy 'sat'
+EQY 16:24:31 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.17'..
+EQY 16:24:31 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.17' using strategy 'sat'
+EQY 16:24:31 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.18'..
+EQY 16:24:31 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.18' using strategy 'sat'
+EQY 16:24:31 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.19'..
+EQY 16:24:31 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.19' using strategy 'sat'
+EQY 16:24:31 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.2'..
+EQY 16:24:31 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.2' using strategy 'sat'
+EQY 16:24:31 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.20'..
+EQY 16:24:31 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.20' using strategy 'sat'
+EQY 16:24:31 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.21'..
+EQY 16:24:31 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.21' using strategy 'sat'
+EQY 16:24:31 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.22'..
+EQY 16:24:32 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.22' using strategy 'sat'
+EQY 16:24:32 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.23'..
+EQY 16:24:32 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.23' using strategy 'sat'
+EQY 16:24:32 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.24'..
+EQY 16:24:32 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.24' using strategy 'sat'
+EQY 16:24:32 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.25'..
+EQY 16:24:32 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.25' using strategy 'sat'
+EQY 16:24:32 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.26'..
+EQY 16:24:32 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.26' using strategy 'sat'
+EQY 16:24:32 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.27'..
+EQY 16:24:32 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.27' using strategy 'sat'
+EQY 16:24:32 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.28'..
+EQY 16:24:32 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.28' using strategy 'sat'
+EQY 16:24:32 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.29'..
+EQY 16:24:32 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.29' using strategy 'sat'
+EQY 16:24:32 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.3'..
+EQY 16:24:32 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.3' using strategy 'sat'
+EQY 16:24:32 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.30'..
+EQY 16:24:32 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.30' using strategy 'sat'
+EQY 16:24:32 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.31'..
+EQY 16:24:32 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.31' using strategy 'sat'
+EQY 16:24:32 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.4'..
+EQY 16:24:32 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.4' using strategy 'sat'
+EQY 16:24:32 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.5'..
+EQY 16:24:33 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.5' using strategy 'sat'
+EQY 16:24:33 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.6'..
+EQY 16:24:33 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.6' using strategy 'sat'
+EQY 16:24:33 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.7'..
+EQY 16:24:33 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.7' using strategy 'sat'
+EQY 16:24:33 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.8'..
+EQY 16:24:33 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.8' using strategy 'sat'
+EQY 16:24:33 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_pc.9'..
+EQY 16:24:33 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_pc.9' using strategy 'sat'
+EQY 16:24:33 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_rd'..
+EQY 16:24:33 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_rd' using strategy 'sat'
+EQY 16:24:33 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_val'..
+EQY 16:24:33 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_val' using strategy 'sat'
+EQY 16:24:33 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.retire_we'..
+EQY 16:24:33 [prop] run: Proved equivalence of partition 'rv32i_core_gold.retire_we' using strategy 'sat'
+EQY 16:24:33 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.rs1.0'..
+EQY 16:24:33 [prop] run: Proved equivalence of partition 'rv32i_core_gold.rs1.0' using strategy 'sat'
+EQY 16:24:33 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.rs1.1'..
+EQY 16:24:33 [prop] run: Proved equivalence of partition 'rv32i_core_gold.rs1.1' using strategy 'sat'
+EQY 16:24:33 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.rs1.2'..
+EQY 16:24:33 [prop] run: Proved equivalence of partition 'rv32i_core_gold.rs1.2' using strategy 'sat'
+EQY 16:24:33 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.rs1.3'..
+EQY 16:24:33 [prop] run: Proved equivalence of partition 'rv32i_core_gold.rs1.3' using strategy 'sat'
+EQY 16:24:33 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.rs1.4'..
+EQY 16:24:34 [prop] run: Proved equivalence of partition 'rv32i_core_gold.rs1.4' using strategy 'sat'
+EQY 16:24:34 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.rs2.0'..
+EQY 16:24:34 [prop] run: Proved equivalence of partition 'rv32i_core_gold.rs2.0' using strategy 'sat'
+EQY 16:24:34 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.rs2.1'..
+EQY 16:24:34 [prop] run: Proved equivalence of partition 'rv32i_core_gold.rs2.1' using strategy 'sat'
+EQY 16:24:34 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.rs2.2'..
+EQY 16:24:34 [prop] run: Proved equivalence of partition 'rv32i_core_gold.rs2.2' using strategy 'sat'
+EQY 16:24:34 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.rs2.3'..
+EQY 16:24:34 [prop] run: Proved equivalence of partition 'rv32i_core_gold.rs2.3' using strategy 'sat'
+EQY 16:24:34 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.rs2.4'..
+EQY 16:24:34 [prop] run: Proved equivalence of partition 'rv32i_core_gold.rs2.4' using strategy 'sat'
+EQY 16:24:34 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.shamt'..
+EQY 16:24:34 [prop] run: Proved equivalence of partition 'rv32i_core_gold.shamt' using strategy 'sat'
+EQY 16:24:34 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.0'..
+EQY 16:24:34 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.0' using strategy 'sat'
+EQY 16:24:34 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.1'..
+EQY 16:24:34 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.1' using strategy 'sat'
+EQY 16:24:34 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.10'..
+EQY 16:24:34 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.10' using strategy 'sat'
+EQY 16:24:34 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.11'..
+EQY 16:24:34 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.11' using strategy 'sat'
+EQY 16:24:34 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.12'..
+EQY 16:24:34 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.12' using strategy 'sat'
+EQY 16:24:34 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.13'..
+EQY 16:24:35 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.13' using strategy 'sat'
+EQY 16:24:35 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.14'..
+EQY 16:24:35 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.14' using strategy 'sat'
+EQY 16:24:35 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.15'..
+EQY 16:24:35 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.15' using strategy 'sat'
+EQY 16:24:35 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.16'..
+EQY 16:24:35 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.16' using strategy 'sat'
+EQY 16:24:35 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.17'..
+EQY 16:24:35 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.17' using strategy 'sat'
+EQY 16:24:35 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.18'..
+EQY 16:24:35 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.18' using strategy 'sat'
+EQY 16:24:35 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.19'..
+EQY 16:24:35 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.19' using strategy 'sat'
+EQY 16:24:35 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.2'..
+EQY 16:24:35 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.2' using strategy 'sat'
+EQY 16:24:35 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.20'..
+EQY 16:24:35 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.20' using strategy 'sat'
+EQY 16:24:35 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.21'..
+EQY 16:24:35 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.21' using strategy 'sat'
+EQY 16:24:35 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.22'..
+EQY 16:24:35 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.22' using strategy 'sat'
+EQY 16:24:35 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.23'..
+EQY 16:24:36 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.23' using strategy 'sat'
+EQY 16:24:36 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.24'..
+EQY 16:24:36 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.24' using strategy 'sat'
+EQY 16:24:36 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.25'..
+EQY 16:24:36 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.25' using strategy 'sat'
+EQY 16:24:36 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.26'..
+EQY 16:24:36 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.26' using strategy 'sat'
+EQY 16:24:36 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.27'..
+EQY 16:24:36 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.27' using strategy 'sat'
+EQY 16:24:36 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.28'..
+EQY 16:24:36 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.28' using strategy 'sat'
+EQY 16:24:36 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.29'..
+EQY 16:24:36 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.29' using strategy 'sat'
+EQY 16:24:36 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.3'..
+EQY 16:24:36 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.3' using strategy 'sat'
+EQY 16:24:36 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.30'..
+EQY 16:24:36 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.30' using strategy 'sat'
+EQY 16:24:36 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.31'..
+EQY 16:24:36 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.31' using strategy 'sat'
+EQY 16:24:36 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.4'..
+EQY 16:24:36 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.4' using strategy 'sat'
+EQY 16:24:36 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.5'..
+EQY 16:24:37 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.5' using strategy 'sat'
+EQY 16:24:37 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.6'..
+EQY 16:24:37 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.6' using strategy 'sat'
+EQY 16:24:37 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.7'..
+EQY 16:24:37 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.7' using strategy 'sat'
+EQY 16:24:37 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.8'..
+EQY 16:24:37 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.8' using strategy 'sat'
+EQY 16:24:37 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_data.9'..
+EQY 16:24:37 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_data.9' using strategy 'sat'
+EQY 16:24:37 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_strb.0'..
+EQY 16:24:37 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_strb.0' using strategy 'sat'
+EQY 16:24:37 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_strb.1'..
+EQY 16:24:37 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_strb.1' using strategy 'sat'
+EQY 16:24:37 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_strb.2'..
+EQY 16:24:37 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_strb.2' using strategy 'sat'
+EQY 16:24:37 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.st_strb.3'..
+EQY 16:24:37 [prop] run: Proved equivalence of partition 'rv32i_core_gold.st_strb.3' using strategy 'sat'
+EQY 16:24:37 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.wb_data'..
+EQY 16:24:37 [prop] run: Proved equivalence of partition 'rv32i_core_gold.wb_data' using strategy 'sat'
+EQY 16:24:37 [prop] run: Running strategy 'sat' on 'rv32i_core_gold.wb_en'..
+EQY 16:24:37 [prop] run: Proved equivalence of partition 'rv32i_core_gold.wb_en' using strategy 'sat'
+EQY 16:24:37 [prop] run: make -f strategies.mk summary
+EQY 16:24:37 [prop] run: make[1]: Entering directory '/home/toshn/gates/P4/prop'
+EQY 16:24:38 [prop] run: make[1]: Leaving directory '/home/toshn/gates/P4/prop'
+EQY 16:24:38 [prop] run: make: Leaving directory '/home/toshn/gates/P4/prop'
+EQY 16:24:38 [prop] run: finished (returncode=0)
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.wb_en
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.wb_data
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_strb.3
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_strb.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_strb.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_strb.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.31
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.30
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.29
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.28
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.27
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.26
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.25
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.24
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.23
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.22
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.21
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.20
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.19
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.18
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.17
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.16
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.15
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.14
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.13
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.12
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.11
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.10
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.9
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.8
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.7
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.6
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.5
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.4
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.3
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.st_data.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.shamt
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.rs2.4
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.rs2.3
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.rs2.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.rs2.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.rs2.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.rs1.4
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.rs1.3
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.rs1.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.rs1.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.rs1.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_we
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_val
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_rd
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.31
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.30
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.29
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.28
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.27
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.26
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.25
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.24
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.23
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.22
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.21
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.20
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.19
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.18
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.17
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.16
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.15
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.14
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.13
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.12
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.11
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.10
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.9
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.8
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.7
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.6
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.5
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.4
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.3
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_pc.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.31
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.30
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.29
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.28
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.27
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.26
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.25
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.24
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.23
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.22
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.21
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.20
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.19
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.18
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.17
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.16
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.15
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.14
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.13
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.12
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.11
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.10
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.9
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.8
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.7
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.6
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.5
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.4
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.3
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.retire_insn.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.9
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.8
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.7
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.6
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.5
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.4
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.3
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.31
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.30
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.29
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.28
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.27
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.26
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.25
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.24
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.23
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.22
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.21
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.20
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.19
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.18
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.17
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.16
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.15
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.14
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.13
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.12
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.11
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regs.10
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.regfile_clk
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.rd.4
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.rd.3
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.rd.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.rd.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.rd.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.pc_plus4
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.pc
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.opcode.6
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.opcode.5
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.opcode.4
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.opcode.3
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.opcode.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.opcode.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.opcode.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.next_pc
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.mem_addr
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.load_out
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.ld_half
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.ld_byte
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.31
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.30
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.29
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.28
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.27
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.26
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.25
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.24
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.23
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.22
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.21
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.20
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.19
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.18
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.17
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.16
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.15
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.14
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.13
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.12
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.11
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.10
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.9
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.8
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.7
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.6
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.5
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.4
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.3
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.insn.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.31
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.30
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.29
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.28
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.27
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.26
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.25
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.24
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.23
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.22
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.21
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.20
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.19
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.18
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.17
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.16
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.15
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.14
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.13
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.12
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.11
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.10
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.9
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.8
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.7
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.6
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.5
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.4
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.3
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_u.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.31
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.30
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.29
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.28
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.27
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.26
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.25
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.24
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.23
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.22
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.21
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.20
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.19
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.18
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.17
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.16
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.15
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.14
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.13
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.12
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.11
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.10
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.9
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.8
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.7
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.6
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.5
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.4
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.3
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_s.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.31
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.30
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.29
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.28
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.27
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.26
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.25
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.24
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.23
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.22
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.21
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.20
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.19
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.18
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.17
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.16
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.15
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.14
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.13
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.12
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.11
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.10
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.9
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.8
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.7
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.6
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.5
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.4
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.3
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_j.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.31
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.30
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.29
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.28
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.27
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.26
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.25
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.24
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.23
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.22
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.21
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.20
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.19
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.18
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.17
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.16
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.15
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.14
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.13
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.12
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.11
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.10
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.9
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.8
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.7
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.6
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.5
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.4
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.3
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_i.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.31
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.30
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.29
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.28
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.27
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.26
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.25
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.24
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.23
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.22
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.21
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.20
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.19
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.18
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.17
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.16
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.15
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.14
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.13
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.12
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.11
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.10
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.9
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.8
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.7
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.6
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.5
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.4
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.3
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imm_b.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.31
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.30
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.29
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.28
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.27
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.26
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.25
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.24
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.23
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.22
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.21
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.20
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.19
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.18
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.17
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.16
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.15
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.14
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.13
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.12
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.11
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.10
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.9
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.8
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.7
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.6
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.5
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.4
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.3
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.imem_addr.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.halted
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.halt_r
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.funct7.6
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.funct7.5
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.funct7.4
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.funct7.3
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.funct7.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.funct7.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.funct7.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.funct3.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.funct3.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.funct3.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_wstrb
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_we
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_wdata
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.31
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.30
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.29
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.28
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.27
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.26
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.25
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.24
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.23
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.22
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.21
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.20
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.19
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.18
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.17
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.16
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.15
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.14
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.13
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.12
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.11
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.10
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.9
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.8
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.7
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.6
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.5
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.4
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.3
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.2
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.dmem_addr.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.commit_we
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.byte_off.1
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.byte_off.0
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.branch_taken
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.b
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.alu_b
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.alt
+EQY 16:24:38 [prop] Successfully proved equivalence of partition rv32i_core_gold.a
+EQY 16:24:38 [prop] Warning: Failed to prove equivalence for 1/447 partitions:
+EQY 16:24:38 [prop] Failed to prove equivalence of partition rv32i_core_gold.alu_out
+EQY 16:24:38 [prop] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:46 (46)
+EQY 16:24:38 [prop] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:17 (17)
+EQY 16:24:38 [prop] DONE (FAIL, rc=2)
