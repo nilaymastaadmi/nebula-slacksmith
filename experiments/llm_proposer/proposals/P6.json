@@ -1,0 +1,13 @@
+{
+  "id": "P6",
+  "def_id": "operator_sharing_branch_comparator",
+  "tier": 1,
+  "latency_delta_k": 0,
+  "obligation_branch": "1 (combinational equivalence, EQY)",
+  "target_module": "rv32i_core",
+  "target_region": "branch_taken always block",
+  "anchor_start": "    reg branch_taken;\n    always @(*) begin",
+  "anchor_end": "    end\n\n    // ------------------------------------------------------------ data memory",
+  "rationale": "The branch unit infers four more comparators (BLT, BGE, BLTU, BGEU) plus two equality checks, all on the same (a,b) pair. Derive all six from one subtraction: equality from a zero-detect on the difference, unsigned order from the borrow, signed order from the sign-difference rule.",
+  "replacement": "    reg branch_taken;\n    wire [32:0] bdiff = {1'b0, a} - {1'b0, b};\n    wire        beq   = (bdiff[31:0] == 32'd0);\n    wire        bltu  = bdiff[32];\n    wire        blt   = (a[31] ^ b[31]) ? a[31] : bdiff[32];\n    always @(*) begin\n        case (funct3)\n            3'b000: branch_taken = beq;\n            3'b001: branch_taken = !beq;\n            3'b100: branch_taken = blt;\n            3'b101: branch_taken = !blt;\n            3'b110: branch_taken = bltu;\n            3'b111: branch_taken = !bltu;\n            default: branch_taken = 1'b0;\n        endcase"
+}

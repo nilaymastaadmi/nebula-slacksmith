@@ -1,0 +1,13 @@
+{
+  "id": "P2",
+  "def_id": "operator_sharing_shifter",
+  "tier": 1,
+  "latency_delta_k": 0,
+  "obligation_branch": "1 (combinational equivalence, EQY)",
+  "target_module": "rv32i_core",
+  "target_region": "alu_out always block",
+  "anchor_start": "    reg [31:0] alu_out;\n    always @(*) begin",
+  "anchor_end": "    end\n\n    // ---------------------------------------------------------------- branches",
+  "rationale": "Three independent 32-bit barrel shifters are inferred (SLL, SRL, SRA). Classic sharing: implement SLL as reverse(reverse(a) >> shamt), and SRL/SRA as one arithmetic shift over a 33-bit value whose top bit is the sign for SRA and 0 for SRL. Collapses three shifters to one.",
+  "replacement": "    reg [31:0] alu_out;\n    function [31:0] rev32;\n        input [31:0] x;\n        integer i;\n        begin\n            for (i = 0; i < 32; i = i + 1)\n                rev32[i] = x[31 - i];\n        end\n    endfunction\n    wire               sra_op   = (funct3 == 3'b101) && alt;\n    wire        [31:0] shin     = (funct3 == 3'b001) ? rev32(a) : a;\n    wire signed [32:0] shext    = {sra_op ? a[31] : 1'b0, shin};\n    wire        [32:0] shres    = shext >>> shamt;\n    always @(*) begin\n        case (funct3)\n            3'b000: alu_out = (opcode == OP_ALUR && alt) ? (a - alu_b) : (a + alu_b);\n            3'b001: alu_out = rev32(shres[31:0]);\n            3'b010: alu_out = ($signed(a) < $signed(alu_b)) ? 32'd1 : 32'd0;\n            3'b011: alu_out = (a < alu_b) ? 32'd1 : 32'd0;\n            3'b100: alu_out = a ^ alu_b;\n            3'b101: alu_out = shres[31:0];\n            3'b110: alu_out = a | alu_b;\n            3'b111: alu_out = a & alu_b;\n            default: alu_out = 32'd0;\n        endcase"
+}

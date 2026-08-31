@@ -1,0 +1,13 @@
+{
+  "id": "P3",
+  "def_id": "operator_sharing_comparator",
+  "tier": 1,
+  "latency_delta_k": 0,
+  "obligation_branch": "1 (combinational equivalence, EQY)",
+  "target_module": "rv32i_core",
+  "target_region": "alu_out always block",
+  "anchor_start": "    reg [31:0] alu_out;\n    always @(*) begin",
+  "anchor_end": "    end\n\n    // ---------------------------------------------------------------- branches",
+  "rationale": "SLT and SLTU each infer a separate 32-bit comparator, and funct3==000 already infers a subtractor. Derive both comparisons from one subtraction: the borrow out gives unsigned less-than, and for signed, if the sign bits differ then a<b iff a is negative, else the unsigned borrow is correct.",
+  "replacement": "    reg [31:0] alu_out;\n    wire [32:0] diff = {1'b0, a} - {1'b0, alu_b};\n    wire        lt_u = diff[32];\n    wire        lt_s = (a[31] ^ alu_b[31]) ? a[31] : diff[32];\n    always @(*) begin\n        case (funct3)\n            3'b000: alu_out = (opcode == OP_ALUR && alt) ? (a - alu_b) : (a + alu_b);\n            3'b001: alu_out = a << shamt;\n            3'b010: alu_out = {31'd0, lt_s};\n            3'b011: alu_out = {31'd0, lt_u};\n            3'b100: alu_out = a ^ alu_b;\n            3'b101: begin\n                if (alt) alu_out = $signed(a) >>> shamt;\n                else     alu_out = a >> shamt;\n            end\n            3'b110: alu_out = a | alu_b;\n            3'b111: alu_out = a & alu_b;\n            default: alu_out = 32'd0;\n        endcase"
+}

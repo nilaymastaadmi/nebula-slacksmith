@@ -1,0 +1,13 @@
+{
+  "id": "P1",
+  "def_id": "operator_sharing_addsub",
+  "tier": 1,
+  "latency_delta_k": 0,
+  "obligation_branch": "1 (combinational equivalence, EQY)",
+  "target_module": "rv32i_core",
+  "target_region": "alu_out always block",
+  "anchor_start": "    reg [31:0] alu_out;\n    always @(*) begin",
+  "anchor_end": "    end\n\n    // ---------------------------------------------------------------- branches",
+  "rationale": "The critical path runs through the ALU. funct3==000 currently infers TWO 32-bit carry chains, (a - alu_b) and (a + alu_b), selected by a mux, so the adder area and the mux delay are both on the path. Standard fix: one adder with a conditionally inverted B input and carry-in, a - b == a + ~b + 1.",
+  "replacement": "    reg [31:0] alu_out;\n    wire        sub_op = (opcode == OP_ALUR) && alt;\n    wire [31:0] addend = sub_op ? ~alu_b : alu_b;\n    wire [31:0] sum    = a + addend + {31'd0, sub_op};\n    always @(*) begin\n        case (funct3)\n            3'b000: alu_out = sum;\n            3'b001: alu_out = a << shamt;\n            3'b010: alu_out = ($signed(a) < $signed(alu_b)) ? 32'd1 : 32'd0;\n            3'b011: alu_out = (a < alu_b) ? 32'd1 : 32'd0;\n            3'b100: alu_out = a ^ alu_b;\n            3'b101: begin\n                if (alt) alu_out = $signed(a) >>> shamt;\n                else     alu_out = a >> shamt;\n            end\n            3'b110: alu_out = a | alu_b;\n            3'b111: alu_out = a & alu_b;\n            default: alu_out = 32'd0;\n        endcase"
+}

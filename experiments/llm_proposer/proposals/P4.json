@@ -1,0 +1,13 @@
+{
+  "id": "P4",
+  "def_id": "mux_priority_to_parallel",
+  "tier": 1,
+  "latency_delta_k": 0,
+  "obligation_branch": "1 (combinational equivalence, EQY)",
+  "target_module": "rv32i_core",
+  "target_region": "alu_out always block",
+  "anchor_start": "    reg [31:0] alu_out;\n    always @(*) begin",
+  "anchor_end": "    end\n\n    // ---------------------------------------------------------------- branches",
+  "rationale": "The case statement synthesizes to a mux tree whose select path (funct3) is late-arriving because funct3 comes straight off imem_data. One-hot decode of funct3 and an OR of masked results makes every arm independent, so the select decode happens in parallel with the datapath instead of after it. Legal here because a case on a 3-bit value is exhaustive and mutually exclusive by construction.",
+  "replacement": "    reg [31:0] alu_out;\n    wire [7:0] f3_oh = (8'd1 << funct3);\n    wire [31:0] r_add = (opcode == OP_ALUR && alt) ? (a - alu_b) : (a + alu_b);\n    wire [31:0] r_sll = a << shamt;\n    wire [31:0] r_slt = ($signed(a) < $signed(alu_b)) ? 32'd1 : 32'd0;\n    wire [31:0] r_sltu= (a < alu_b) ? 32'd1 : 32'd0;\n    wire [31:0] r_xor = a ^ alu_b;\n    wire [31:0] r_shr = alt ? ($signed(a) >>> shamt) : (a >> shamt);\n    wire [31:0] r_or  = a | alu_b;\n    wire [31:0] r_and = a & alu_b;\n    always @(*) begin\n        alu_out = ({32{f3_oh[0]}} & r_add)\n                | ({32{f3_oh[1]}} & r_sll)\n                | ({32{f3_oh[2]}} & r_slt)\n                | ({32{f3_oh[3]}} & r_sltu)\n                | ({32{f3_oh[4]}} & r_xor)\n                | ({32{f3_oh[5]}} & r_shr)\n                | ({32{f3_oh[6]}} & r_or)\n                | ({32{f3_oh[7]}} & r_and);"
+}

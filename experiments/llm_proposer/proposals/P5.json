@@ -1,0 +1,13 @@
+{
+  "id": "P5",
+  "def_id": "pipeline_cut_rigid",
+  "tier": 3,
+  "latency_delta_k": 1,
+  "obligation_branch": "2 (k-padded miter, k=1)",
+  "target_module": "rv32i_core",
+  "target_region": "alu_out always block",
+  "anchor_start": "    reg [31:0] alu_out;\n    always @(*) begin",
+  "anchor_end": "    end\n\n    // ---------------------------------------------------------------- branches",
+  "rationale": "The ALU cone is the longest combinational stretch on the critical path. Registering alu_out cuts it, trading one cycle of latency for a shorter path. Declared as latency-changing (k=1) so the k-padded obligation is generated rather than a plain equivalence check.",
+  "replacement": "    reg [31:0] alu_comb;\n    reg [31:0] alu_out;\n    always @(*) begin\n        case (funct3)\n            3'b000: alu_comb = (opcode == OP_ALUR && alt) ? (a - alu_b) : (a + alu_b);\n            3'b001: alu_comb = a << shamt;\n            3'b010: alu_comb = ($signed(a) < $signed(alu_b)) ? 32'd1 : 32'd0;\n            3'b011: alu_comb = (a < alu_b) ? 32'd1 : 32'd0;\n            3'b100: alu_comb = a ^ alu_b;\n            3'b101: begin\n                if (alt) alu_comb = $signed(a) >>> shamt;\n                else     alu_comb = a >> shamt;\n            end\n            3'b110: alu_comb = a | alu_b;\n            3'b111: alu_comb = a & alu_b;\n            default: alu_comb = 32'd0;\n        endcase\n    end\n\n    always @(posedge clk or negedge rst_n) begin\n        if (!rst_n) alu_out <= 32'd0;\n        else        alu_out <= alu_comb;"
+}
