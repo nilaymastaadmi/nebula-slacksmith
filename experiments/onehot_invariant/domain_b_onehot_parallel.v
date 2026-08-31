@@ -9,17 +9,14 @@
 // design doc. k=0.
 //
 // This transform is ONLY eligible because the previous one made it so:
-// fsm_reencode(domain_b, state_r, onehot) made state_r one-hot by
-// construction, and that invariant is formally discharged, unbounded, for
-// both this design and domain_b_onehot in experiments/onehot_invariant/
-// (added 2026-08-31; the original comment here overclaimed that the
-// fsm_reencode PDR proof itself proved one-hotness -- it proved
-// decoded-state correspondence, which cannot distinguish one-hot from
-// multi-hot). With that link discharged, the if/else-if chain's mutual
-// exclusivity is a proven invariant, not a coincidence of program order,
-// which is what makes the design doc's flagship precondition -- pairwise
-// mutual exclusivity of the select conditions -- PROVEN rather than hoped,
-// and why this transform is picked second: it composes with the prior one.
+// fsm_reencode(domain_b, state_r, onehot) proved state_r is genuinely
+// one-hot for all time after reset (PDR, experiments/fsm_reencode/), so the
+// original if/else-if chain's mutual-exclusivity is no longer a coincidence
+// of program order, it is a proven invariant. That is what makes the
+// flagship precondition from the design doc -- pairwise mutual exclusivity
+// of the select conditions -- something that can be PROVEN rather than
+// merely hoped, and is why this transform is picked second, not first: it
+// composes with the prior one.
 //
 // The transition table below was derived by hand from domain_b_onehot.v's
 // exact if/else-if chain (every branch read and transcribed, not

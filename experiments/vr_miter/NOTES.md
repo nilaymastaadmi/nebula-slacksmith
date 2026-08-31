@@ -202,3 +202,14 @@ correct. It was correct because `mac_vr_opt` actually works, not because
 the check confirmed it could not have been vacuous. The gap in the method
 existed unnoticed from day one until this session built something broken
 enough to expose it.
+
+## Correction to Addendum 2 (2026-08-31, audit finding F5)
+
+Addendum 2 described the cover statement as already "appended to
+miter_vr_stream.sv". The audit found the file did not contain it: the 27 Aug
+check ran against a scratch copy and the repo file was never edited. Fixed
+2026-08-31: the statement is now genuinely in miter_vr_stream.sv, and the
+check was rerun against the committed file at its committed W=8 default
+(not the W=4 of the original scratch run): REACHED, 0s, log in
+logs/cover_w8_2026-08-31.log. The addendum's conclusion stands unchanged;
+its file claim is now true instead of intended.

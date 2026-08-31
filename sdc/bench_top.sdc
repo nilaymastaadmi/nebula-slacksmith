@@ -127,7 +127,13 @@ set_false_path -from [get_ports {rst_a_n rst_b_n rst_c_n rst_d_n rst_e_n}]
 #    GENERATED clock), not clk_a -- domain_a accumulates on the divided
 #    clock even though its front end samples on the primary. Getting
 #    this wrong is exactly the class of mistake that hid 41% of the real
-#    critical path on rv32i_core (see 2026-08-14_first_calibrated_wns.md).
+#    data-path critical path on rv32i_core: worst DATA-path slack -8.527
+#    (imem_data->retire_val) vs -1.114 reg-to-reg with I/O unconstrained.
+#    Re-derived and made precise 2026-08-31 with a saved recipe (see
+#    experiments/rv32i_wns/): tool-level report_wns on those same inputs is
+#    -32.30, dominated by a reset RECOVERY artifact because that SDC times
+#    rst_n without a false-path -- a second, independent lesson in the same
+#    direction, and the reason section 4 above false-paths the resets here.
 #
 #    Input/output delays are set to roughly 30% of the relevant domain's
 #    period, a standard default in the absence of a real board-level

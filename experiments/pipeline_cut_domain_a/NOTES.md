@@ -58,9 +58,23 @@ cross-domain guess this project has been careful not to make (see the SDC's
 own documented reset-phase assumption for the same reason). Rather than
 guess, the obligation is scoped to the one point where k=1 is unambiguous:
 `clamped_w`/`clamped_r` and their paired valid signals, both still entirely
-within the `clk` domain, before anything crosses to `clk_div`. Everything
-downstream is identical logic between the two designs, so proving
-equivalence up to this boundary is sufficient.
+within the `clk` domain, before anything crosses to `clk_div`.
+
+**CORRECTION 2026-08-31 (audit finding F2).** The original text here ended
+"so proving equivalence up to this boundary is sufficient". That sufficiency
+claim is FALSE, demonstrated by execution: `tb_divergence.v` (this
+directory, log in `logs/tb_divergence_2026-08-31.log`) drives both variants
+with identical stimulus and a real /2 divider, and `mac_result` diverges
+permanently (`002a` vs `0031`). Mechanism: `cap_r` samples on `clk_div` at
+half the `clk` rate, so a 1-clk delay in its driver selects a different
+subsequence of the stream, not a shifted copy of it. The correct statement
+of this experiment's result: the transform is a **boundary-proven
+microarchitectural change**. The PROVEN verdict below stands for exactly
+the property the miter asserts, and nothing more. This also corrects the
+framing of the Step 6 timing table: those deltas are the cost of the
+microarchitectural change, not of a behaviour-preserving transform.
+Decision of record:
+`~/jarvis-vault/Decisions/2026-08-31-nebula-pipeline-cut-claim-refuted.md`.
 
 Precondition P1 (design doc): every path from the cut to any consumer
 crosses it exactly once. Holds by construction here -- `clamped_r` has

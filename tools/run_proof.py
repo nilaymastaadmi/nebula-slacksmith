@@ -37,6 +37,7 @@ Requires `sby` on PATH (this project's OSS CAD Suite build).
 import argparse
 import os
 import re
+import signal
 import subprocess
 import sys
 
@@ -101,19 +102,45 @@ def run_task(sby_bin: str, sby_path: str, task: str, workdir: str, timeout: int)
     run_dir = os.path.join(workdir, f"{os.path.splitext(os.path.basename(sby_path))[0]}_{task}")
     if os.path.isdir(run_dir):
         subprocess.run(["rm", "-rf", run_dir])
+    # start_new_session makes sby a SESSION leader (setsid). On timeout the
+    # whole tree must die, and a plain killpg is NOT enough: measured
+    # directly (2026-08-31, audit finding F7 follow-up), sby places each
+    # engine in its own process group (observed: sby pid 567 pgid 567,
+    # yosys-abc pid 625 pgid 625), so killing sby's group leaves the engine
+    # running; it dies later only if a write to its broken pipe happens to
+    # raise SIGPIPE, which is luck, not cleanup. The original version was
+    # worse still: subprocess.run(timeout=) kills only sby itself (orphaned
+    # z3 observed live twice this project). The robust kill is by SESSION:
+    # every engine stays in sby's session even with its own group, and
+    # pkill -s <sid> takes the whole tree. killpg stays as a fallback for
+    # environments without pkill. Validated: 6s-timeout run on a 48s proof,
+    # ps during the run shows the split groups, ps after shows 0 survivors.
+    proc = subprocess.Popen(
+        [sby_bin, "-f", os.path.basename(sby_path), task],
+        cwd=workdir,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        start_new_session=True,
+    )
     try:
-        proc = subprocess.run(
-            [sby_bin, "-f", os.path.basename(sby_path), task],
-            cwd=workdir,
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-        )
-        return proc.returncode, proc.stdout + proc.stderr, False
-    except subprocess.TimeoutExpired as e:
-        out = (e.stdout or b"").decode("utf-8", "replace") if isinstance(e.stdout, bytes) else (e.stdout or "")
-        err = (e.stderr or b"").decode("utf-8", "replace") if isinstance(e.stderr, bytes) else (e.stderr or "")
-        return None, out + err, True
+        out, _ = proc.communicate(timeout=timeout)
+        return proc.returncode, out or "", False
+    except subprocess.TimeoutExpired:
+        killed = False
+        try:
+            subprocess.run(["pkill", "-9", "-s", str(proc.pid)],
+                           capture_output=True, timeout=10)
+            killed = True
+        except (FileNotFoundError, subprocess.TimeoutExpired):
+            pass
+        if not killed:
+            try:
+                os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+            except (ProcessLookupError, PermissionError):
+                pass
+        out, _ = proc.communicate()
+        return None, out or "", True
 
 
 def parse_result(task: str, log: str, timed_out: bool):
@@ -141,6 +168,10 @@ def parse_result(task: str, log: str, timed_out: bool):
             fail_m = re.search(r"failed assertion ([\w.]+)", log)
             prop = fail_m.group(1) if fail_m else "unknown property"
             return "FAIL", f"{prop}, {secs}s"
+        err_m = re.search(r"DONE \(ERROR.*?\)|ERROR: (.+)", log)
+        if err_m:
+            detail = (err_m.group(1) or "setup error").strip()
+            return "ERROR", f"{detail[:100]} -- inspect raw log"
         return "UNPARSED", "no DONE (PASS|FAIL) line found -- inspect raw log"
 
     if task == "cover":

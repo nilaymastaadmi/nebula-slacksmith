@@ -110,17 +110,18 @@ def sta_slack(sta_bin, liberty, mapped_path, top, sdc, clocks, workdir):
 
     results = {}
     for clk in clocks:
-        m = re.search(
-            rf"---CLOCK:{re.escape(clk)}---.*?slack \(MET\)\s*\n?\s*([\-0-9.]+)\s+slack \(MET\)",
-            out, re.S,
-        )
-        # OpenSTA prints "slack (MET)" once at the end of the path report,
-        # with the numeric value on the line just above it -- match the
-        # LAST "<number>   slack (MET)" occurrence within this clock's block.
+        # OpenSTA ends a path report with "<number>   slack (MET)" or
+        # "<number>   slack (VIOLATED)". Match BOTH. The original version of
+        # this parser matched only MET, so any variant that broke timing
+        # reported UNPARSED instead of the negative number -- audit finding
+        # F6, 2026-08-31: the measurement tool was blind to the one outcome
+        # that matters most. Fixed and validated with a deliberate
+        # negative-control run (tightened scratch SDC, both columns report
+        # negative slack, no UNPARSED).
         block_m = re.search(rf"---CLOCK:{re.escape(clk)}---(.*?)(?=---CLOCK:|\Z)", out, re.S)
         slack = None
         if block_m:
-            nums = re.findall(r"([\-0-9.]+)\s+slack \(MET\)", block_m.group(1))
+            nums = re.findall(r"([\-0-9.]+)\s+slack \((?:MET|VIOLATED)\)", block_m.group(1))
             if nums:
                 slack = float(nums[-1])
         results[clk] = slack

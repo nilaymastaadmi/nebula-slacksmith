@@ -5,15 +5,20 @@ OpenSTA (this repo's build).
 
 ## Why this transform, second
 
-`fsm_reencode(domain_b, state_r, onehot)` proved `state_r` is genuinely one-hot
-for all time after reset (PDR, `experiments/fsm_reencode/`). That proof is what
-makes this transform legal: the design's next-state decode is a 10-level
-`if/else-if` chain whose mutual exclusivity, before the prior transform, was
-only a coincidence of program order. After it, exclusivity is a proven
-invariant, and the design doc's flagship mux_priority_to_parallel precondition
--- pairwise mutual exclusivity of the select conditions -- can be *assumed
-from a proof*, not merely hoped. Picked specifically to demonstrate transforms
-composing, not as an arbitrary second example.
+`fsm_reencode(domain_b, state_r, onehot)` made `state_r` one-hot by
+construction (reset sets exactly one bit; every next-state assignment sets
+exactly one bit). CORRECTION 2026-08-31 (audit finding F1): the original text
+here said fsm_reencode's PDR proof "proved state_r is genuinely one-hot". It
+did not -- that proof established decoded-state correspondence through
+decode_state(), a priority encoder that cannot distinguish one-hot from
+multi-hot. One-hotness is now formally discharged, unbounded, for BOTH
+designs in `experiments/onehot_invariant/` (and it is the first property in
+this project that k-induction closes on its own). With that link discharged,
+the rest stands: the 10-level `if/else-if` chain's mutual exclusivity is a
+proven invariant rather than a coincidence of program order, and the design
+doc's flagship precondition -- pairwise mutual exclusivity of the select
+conditions -- is assumed from a proof, not hoped. Picked specifically to
+demonstrate transforms composing, not as an arbitrary second example.
 
 ## Step 1 -- the transition table, transcribed by hand before writing any code
 

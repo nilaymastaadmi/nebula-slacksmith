@@ -36,12 +36,13 @@ pdr:   abc pdr
 cover: smtbmc z3
 
 [script]
-read_verilog -formal -sv sync_fifo.v
-read_verilog -formal -sv sync_fifo_pipelined.v
-read_verilog -formal -sv miter_sync_fifo_stream.sv
-prep -top miter_sync_fifo_stream
+read_verilog -formal -sv domain_b_onehot_raw_fv.v
+read_verilog -formal -sv domain_b_onehot_parallel_fv.v
+read_verilog -formal -sv onehot_check.sv
+prep -top onehot_check
 
 [files]
-sync_fifo.v
-sync_fifo_pipelined.v
-miter_sync_fifo_stream.sv
+domain_b_onehot_raw_fv.v
+domain_b_onehot_parallel_fv.v
+decode_state.vh
+onehot_check.sv

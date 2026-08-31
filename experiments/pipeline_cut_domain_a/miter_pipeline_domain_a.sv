@@ -17,11 +17,23 @@
 // still entirely within the clk domain, before anything crosses to clk_div.
 // Everything downstream of that point (cap_r capture, the accumulate loop,
 // cnt_r/ctrl_r window logic, result_r, a2b_wr_en/wdata) is byte-for-byte
-// identical between the two designs, so proving equivalence up to this
-// boundary is sufficient: identical logic fed identical inputs at identical
-// relative timing produces identical outputs, and this miter proves the
-// inputs to that identical logic (cap_r/cap_v_r's own drivers) are related
-// by exactly the padding relationship claimed.
+// identical between the two designs. CORRECTION 2026-08-31 (audit finding
+// F2): this header originally went one step further and claimed the
+// boundary proof was SUFFICIENT for module-level equivalence ("identical
+// logic fed identical inputs at identical relative timing produces
+// identical outputs"). That is false, and it was demonstrated by execution,
+// not argument: tb_divergence.v in this directory drives both variants with
+// identical stimulus and a real /2 divider, and mac_result diverges
+// permanently (002a vs 0031). The mechanism: cap_r samples on clk_div at
+// half the clk rate, so a 1-clk delay in its driver does not shift the
+// captured stream, it selects a DIFFERENT SUBSEQUENCE of it (different
+// phase of the stride-2 sampling). The transform is therefore a
+// boundary-proven MICROARCHITECTURAL CHANGE, not a proven drop-in
+// equivalent of the comb variant. What this miter proves is exactly and
+// only what its assertions state: the drivers of cap_r/cap_v_r in the two
+// designs are related by the k=1 padding relationship, within the clk
+// domain. Decision of record: ~/jarvis-vault/Decisions/
+// 2026-08-31-nebula-pipeline-cut-claim-refuted.md.
 //
 // The _fv wrapper pattern (tap an internal signal to a real port) is reused
 // from experiments/fsm_reencode/ and experiments/mux_priority_to_parallel/,

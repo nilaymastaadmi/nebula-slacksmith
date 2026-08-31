@@ -1,0 +1,12 @@
+$ iverilog -g2001 -o f2.out rtl/domain_a_clamped_comb.v rtl/domain_a_clamped_pipelined.v tb_divergence.v && vvp f2.out
+DIVERGED t=215000  comb=002a  pipelined=0000
+DIVERGED t=225000  comb=002a  pipelined=0000
+DIVERGED t=235000  comb=002a  pipelined=0031
+DIVERGED t=245000  comb=002a  pipelined=0031
+DIVERGED t=255000  comb=002a  pipelined=0031
+
+RESULT: mac_result diverges permanently between the comb and pipelined
+variants under identical stimulus with the real /2 divider. Demonstrates
+audit finding F2: the boundary proof does not imply module-level
+equivalence; clk_div's stride-2 sampling of a 1-clk-delayed driver captures
+a different subsequence. Run 2026-08-31.

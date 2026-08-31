@@ -14,13 +14,17 @@
 // reported in logs/, not discarded.
 //
 // The claim that matters is narrower and is what this miter proves: under
-// the precondition that state_r is one-hot -- proven separately, unbounded,
-// for domain_b_onehot in experiments/fsm_reencode/ -- the two designs are
-// equivalent. `assume ($onehot(u_ref.dbg_state))` states that precondition
-// explicitly rather than leaving it implicit; it is asserted on BOTH
-// instances (not just gold), because the claim is symmetric: if either
-// design's state ever left the one-hot subspace the comparison would no
-// longer be meaningful for either side, not just one.
+// the precondition that state_r is one-hot, the two designs are equivalent.
+// The precondition is stated as explicit ASSUMES below, in the manual form
+// (s != 0) && ((s & (s-1)) == 0), on BOTH instances, because the claim is
+// symmetric: if either design's state left the one-hot subspace the
+// comparison would stop being meaningful for either side. CORRECTION
+// 2026-08-31 (audit finding F1): this header originally said one-hotness
+// was "proven separately, unbounded, in experiments/fsm_reencode/". That
+// was drift -- the fsm_reencode proof established decoded-state
+// correspondence, which cannot distinguish one-hot from multi-hot. The
+// assumption used here is now actually discharged, unbounded, for both
+// instantiated designs in experiments/onehot_invariant/.
 //
 // Reused from experiments/fsm_reencode/: the _fv wrapper pattern (tap an
 // internal register to a real port), because Yosys's -formal frontend does

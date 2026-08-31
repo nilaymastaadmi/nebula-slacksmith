@@ -1,0 +1,266 @@
+SBY  5:09:34 [miter_sync_fifo_stream_pdr] Removing directory '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/sync_fifo_stream/miter_sync_fifo_stream_pdr'.
+SBY  5:09:34 [miter_sync_fifo_stream_pdr] Copy '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/sync_fifo_stream/sync_fifo.v' to '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/sync_fifo_stream/miter_sync_fifo_stream_pdr/src/sync_fifo.v'.
+SBY  5:09:34 [miter_sync_fifo_stream_pdr] Copy '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/sync_fifo_stream/sync_fifo_pipelined.v' to '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/sync_fifo_stream/miter_sync_fifo_stream_pdr/src/sync_fifo_pipelined.v'.
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] Copy '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/sync_fifo_stream/miter_sync_fifo_stream.sv' to '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/sync_fifo_stream/miter_sync_fifo_stream_pdr/src/miter_sync_fifo_stream.sv'.
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: abc pdr
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] base: starting process "cd miter_sync_fifo_stream_pdr/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] base: finished (returncode=0)
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] prep: starting process "cd miter_sync_fifo_stream_pdr/model; yosys -ql design_prep.log design_prep.ys"
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] prep: finished (returncode=0)
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] aig: starting process "cd miter_sync_fifo_stream_pdr/model; yosys -ql design_aiger.log design_aiger.ys"
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\clk like $anyseq.
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\wdata [0] like $anyseq.
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\wdata [1] like $anyseq.
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\wdata [2] like $anyseq.
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\wdata [3] like $anyseq.
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\wdata [4] like $anyseq.
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\wdata [5] like $anyseq.
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\wdata [6] like $anyseq.
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\wdata [7] like $anyseq.
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\rst_n like $anyseq.
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] aig: Warning: Treating undriven bit miter_sync_fifo_stream.\rinc like $anyseq.
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] aig: Warning: Treating a total of 11 undriven bits in miter_sync_fifo_stream like $anyseq.
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] aig: finished (returncode=0)
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: starting process "cd miter_sync_fifo_stream_pdr; yosys-abc -c 'read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw'"
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: ======== ABC command line "read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw"
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: Warning: The last 2 outputs are interpreted as constraints.
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: VarMax = 300. FrameMax = 10000. QueMax = 0. TimeMax = 119. MonoCNF = no. SkipGen = no. SolveAll = no.
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 1 : 0 1                                                                 1     2      0.00 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 2 : 0 9 13                                                              6    29      0.01 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 3 : 0 5 4 5 ~5                                                           0    29      0.01 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 4 : 0 5 4 4 1 ~5                                                         0    29      0.01 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 5 : 0 7 19 22 4 9 ~5                                                    18    35      0.02 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 5 : 0 7 22 38 33 24 ~5                                                  28    40      0.03 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 5 : 0 7 22 43 51 56 ~5                                                  27    43      0.05 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 5 : 0 7 22 55 70 90 ~5                                                   7    79      0.07 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 5 : 0 7 22 68 91 124 ~5                                                  6    93      0.09 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 5 : 0 7 22 72 97 136 ~5                                                  6    94      0.10 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 6 : 0 3 8 51 62 115 14 ~18                                               0    94      0.12 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 7 : 0 3 8 49 65 135 39 7 ~18                                            25    96      0.15 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 7 : 0 3 8 49 65 135 69 38 ~18                                           29    96      0.17 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 7 : 0 3 8 49 65 136 98 67 ~18                                           27    98      0.19 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 7 : 0 3 8 49 67 138 115 104 ~18                                         27   104      0.21 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 7 : 0 3 8 49 69 141 135 139 ~18                                          6   110      0.23 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 7 : 0 3 8 49 70 141 137 146 ~18                                          5   112      0.24 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: Timing out on output 0 in frame 7 (retrying in next anytime pass).
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 7 : 0 3 8 49 70 141 137 146 ~18                                          0   112      0.24 sec  T/O =  1  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 8 : 0 3 8 49 53 62 127 106 80 ~23                                        0   112      0.27 sec  T/O =  1  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: All outputs solved or timed out in frame 8.
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: Starting new anytime pass, reusing clauses.
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 1 : 0 239 ~71                                                            0     0      0.03 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 2 : 0 1 238 ~71                                                          0     0      0.03 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 3 : 0 1 1 237 ~71                                                        0     0      0.03 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 4 : 0 1 1 20 217 ~71                                                     0     0      0.03 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 5 : 0 1 1 20 21 196 ~71                                                  0     0      0.04 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 6 : 0 1 1 20 21 33 163 ~71                                               0     0      0.04 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 7 : 0 1 1 20 25 42 69 132 ~71                                            7    45      0.07 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 7 : 0 1 1 20 28 50 85 158 ~71                                            7    69      0.09 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 7 : 0 1 1 20 30 59 101 185 ~71                                           7    69      0.12 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 7 : 0 1 1 20 30 59 105 192 ~71                                           7    75      0.12 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 8 : 0 1 1 20 21 40 83 126 60 ~99                                        0    75      0.15 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 9 : 0 1 1 20 21 40 88 150 58 28 ~99                                    25    88      0.19 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 9 : 0 1 1 20 21 40 88 154 91 54 ~99                                    33    90      0.22 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 9 : 0 1 1 20 21 40 88 155 119 88 ~99                                   32    96      0.24 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 9 : 0 1 1 20 21 40 89 162 133 127 ~99                                  29    98      0.26 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 9 : 0 1 1 20 21 40 91 175 146 154 ~99                                   9   108      0.29 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 9 : 0 1 1 20 21 40 91 177 148 154 ~99                                   7   108      0.29 sec  T/O =  0  PRV =  0
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: Timing out on output 0 in frame 9 (retrying in next anytime pass).
+SBY  5:09:35 [miter_sync_fifo_stream_pdr] engine_0: 9 : 0 1 1 20 21 40 91 177 148 154 ~99                                   0   108      0.29 sec  T/O =  1  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 10 : 0 1 1 20 21 30 37 62 120 182 51 ~144                                 0   108      0.34 sec  T/O =  1  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: All outputs solved or timed out in frame 10.
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: Starting new anytime pass, reusing clauses.
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 1 : 0 348 ~155                                                           0     0      0.06 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 2 : 0 1 347 ~155                                                         0     0      0.06 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 3 : 0 1 1 346 ~155                                                       0     0      0.06 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 4 : 0 1 1 20 326 ~155                                                    0     0      0.06 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 5 : 0 1 1 20 21 305 ~155                                                 0     0      0.06 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 6 : 0 1 1 20 21 7 298 ~155                                               0     0      0.07 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 7 : 0 1 1 20 21 7 17 281 ~155                                            0     0      0.07 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 8 : 0 1 1 20 21 7 17 32 249 ~155                                         0     0      0.07 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 9 : 0 1 1 20 21 7 20 47 69 215 ~155                                      8    37      0.11 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 9 : 0 1 1 20 21 7 22 62 82 240 ~155                                     10    61      0.14 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 9 : 0 1 1 20 21 7 25 74 95 268 ~155                                      8    74      0.16 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 9 : 0 1 1 20 21 7 29 88 107 291 ~155                                     8    81      0.19 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 9 : 0 1 1 20 21 7 30 100 115 307 ~155                                    9    83      0.21 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 10 : 0 1 1 20 21 7 18 35 108 265 76 ~193                                 12    97      0.29 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 10 : 0 1 1 20 21 7 18 35 110 285 108 ~193                                15   101      0.31 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 7 18 32 57 249 203 32 ~204                              11   109      0.39 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 7 18 32 60 256 228 60 ~204                              13   112      0.42 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 7 18 32 64 266 254 81 ~204                              19   115      0.44 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 7 18 32 65 272 268 104 ~204                             17   121      0.46 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 7 18 32 70 279 283 130 ~204                              9   129      0.49 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 7 18 32 73 283 304 159 ~204                              8   136      0.52 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 7 18 32 78 287 319 189 ~204                              8   144      0.55 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 7 18 32 79 292 328 201 ~204                              9   144      0.57 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: Timing out on output 0 in frame 11 (retrying in next anytime pass).
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 7 18 32 79 292 328 201 ~204                              0   144      0.57 sec  T/O =  1  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 12 : 0 1 1 20 21 7 17 30 56 146 276 236 58 ~247                           0   144      0.66 sec  T/O =  1  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: All outputs solved or timed out in frame 12.
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: Starting new anytime pass, reusing clauses.
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 1 : 0 561 ~250                                                           0     0      0.16 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 2 : 0 1 560 ~250                                                         0     0      0.16 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 3 : 0 1 1 559 ~250                                                       0     0      0.16 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 4 : 0 1 1 20 539 ~250                                                    0     0      0.16 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 5 : 0 1 1 20 21 518 ~250                                                 0     0      0.16 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 6 : 0 1 1 20 21 6 512 ~250                                               0     0      0.16 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 7 : 0 1 1 20 21 6 5 507 ~250                                             0     0      0.17 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 8 : 0 1 1 20 21 6 5 6 501 ~250                                           0     0      0.17 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 9 : 0 1 1 20 21 6 5 6 13 488 ~250                                        0     0      0.17 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 10 : 0 1 1 20 21 6 5 6 13 85 403 ~250                                     0     0      0.18 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 6 5 6 16 96 176 264 ~250                                 8    42      0.23 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 6 5 6 17 108 197 287 ~250                               11    58      0.25 sec  T/O =  0  PRV =  0
+SBY  5:09:36 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 6 5 6 19 121 217 311 ~250                                9    72      0.28 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 6 5 6 22 133 238 331 ~250                               13    85      0.31 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 6 5 6 25 145 261 353 ~250                               11    87      0.34 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 6 5 6 28 154 282 374 ~250                               10    95      0.37 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 6 5 6 31 164 301 398 ~250                               10   106      0.40 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 6 5 6 31 177 320 423 ~250                                9   116      0.43 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 6 5 6 34 189 341 443 ~250                               12   118      0.46 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 20 21 6 5 6 34 191 344 453 ~250                                8   120      0.47 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 12 : 0 1 1 20 21 6 5 6 14 77 261 456 122 ~265                            13   135      0.61 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 12 : 0 1 1 20 21 6 5 6 15 80 269 481 144 ~265                            22   140      0.64 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 12 : 0 1 1 20 21 6 5 6 16 82 276 505 170 ~265                            19   143      0.67 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 12 : 0 1 1 20 21 6 5 6 16 82 277 525 198 ~265                            10   145      0.70 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 20 21 6 5 6 17 77 165 438 325 57 ~283                         14   153      0.84 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 20 21 6 5 6 17 79 174 450 343 79 ~283                         19   154      0.88 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 20 21 6 5 6 17 79 178 461 365 94 ~283                         21   155      0.91 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 20 21 6 5 6 17 79 178 464 392 123 ~283                        12   156      0.94 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 20 21 6 5 6 17 79 178 468 420 156 ~283                        13   160      0.98 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 20 21 6 5 6 18 83 184 474 440 168 ~283                        13   162      1.01 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 20 21 6 5 6 19 85 186 479 458 191 ~283                        14   164      1.04 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 20 21 6 5 6 20 88 190 483 478 214 ~283                        11   164      1.08 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 20 21 6 5 6 20 88 192 491 497 238 ~283                        15   168      1.12 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 20 21 6 5 6 21 92 196 502 515 253 ~283                        15   172      1.15 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 20 21 6 5 6 22 97 202 513 527 266 ~283                        14   174      1.19 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 20 21 6 5 6 22 97 202 514 537 284 ~283                        15   174      1.21 sec  T/O =  0  PRV =  0
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: Timing out on output 0 in frame 13 (retrying in next anytime pass).
+SBY  5:09:37 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 20 21 6 5 6 22 97 202 514 537 284 ~283                         0   174      1.21 sec  T/O =  1  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 14 : 0 1 1 19 20 7 5 6 22 89 158 323 444 367 137 ~296                     0   174      1.38 sec  T/O =  1  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: All outputs solved or timed out in frame 14.
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: Starting new anytime pass, reusing clauses.
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 1 : 0 1108 ~297                                                          0     0      0.35 sec  T/O =  0  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 2 : 0 1 1107 ~297                                                        0     0      0.35 sec  T/O =  0  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 3 : 0 1 1 1106 ~297                                                      0     0      0.36 sec  T/O =  0  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 4 : 0 1 1 18 1088 ~297                                                   0     0      0.36 sec  T/O =  0  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 5 : 0 1 1 18 19 1069 ~297                                                0     0      0.36 sec  T/O =  0  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 6 : 0 1 1 18 19 6 1063 ~297                                              0     0      0.37 sec  T/O =  0  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 7 : 0 1 1 18 19 6 5 1058 ~297                                            0     0      0.37 sec  T/O =  0  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 8 : 0 1 1 18 19 6 5 5 1053 ~297                                          0     0      0.37 sec  T/O =  0  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 9 : 0 1 1 18 19 6 5 5 5 1048 ~297                                        0     0      0.38 sec  T/O =  0  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 10 : 0 1 1 18 19 6 5 5 5 33 1015 ~297                                     0     0      0.38 sec  T/O =  0  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 18 19 6 5 5 5 33 84 931 ~297                                   0     0      0.39 sec  T/O =  0  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 12 : 0 1 1 18 19 6 5 5 5 33 84 204 727 ~297                               0     0      0.41 sec  T/O =  0  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 18 19 6 5 5 5 33 87 219 315 446 ~297                          14    35      0.49 sec  T/O =  0  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 18 19 6 5 5 5 33 89 228 331 468 ~297                          13    50      0.53 sec  T/O =  0  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 18 19 6 5 5 5 33 91 237 352 498 ~297                           8    71      0.57 sec  T/O =  0  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 18 19 6 5 5 5 33 93 246 371 525 ~297                           8    76      0.61 sec  T/O =  0  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 18 19 6 5 5 5 33 93 246 372 532 ~297                           5    78      0.61 sec  T/O =  0  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 14 : 0 1 1 17 18 7 5 5 3 27 50 106 199 480 354 ~303                      10    88      0.80 sec  T/O =  0  PRV =  0
+SBY  5:09:38 [miter_sync_fifo_stream_pdr] engine_0: 14 : 0 1 1 17 18 7 5 5 3 27 50 106 201 499 379 ~303                       9    98      0.82 sec  T/O =  0  PRV =  0
+SBY  5:09:39 [miter_sync_fifo_stream_pdr] engine_0: 15 : 0 1 1 17 18 7 5 5 3 27 44 86 136 382 420 108 ~306                    9   102      0.98 sec  T/O =  0  PRV =  0
+SBY  5:09:39 [miter_sync_fifo_stream_pdr] engine_0: 15 : 0 1 1 17 18 7 5 5 3 27 44 86 137 387 443 132 ~306                   13   104      1.01 sec  T/O =  0  PRV =  0
+SBY  5:09:39 [miter_sync_fifo_stream_pdr] engine_0: 15 : 0 1 1 17 18 7 5 5 3 27 44 87 138 392 465 161 ~306                    9   112      1.05 sec  T/O =  0  PRV =  0
+SBY  5:09:39 [miter_sync_fifo_stream_pdr] engine_0: 15 : 0 1 1 17 18 7 5 5 3 27 44 87 141 400 478 183 ~306                   10   118      1.08 sec  T/O =  0  PRV =  0
+SBY  5:09:39 [miter_sync_fifo_stream_pdr] engine_0: 15 : 0 1 1 17 18 7 5 5 3 27 44 88 142 401 502 213 ~306                   10   126      1.11 sec  T/O =  0  PRV =  0
+SBY  5:09:39 [miter_sync_fifo_stream_pdr] engine_0: 15 : 0 1 1 17 18 7 5 5 3 27 44 88 143 408 520 238 ~306                   10   126      1.15 sec  T/O =  0  PRV =  0
+SBY  5:09:39 [miter_sync_fifo_stream_pdr] engine_0: 15 : 0 1 1 17 18 7 5 5 3 27 44 88 143 412 530 260 ~306                   10   126      1.17 sec  T/O =  0  PRV =  0
+SBY  5:09:39 [miter_sync_fifo_stream_pdr] engine_0: 16 : 0 1 1 17 18 6 5 5 3 26 35 50 83 177 370 447 247 ~326                21   132      1.38 sec  T/O =  0  PRV =  0
+SBY  5:09:39 [miter_sync_fifo_stream_pdr] engine_0: 16 : 0 1 1 17 18 6 5 5 3 26 35 50 83 177 370 480 279 ~326                12   135      1.41 sec  T/O =  0  PRV =  0
+SBY  5:09:39 [miter_sync_fifo_stream_pdr] engine_0: 16 : 0 1 1 17 18 6 5 5 3 26 35 50 83 180 372 503 306 ~326                14   137      1.45 sec  T/O =  0  PRV =  0
+SBY  5:09:39 [miter_sync_fifo_stream_pdr] engine_0: 16 : 0 1 1 17 18 6 5 5 3 26 35 50 85 186 374 528 327 ~326                11   141      1.48 sec  T/O =  0  PRV =  0
+SBY  5:09:39 [miter_sync_fifo_stream_pdr] engine_0: 16 : 0 1 1 17 18 6 5 5 3 26 35 51 91 196 379 538 348 ~326                12   154      1.52 sec  T/O =  0  PRV =  0
+SBY  5:09:39 [miter_sync_fifo_stream_pdr] engine_0: 16 : 0 1 1 17 18 6 5 5 3 26 35 51 92 202 382 558 366 ~326                12   161      1.56 sec  T/O =  0  PRV =  0
+SBY  5:09:39 [miter_sync_fifo_stream_pdr] engine_0: 16 : 0 1 1 17 18 6 5 5 3 26 35 51 92 206 386 576 395 ~326                 9   163      1.60 sec  T/O =  0  PRV =  0
+SBY  5:09:39 [miter_sync_fifo_stream_pdr] engine_0: 16 : 0 1 1 17 18 6 5 5 3 26 35 52 93 209 386 584 406 ~326                 9   163      1.61 sec  T/O =  0  PRV =  0
+SBY  5:09:39 [miter_sync_fifo_stream_pdr] engine_0: 17 : 0 1 1 15 16 7 5 5 3 25 33 30 49 66 96 208 427 619 ~370               0   163      1.80 sec  T/O =  0  PRV =  0
+SBY  5:09:40 [miter_sync_fifo_stream_pdr] engine_0: 18 : 0 1 1 15 16 7 5 5 3 25 33 30 49 68 94 209 414 519 117 ~370          31   164      1.94 sec  T/O =  0  PRV =  0
+SBY  5:09:40 [miter_sync_fifo_stream_pdr] engine_0: 18 : 0 1 1 15 16 7 5 5 3 25 33 30 49 68 95 212 424 552 133 ~370          37   165      1.98 sec  T/O =  0  PRV =  0
+SBY  5:09:40 [miter_sync_fifo_stream_pdr] engine_0: 18 : 0 1 1 15 16 7 5 5 3 25 33 30 49 68 95 212 429 580 162 ~370          37   166      2.02 sec  T/O =  0  PRV =  0
+SBY  5:09:40 [miter_sync_fifo_stream_pdr] engine_0: 18 : 0 1 1 15 16 7 5 5 3 25 33 31 51 70 96 214 440 605 177 ~370          46   166      2.05 sec  T/O =  0  PRV =  0
+SBY  5:09:40 [miter_sync_fifo_stream_pdr] engine_0: 18 : 0 1 1 15 16 7 5 5 3 25 33 31 51 70 96 214 441 627 213 ~370          39   166      2.08 sec  T/O =  0  PRV =  0
+SBY  5:09:40 [miter_sync_fifo_stream_pdr] engine_0: 18 : 0 1 1 15 16 7 5 5 3 25 33 31 51 70 96 214 441 646 254 ~370          20   166      2.12 sec  T/O =  0  PRV =  0
+SBY  5:09:40 [miter_sync_fifo_stream_pdr] engine_0: 18 : 0 1 1 15 16 7 5 5 3 25 33 31 51 70 96 214 442 671 289 ~370           6   172      2.17 sec  T/O =  0  PRV =  0
+SBY  5:09:40 [miter_sync_fifo_stream_pdr] engine_0: 18 : 0 1 1 15 16 7 5 5 3 25 33 31 51 70 96 214 442 692 323 ~370           5   173      2.21 sec  T/O =  0  PRV =  0
+SBY  5:09:40 [miter_sync_fifo_stream_pdr] engine_0: 19 : ... 1 1 15 16 7 5 5 3 25 33 30 47 62 73 37 98 131 289 870 ~404       0   173      2.41 sec  T/O =  0  PRV =  0
+SBY  5:09:40 [miter_sync_fifo_stream_pdr] engine_0: 20 : ... 15 16 8 6 6 4 27 35 32 49 65 73 38 96 130 274 515 367 ~404      21   174      2.55 sec  T/O =  0  PRV =  0
+SBY  5:09:40 [miter_sync_fifo_stream_pdr] engine_0: 20 : ... 15 16 8 6 6 4 27 35 32 49 65 73 38 96 133 278 538 392 ~404      12   176      2.58 sec  T/O =  0  PRV =  0
+SBY  5:09:40 [miter_sync_fifo_stream_pdr] engine_0: 20 : ... 15 16 9 7 7 5 29 37 34 49 65 73 38 96 133 279 556 405 ~404      19   177      2.61 sec  T/O =  0  PRV =  0
+SBY  5:09:40 [miter_sync_fifo_stream_pdr] engine_0: 20 : ... 15 16 9 7 7 5 29 37 34 49 65 73 38 96 133 282 577 437 ~404      13   179      2.65 sec  T/O =  0  PRV =  0
+SBY  5:09:40 [miter_sync_fifo_stream_pdr] engine_0: 20 : ... 15 16 9 7 7 5 29 37 34 49 65 73 38 96 133 282 597 473 ~404       8   184      2.69 sec  T/O =  0  PRV =  0
+SBY  5:09:40 [miter_sync_fifo_stream_pdr] engine_0: 20 : ... 15 16 9 7 7 5 29 37 34 49 65 73 38 96 134 284 610 506 ~404       9   189      2.73 sec  T/O =  0  PRV =  0
+SBY  5:09:40 [miter_sync_fifo_stream_pdr] engine_0: 20 : ... 15 16 9 7 7 5 29 37 34 49 65 73 38 96 135 285 615 519 ~404       9   189      2.75 sec  T/O =  0  PRV =  0
+SBY  5:09:41 [miter_sync_fifo_stream_pdr] engine_0: 21 : ... 16 7 5 5 3 25 33 30 47 62 71 36 93 47 185 508 557 160 ~400       0   189      2.96 sec  T/O =  0  PRV =  0
+SBY  5:09:41 [miter_sync_fifo_stream_pdr] engine_0: 22 : ... 7 5 5 3 25 33 30 47 62 71 36 93 47 184 511 563 159 22 ~400      25   189      3.11 sec  T/O =  0  PRV =  0
+SBY  5:09:41 [miter_sync_fifo_stream_pdr] engine_0: 22 : ... 7 5 5 3 25 33 30 47 62 71 36 93 47 184 521 583 181 28 ~400      43   189      3.15 sec  T/O =  0  PRV =  0
+SBY  5:09:41 [miter_sync_fifo_stream_pdr] engine_0: 22 : ... 7 5 5 3 25 33 30 47 62 71 36 93 47 184 521 590 210 46 ~400      52   189      3.18 sec  T/O =  0  PRV =  0
+SBY  5:09:41 [miter_sync_fifo_stream_pdr] engine_0: 22 : ... 7 5 5 3 25 33 30 47 62 71 36 93 47 184 521 593 241 77 ~400      46   189      3.21 sec  T/O =  0  PRV =  0
+SBY  5:09:41 [miter_sync_fifo_stream_pdr] engine_0: 22 : ... 7 5 5 3 25 33 30 47 62 72 37 93 48 185 522 596 262 99 ~400      55   189      3.25 sec  T/O =  0  PRV =  0
+SBY  5:09:41 [miter_sync_fifo_stream_pdr] engine_0: 22 : ... 7 6 5 3 26 34 31 48 64 74 39 96 51 188 525 599 273 110 ~400     55   189      3.28 sec  T/O =  0  PRV =  0
+SBY  5:09:41 [miter_sync_fifo_stream_pdr] engine_0: 22 : ... 7 6 5 3 26 34 31 48 64 74 39 96 51 188 527 612 294 125 ~400     49   189      3.31 sec  T/O =  0  PRV =  0
+SBY  5:09:41 [miter_sync_fifo_stream_pdr] engine_0: 22 : ... 7 6 5 3 26 34 31 48 64 74 39 96 51 190 529 616 308 158 ~400     45   189      3.35 sec  T/O =  0  PRV =  0
+SBY  5:09:41 [miter_sync_fifo_stream_pdr] engine_0: 22 : ... 7 6 5 3 27 35 32 48 64 74 39 96 51 190 530 625 318 174 ~400     28   189      3.37 sec  T/O =  0  PRV =  0
+SBY  5:09:41 [miter_sync_fifo_stream_pdr] engine_0: 22 : ... 7 6 5 3 27 35 32 48 64 74 39 96 51 190 530 627 343 208 ~400     10   189      3.41 sec  T/O =  0  PRV =  0
+SBY  5:09:41 [miter_sync_fifo_stream_pdr] engine_0: 22 : ... 7 6 5 3 27 35 32 48 64 74 39 96 51 190 530 628 349 215 ~400      8   189      3.42 sec  T/O =  0  PRV =  0
+SBY  5:09:41 [miter_sync_fifo_stream_pdr] engine_0: Timing out on output 0 in frame 22 (retrying in next anytime pass).
+SBY  5:09:41 [miter_sync_fifo_stream_pdr] engine_0: 22 : ... 7 6 5 3 27 35 32 48 64 74 39 96 51 190 530 628 349 215 ~400      0   189      3.42 sec  T/O =  1  PRV =  0
+SBY  5:09:41 [miter_sync_fifo_stream_pdr] engine_0: 23 : ... 5 3 25 33 30 46 62 71 37 93 45 163 190 186 125 143 812 ~414      0   189      3.66 sec  T/O =  1  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: All outputs solved or timed out in frame 23.
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: Starting new anytime pass, reusing clauses.
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 1 : 0 882 ~418                                                           0     0      0.83 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 2 : 0 1 881 ~418                                                         0     0      0.83 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 3 : 0 1 1 880 ~418                                                       0     0      0.83 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 4 : 0 1 1 15 865 ~418                                                    0     0      0.83 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 5 : 0 1 1 15 15 850 ~418                                                 0     0      0.84 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 6 : 0 1 1 15 15 6 844 ~418                                               0     0      0.84 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 7 : 0 1 1 15 15 6 4 840 ~418                                             0     0      0.84 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 8 : 0 1 1 15 15 6 4 4 836 ~418                                           0     0      0.85 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 9 : 0 1 1 15 15 6 4 4 2 834 ~418                                         0     0      0.85 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 10 : 0 1 1 15 15 6 4 4 2 7 827 ~418                                       0     0      0.85 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 11 : 0 1 1 15 15 6 4 4 2 7 18 809 ~418                                    0     0      0.86 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 12 : 0 1 1 15 15 6 4 4 2 7 18 8 801 ~418                                  0     0      0.86 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 13 : 0 1 1 15 15 6 4 4 2 7 18 8 2 799 ~418                                0     0      0.87 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 14 : 0 1 1 15 15 6 4 4 2 7 18 8 2 16 783 ~418                             0     0      0.87 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 15 : 0 1 1 15 15 6 4 4 2 7 18 8 2 16 10 773 ~418                          0     0      0.88 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 16 : 0 1 1 15 15 6 4 4 2 7 18 8 2 16 10 6 767 ~418                        0     0      0.88 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 17 : 0 1 1 15 15 6 4 4 2 7 18 8 2 16 10 6 11 756 ~418                     0     0      0.89 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 18 : 0 1 1 15 15 6 4 4 2 7 18 8 2 16 10 6 11 13 743 ~418                  0     0      0.89 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 19 : 0 1 1 15 15 6 4 4 2 7 18 8 2 16 10 6 11 13 56 687 ~418               0     0      0.90 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 20 : 0 1 1 15 15 6 4 4 2 7 18 8 2 16 10 6 11 13 56 89 598 ~418            0     0      0.92 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 21 : ... 1 1 15 15 6 4 4 2 7 18 8 2 16 10 6 11 13 56 89 91 507 ~418       0     0      0.94 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 22 : ... 15 15 6 4 4 2 7 18 8 2 16 10 6 11 13 57 94 101 76 464 ~418       8    45      1.00 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 22 : ... 15 15 6 4 4 2 7 18 8 2 16 10 6 11 13 57 98 102 83 499 ~418       8    74      1.04 sec  T/O =  0  PRV =  0
+SBY  5:09:42 [miter_sync_fifo_stream_pdr] engine_0: 22 : ... 15 15 6 4 4 2 7 18 8 2 16 10 6 11 13 57 101 103 88 524 ~418      7    89      1.06 sec  T/O =  0  PRV =  0
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: 23 : ... 15 6 4 4 2 7 18 8 2 16 10 6 11 10 48 70 63 67 62 548 ~416        9    98      1.21 sec  T/O =  0  PRV =  0
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: 24 : ... 6 4 4 2 7 18 8 2 16 10 6 11 10 47 66 56 58 37 45 577 ~416        9   112      1.36 sec  T/O =  0  PRV =  0
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: 24 : ... 6 4 4 2 7 18 8 2 16 10 6 11 10 47 66 59 59 37 45 594 ~416        7   114      1.37 sec  T/O =  0  PRV =  0
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: 25 : ... 4 4 2 7 18 8 2 16 10 6 11 10 45 52 29 16 17 19 40 689 ~416       8   122      1.51 sec  T/O =  0  PRV =  0
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: 26 : ... 4 4 2 7 18 8 2 16 10 6 11 10 45 52 29 15 13 10 3 2 725 ~416      4   122      1.64 sec  T/O =  0  PRV =  0
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: 27 : ... 8 2 16 10 6 11 10 45 52 29 15 13 8 3 1 1 -7 ~1152        5   124      1.73 sec  T/O =  0  PRV =  0
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: Proved output 0 in frame 27.
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: 28 : ... 8 2 16 10 6 11 10 45 52 29 15 13 7 1 0 0 0 -13 ~1013      0   124      1.76 sec  T/O =  0  PRV =  1
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: Block =   25  Oblig = 10788  Clause =  5953  Call =118698 (sat=60.7%)  Cex =   0  Start = 356
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: SAT solving =     5.06 sec ( 61.73 %)
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: unsat     =     1.08 sec ( 13.22 %)
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: sat       =     3.97 sec ( 48.51 %)
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: Generalize  =     2.70 sec ( 32.97 %)
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: Push clause =     2.45 sec ( 29.93 %)
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: Ternary sim =     0.09 sec (  1.10 %)
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: Containment =     0.04 sec (  0.43 %)
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: CNF compute =     0.17 sec (  2.08 %)
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: Refinement  =     0.00 sec (  0.00 %)
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: TOTAL       =     8.19 sec (100.00 %)
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: Property proved.  Time =     8.20 sec
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: Counter-example is not available.
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: finished (returncode=0)
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] engine_0: Status returned by engine: PASS
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:08 (8)
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:08 (8)
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] summary: engine_0 (abc pdr) returned PASS
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] summary: engine_0 did not produce any traces
+SBY  5:09:43 [miter_sync_fifo_stream_pdr] DONE (PASS, rc=0)

@@ -1,0 +1,70 @@
+SBY  5:05:22 [onehot_check_pdr] Removing directory '/home/toshn/fixbatch/f1/onehot_check_pdr'.
+SBY  5:05:22 [onehot_check_pdr] Copy '/home/toshn/fixbatch/f1/domain_b_onehot_raw_fv.v' to '/home/toshn/fixbatch/f1/onehot_check_pdr/src/domain_b_onehot_raw_fv.v'.
+SBY  5:05:22 [onehot_check_pdr] Copy '/home/toshn/fixbatch/f1/domain_b_onehot_parallel_fv.v' to '/home/toshn/fixbatch/f1/onehot_check_pdr/src/domain_b_onehot_parallel_fv.v'.
+SBY  5:05:22 [onehot_check_pdr] Copy '/home/toshn/fixbatch/f1/decode_state.vh' to '/home/toshn/fixbatch/f1/onehot_check_pdr/src/decode_state.vh'.
+SBY  5:05:22 [onehot_check_pdr] Copy '/home/toshn/fixbatch/f1/onehot_check.sv' to '/home/toshn/fixbatch/f1/onehot_check_pdr/src/onehot_check.sv'.
+SBY  5:05:22 [onehot_check_pdr] engine_0: abc pdr
+SBY  5:05:22 [onehot_check_pdr] base: starting process "cd onehot_check_pdr/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  5:05:22 [onehot_check_pdr] base: finished (returncode=0)
+SBY  5:05:22 [onehot_check_pdr] prep: starting process "cd onehot_check_pdr/model; yosys -ql design_prep.log design_prep.ys"
+SBY  5:05:22 [onehot_check_pdr] prep: finished (returncode=0)
+SBY  5:05:22 [onehot_check_pdr] aig: starting process "cd onehot_check_pdr/model; yosys -ql design_aiger.log design_aiger.ys"
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\clk like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\rst_n like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\clk_div like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\a2b_rdata [0] like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\a2b_rdata [1] like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\a2b_rdata [2] like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\a2b_rdata [3] like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\a2b_rdata [4] like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\a2b_rdata [5] like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\a2b_rdata [6] like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\a2b_rdata [7] like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\a2b_rdata [8] like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\a2b_rdata [9] like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\a2b_rdata [10] like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\a2b_rdata [11] like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\a2b_rdata [12] like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\a2b_rdata [13] like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\a2b_rdata [14] like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\a2b_rdata [15] like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating undriven bit onehot_check.\a2b_empty like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: Warning: Treating a total of 20 undriven bits in onehot_check like $anyseq.
+SBY  5:05:22 [onehot_check_pdr] aig: finished (returncode=0)
+SBY  5:05:22 [onehot_check_pdr] engine_0: starting process "cd onehot_check_pdr; yosys-abc -c 'read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw'"
+SBY  5:05:22 [onehot_check_pdr] engine_0: ======== ABC command line "read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw"
+SBY  5:05:22 [onehot_check_pdr] engine_0: Warning: The last 3 outputs are interpreted as constraints.
+SBY  5:05:22 [onehot_check_pdr] engine_0: VarMax = 300. FrameMax = 10000. QueMax = 0. TimeMax = 139. MonoCNF = no. SkipGen = no. SolveAll = no.
+SBY  5:05:22 [onehot_check_pdr] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  5:05:22 [onehot_check_pdr] engine_0: 1 : 0 1                                                                 1     2      0.00 sec  T/O =  0  PRV =  0
+SBY  5:05:22 [onehot_check_pdr] engine_0: 2 : 0 9 20                                                              4    25      0.01 sec  T/O =  0  PRV =  0
+SBY  5:05:22 [onehot_check_pdr] engine_0: 3 : 0 5 4 17 ~1                                                          0    25      0.01 sec  T/O =  0  PRV =  0
+SBY  5:05:22 [onehot_check_pdr] engine_0: 4 : 0 5 4 6 21 ~1                                                        2    25      0.01 sec  T/O =  0  PRV =  0
+SBY  5:05:22 [onehot_check_pdr] engine_0: 5 : 0 5 4 4 8 19 ~3                                                      2    25      0.02 sec  T/O =  0  PRV =  0
+SBY  5:05:22 [onehot_check_pdr] engine_0: 6 : 0 5 4 4 6 11 29 ~6                                                   2    25      0.02 sec  T/O =  0  PRV =  0
+SBY  5:05:22 [onehot_check_pdr] engine_0: 7 : 0 5 4 4 6 6 15 36 ~16                                                3    25      0.03 sec  T/O =  0  PRV =  0
+SBY  5:05:22 [onehot_check_pdr] engine_0: 8 : 0 5 4 4 6 6 4 6 47 ~29                                               2    25      0.04 sec  T/O =  0  PRV =  0
+SBY  5:05:22 [onehot_check_pdr] engine_0: 9 : 0 5 4 4 6 6 4 4 10 47 ~39                                            2    25      0.05 sec  T/O =  0  PRV =  0
+SBY  5:05:22 [onehot_check_pdr] engine_0: Proved output 1 in frame 9.
+SBY  5:05:22 [onehot_check_pdr] engine_0: 10 : 0 5 4 4 6 6 4 4 0 0 45 ~49                                           0    25      0.06 sec  T/O =  0  PRV =  1
+SBY  5:05:22 [onehot_check_pdr] engine_0: Proved output 0 in frame 2 (converged).
+SBY  5:05:22 [onehot_check_pdr] engine_0: Block =   15  Oblig =   254  Clause =   142  Call =  1274 (sat=61.7%)  Cex =   0  Start =   0
+SBY  5:05:22 [onehot_check_pdr] engine_0: SAT solving =     0.02 sec ( 38.40 %)
+SBY  5:05:22 [onehot_check_pdr] engine_0: unsat     =     0.00 sec (  3.69 %)
+SBY  5:05:22 [onehot_check_pdr] engine_0: sat       =     0.02 sec ( 34.71 %)
+SBY  5:05:22 [onehot_check_pdr] engine_0: Generalize  =     0.02 sec ( 28.76 %)
+SBY  5:05:22 [onehot_check_pdr] engine_0: Push clause =     0.01 sec ( 11.10 %)
+SBY  5:05:22 [onehot_check_pdr] engine_0: Ternary sim =     0.00 sec (  2.63 %)
+SBY  5:05:22 [onehot_check_pdr] engine_0: Containment =     0.00 sec (  0.06 %)
+SBY  5:05:22 [onehot_check_pdr] engine_0: CNF compute =     0.00 sec (  4.91 %)
+SBY  5:05:22 [onehot_check_pdr] engine_0: Refinement  =     0.00 sec (  0.00 %)
+SBY  5:05:22 [onehot_check_pdr] engine_0: TOTAL       =     0.06 sec (100.00 %)
+SBY  5:05:22 [onehot_check_pdr] engine_0: Property proved.  Time =     0.06 sec
+SBY  5:05:22 [onehot_check_pdr] engine_0: Counter-example is not available.
+SBY  5:05:22 [onehot_check_pdr] engine_0: finished (returncode=0)
+SBY  5:05:22 [onehot_check_pdr] engine_0: Status returned by engine: PASS
+SBY  5:05:22 [onehot_check_pdr] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  5:05:22 [onehot_check_pdr] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  5:05:22 [onehot_check_pdr] summary: engine_0 (abc pdr) returned PASS
+SBY  5:05:22 [onehot_check_pdr] summary: engine_0 did not produce any traces
+SBY  5:05:22 [onehot_check_pdr] DONE (PASS, rc=0)

@@ -81,5 +81,16 @@ module miter_vr_stream #(
         if (!rst && ref_got && opt_got)
             assert (ref_lat == opt_lat);
     end
+
+    // Vacuity check (see experiments/sync_fifo_stream/NOTES.md: the assert
+    // above is gated on both _got flags and is vacuously true for a design
+    // that never completes a transaction; a mutant with a real deadlock bug
+    // proved PASS in 0s until this class of check existed). The 2026-08-27
+    // addendum in NOTES.md described this statement as already added; audit
+    // finding F5 (2026-08-31) found it missing from the file. Added and run
+    // for real on 2026-08-31: REACHED (log in logs/). Establishes
+    // reachability for the easiest anyconst index; the assert quantifies
+    // over all nsel.
+    cover_reachable: cover property (ref_got && opt_got);
 `endif
 endmodule

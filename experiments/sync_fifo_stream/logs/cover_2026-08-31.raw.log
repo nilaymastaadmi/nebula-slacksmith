@@ -1,0 +1,32 @@
+SBY  5:09:43 [miter_sync_fifo_stream_cover] Removing directory '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/sync_fifo_stream/miter_sync_fifo_stream_cover'.
+SBY  5:09:43 [miter_sync_fifo_stream_cover] Copy '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/sync_fifo_stream/sync_fifo.v' to '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/sync_fifo_stream/miter_sync_fifo_stream_cover/src/sync_fifo.v'.
+SBY  5:09:43 [miter_sync_fifo_stream_cover] Copy '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/sync_fifo_stream/sync_fifo_pipelined.v' to '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/sync_fifo_stream/miter_sync_fifo_stream_cover/src/sync_fifo_pipelined.v'.
+SBY  5:09:43 [miter_sync_fifo_stream_cover] Copy '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/sync_fifo_stream/miter_sync_fifo_stream.sv' to '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/sync_fifo_stream/miter_sync_fifo_stream_cover/src/miter_sync_fifo_stream.sv'.
+SBY  5:09:43 [miter_sync_fifo_stream_cover] engine_0: smtbmc z3
+SBY  5:09:43 [miter_sync_fifo_stream_cover] base: starting process "cd miter_sync_fifo_stream_cover/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  5:09:44 [miter_sync_fifo_stream_cover] base: finished (returncode=0)
+SBY  5:09:44 [miter_sync_fifo_stream_cover] prep: starting process "cd miter_sync_fifo_stream_cover/model; yosys -ql design_prep.log design_prep.ys"
+SBY  5:09:44 [miter_sync_fifo_stream_cover] prep: finished (returncode=0)
+SBY  5:09:44 [miter_sync_fifo_stream_cover] smt2: starting process "cd miter_sync_fifo_stream_cover/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  5:09:44 [miter_sync_fifo_stream_cover] smt2: finished (returncode=0)
+SBY  5:09:44 [miter_sync_fifo_stream_cover] engine_0: starting process "cd miter_sync_fifo_stream_cover; yosys-smtbmc -s z3 --presat -c --noprogress -t 40  --append 0 --dump-vcd engine_0/trace%.vcd --dump-yw engine_0/trace%.yw --dump-vlogtb engine_0/trace%_tb.v --dump-smtc engine_0/trace%.smtc model/design_smt2.smt2"
+SBY  5:09:44 [miter_sync_fifo_stream_cover] engine_0: ##   0:00:00  Solver: z3
+SBY  5:09:44 [miter_sync_fifo_stream_cover] engine_0: ##   0:00:00  Checking cover reachability in step 0..
+SBY  5:09:44 [miter_sync_fifo_stream_cover] engine_0: ##   0:00:00  Checking cover reachability in step 1..
+SBY  5:09:44 [miter_sync_fifo_stream_cover] engine_0: ##   0:00:00  Checking cover reachability in step 2..
+SBY  5:09:44 [miter_sync_fifo_stream_cover] engine_0: ##   0:00:00  Checking cover reachability in step 3..
+SBY  5:09:44 [miter_sync_fifo_stream_cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
+SBY  5:09:44 [miter_sync_fifo_stream_cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at miter_sync_fifo_stream: cover_reachable
+SBY  5:09:44 [miter_sync_fifo_stream_cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace0.vcd
+SBY  5:09:44 [miter_sync_fifo_stream_cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace0_tb.v
+SBY  5:09:44 [miter_sync_fifo_stream_cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace0.smtc
+SBY  5:09:44 [miter_sync_fifo_stream_cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace0.yw
+SBY  5:09:44 [miter_sync_fifo_stream_cover] engine_0: ##   0:00:00  Status: passed
+SBY  5:09:44 [miter_sync_fifo_stream_cover] engine_0: finished (returncode=0)
+SBY  5:09:44 [miter_sync_fifo_stream_cover] engine_0: Status returned by engine: pass
+SBY  5:09:44 [miter_sync_fifo_stream_cover] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  5:09:44 [miter_sync_fifo_stream_cover] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  5:09:44 [miter_sync_fifo_stream_cover] summary: engine_0 (smtbmc z3) returned pass
+SBY  5:09:44 [miter_sync_fifo_stream_cover] summary: cover trace: miter_sync_fifo_stream_cover/engine_0/trace0.vcd
+SBY  5:09:44 [miter_sync_fifo_stream_cover] summary:   reached cover statement miter_sync_fifo_stream.cover_reachable at miter_sync_fifo_stream.sv:99.5-99.57 step 4
+SBY  5:09:44 [miter_sync_fifo_stream_cover] DONE (PASS, rc=0)

@@ -1,0 +1,135 @@
+=== WNS overall ===
+wns max -32.30
+=== worst path, full ===
+Startpoint: rst_n (input port clocked by clk)
+Endpoint: _11385_ (recovery check against rising-edge clock clk)
+Path Group: asynchronous
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   2.000    2.000 ^ input external delay
+  29.028   31.028 ^ rst_n (in)
+   0.000   31.028 ^ _11385_/RESET_B (sky130_fd_sc_hd__dfrtp_1)
+           31.028   data arrival time
+
+  10.000   10.000   clock clk (rise edge)
+   0.000   10.000   clock network delay (ideal)
+   0.000   10.000   clock reconvergence pessimism
+           10.000 ^ _11385_/CLK (sky130_fd_sc_hd__dfrtp_1)
+ -11.268   -1.268   library recovery time
+           -1.268   data required time
+-----------------------------------------------------------
+           -1.268   data required time
+          -31.028   data arrival time
+-----------------------------------------------------------
+          -32.296   slack (VIOLATED)
+
+
+Startpoint: imem_data[24] (input port clocked by clk)
+Endpoint: retire_val[20] (output port clocked by clk)
+Path Group: clk
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   2.000    2.000 ^ input external delay
+   1.421    3.421 ^ imem_data[24] (in)
+   1.309    4.730 v _05641_/Y (sky130_fd_sc_hd__clkinv_1)
+   0.764    5.494 v _05720_/X (sky130_fd_sc_hd__and2_0)
+   0.413    5.907 ^ _06114_/Y (sky130_fd_sc_hd__a222oi_1)
+   0.125    6.033 v _06117_/Y (sky130_fd_sc_hd__nand4b_1)
+   0.411    6.443 v _06118_/X (sky130_fd_sc_hd__o21a_1)
+   2.243    8.687 ^ _07399_/Y (sky130_fd_sc_hd__mux2i_1)
+   0.210    8.896 v _07401_/Y (sky130_fd_sc_hd__nor2_1)
+   0.588    9.484 ^ _07410_/Y (sky130_fd_sc_hd__o311ai_0)
+   0.198    9.682 v _07412_/Y (sky130_fd_sc_hd__a311oi_1)
+   0.375   10.057 ^ _07414_/Y (sky130_fd_sc_hd__o311ai_0)
+   0.131   10.189 v _07415_/Y (sky130_fd_sc_hd__a21oi_1)
+   0.437   10.626 ^ _07418_/Y (sky130_fd_sc_hd__o311ai_0)
+   0.181   10.807 v _07421_/Y (sky130_fd_sc_hd__a311oi_1)
+   0.297   11.104 ^ _07423_/Y (sky130_fd_sc_hd__o31ai_1)
+   0.136   11.240 v _07425_/Y (sky130_fd_sc_hd__o211ai_1)
+   0.230   11.470 ^ _07427_/Y (sky130_fd_sc_hd__a31oi_1)
+   0.115   11.585 v _07429_/Y (sky130_fd_sc_hd__o211ai_1)
+   0.173   11.758 v _07430_/X (sky130_fd_sc_hd__and2_0)
+   0.132   11.891 ^ _07431_/Y (sky130_fd_sc_hd__a21oi_1)
+   0.049   11.940 v _08140_/Y (sky130_fd_sc_hd__nand2_1)
+   0.106   12.046 ^ _08141_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.102   12.148 v _08143_/Y (sky130_fd_sc_hd__a21oi_1)
+   0.175   12.323 ^ _08158_/Y (sky130_fd_sc_hd__nor3_1)
+   0.047   12.370 v _08159_/Y (sky130_fd_sc_hd__nor2_1)
+   3.084   15.454 ^ _08168_/Y (sky130_fd_sc_hd__a2111oi_0)
+   1.073   16.527 v _08169_/Y (sky130_fd_sc_hd__nor2_1)
+   0.000   16.527 v retire_val[20] (out)
+           16.527   data arrival time
+
+  10.000   10.000   clock clk (rise edge)
+   0.000   10.000   clock network delay (ideal)
+   0.000   10.000   clock reconvergence pessimism
+  -2.000    8.000   output external delay
+            8.000   data required time
+-----------------------------------------------------------
+            8.000   data required time
+          -16.527   data arrival time
+-----------------------------------------------------------
+           -8.527   slack (VIOLATED)
+
+
+=== reg-to-reg only ===
+Startpoint: _11610_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: _11469_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ _11610_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.359    0.359 v _11610_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.078    0.437 ^ _06105_/Y (sky130_fd_sc_hd__nand3_1)
+   0.101    0.538 v _06108_/Y (sky130_fd_sc_hd__nand4_1)
+   0.511    1.049 v _06112_/X (sky130_fd_sc_hd__or4_1)
+   0.420    1.469 v _06118_/X (sky130_fd_sc_hd__o21a_1)
+   2.243    3.713 ^ _07399_/Y (sky130_fd_sc_hd__mux2i_1)
+   0.210    3.922 v _07401_/Y (sky130_fd_sc_hd__nor2_1)
+   0.588    4.510 ^ _07410_/Y (sky130_fd_sc_hd__o311ai_0)
+   0.198    4.708 v _07412_/Y (sky130_fd_sc_hd__a311oi_1)
+   0.375    5.083 ^ _07414_/Y (sky130_fd_sc_hd__o311ai_0)
+   0.131    5.215 v _07415_/Y (sky130_fd_sc_hd__a21oi_1)
+   0.437    5.652 ^ _07418_/Y (sky130_fd_sc_hd__o311ai_0)
+   0.181    5.833 v _07421_/Y (sky130_fd_sc_hd__a311oi_1)
+   0.297    6.130 ^ _07423_/Y (sky130_fd_sc_hd__o31ai_1)
+   0.136    6.266 v _07425_/Y (sky130_fd_sc_hd__o211ai_1)
+   0.230    6.496 ^ _07427_/Y (sky130_fd_sc_hd__a31oi_1)
+   0.115    6.611 v _07429_/Y (sky130_fd_sc_hd__o211ai_1)
+   0.173    6.784 v _07430_/X (sky130_fd_sc_hd__and2_0)
+   0.132    6.917 ^ _07431_/Y (sky130_fd_sc_hd__a21oi_1)
+   0.049    6.966 v _08140_/Y (sky130_fd_sc_hd__nand2_1)
+   0.106    7.072 ^ _08141_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.102    7.174 v _08143_/Y (sky130_fd_sc_hd__a21oi_1)
+   0.175    7.349 ^ _08158_/Y (sky130_fd_sc_hd__nor3_1)
+   0.047    7.396 v _08159_/Y (sky130_fd_sc_hd__nor2_1)
+   3.084   10.480 ^ _08168_/Y (sky130_fd_sc_hd__a2111oi_0)
+   0.342   10.821 v _09936_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.000   10.821 v _11469_/D (sky130_fd_sc_hd__dfrtp_1)
+           10.821   data arrival time
+
+  10.000   10.000   clock clk (rise edge)
+   0.000   10.000   clock network delay (ideal)
+   0.000   10.000   clock reconvergence pessimism
+           10.000 ^ _11469_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.292    9.708   library setup time
+            9.708   data required time
+-----------------------------------------------------------
+            9.708   data required time
+          -10.821   data arrival time
+-----------------------------------------------------------
+           -1.114   slack (VIOLATED)
+
+
