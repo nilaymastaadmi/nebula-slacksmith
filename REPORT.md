@@ -19,7 +19,7 @@ An LLM pointed at a timing report can fail in two different ways, and we measure
 
 That count started at 4 refuted. It is 3 because batch 2 caught **our own gate manufacturing a refutation**: EQY prints the same "Failed to prove equivalence" line whether it found a counterexample or merely ran out of depth, and we matched on the string. §7.1 has the correction and the check that it does not cascade.
 
-**Failure two, relevance.** Then we asked whether the transforms that *are* correct actually help. On our benchmark they mostly did not, and the reason is measurable: the binding paths were **59% to 91% fanout-attributable delay**, and no RTL rewrite shortens a net's load delay. A stock buffering pass that changes **zero lines of RTL** took both violated clock groups from −4.957 ns to **+12.600 and +20.394 ns, closing the design**, and beat our best formally-proven RTL transform by 3.6x on the same group.
+**Failure two, relevance.** Then we asked whether the transforms that *are* correct actually help. On our benchmark they mostly did not, and the reason is measurable: the binding paths were **59% to 91% fanout-attributable delay**, and no RTL rewrite shortens a net's load delay. Our best formally-proven RTL transform bought **+4.925 ns**. **OpenROAD `repair_design`, changing zero lines of RTL, bought +55.805 ns on the same clock group and closed all three**, at a measured cost of 20.2% area.
 
 So SlackSmith routes twice. It routes the **proof obligation** by declared transform type, which is the original contribution, and it now routes the **fix** by measured path pathology, which the measurement forced on us. The two levers turn out to be sequential rather than alternative: after buffering, the remaining violations are measurably depth-dominated, which is exactly where an RTL transform has something to bite on.
 
@@ -31,7 +31,7 @@ Timing closure is manual because static timing analysis speaks in cells and nets
 
 Every published agentic RTL optimizer that holds a formal gate refuses to change latency. Dr. RTL (ICCAD 2026) states it explicitly: it preserves micro-architecture "including pipeline latency", permitting only "latency-preserving sequential restructuring". RTLScout runs on the open Yosys/OpenROAD flow but verifies with `abc cec`, which is combinational and structurally cannot see an added register.
 
-The reason is real. Insert a pipeline stage and the optimized design is no longer equivalent to the original under any conventional miter; it is equivalent only under a latency offset the checker must be told about. So the tools that could check the safe transforms are used, and the profitable ones are forbidden.
+The reason is real. Insert a pipeline stage and the design is no longer equivalent under any conventional miter; it is equivalent only under a latency offset the checker must be told about. So the profitable transforms are forbidden because the available checkers cannot express them.
 
 **What we built.** Transforms are *typed*. The model does not emit free-text Verilog and hope; it emits a declared transform type, and that declaration mechanically determines which proof obligation is generated. A transform whose obligation cannot be discharged is never reported as a result.
 
@@ -110,11 +110,11 @@ Crossings form a ring A→B→C→D→E→A. Every multi-bit crossing is a gray-
 | 4 | D → E | `d2e_ctrl` (toggle) | `sync2ff` | `clk_d/5` | `clk_e/2` |
 | 5 | E → A | `e2a_wdata[31:0]` | `async_fifo` DW=32, 4 deep | `clk_e/2` | `clk_a` |
 
-Four of the five crossings both launch *and* capture on generated clocks, which is the constraint case that makes this benchmark harder than a single-clock design. Single-bit crossings carry a toggle rather than a pulse, so a slow destination cannot miss a narrow source pulse. Inside the FIFOs the crossing pointer is gray-coded (`bin ^ (bin >> 1)`, exactly one bit changing per increment) and `full`/`empty` are registered from the *next* pointer value, so they never combinationally depend on the increment inputs and a consumer driving `rinc = ~rempty` cannot form a loop.
+Four of the five crossings both launch *and* capture on generated clocks, which is what makes this harder than a single-clock design. Single-bit crossings carry a toggle rather than a pulse, so a slow destination cannot miss a narrow source pulse. FIFO pointers are gray-coded and `full`/`empty` are registered from the *next* pointer value, so a consumer driving `rinc = ~rempty` cannot form a loop.
 
-**The /3 and /5 dividers are the deliberate difficulty.** An odd ratio cannot be split evenly by posedge logic alone, so `clkdiv.v` runs two counters, one on each edge, and ANDs their phase flags. We verified the result rather than asserting it: simulated over 2,000 ns with an off-grid reset release, every high and low segment measures **exactly 15.000 ns (/3) and 25.000 ns (/5)**, 65 and 39 segments respectively, minimum segment equal to the mean, so no glitch. The SDC must then describe generated clocks whose edges derive from *both* edges of the source, which is the constraint case this benchmark exists to exercise.
+**The /3 and /5 dividers are the deliberate difficulty.** An odd ratio cannot be split evenly by posedge logic alone, so `clkdiv.v` runs two counters, one per edge, and ANDs their phase flags. Verified rather than asserted: simulated over 2,000 ns with an off-grid reset release, every segment measures **exactly 15.000 ns (/3) and 25.000 ns (/5)** across 65 and 39 segments, minimum equal to mean, so no glitch. The SDC must then describe generated clocks whose edges derive from *both* source edges, which is the constraint case this benchmark exists to exercise.
 
-Third-party content: the AES-128 core is `secworks/aes`, BSD-2-Clause, vendored unmodified under `rtl/aes/` with its license and a `THIRD_PARTY.md`. The RV32I core is our own, from `rv32-dsp-soc`, where it is verified against a golden C++ instruction-set simulator over a 400-seed, 132,400-instruction differential regression.
+Third-party content: the AES-128 core is `secworks/aes`, BSD-2-Clause, vendored unmodified under `rtl/aes/` with its license and a `THIRD_PARTY.md`. The RV32I core is ours, from `rv32-dsp-soc`, verified against a golden C++ instruction-set simulator over a 400-seed, 132,400-instruction differential regression.
 
 ---
 
@@ -150,21 +150,17 @@ So we measured what each domain actually requires, then set `sdc/bench_top_v2.sd
 | `clk_c` | 6.0 | 2.46 | 3.0 | met |
 | `clk_d` | 13.0 | 7.19 | 8.0 | met |
 
-Generated-clock `-edges` are relative to master edges, so they scale with the new periods and no edge list changed. v1 is retained unchanged as the frozen record for every measurement published before this revision: revising a target with disclosure is not the same as editing constraints mid-campaign, which stays forbidden.
+Generated-clock `-edges` are relative to master edges, so they scale with the new periods and no edge list changed. v1 is retained unchanged as the frozen record for every earlier measurement: revising a target with disclosure is not the same as editing constraints mid-campaign, which stays forbidden.
 
-Under v2, and after the correction in §5.2, the baseline **meets** `clk_a` at +1.333 ns; the open closure work is `clk_a_div2` at −0.543 ns and the two AES-bound domains at −4.957 ns each. That is a reachable target list rather than a rhetorical one.
+Under v2, and after the correction below, the baseline **meets** `clk_a` at +1.333 ns, with `clk_a_div2` at −0.543 and the two AES-bound domains at −4.957 each. **Read those against §7.2**, which shows what they become once wires exist.
 
 ### 5.2 The fix that did nothing, for eight commits
 
-Finding 1 above is correct in substance and **was not in effect**. The exclusion list is built by scanning the liberty for cell names; the liberty writes `cell ("name")` with quotes and the regex expected `cell (name)` without, so it matched nothing and returned an empty flag string. Every netlist built between that "fix" and its discovery contains 203 `lpflow` cells and the 12.8 ns artifact the exclusion exists to remove.
+Finding 1 above is correct in substance and **was not in effect**. The exclusion list is built by scanning the liberty for cell names; the liberty writes `cell ("name")` with quotes and the regex expected it without, so it matched nothing and returned an empty flag string. Every netlist built between that "fix" and its discovery carries 203 `lpflow` cells and the 12.8 ns artifact the exclusion exists to remove. It was found by reading a critical-path report and seeing the banned cell at 12.824 ns on a path where it was supposedly forbidden. There was no test, which is why nothing else caught it.
 
-It was found by reading a critical-path report and seeing the banned cell at 12.824 ns on a path it should have been excluded from. There was no test, which is why nothing else caught it.
+All affected numbers were re-measured. The `clk_a` baseline carried **4.62 ns** of artifact (−25.287 → −20.667) and the four proven transforms' deltas moved 40 to 50%, but **the qualitative conclusion did not change**, so no conclusion had to be withdrawn. Note also that the exclusion is **not** uniformly beneficial: `clk_a` gains 4.62 ns while `clk_b` and `clk_e` each lose 1.97 ns, because constraining the mapper also removes options from paths using those cells benignly.
 
-All affected numbers were re-measured. The `clk_a` baseline carried **4.62 ns** of artifact (−25.287 → −20.667), and the four proven transforms' deltas moved 40 to 50%. **The qualitative conclusion did not change**: P2 is still the only proposal that improves its touched path group and the other three still make it worse, so no conclusion had to be withdrawn. The corrected figures are what appear in §7 and §8.
-
-Worth stating because it is not intuitive: the exclusion is **not** uniformly beneficial. `clk_a` gains 4.62 ns while `clk_b` and `clk_e` each lose 1.97 ns, because constraining the mapper's cell choice also removes options from paths using those cells benignly.
-
-After the `lpflow` fix a 5.66 ns single-cell delay remained, which is high fanout with no buffer-insertion pass. We flagged that as a limitation and an upper bound. **§7.2 stops flagging it and measures it**, and it turned out to be the largest single number in this report.
+After the fix a 5.66 ns single-cell delay remained, high fanout with no buffer-insertion pass. We flagged it as a limitation and an upper bound. **§7.2 stops flagging it and measures it**, and it turned out to be the largest number in this report.
 
 ---
 
@@ -189,17 +185,13 @@ After the `lpflow` fix a 5.66 ns single-cell delay remained, which is high fanou
 
 They fail for different reasons, and the difference matters: `cec` cannot express the question, while `dsec` and EQY express it and correctly answer no, because the designs genuinely are not cycle-for-cycle equivalent. None can express equivalence *modulo k cycles*, so a pipeline gated on any of them can only ever reject a latency change. That is measured evidence for the routing decision, not an argument.
 
-**We mutation-tested our own checker, and it failed.** The stream-equivalence obligation asserts only once both designs have completed a transaction. We built a mutant reproducing a real documented deadlock bug, confirmed by simulation that it never produces output, and ran the proof: **PDR reported PROVEN in 0 seconds** for a design that deadlocks. The assert was vacuously true because its guard was unreachable. Fixed with a `cover` property, validated to distinguish the real design (REACHED) from the mutant (UNREACHABLE), and now a standing task in the tooling. We found this by testing the verifier, not the design.
+**We mutation-tested our own checker, and it failed.** The stream-equivalence obligation asserts only once both designs have completed a transaction. We built a mutant reproducing a real documented deadlock bug, confirmed by simulation that it never produces output, and ran the proof: **PDR reported PROVEN in 0 seconds** for a design that deadlocks, because the assert's guard was unreachable and it was vacuously true. Fixed with a `cover` property that distinguishes the real design (REACHED) from the mutant (UNREACHABLE). We found this by testing the verifier, not the design.
 
 ### 6.1 Choosing the branch: the interface classifier
 
 A k-padded obligation is *wrong* for an elastic interface. We measured that too: pointed at a valid/ready pair with back-pressure, the k-padded miter is **refuted in 0 seconds on a design that is correct**, because under back-pressure the two designs hold different numbers of in-flight transactions and no fixed cycle offset exists. A tool that emits the wrong obligation reports a correct transform as broken.
 
-So the branch is chosen automatically, in three passes, each able to overrule the last:
-
-1. **Lexical**: candidate handshake ports by name (`ready`, `rdy`, AXI `t*` prefixes).
-2. **Structural**: does the candidate actually reach a flop's D or enable cone? A signal that never reaches sequential state cannot stall anything.
-3. **Formal**: prove output stability under back-pressure, so the verdict is a discharged obligation rather than a heuristic.
+So the branch is chosen automatically, in three passes, each able to overrule the last: **lexical** (candidate handshake ports by name), **structural** (does the candidate reach a flop's D or enable cone, since a signal that never reaches state cannot stall anything), and **formal** (prove output stability under back-pressure, so the verdict is a discharged obligation rather than a heuristic).
 
 | module | lexical | structural | formal | verdict |
 |---|---|---|---|---|
@@ -211,7 +203,7 @@ So the branch is chosen automatically, in three passes, each able to overrule th
 
 `costume_ready` is the case that earns the machinery: handshake-shaped port names, not an elastic interface. Both later passes reject it by *independent* arguments, the signal never reaching state and the data changing while stalled.
 
-Two honest limits. Pass 3 is bounded (depth 16), not an unbounded proof, and is reported as such. And credit-based or otherwise exotic flow control will miss the lexical pass and be classified rigid, which is the unsafe direction; the correct default for an unrecognised interface is elastic, and that is not yet implemented.
+Two honest limits. Pass 3 is bounded (depth 16), not an unbounded proof. And credit-based or otherwise exotic flow control misses the lexical pass and is classified rigid, which is the unsafe direction; the correct default for an unrecognised interface is elastic, and that is not yet implemented.
 
 ### 6.2 Why simulation is not a substitute, measured on four mutants
 
@@ -224,7 +216,7 @@ Before the LLM experiment we measured the same question on hand-built mutants of
 | `mut2_rare` | **PASS** | **PASS** | **FAILED** |
 | `mut3_trunc` | FAIL | FAIL | **FAILED** |
 
-`mut1_stale_c` is the classic pipelining bug, stage 2 adding the current operand to a product one cycle old, and it is invisible to a testbench that holds that operand constant, which is exactly what a directed test looks like. `mut2_rare` survived 20,000 random vectors in both regimes and formal refuted it instantly. §7 reproduces this result on a real LLM proposal rather than a hand-built mutant.
+`mut1_stale_c` is the classic pipelining bug, stage 2 adding the current operand to a product one cycle old, invisible to any testbench that holds that operand constant. `mut2_rare` survived 20,000 random vectors in both regimes and formal refuted it instantly. §7 reproduces this on a real LLM proposal rather than a hand-built mutant.
 
 ---
 
@@ -307,17 +299,30 @@ Four of batch 1's six proposals were proven correct and three of those made timi
 
 We built `tools/classify_path.py`, which scores what fraction of a path's delay comes from cells driving 32 or more loads. Batch 1's target path is **58.9% fanout-attributable**. The design-level AES path is **91.4%**, with 21.029 ns sitting in a single `nor4_1` driving **300 loads**: `aes_key_mem` is a 15 × 128-bit register array read through a combinational 15-to-1 mux. Restructuring logic does not shorten a net's load delay. The proposals were aimed at the wrong variable.
 
-The control, registered in advance and committed before its output was read: synthesize `bench_top` twice from identical RTL under identical SDC, differing only by appending `buffer -N 16; upsize; dnsize` to the ABC script. Yosys already ships that in its `-liberty -constr` script; our flow simply was not running it.
+The control, registered in advance and committed before its output was read: synthesize `bench_top` twice from identical RTL under identical SDC, differing only by appending `buffer -N 16; upsize; dnsize` to the ABC script. Yosys ships that in its `-liberty -constr` script; our flow was not running it. Both violated groups close, `clk_b` moving **−4.957 to +12.600 MET**, with zero RTL change, 1,419 buffers added and an identical flop count. Equivalence checked rather than trusted: **49,923 of 49,924** obligations discharged, the residual being one top-level XOR whose input net is undriven in *both* designs.
 
-| clock | default | buffered | delta |
+That control has no placement and no parasitics, so we then ran the real thing. **OpenROAD** was the one organizer-named tool this project had never used, and the measurement is what finally asked for it. Full flow on the same unbuffered netlist: tech and cell LEF, floorplan at 40% utilization, `make_tracks`, `place_pins`, the platform's own `setRC.tcl`, global placement, placement-based parasitics, then `repair_design` and detailed placement.
+
+| clock | before `repair_design` | after | delta |
 |---|---|---|---|
-| clk_a | +1.333 MET | +12.784 MET | +11.451 |
-| clk_b | **−4.957 VIOLATED** | **+12.600 MET** | **+17.557** |
-| clk_e | **−4.957 VIOLATED** | **+20.394 MET** | **+25.351** |
+| clk_a | −36.723 | **+17.593 MET** | **+54.316** |
+| clk_b | −43.438 | **+12.367 MET** | **+55.805** |
+| clk_e | −47.683 | **+19.529 MET** | **+67.212** |
 
-**Both violated groups close, with zero RTL change.** Flop count is identical (5,191), 1,419 buffers are added, and nets above fanout 64 drop from 112 to 27. We checked equivalence rather than trusting the pass: **49,923 of 49,924** obligations discharged, the residual being one top-level XOR whose input net is undriven in *both* designs, reproduced across two independent runs.
+**All three groups close**, at a measured cost of **+20.2% area** (448,840 to 539,351 µm², 40% to 48% utilization). Flop count is identical at 7,959 flattened on both sides, with 960 buffers added, and both runs of the flow reproduce every number exactly.
 
-Set against the RTL levers on the same group: batch 1's best was +0.485 ns, batch 2's best +4.925 ns, **buffering +17.557 ns**.
+One thing is **not** verified, and we would rather say so than round it up. The ABC control got a 49,923-of-49,924 internal equivalence check. `repair_design` did not: three attempts failed for tooling reasons, twice because `equiv_make` matches by name and `repair_design` splits nets when it buffers them (86 equivalence points in one attempt, 1 in the other), and once because liberty-derived cells stay blackboxes in the bounded miter. **None produced a counterexample; they produced no evidence either way.** What supports the result is the structural check, the exact reproducibility, and the pass's documented contract. Closing this properly needs functional sky130 cell models, and it is listed as open work.
+
+Now look at the *before* column. Under the same SDC, netlist and liberty, `clk_a` reads **+1.333 MET without parasitics and −36.723 with them**. **Every timing number this project published before today was a zero-parasitic number.** That does not invalidate the baseline-versus-variant comparisons, which were all made under one consistent model, but it does mean our absolute closure claims described a model without wires. This is the correction, and it makes the routing argument stronger rather than weaker: wire delay is definitionally not an RTL problem, so putting parasitics in the model *raises* the share of the violation no RTL rewrite can touch.
+
+| lever, same group, same SDC | clk_b gain | changes RTL? | parasitics? |
+|---|---|---|---|
+| best LLM RTL transform, batch 1 (P2) | +0.485 | yes | no |
+| best LLM RTL transform, batch 2 (A4) | +4.925 | yes | no |
+| ABC buffering control | +17.557 | no | no |
+| **OpenROAD `repair_design`** | **+55.805** | **no** | **yes** |
+
+The mapping-level control pointed the right way and understated the real pass by **3.2x**, which is what a control is for.
 
 Two results keep this from being a simple "buffering wins" story.
 
@@ -359,7 +364,7 @@ Judged work should show its corrections, so here are ours, all committed with th
 
 **Three of eleven registered predictions across the two batches were wrong.** In batch 1 we predicted at least one proposal would be rejected at the precondition gate; **zero were**, and we reported that the precondition layer was a type check rather than a legality check. Batch 2 is the follow-up and A6 was rejected there, so the batch 1 finding is true of batch 1 and false as a general claim; both are on the record. We also predicted latency semantics would dominate the failure modes; it was one of each. In batch 2 we predicted at most 2 of 6 would improve `clk_b` and **3 did**. Each was registered in advance, two at explicitly low or medium confidence, so the misses are visible rather than forgotten.
 
-**We spent the whole project optimizing a design whose violations a stock pass closes.** Yosys ships `buffer; upsize` in its `-liberty -constr` ABC script and not in the plain `-liberty` script we had been using. Running it takes both violated groups to MET (§7.2). Every timing number this project produced before 2026-08-31 describes a flow that was missing a standard step, and the honest consequence is that our reported violations were an upper bound on a complete flow, which §5 had flagged as a *possibility* and we had not tested. We tested it, and it was worth 17.557 ns. It is reported as a control and credited to no transform.
+**We spent the whole project optimizing a design whose violations a stock pass closes, and reporting numbers that had no wires in them.** Yosys ships `buffer; upsize` in its `-liberty -constr` ABC script and not in the plain `-liberty` script we used, so we never ran it; it is worth 17.557 ns. Worse, every timing number we published before today was **zero-parasitic**. With placement parasitics the `clk_a` baseline we reported as "+1.333 MET" is **−36.723** (§7.2). The baseline-versus-variant comparisons survive, because both sides always used one consistent model, but our absolute closure claims described a model without wires. §5 had flagged this as a possibility and we had not tested it. We tested it.
 
 **Two harness bugs, both ours, both surfaced as UNRESOLVED.** Proposal A3 reported UNRESOLVED twice before producing a verdict: first because `sby` was not on PATH, then because our own generalization patch broke an f-string and wrote `{max(k,1)}` into the generated miter as literal Verilog. Neither was a transform result. Fixed and re-run, A3 is REFUTED. We record this because UNRESOLVED must never be quietly read as PROVEN or REFUTED; here it twice meant "the harness broke", and a report that left A3 as UNRESOLVED would have hidden two of its own bugs behind something that looks like a result.
 
