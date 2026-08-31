@@ -218,12 +218,12 @@ To measure this honestly we **pre-registered the experiment before writing any p
 
 | | transform | declared | parse | elab | precond | **formal** | timing (clk_a) |
 |---|---|---|---|---|---|---|---|
-| P1 | addsub sharing | k=0 | ✓ | ✓ | ✓ | PROVEN | −2.471 |
-| P2 | shifter sharing | k=0 | ✓ | ✓ | ✓ | PROVEN | **+0.829** |
-| P3 | comparator sharing | k=0 | ✓ | ✓ | ✓ | PROVEN | −2.051 |
+| P1 | addsub sharing | k=0 | ✓ | ✓ | ✓ | PROVEN | −1.555 |
+| P2 | shifter sharing | k=0 | ✓ | ✓ | ✓ | PROVEN | **+0.485** |
+| P3 | comparator sharing | k=0 | ✓ | ✓ | ✓ | PROVEN | −2.102 |
 | P4 | mux priority→parallel | k=0 | ✓ | ✓ | ✓ | **REFUTED** | — |
 | P5 | pipeline cut | k=1 | ✓ | ✓ | ✓ | **REFUTED** | — |
-| P6 | branch cmp sharing | k=0 | ✓ | ✓ | ✓ | PROVEN | −3.400 |
+| P6 | branch cmp sharing | k=0 | ✓ | ✓ | ✓ | PROVEN | −1.615 |
 
 **4 proven, 2 refuted, 1 improved timing.** The registered primary bar was met by P2, which is also the only proposal both smaller (−351 cells) and faster.
 
@@ -268,9 +268,9 @@ Core level (`rv32i_core` alone, transform is 100% of the design; reset false-pat
 | P3 | 6,700 | −12.65 | 6.62 |
 | P6 | 6,864 | **−7.88** | 6.38 |
 
-Expressed as frequency, which is what deliverable 5 asks for: at core level a 10 ns constraint with −9.84 ns of violation means a required period of 19.84 ns, so **F_max 50.4 MHz for the baseline core and 55.9 MHz with P6**, an 11.0% improvement. At design level the 8 ns `clk_a` constraint with −25.287 ns gives a required period of 33.29 ns, **F_max 30.0 MHz**, which is an upper bound given the missing buffer-insertion pass noted in §5.
+Expressed as frequency, which is what deliverable 5 asks for: at core level a 10 ns constraint with −9.84 ns of violation means a required period of 19.84 ns, so **F_max 50.4 MHz for the baseline core and 55.9 MHz with P6**, an 11.0% improvement. At design level the 8 ns `clk_a` constraint with −20.667 ns gives a required period of 33.29 ns, **F_max 30.0 MHz**, which is an upper bound given the missing buffer-insertion pass noted in §5.
 
-**The rankings invert between contexts.** By core timing the best transform is P6 (+1.96 ns); at design level P6 is the worst (−3.400 ns), and the only design-level winner is P2, which is nearly neutral at core level. Two real mechanisms: the core's critical path is not the design's (inside `bench_top` the binding path runs through the wrapper's async-read memory and its fanout, not the ALU cone), plus the non-local remapping quantified in §5.
+**The rankings invert between contexts.** By core timing the best transform is P6 (+1.96 ns); at design level P6 is the worst (−1.615 ns), and the only design-level winner is P2, which is nearly neutral at core level. Two real mechanisms: the core's critical path is not the design's (inside `bench_top` the binding path runs through the wrapper's async-read memory and its fanout, not the ALU cone), plus the non-local remapping quantified in §5.
 
 We report both contexts for all four transforms. A report quoting only the core table would name P6 the best transform; one quoting only the design table would name it the worst.
 
@@ -286,7 +286,7 @@ Judged work should show its corrections, so here are ours, all committed with th
 
 **A claim that was false, caught by simulation.** We had described `pipeline_cut_rigid(domain_a)` as boundary-proven *and therefore* module-equivalent. It is not: a testbench shows `mac_result` diverging permanently (`002a` vs `0031`), because the consuming domain samples at half rate and a one-cycle delay selects a different subsequence rather than shifting the stream. The proof stands for the property it states; the sufficiency claim was withdrawn and the refuting testbench committed.
 
-**A number that was nearly published six times too large.** P2's improvement first measured +5.105 ns against a baseline built by a slightly different flow. Rebuilt identically: **+0.829 ns**.
+**A number that was nearly published six times too large.** P2's improvement first measured +5.105 ns against a baseline built by a slightly different flow. Rebuilt identically: **+0.485 ns**.
 
 **An interoperability gap that nearly hid our only success.** P2 is the one proposal using a Verilog `function`. Yosys names function temporaries with an embedded absolute path and colon, which OpenSTA's Verilog reader rejects, so a netlist that synthesized cleanly could not be timed at all (1,386 such names). `opt_clean -purge` fixes it. Without that fix the batch's single winner would have been recorded as unmeasurable.
 

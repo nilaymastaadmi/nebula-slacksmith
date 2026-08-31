@@ -32,15 +32,15 @@ From `experiments/llm_proposer/` (55,413-cell design, frozen SDC, clk_a):
 
 | variant | design clk_a delta | core data WNS delta |
 |---|---|---|
-| P1 | **-2.471** | +0.38 |
-| P2 | **+0.829** | +0.03 |
-| P3 | **-2.051** | -2.81 |
-| P6 | **-3.400** | **+1.96** |
+| P1 | **-1.555** | +0.38 |
+| P2 | **+0.485** | +0.03 |
+| P3 | **-2.102** | -2.81 |
+| P6 | **-1.615** | **+1.96** |
 
 ## The finding: the two rankings nearly invert
 
 By core-level timing the best transform is **P6** (+1.96 ns). By design-level
-timing P6 is the **worst** (-3.400 ns), and the only design-level winner is
+timing P6 is the **worst** (-1.615 ns), and the only design-level winner is
 P2, which is nearly neutral at core level (+0.03 ns).
 
 Only P3 agrees with itself: worse in both.

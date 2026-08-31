@@ -17,12 +17,12 @@ parsed, elaborated, checked or timed before all 6 were committed.
 
 | | transform | declared | G1 parse | G2 elab | G3 precond | G4 formal | G5 clk_a slack |
 |---|---|---|---|---|---|---|---|
-| P1 | operator_sharing_addsub | k=0 | PASS | PASS | PASS | **PROVEN** | -2.471 |
-| P2 | operator_sharing_shifter | k=0 | PASS | PASS | PASS | **PROVEN** | **+0.829** |
-| P3 | operator_sharing_comparator | k=0 | PASS | PASS | PASS | **PROVEN** | -2.051 |
+| P1 | operator_sharing_addsub | k=0 | PASS | PASS | PASS | **PROVEN** | -1.555 |
+| P2 | operator_sharing_shifter | k=0 | PASS | PASS | PASS | **PROVEN** | **+0.485** |
+| P3 | operator_sharing_comparator | k=0 | PASS | PASS | PASS | **PROVEN** | -2.102 |
 | P4 | mux_priority_to_parallel | k=0 | PASS | PASS | PASS | **REFUTED** | n/a |
 | P5 | pipeline_cut_rigid | k=1 | PASS | PASS | PASS | **REFUTED** | n/a |
-| P6 | operator_sharing_branch_comparator | k=0 | PASS | PASS | PASS | **PROVEN** | -3.400 |
+| P6 | operator_sharing_branch_comparator | k=0 | PASS | PASS | PASS | **PROVEN** | -1.615 |
 
 Cells (gold 8,269): P1 8,362, P2 **7,918**, P3 8,409, P4 8,061, P6 8,380.
 
@@ -113,8 +113,9 @@ here is refutation.
 
 **A wrong number that was nearly reported.** P2's first G5 measurement showed
 +5.105 ns against a baseline built without `opt_clean -purge`. Rebuilding
-both sides identically gave **+0.829 ns**. The unmatched comparison
-overstated the win by 6x. The rule that caught it is the one already in
+both sides identically gave +0.829 ns at the time, and +0.485 ns after the
+third correction below. The unmatched comparison overstated the win by 6x
+against the same-day rebuild, and by 10.5x against the final figure. The rule that caught it is the one already in
 `docs/measurement-methodology.md`: baseline and variant must be built by the
 same flow, or the delta measures the flow.
 
@@ -144,3 +145,34 @@ would have been recorded as unmeasurable.
 `PREREGISTRATION.md`, `proposals/P1..P6.json` (frozen pre-gate),
 `tools/gate_proposal.py`, `results/` (per-proposal gate output and logs),
 `fourchecker/` (the P4 testbenches and their output).
+
+## CORRECTION 2026-08-31 (third measurement error, found after first publication)
+
+Every G5 number in the table above was re-measured and changed. The
+`dont_use` exclusion introduced to remove the `lpflow` artifact
+(`docs/measurement-methodology.md` finding 1) **was never actually in
+effect**: the liberty writes `cell ("name")` with quotes and the regex
+generating the flags expected `cell (name)` without, so it silently returned
+zero flags. The netlists carried 203 `lpflow` cells and a 12.8 ns
+single-cell artifact on the critical path.
+
+Caught by seeing the banned cell reappear on a critical-path report it
+should have been excluded from, not by a test.
+
+| | G5 as first published (contaminated) | G5 corrected (artifact-free) |
+|---|---|---|
+| P1 | -2.471 | **-1.555** |
+| P2 | **+0.829** | **+0.485** |
+| P3 | -2.051 | **-2.102** |
+| P6 | -3.400 | **-1.615** |
+| baseline clk_a (v1 SDC) | -25.287 | **-20.667** |
+
+The baseline carried **4.62 ns** of pure artifact. Magnitudes moved 40 to
+50%. **The qualitative conclusion is unchanged**: P2 is the only proposal
+that improves the touched path group, and the other three proven transforms
+still make it worse. The registered primary bar is still met, by a smaller
+margin.
+
+A failed fix that silently does nothing is worse than no fix, because it is
+reported as done. The lesson taken: a flag-generating function needs a test
+asserting it returns a non-empty result, which is now how it is verified.

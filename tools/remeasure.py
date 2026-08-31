@@ -95,7 +95,12 @@ def dont_use_flags(liberty_path):
             text = f.read()
     except OSError:
         return ""
-    cells = set(re.findall(r"cell \((sky130_fd_sc_hd__[a-z0-9_]+)\)", text))
+    # The liberty writes cell ("name") WITH quotes. An earlier version of
+    # this regex omitted them, silently produced ZERO flags, and every
+    # measurement taken with it carried the 12.8 ns lpflow artifact the
+    # exclusion exists to remove. Caught 2026-08-31 by seeing the cell
+    # reappear on a critical path it should have been banned from.
+    cells = set(re.findall(r'cell \(\"?(sky130_fd_sc_hd__[a-z0-9_]+)\"?\)', text))
     excluded = sorted(c for c in cells if any(p in c for p in DONT_USE_PATTERNS))
     return " ".join(f"-dont_use {c}" for c in excluded)
 
