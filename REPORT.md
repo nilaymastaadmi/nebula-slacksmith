@@ -146,6 +146,34 @@ Three findings changed how we report every number (`docs/measurement-methodology
 
 **Local RTL changes have non-local timing effects.** Given the null control above, the +1.398 ns that a `domain_b`-only change produces on `clk_a` is not noise: it is ABC's global technology mapping moving an unrelated path group. **Reporting rule adopted:** a transform's effect is the delta in the group it touches; movement elsewhere is reported separately and never folded into the claimed benefit.
 
+### 5.1 Setting a closure target that means something
+
+The v1 periods were chosen as illustrative and non-harmonic when the benchmark was 3,584 cells. The benchmark is now 55,413 cells containing an RV32I core and two AES-128 cores, and an 8 ns `clk_a` target demands roughly four times what a single-cycle RV32I with async-read memory can physically reach in sky130. Against a target like that, moving WNS from −25 ns to −24 ns is not progress toward anything.
+
+So we measured what each domain actually requires, then set `sdc/bench_top_v2.sdc` about 10% tighter than that:
+
+| domain | v1 | measured requirement | v2 target | bound by |
+|---|---|---|---|---|
+| `clk_a` | 8.0 | 33.29 | 30.0 | RV32I core |
+| `clk_b` | 11.0 | 29.49 | 26.5 | AES-128 |
+| `clk_e` | 9.0 | 29.49 | 26.5 | AES-128 |
+| `clk_c` | 6.0 | 2.46 | 3.0 | met |
+| `clk_d` | 13.0 | 7.19 | 8.0 | met |
+
+Generated-clock `-edges` are relative to master edges, so they scale with the new periods and no edge list changed. v1 is retained unchanged as the frozen record for every measurement published before this revision: revising a target with disclosure is not the same as editing constraints mid-campaign, which stays forbidden.
+
+Under v2, and after the correction in §5.2, the baseline **meets** `clk_a` at +1.333 ns; the open closure work is `clk_a_div2` at −0.543 ns and the two AES-bound domains at −4.957 ns each. That is a reachable target list rather than a rhetorical one.
+
+### 5.2 The fix that did nothing, for eight commits
+
+Finding 1 above is correct in substance and **was not in effect**. The exclusion list is built by scanning the liberty for cell names; the liberty writes `cell ("name")` with quotes and the regex expected `cell (name)` without, so it matched nothing and returned an empty flag string. Every netlist built between that "fix" and its discovery contains 203 `lpflow` cells and the 12.8 ns artifact the exclusion exists to remove.
+
+It was found by reading a critical-path report and seeing the banned cell at 12.824 ns on a path it should have been excluded from. There was no test, which is why nothing else caught it.
+
+All affected numbers were re-measured. The `clk_a` baseline carried **4.62 ns** of artifact (−25.287 → −20.667), and the four proven transforms' deltas moved 40 to 50%. **The qualitative conclusion did not change**: P2 is still the only proposal that improves its touched path group and the other three still make it worse, so no conclusion had to be withdrawn. The corrected figures are what appear in §7 and §8.
+
+Worth stating because it is not intuitive: the exclusion is **not** uniformly beneficial. `clk_a` gains 4.62 ns while `clk_b` and `clk_e` each lose 1.97 ns, because constraining the mapper's cell choice also removes options from paths that were using those cells benignly.
+
 Disclosed limitation: after the `lpflow` fix a 5.66 ns single-cell delay remains, which is high fanout with no buffer-insertion pass. This flow stops at technology mapping; a repair or P&R step (OpenROAD `repair_design`) would address it. Our reported violations are therefore an upper bound.
 
 ---
@@ -268,7 +296,7 @@ Core level (`rv32i_core` alone, transform is 100% of the design; reset false-pat
 | P3 | 6,700 | −12.65 | 6.62 |
 | P6 | 6,864 | **−7.88** | 6.38 |
 
-Expressed as frequency, which is what deliverable 5 asks for: at core level a 10 ns constraint with −9.84 ns of violation means a required period of 19.84 ns, so **F_max 50.4 MHz for the baseline core and 55.9 MHz with P6**, an 11.0% improvement. At design level the 8 ns `clk_a` constraint with −20.667 ns gives a required period of 33.29 ns, **F_max 30.0 MHz**, which is an upper bound given the missing buffer-insertion pass noted in §5.
+Expressed as frequency, which is what deliverable 5 asks for: at core level a 10 ns constraint with −9.84 ns of violation means a required period of 19.84 ns, so **F_max 50.4 MHz for the baseline core and 55.9 MHz with P6**, an 11.0% improvement. At design level the 8 ns `clk_a` constraint with −20.667 ns gives a required period of 28.67 ns, **F_max 34.9 MHz**, which is an upper bound given the missing buffer-insertion pass noted in §5. Under the measurement-derived closure targets of `sdc/bench_top_v2.sdc` (§5.1) the same baseline **meets** `clk_a` at +1.333 ns, and the remaining violated groups are `clk_a_div2` (−0.543 ns) and the two AES-bound domains `clk_b` and `clk_e` (−4.957 ns each).
 
 **The rankings invert between contexts.** By core timing the best transform is P6 (+1.96 ns); at design level P6 is the worst (−1.615 ns), and the only design-level winner is P2, which is nearly neutral at core level. Two real mechanisms: the core's critical path is not the design's (inside `bench_top` the binding path runs through the wrapper's async-read memory and its fanout, not the ALU cone), plus the non-local remapping quantified in §5.
 
