@@ -179,7 +179,19 @@ def main():
                             txt += fh.read()
                     except OSError:
                         pass
-                if re.search(r"Assert failed|model found: FAIL", txt):
+                # Order matters, and so does the exact wording. Yosys prints
+                # "SAT temporal induction proof finished - model found for
+                # base case: FAIL!" for a real counterexample, and
+                # "Reached maximum number of time steps -> proof failed."
+                # followed by "Dumping SAT model to VCD file" for a bound.
+                # BOTH mention a model, so the discriminator is "model found",
+                # not "model". An earlier version of this check matched the
+                # literal "model found: FAIL" and therefore missed P4's
+                # "model found for base case: FAIL!", reporting a genuine
+                # refutation as UNRESOLVED. That is the mirror image of the
+                # bug this whole branch exists to fix, and it was caught by
+                # re-running a proposal whose verdict was already known.
+                if re.search(r"Assert failed|model found", txt):
                     refuted.append(part)
                 elif "Reached maximum number of time steps" in txt:
                     bounded.append(part)

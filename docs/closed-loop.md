@@ -77,22 +77,58 @@ needed to exercise the other branch.
 flow missing the buffering pass, and the buffered netlist clears them by 12 to
 20 ns. A target you clear by 20 ns is not a closure target.
 
+8 iterations, 449.3 s:
+
     it1  MEASURE   clk_a=-13.167  clk_b=-18.957  clk_e=-25.957
-    it1  CLASSIFY  clk_e: FANOUT_DOMINATED (0.9139) -> physical
+    it1  CLASSIFY  clk_e: FANOUT_DOMINATED (0.9139, 30.602 ns over 9 cells) -> physical
+                     21.029 ns  nor4_1  fanout=300  u_aes_e/u_core/keymem/_07883_
     it1  APPLY     physical: abc buffer -N 16; upsize; dnsize
     it2  MEASURE   clk_a=-1.716  clk_b=5.6  clk_e=-0.606
-    it2  CLASSIFY  clk_a: DEPTH_DOMINATED (fanout share 0.000) -> rtl
-    it2  GATE      P1 (operator_sharing_addsub) k=0 G3=PASS G4=PROVEN
-    it2  APPLY     P1 provisionally
-    it3  MEASURE   clk_a=-2.026
+    it2  CLASSIFY  clk_a: DEPTH_DOMINATED (fanout share 0.000, 17.13 ns over 33 cells) -> rtl
+    it2  GATE      P1 (operator_sharing_addsub)   k=0  G4=PROVEN
     it3  REVERT    P1: clk_a -1.716 -> -2.026, G5_no_improvement
+    it4  GATE      P2 (operator_sharing_shifter)  k=0  G4=PROVEN
+    it5  REVERT    P2: clk_a -1.716 -> -2.201, G5_no_improvement
+    it6  GATE      P3 (operator_sharing_comparator) k=0 G4=PROVEN
+    it7  REVERT    P3: clk_a -1.716 -> -2.02,  G5_no_improvement
+    it8  GATE      P4 k=0 REFUTED / P5 k=1 REFUTED / P6 k=0 PROVEN, applied unconfirmed at max-iters
 
-Both branches fire, in the right order, and the last two lines are the point.
-P1 is **formally proven correct** and it makes the group it was aimed at
-**worse**. The loop reverted it on its own, which is the same rule the
-standalone experiments applied by hand, and it independently reproduces batch
-1's design-level result for P1 (−1.555 there, −0.310 here against a different
-target). G4 PROVEN means correct. It does not mean useful.
+Both branches fire in the right order. The physical lever alone **closes
+`clk_b` outright** (−18.957 to +5.6). And then the part worth reading twice:
+
+**3 of 3 formally-proven transforms made the group they were aimed at worse,
+and the loop reverted all three by itself.** Each revert restores `clk_a` to
+exactly −1.716, so the rollback is clean and deterministic. This is the
+project's own methodology, previously applied by hand, now enforced by the
+tool. G4 PROVEN means correct. It does not mean useful.
+
+### The ranking changes once the physical lever has been applied
+
+P2 is the one proposal batch 1 found to *improve* `clk_a`, at **+0.485 ns**.
+Here the loop reverted it. Those two runs differ in both SDC and buffering, so
+`experiments/closed_loop/context_control.py` isolates the variable: one SDC
+(v2), one transform (P2), and the only difference is whether
+`buffer; upsize; dnsize` is in the ABC script.
+
+| context | baseline clk_a | with P2 | delta |
+|---|---|---|---|
+| unbuffered | 1.333 | 1.818 | **+0.485** |
+| buffered | 12.784 | 12.299 | **-0.485** |
+
+The unbuffered row reproduces batch 1 exactly. The buffered row is the same
+transform, same SDC, same flow, **and the sign flips**: same magnitude,
+opposite direction.
+
+So batch 1's single winner is a loser in the context the design would actually
+ship in. The practical consequence: **a transform must be evaluated in the
+physical context you intend to ship**, because ranking it against an
+unbuffered netlist can rank it backwards. This is the third context in which
+this project has found rankings to invert, after core-level versus
+design-level in `experiments/ppa/NOTES.md`.
+
+Caveat, stated because the number is tidy enough to be suspicious: this is
+one transform on one design at one buffering setting. The equal magnitude is
+not predicted by anything and is not claimed as a law.
 
 The full log is in `experiments/closed_loop/`.
 
