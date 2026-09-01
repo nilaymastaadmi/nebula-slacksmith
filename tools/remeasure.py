@@ -109,16 +109,22 @@ def run(cmd, **kw):
     return subprocess.run(cmd, capture_output=True, text=True, **kw)
 
 
-def synth_bench_top(yosys_bin, rtl_dir, files, liberty, workdir, mapped_name, extra_yosys_top="bench_top"):
+def synth_bench_top(yosys_bin, rtl_dir, files, liberty, workdir, mapped_name,
+                    extra_yosys_top="bench_top", abc_script=None):
+    """abc_script, when given, is passed to abc as -script. tools/slacksmith.py
+    uses it to apply the buffering physical lever (buffer; upsize; dnsize)
+    without forking this function. Default None reproduces every measurement
+    taken before it existed."""
     os.makedirs(workdir, exist_ok=True)
     paths = " ".join(os.path.join(rtl_dir, f) for f in files)
     mapped_path = os.path.join(workdir, mapped_name)
+    abc_extra = f" -script {abc_script}" if abc_script else ""
     script = (
         f"read_verilog {paths}; "
         f"hierarchy -check -top {extra_yosys_top}; "
         f"synth -top {extra_yosys_top}; "
         f"dfflibmap -liberty {liberty}; "
-        f"abc -liberty {liberty} {dont_use_flags(liberty)}; "
+        f"abc -liberty {liberty} {dont_use_flags(liberty)}{abc_extra}; "
         # opt_clean -purge strips named-but-unused wires. Required, not
         # cosmetic: Yosys names Verilog function temporaries like
         # \rev32$func$/abs/path/file.v:101$4454.i , and OpenSTA's Verilog

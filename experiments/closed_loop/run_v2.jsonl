@@ -1,0 +1,5 @@
+{"iter": 1, "step": "measure", "engine": "sta", "slacks": {"clk_a": 1.333, "clk_b": -4.957, "clk_e": -4.957}, "physical_applied": false, "rtl_applied": [], "t": 20.9}
+{"iter": 1, "step": "classify", "clock": "clk_b", "verdict": "FANOUT_DOMINATED", "fanout_delay_share": 0.9139, "path_delay_ns": 30.602, "cells_on_path": 9, "top_cells": [{"inst": "u_aes_b/u_core/keymem/_07883_", "cell": "sky130_fd_sc_hd__nor4_1", "incr_ns": 21.029, "fanout": 300, "module": "aes_key_mem"}, {"inst": "u_aes_b/u_core/keymem/_08792_", "cell": "sky130_fd_sc_hd__nor2_1", "incr_ns": 6.016, "fanout": 153, "module": "aes_key_mem"}, {"inst": "u_aes_b/u_core/keymem/_07893_", "cell": "sky130_fd_sc_hd__nor2_1", "incr_ns": 1.525, "fanout": 6, "module": "aes_key_mem"}], "lever": "physical", "t": 22.7}
+{"iter": 1, "step": "apply", "lever": "physical", "how": "abc buffer -N 16; upsize; dnsize", "t": 22.7}
+{"iter": 2, "step": "measure", "engine": "sta", "slacks": {"clk_a": 12.784, "clk_b": 12.6, "clk_e": 20.394}, "physical_applied": true, "rtl_applied": [], "t": 46.7}
+{"iter": 2, "step": "stop", "reason": "all_met", "slacks": {"clk_a": 12.784, "clk_b": 12.6, "clk_e": 20.394}, "t": 46.7}
