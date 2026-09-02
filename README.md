@@ -62,12 +62,20 @@ obligation by declared transform type.
 
 **3. And we tested that on designs we did not write.** The 20 human-written
 designs published with Dr. RTL (ICCAD 2026), pre-registered, same flow, same
-unchanged thresholds: 15 in scope, **5 FANOUT / 2 MIXED / 8 DEPTH**, byte-
-identical across two independent runs. The physical lever closed **5 of 5**
-fanout-dominated designs outright and 4 of 8 depth-dominated ones, with a
-7.5x higher median gain on the former. Three of five registered predictions
-were wrong, including the primary one, and the write-up says exactly how.
+unchanged thresholds: 15 in scope, **5 FANOUT / 3 MIXED / 7 DEPTH** after a
+classifier correction (2026-09-03, 1 verdict changed), byte-identical across
+two independent runs. The physical lever closed **5 of 5** fanout-dominated
+designs outright and 4 of 7 depth-dominated ones, with a 6.2x higher median
+gain on the former. Three of five registered predictions were wrong,
+including the primary one, and the write-up says exactly how.
 `experiments/drrtl_transfer/`.
+
+**4. The tool's own log caught its worst bug.** The classifier had been
+undercounting fanout across module boundaries; a 6.762 ns cell it recorded
+at fanout 1 drives 387 loads. Every DEPTH verdict it gave on this benchmark's
+post-buffering paths was wrong, the fix is regression-checked against
+OpenSTA's own fanout column, and the wrong logs are kept.
+`tools/classify_regression.py`, `docs/closed-loop.md`.
 
 ## Run it
 
