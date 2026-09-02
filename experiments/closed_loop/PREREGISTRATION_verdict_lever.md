@@ -67,3 +67,19 @@ unregistered observation, not a prediction.
 - Comparing against a re-run of the blunt policy instead of the committed
   log, unless the re-run reproduces it exactly (it should; the flow is
   deterministic).
+
+## Amendment 2, 2026-09-03, after the run: the classifier's verdicts in this run were wrong
+
+Found after run 3 and run 4 were scored. `tools/classify_path.py` as used by
+this run undercounted fanout across module boundaries (see
+`experiments/drrtl_transfer/PREREGISTRATION.md` amendment 4 and
+`tools/classify_regression.py`). The post-buffering `clk_a` path it called
+DEPTH_DOMINATED at share 0.000 has a 387-load net carrying 6.762 of its
+17.131 ns and is MIXED at 0.428; the post-buffering `clk_e` path it called
+DEPTH_DOMINATED at 0.000 has a 59-load net carrying 1.952 of 6.817 ns and is
+MIXED at 0.286. Under the registered policy MIXED routes to buffer-only then
+sizing then stop, so with a correct classifier the RTL lever would not have
+fired in this run at all. Predictions 1 to 5 keep their scores: they were
+scored against the verdicts the loop acted on. Prediction 5 in particular is
+a wiring check and remains correct as such. The corrected-classifier run is
+registered separately in `PREREGISTRATION_classifier_fixed.md`.

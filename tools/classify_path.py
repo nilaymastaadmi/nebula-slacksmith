@@ -69,8 +69,89 @@ KEYWORDS = {"module", "endmodule", "input", "output", "inout", "wire", "reg",
 CONST = ("1'h0", "1'h1")
 
 
+DECL_RE = re.compile(
+    r"^\s*(?:input|output|inout|wire|reg)\s+(?:wire\s+|reg\s+)?"
+    r"(?:\[\s*(-?\d+)\s*:\s*(-?\d+)\s*\]\s*)?(.+?);", re.M)
+CONST_RE = re.compile(r"^(\d+)'[sS]?[hbdoHBDO][0-9a-fA-FxXzZ_?]+$")
+PART_RE = re.compile(r"^(.+?)\[(\d+):(\d+)\]$")
+BIT_RE = re.compile(r"^(.+?)\[(\d+)\]$")
+
+
+def _norm(net):
+    """One spelling per net: no whitespace, no leading escape backslash.
+    Yosys writes escaped names as `\\foo.bar [2]` in one place and the cell
+    pin as `\\foo.bar[2]` in another."""
+    return re.sub(r"\s+", "", net).lstrip("\\")
+
+
 def _conns(text):
-    return [(p, n.strip()) for p, n in CONN_RE.findall(text)]
+    return [(p, _norm(n)) for p, n in CONN_RE.findall(text)]
+
+
+def _split_top(text):
+    """Split a concatenation body on commas at brace depth 0."""
+    parts, depth, cur = [], 0, []
+    for ch in text:
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+        if ch == "," and depth == 0:
+            parts.append("".join(cur)); cur = []
+        else:
+            cur.append(ch)
+    if cur:
+        parts.append("".join(cur))
+    return parts
+
+
+def _bits(text, widths):
+    """Expand a port connection into bit-level net names, MSB first.
+
+    Handles `{a, b[3:1], 2'h0, c}` concatenations, part-selects, bit-selects
+    and whole-bus names (width from the parent's declaration). Constant
+    bits become None and are never charged.
+
+    This is the 2026-09-03 fix. Before it, a connection was charged only if
+    its text equalled a net name exactly, so `.sboxw(tmp_sboxw)` (a 32-bit
+    bus) and `.imem_data({imem_data[2], imem_data[2], ...})` (one bit fanned
+    into 20 port bits) were charged nothing. On this project's own benchmark
+    that read a 387-load net as fanout 1 and a 59-load net as fanout 0, and
+    classified both paths DEPTH_DOMINATED at share 0.000.
+    """
+    t = _norm(text)
+    if not t:
+        return []
+    if t.startswith("{"):
+        inner = t[1:t.rfind("}")] if "}" in t else t[1:]
+        out = []
+        for part in _split_top(inner):
+            out.extend(_bits(part, widths))
+        return out
+    m = CONST_RE.match(t)
+    if m:
+        return [None] * int(m.group(1))
+    m = PART_RE.match(t)
+    if m:
+        name, hi, lo = m.group(1), int(m.group(2)), int(m.group(3))
+        step = -1 if hi >= lo else 1
+        return [f"{name}[{i}]" for i in range(hi, lo + step, step)]
+    if BIT_RE.match(t):
+        return [t]
+    w = widths.get(t)
+    if w:
+        msb, lsb = w
+        step = -1 if msb >= lsb else 1
+        return [f"{t}[{i}]" for i in range(msb, lsb + step, step)]
+    return [t]
+
+
+def _port_bits(port, width):
+    if width:
+        msb, lsb = width
+        step = -1 if msb >= lsb else 1
+        return [f"{port}[{i}]" for i in range(msb, lsb + step, step)]
+    return [port]
 
 
 def parse_netlist(path):
@@ -93,15 +174,22 @@ def parse_netlist(path):
         for decl in re.findall(
                 r"^\s*input\s+(?:wire\s+)?(?:\[[^\]]*\]\s*)?(.+?);", body, re.M):
             for tok in decl.split(","):
-                tok = tok.strip().lstrip("\\")
+                tok = _norm(tok)
                 if tok:
                     inputs.add(tok)
+        # Declared widths, needed to expand whole-bus connections.
+        widths = {}
+        for msb, lsb, names in DECL_RE.findall(body):
+            for tok in names.split(","):
+                tok = _norm(tok)
+                if tok:
+                    widths[tok] = (int(msb), int(lsb)) if msb else None
         cells, drv, own_loads = {}, {}, {}
         for ctype, inst, conns in CELL_RE.findall(body):
             inst = inst.lstrip("\\")
             cells[inst] = ctype
             for pin, net in _conns(conns):
-                if not net or net in CONST:
+                if not net or net in CONST or CONST_RE.match(net):
                     continue
                 if pin in DRIVER_PINS:
                     drv[inst] = net
@@ -114,11 +202,13 @@ def parse_netlist(path):
             if mtype in KEYWORDS:
                 continue
             subs.append((mtype, inst.lstrip("\\"), _conns(conns)))
-        raw[name] = {"inputs": inputs, "cells": cells, "drv": drv,
-                     "own_loads": own_loads, "subs": subs}
+        raw[name] = {"inputs": inputs, "widths": widths, "cells": cells,
+                     "drv": drv, "own_loads": own_loads, "subs": subs}
 
-    # Leaf-first resolution. port_pins[module][port] is the number of leaf
-    # input pins that port ultimately drives inside that module.
+    # Leaf-first resolution. port_pins[module]["pins"][port_bit] is the
+    # number of leaf input pins that port bit ultimately drives inside that
+    # module; ["widths"] carries the port widths so a parent can expand a
+    # whole-bus or concatenated connection bit by bit.
     port_pins, done = {}, set()
     for _ in range(len(raw) + 2):
         progress = False
@@ -131,15 +221,30 @@ def parse_netlist(path):
             for stype, _inst, conns in md["subs"]:
                 pp = port_pins.get(stype)
                 for pin, net in conns:
-                    if not net or net in CONST:
+                    if not net:
                         continue
+                    nbits = _bits(net, md["widths"])
                     if pp is None:
-                        add = 1          # unknown submodule: charge one pin
-                    else:
-                        add = pp.get(pin, 0)   # 0 for output ports
-                    loads[net] = loads.get(net, 0) + add
+                        # unknown submodule: charge one pin per bit
+                        for nb in nbits:
+                            if nb is not None:
+                                loads[nb] = loads.get(nb, 0) + 1
+                        continue
+                    pbits = _port_bits(pin, pp["widths"].get(pin))
+                    if len(pbits) == 1 and len(nbits) > 1 and pin not in pp["widths"]:
+                        # output port connected to a bus: nothing to charge
+                        continue
+                    for nb, pb in zip(nbits, pbits):
+                        if nb is None:
+                            continue
+                        loads[nb] = loads.get(nb, 0) + pp["pins"].get(pb, 0)
             md["loads"] = loads
-            port_pins[name] = {p: loads.get(p, 0) for p in md["inputs"]}
+            pins = {}
+            for p in md["inputs"]:
+                for pb in _port_bits(p, md["widths"].get(p)):
+                    pins[pb] = loads.get(pb, 0)
+            port_pins[name] = {"pins": pins,
+                               "widths": {p: md["widths"].get(p) for p in md["inputs"]}}
             done.add(name)
             progress = True
         if not progress:
@@ -180,14 +285,20 @@ def parse_path(report_text):
     \\S+ here and matched a `//` comment.
     """
     rows = []
+    # With `report_checks -fields {fanout}` each cell row carries OpenSTA's
+    # own leaf-pin fanout as a leading integer column. That count is taken
+    # through hierarchy by the tool that timed the path, so when it is
+    # present it is the fanout used (see classify). Without the field the
+    # optional group is empty and the netlist is the only source.
     pat = re.compile(
-        r"^\s*(-?\d+\.\d+)\s+(-?\d+\.\d+)\s+[v^]\s+"
+        r"^\s*(?:(\d+)\s+)?(-?\d+\.\d+)\s+(-?\d+\.\d+)\s+[v^]\s+"
         r"([A-Za-z_\\][\w\\/\[\]\.$:]*)/(\w+)\s+\((sky130_fd_sc_hd__\w+)\)",
         re.M)
     for m in pat.finditer(report_text):
-        incr, _arr, inst, pin, ctype = m.groups()
+        rfo, incr, _arr, inst, pin, ctype = m.groups()
         rows.append({"incr": float(incr), "inst": inst,
-                     "pin": pin, "cell": ctype})
+                     "pin": pin, "cell": ctype,
+                     "report_fanout": int(rfo) if rfo is not None else None})
     m = re.search(r"^\s*(-?\d+\.\d+)\s+slack \((MET|VIOLATED)\)",
                   report_text, re.M)
     slack = float(m.group(1)) if m else None
@@ -207,9 +318,20 @@ def classify(report_text, netlist_path, top="bench_top"):
     path_delay = sum(r["incr"] for r in rows)
 
     mods = parse_netlist(netlist_path) if netlist_path else {}
+    have_report = any(r["report_fanout"] is not None for r in rows)
+    disagree = 0
     for r in rows:
         fo, owner = resolve_fanout(mods, top, r["inst"]) if mods else (None, None)
-        r["fanout"], r["module"] = fo, owner
+        r["netlist_fanout"], r["module"] = fo, owner
+        if have_report:
+            # Driver pins carry the count; the CLK and D rows have none and
+            # contribute no delay of their own.
+            r["fanout"] = r["report_fanout"] if r["report_fanout"] is not None else 0
+            if fo is not None and r["report_fanout"] is not None and fo != r["report_fanout"]:
+                disagree += 1
+        else:
+            r["fanout"] = fo
+    fanout_source = "report" if have_report else ("netlist" if mods else "none")
 
     unresolved = sum(1 for r in rows if r["fanout"] is None)
     hi = [r for r in rows if (r["fanout"] or 0) >= FANOUT_HI]
@@ -237,9 +359,12 @@ def classify(report_text, netlist_path, top="bench_top"):
         "fanout_delay_ns": round(fanout_delay, 3),
         "fanout_delay_share": round(share, 4),
         "unresolved_cells": unresolved,
+        "fanout_source": fanout_source,
+        "fanout_disagreements": disagree if have_report and mods else None,
         "top_cells": [{"inst": r["inst"], "cell": r["cell"],
                        "incr_ns": round(r["incr"], 3),
-                       "fanout": r["fanout"], "module": r["module"]}
+                       "fanout": r["fanout"], "module": r["module"],
+                       "netlist_fanout": r["netlist_fanout"]}
                       for r in ranked[:3]],
         "thresholds": {"fanout_hi": FANOUT_HI,
                        "fanout_share_hi": FANOUT_SHARE_HI,

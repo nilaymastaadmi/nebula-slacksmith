@@ -154,7 +154,7 @@ def sta_slack(sta_bin, liberty, mapped_path, top, sdc, clocks, workdir):
     ]
     for clk in clocks:
         lines.append(f"puts \"---CLOCK:{clk}---\"")
-        lines.append(f"report_checks -path_delay max -to [get_clocks {clk}] -group_path_count 1 -digits 3")
+        lines.append(f"report_checks -path_delay max -to [get_clocks {clk}] -group_path_count 1 -digits 3 -fields {{fanout}}")
     with open(tcl_path, "w") as f:
         f.write("\n".join(lines) + "\n")
 

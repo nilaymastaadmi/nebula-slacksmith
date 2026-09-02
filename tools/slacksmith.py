@@ -167,7 +167,7 @@ def measure_openroad(a, netlist, workdir, tag, do_repair):
     reports = "\n".join(
         f'puts "---CLOCK:{c}---"\n'
         f'report_checks -path_delay max -to [get_clocks {c}] '
-        f'-group_count 1 -digits 3' for c in a.clocks)
+        f'-group_count 1 -digits 3 -fields {{fanout}}' for c in a.clocks)
     tcl = OR_TCL.format(plat=a.platform, lib=a.liberty, net=netlist, top=a.top,
                         sdc=a.sdc, repair=repair, reports=reports,
                         outnet=os.path.join(d, "out.v"))

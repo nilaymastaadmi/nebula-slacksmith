@@ -66,3 +66,13 @@ the honest end of the run is "no lever left", stated.
 - Changing thresholds in `tools/classify_path.py`, or any proposal.
 - Any tolerance on the sum other than strict improvement. If a tolerance is
   ever added it is a new registration.
+
+## Amendment 1, 2026-09-03, after the run: same classifier defect as run 3
+
+The `clk_e` verdict at iterations 2 and 4 (DEPTH_DOMINATED, 0.000) is
+MIXED at 0.286 with the corrected classifier; see
+`PREREGISTRATION_verdict_lever.md` amendment 2. Predictions 6 to 9 keep their
+scores. Prediction 7's stated reason ("no proposal on the path") is the
+reason the loop gave; with a correct verdict the loop stops one step earlier
+for a different reason (physical lever exhausted). The end state is the
+same. Registered as prediction 11 in `PREREGISTRATION_classifier_fixed.md`.

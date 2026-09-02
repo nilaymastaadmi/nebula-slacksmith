@@ -306,3 +306,44 @@ Predictions:
 - Per-design clock periods set by anything other than the 0.9x rule.
 - The git ordering check at the top failing.
 - Reporting phase 2 without phase 1, or a subset of either.
+
+## Amendment 4, 2026-09-03: the classifier undercounted fanout across module boundaries; every verdict is re-derived
+
+Written after the defect was found on this project's own benchmark and
+**before** `reclassify.sh` has finished on these 20 designs. The phase-1
+verdicts in `results/` were produced by `tools/classify_path.py` as of
+commit `694375d`. That version charged a submodule port connection only when
+its text equalled a net name exactly, so a whole-bus connection
+(`.sboxw(tmp_sboxw)`) or a concatenation (`.imem_data({imem_data[2], ...})`)
+was charged nothing. On the closed-loop v3 runs it read a 387-load net as
+fanout 1 and a 59-load net as fanout 0 and classified both paths
+DEPTH_DOMINATED at share 0.000; OpenSTA's own fanout column gives 387 and
+59, and both paths are MIXED (0.428 and 0.286). The tell was recorded in this
+study's own notes as a limit ("tv80 2.225 ns at fanout 0") and not chased.
+
+The fix (`tools/classify_path.py`, regression `tools/classify_regression.py`)
+expands bus, part-select and concatenation connections bit by bit, and reads
+OpenSTA's fanout column when `report_checks` is asked for it. The correction
+can only add loads, never remove them, so a verdict can move toward FANOUT
+and never toward DEPTH.
+
+Re-derivation: same saved `A.v` netlist per design, same period read back
+from the saved `tight_A.rpt.tcl`, `report_checks` re-run with
+`-fields {fanout}`, corrected classifier. Nothing re-synthesized. Output in
+`results_reclassified/`, with `results/` kept unchanged. Every phase-1 and
+phase-3 statistic that groups designs by verdict (median gain by verdict,
+closes by verdict, buffer-only and sizing-only medians) is recomputed on the
+corrected verdicts and both tables are shown. Predictions 1 to 14 keep the
+scores they were given; they were scored against the verdicts in force.
+
+Predictions for the re-derivation, registered before its output is read:
+
+15. No verdict moves toward DEPTH (FANOUT stays FANOUT; MIXED stays MIXED
+    or becomes FANOUT). High; a failure here is a bug in the fix.
+16. tv80's verdict changes from DEPTH_DOMINATED. Medium-high; its top cell
+    was recorded at fanout 0 with 2.225 ns, the same signature.
+17. At least 2 of the 8 DEPTH_DOMINATED verdicts change. Low-medium.
+18. The phase-3 claim "buffer-only is net harmful on DEPTH paths" survives on
+    the corrected DEPTH set (median buffer-only gain at or below 0). Medium;
+    if the designs that flip are the ones buffering helped, this is the
+    prediction that fails, and that would be the honest outcome.
