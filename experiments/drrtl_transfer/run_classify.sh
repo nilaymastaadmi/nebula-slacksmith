@@ -49,7 +49,10 @@ puts "---CLOCK:clk---"
 report_checks -path_delay max -from [all_registers -clock_pins] -to [all_registers -data_pins] -group_path_count 1 -digits 3
 EOF
   $STA -no_init -no_splash -exit $5.tcl > $5 2>&1
-  grep -E "([\-0-9.]+)\s+slack \((MET|VIOLATED)\)" $5 | tail -1 | awk '{print $1}'
+  # Dash FIRST inside the bracket. "[\-0-9.]" makes POSIX grep read a range
+  # from backslash to zero and abort with "Invalid range end", which turned
+  # every design into NO_PATH on the first run of this script.
+  grep -E "(-?[0-9.]+)[[:space:]]+slack \((MET|VIOLATED)\)" $5 | tail -1 | awk '{print $1}'
 }
 
 hdr="design\ttop\tmapped_cells_A\tmapped_cells_B\trequired_ns\tperiod_ns\tslack_A\tslack_B\tdelta_B\tverdict\tfanout_share\tpath_delay\tcells_on_path\ttop_cell\ttop_incr\ttop_fanout\ttop_module"
