@@ -50,6 +50,16 @@ Treatment: the verdict policy, same SDC v3, same proposal pools, same
 5. The loop never applies buffer-only to a group it classified
    DEPTH_DOMINATED. High; this is a check that the policy is wired right.
 
+## Amendment 1, 2026-09-03, written at treatment iteration 2 (only iteration 1 seen, identical to the baseline)
+
+Prediction 1 names the wrong clock. In the baseline log the group classified
+FANOUT_DOMINATED at share 0.9139 in iteration 1 is **clk_e** (-25.957), not
+clk_b; clk_b (-18.957) closed to +5.6 as a side effect of the same lever, and
+clk_e itself ended the blunt run at **-0.606**, not closed. Prediction 1 is
+scored exactly as written (clk_b at or above 0 after the first buffer-only
+step). Whether clk_e closes under buffer-only is reported alongside it as an
+unregistered observation, not a prediction.
+
 ## What would make this void
 
 - Changing thresholds in `tools/classify_path.py`.
