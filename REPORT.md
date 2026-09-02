@@ -108,7 +108,7 @@ Crossings form a ring A→B→C→D→E→A. Every multi-bit crossing is a gray-
 
 Four of the five crossings both launch *and* capture on generated clocks, which is what makes this harder than a single-clock design. Single-bit crossings carry a toggle rather than a pulse, so a slow destination cannot miss a narrow source pulse. FIFO pointers are gray-coded and `full`/`empty` are registered from the *next* pointer value, so a consumer driving `rinc = ~rempty` cannot form a loop.
 
-**The /3 and /5 dividers are the deliberate difficulty.** An odd ratio cannot be split evenly by posedge logic alone, so `clkdiv.v` runs two counters, one per edge, and ANDs their phase flags. Verified rather than asserted: simulated over 2,000 ns with an off-grid reset release, every segment measures **exactly 15.000 ns (/3) and 25.000 ns (/5)** across 65 and 39 segments, minimum equal to mean, so no glitch. The SDC must then describe generated clocks whose edges derive from *both* source edges, which is the constraint case this benchmark exists to exercise.
+**The /3 and /5 dividers are the deliberate difficulty.** An odd ratio cannot be split evenly by posedge logic alone, so `clkdiv.v` runs two counters, one per edge, and ANDs their phase flags. Simulated over 2,000 ns with an off-grid reset release, every segment measures **exactly 15.000 ns (/3) and 25.000 ns (/5)**, no glitch. The SDC must then describe generated clocks whose edges derive from *both* source edges, which is the constraint case this benchmark exists to exercise.
 
 Third-party content: the AES-128 core is `secworks/aes`, BSD-2-Clause, vendored unmodified under `rtl/aes/` with its license and a `THIRD_PARTY.md`. The RV32I core is ours, from `rv32-dsp-soc`, verified against a golden C++ instruction-set simulator over a 400-seed, 132,400-instruction differential regression.
 
@@ -124,13 +124,13 @@ One `set_clock_groups -asynchronous` over the five domains is also what exempts 
 
 Three findings changed how we report every number (`docs/measurement-methodology.md`):
 
-**A single library cell was worth 4.83 ns of pure artifact.** The first critical path put 19.5 ns of 33.0 ns in *two cells*. That is drive, not logic depth, so we investigated before reporting it, and `abc -D 8000` produced a byte-identical netlist, ruling out mapping effort. The culprit was `sky130_fd_sc_hd__lpflow_isobufsrc_1`, a low-power isolation cell ABC selected on area cost. Excluding the `lpflow` and `probe` families, as standard sky130 flows do, moved WNS from **−27.37 to −22.54 with zero RTL change**.
+**A single library cell was worth 4.83 ns of pure artifact.** The first critical path put 19.5 ns of 33.0 ns in *two cells*, which is drive, not logic depth. The culprit was `sky130_fd_sc_hd__lpflow_isobufsrc_1`, a low-power isolation cell ABC selected on area cost. Excluding the `lpflow` and `probe` families, as standard sky130 flows do, moved WNS from **−27.37 to −22.54 with zero RTL change**.
 
 **The measurement tool has a zero noise floor**: swapping a module for *itself* returns 0.000 delta on every path group. **But local RTL changes have non-local effects.** Given that null control, the +1.398 ns a `domain_b`-only change produces on `clk_a` is not noise, it is ABC's global mapping moving an unrelated group. **Reporting rule adopted:** a transform's effect is the delta in the group it touches, and movement elsewhere is reported separately, never folded into the claimed benefit.
 
 ### 5.1 Setting a closure target that means something
 
-The v1 periods were chosen as illustrative when the benchmark was 3,584 cells. It is now 55,413 with an RV32I core and two AES-128 cores, and an 8 ns `clk_a` target demands roughly four times what a single-cycle RV32I with async-read memory can reach in sky130. Against a target like that, moving WNS from −25 ns to −24 ns is not progress toward anything.
+The v1 periods were chosen as illustrative when the benchmark was 3,584 cells. At 55,413 cells an 8 ns `clk_a` target demands roughly four times what a single-cycle RV32I with async-read memory can reach in sky130, and against a target like that moving WNS from −25 ns to −24 ns is not progress toward anything.
 
 So we measured what each domain requires and set `sdc/bench_top_v2.sdc` about 10% tighter: `clk_a` 33.29 measured to 30.0 target, `clk_b` and `clk_e` 29.49 to 26.5, with `clk_c` and `clk_d` already met and tightened to 3.0 and 8.0. Generated-clock `-edges` are relative to master edges, so they scale automatically and no edge list changed. v1 is retained unchanged as the frozen record for every earlier measurement: revising a target with disclosure is not the same as editing constraints mid-campaign, which stays forbidden. `sdc/bench_top_v3.sdc` (§7.3) later applies the same method again, to the flow that includes the buffering pass.
 
@@ -142,7 +142,7 @@ Finding 1 above is correct in substance and **was not in effect**. The exclusion
 
 All affected numbers were re-measured. The `clk_a` baseline carried **4.62 ns** of artifact (−25.287 → −20.667) and the four proven transforms' deltas moved 40 to 50%, but **the qualitative conclusion did not change**, so no conclusion had to be withdrawn. Note also that the exclusion is **not** uniformly beneficial: `clk_a` gains 4.62 ns while `clk_b` and `clk_e` each lose 1.97 ns, because constraining the mapper also removes options from paths using those cells benignly.
 
-After the fix a 5.66 ns single-cell delay remained, high fanout with no buffer-insertion pass. We flagged it as a limitation and an upper bound. **§7.2 stops flagging it and measures it**, and it turned out to be the largest number in this report.
+After the fix a 5.66 ns single-cell delay remained, high fanout with no buffer-insertion pass; §7.2 stops flagging that and measures it.
 
 ---
 
@@ -165,7 +165,7 @@ After the fix a 5.66 ns single-cell delay remained, high fanout with no buffer-i
 | EQY | PASS | **FAIL**, 1/1 partitions |
 | k-padded miter | n/a | **PASSED, unbounded** |
 
-They fail for different reasons, and the difference matters: `cec` cannot express the question, while `dsec` and EQY express it and correctly answer no, because the designs genuinely are not cycle-for-cycle equivalent. None can express equivalence *modulo k cycles*, so a pipeline gated on any of them can only ever reject a latency change. That is measured evidence for the routing decision, not an argument.
+`cec` cannot express the question; `dsec` and EQY express it and correctly answer no, because the designs are not cycle-for-cycle equivalent. None can express equivalence *modulo k cycles*, so a pipeline gated on any of them can only ever reject a latency change. Measured evidence for the routing decision, not an argument.
 
 **We mutation-tested our own checker, and it failed.** The stream-equivalence obligation asserts only once both designs have completed a transaction. We built a mutant reproducing a real documented deadlock bug, confirmed by simulation that it never produces output, and ran the proof: **PDR reported PROVEN in 0 seconds** for a design that deadlocks, because the assert's guard was unreachable and it was vacuously true. Fixed with a `cover` property that distinguishes the real design (REACHED) from the mutant (UNREACHABLE). We found this by testing the verifier, not the design.
 
@@ -185,7 +185,7 @@ So the branch is chosen automatically, in three passes, each able to overrule th
 
 `costume_ready` is the case that earns the machinery: handshake-shaped port names, not an elastic interface. Both later passes reject it by *independent* arguments, the signal never reaching state and the data changing while stalled.
 
-Two honest limits. Pass 3 is bounded (depth 16), not an unbounded proof. And credit-based or otherwise exotic flow control misses the lexical pass and is classified rigid, which is the unsafe direction; the correct default for an unrecognised interface is elastic, and that is not yet implemented.
+Two limits: pass 3 is bounded (depth 16), and exotic flow control that misses the lexical pass is classified rigid, the unsafe direction; defaulting unrecognised interfaces to elastic is not yet implemented.
 
 ### 6.2 Why simulation is not a substitute, measured on four mutants
 
@@ -378,7 +378,7 @@ As frequency, which is what deliverable 5 asks for: at core level a 10 ns constr
 
 **The rankings invert between contexts.** By core timing the best transform is P6 (+1.96 ns); at design level P6 is the **worst** (−1.615 ns), and the only design-level winner is P2, which is nearly neutral at core level. Two real mechanisms: the core's critical path is not the design's (inside `bench_top` the binding path runs through the wrapper's async-read memory and its fanout, not the ALU cone), plus the non-local remapping quantified in §5. We report both contexts for all four transforms, because a report quoting only the core table would name P6 the best transform and one quoting only the design table would name it the worst.
 
-Power is vector-free at default switching activity: relative between variants, not an absolute silicon figure. At design level it is flat at 223 to 224 mW across all variants, because a 351-cell change is 0.6% of a 55K design and below the method's resolution. That is reported as a null rather than as a 1 mW difference. The area cost that *is* resolvable is `repair_design`'s **+20.2%** (§7.2).
+Power is vector-free at default switching activity, relative between variants only; at design level it is flat at 223 to 224 mW across all variants (a 351-cell change is 0.6% of a 55K design), reported as a null rather than a 1 mW difference. The area cost that *is* resolvable is `repair_design`'s **+20.2%** (§7.2).
 
 ---
 
@@ -394,11 +394,11 @@ Judged work should show its corrections, so here are ours, all committed with th
 
 **Two harness bugs, both ours, both surfaced as UNRESOLVED.** Proposal A3 reported UNRESOLVED twice before producing a verdict: first because `sby` was not on PATH, then because our own generalization patch broke an f-string and wrote `{max(k,1)}` into the generated miter as literal Verilog. Neither was a transform result. Fixed and re-run, A3 is REFUTED. We record this because UNRESOLVED must never be quietly read as PROVEN or REFUTED; here it twice meant "the harness broke", and a report that left A3 as UNRESOLVED would have hidden two of its own bugs behind something that looks like a result.
 
-**The path classifier was wrong twice before it was right.** Its first version used the report's `data arrival time` as the denominator, which includes the launch clock edge and scored a divided-clock path at a meaningless 0.007. Its second counted fanout flat and returned zero for every hierarchical instance. Both were found by running it on paths whose answers we already knew, and a third defect survives: fanout is undercounted for buses crossing a hierarchy boundary, whose tell is a 6.762 ns cell reported at fanout 1. That limitation is documented alongside the tool rather than left for a judge to find.
+**The path classifier was wrong twice before it was right**, and a third defect survives (fanout undercounted across hierarchy boundaries, whose tell is a 6.762 ns cell at reported fanout 1). All three are in `docs/path-classification.md` rather than left for a judge to find.
 
 **A claim that was false, caught by simulation.** We described `pipeline_cut_rigid(domain_a)` as boundary-proven *and therefore* module-equivalent. It is not: a testbench shows `mac_result` diverging permanently (`002a` vs `0031`), because the consuming domain samples at half rate, so a one-cycle delay selects a different subsequence rather than shifting the stream. The proof stands for the property it states; the sufficiency claim was withdrawn and the refuting testbench committed.
 
-**Four more, briefly.** P2's improvement first measured **+5.105 ns** against a baseline built by a slightly different flow; rebuilt identically it is **+0.485 ns**. P2 was also nearly unmeasurable: Yosys names Verilog `function` temporaries with an embedded absolute path that OpenSTA's reader rejects (1,386 such names), so our only batch 1 winner would have been recorded as untimeable without `opt_clean -purge`. `remeasure.py` once matched `//` as a module name, so `bench_top.v`'s own comments counted as a second instantiation. And an attempted fix that failed is reported as closed rather than pending: wiring a real divider into the proof harness surfaces a genuine Yosys limitation (opposite-polarity clocking needs `clk2fflogic`, whose clock-as-data modelling then makes BMC on this dual-edge divider intractable, past 30 s per step by depth 28), so **PDR is confirmed as the correct tool for those properties, not a workaround** for a proof we never attempted.
+**Three more, briefly.** P2's improvement first measured **+5.105 ns** against a baseline built by a slightly different flow; rebuilt identically it is **+0.485 ns**. P2 was also nearly unmeasurable: Yosys names Verilog `function` temporaries with an embedded path that OpenSTA rejects (1,386 such names), so our only batch 1 winner would have been recorded as untimeable without `opt_clean -purge`. And wiring a real divider into the proof harness hit a genuine Yosys limitation (`clk2fflogic` makes BMC on the dual-edge divider intractable past depth 28), so **PDR is confirmed as the correct tool for those properties**, not a workaround.
 
 ---
 
