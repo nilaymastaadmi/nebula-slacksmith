@@ -110,19 +110,25 @@ def run(cmd, **kw):
 
 
 def synth_bench_top(yosys_bin, rtl_dir, files, liberty, workdir, mapped_name,
-                    extra_yosys_top="bench_top", abc_script=None):
+                    extra_yosys_top="bench_top", abc_script=None, flatten=False):
     """abc_script, when given, is passed to abc as -script. tools/slacksmith.py
     uses it to apply the buffering physical lever (buffer; upsize; dnsize)
     without forking this function. Default None reproduces every measurement
-    taken before it existed."""
+    taken before it existed.
+
+    flatten=True adds -flatten to synth, so abc sees one module and its
+    buffering pass can split nets whose loads sit across a module boundary
+    (experiments/flatten_control/PREREGISTRATION.md, 2026-09-03). Default
+    False keeps the hierarchical flow every earlier number came from."""
     os.makedirs(workdir, exist_ok=True)
     paths = " ".join(os.path.join(rtl_dir, f) for f in files)
     mapped_path = os.path.join(workdir, mapped_name)
     abc_extra = f" -script {abc_script}" if abc_script else ""
+    flat = " -flatten" if flatten else ""
     script = (
         f"read_verilog {paths}; "
         f"hierarchy -check -top {extra_yosys_top}; "
-        f"synth -top {extra_yosys_top}; "
+        f"synth -top {extra_yosys_top}{flat}; "
         f"dfflibmap -liberty {liberty}; "
         f"abc -liberty {liberty} {dont_use_flags(liberty)}{abc_extra}; "
         # opt_clean -purge strips named-but-unused wires. Required, not
