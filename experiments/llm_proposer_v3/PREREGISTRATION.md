@@ -68,6 +68,16 @@ counterexamples add. Without A, an improvement in B could be either.
 
    PROPOSER: __to be filled before proposals/ is created__
 
+   STATUS 2026-09-02: **registered, deferred, not run.** A literature pass
+   after registration found counterexample feedback to LLMs already published
+   for RTL generation and repair in 2026 (FormalRTL, Veri-Sure, AutoVeriFix+,
+   HDLFORGE), which narrows this batch's claim to "the same idea for timing
+   transforms". It was deferred in favour of `experiments/drrtl_transfer/`,
+   which tests this project's classifier and physical-lever finding on the
+   20 human-written designs published with Dr. RTL (ICCAD 2026). If this
+   batch runs later, its planned third arm is "proposer given Dr. RTL's
+   47-skill library". Nothing in `inputs/` or this file changes if it runs.
+
    If it is this session, arm A is contaminated by knowledge of the
    refutations and the A/B contrast is weakened; that is disclosed, not hidden.
 3. **Anti-tuning rule, unchanged.** No proposal edited, replaced or withdrawn
