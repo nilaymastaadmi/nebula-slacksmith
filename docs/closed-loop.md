@@ -44,6 +44,11 @@ confirms it or reverts it:
 - G5: the group it targeted must actually improve. Otherwise the loop reverts
   the file substitution and records `reason: G5_no_improvement`.
 
+Since 2026-09-03 physical steps get the same bar under `--lever-policy
+verdict`, and `--g5 total` replaces "the targeted group improved" with "the
+sum over reported groups of min(worst slack, 0) strictly improved". Run 4
+below is why that second bar exists.
+
 ## Honest limit on the phrase "closed loop"
 
 **The proposer is offline.** This loop does not call a model. It selects from
@@ -132,11 +137,71 @@ not predicted by anything and is not claimed as a law.
 
 The full log is in `experiments/closed_loop/`.
 
+## Run 3: the classifier picks the physical component
+
+The transfer study's phase 3 (`experiments/drrtl_transfer/NOTES.md`) split the
+physical lever and found buffering alone net harmful on depth-dominated paths
+and sizing helpful everywhere. So `--lever-policy verdict` lets the verdict
+choose: FANOUT_DOMINATED and MIXED get buffer-only, then sizing, then stop;
+DEPTH_DOMINATED gets sizing-only, then the RTL proposals. Every physical step
+is provisional. Registered in `PREREGISTRATION_verdict_lever.md` with 5
+predictions before the code was changed; same SDC v3, same proposal pools.
+8 iterations, 321.8 s:
+
+    it1  MEASURE   clk_a=-13.167  clk_b=-18.957  clk_e=-25.957
+    it1  CLASSIFY  clk_e: FANOUT_DOMINATED (0.9139) -> physical buffer (provisional)
+    it2  MEASURE   clk_a=1.75     clk_b=5.556    clk_e=-1.444     CONFIRM buffer (+24.513 on clk_e)
+    it2  CLASSIFY  clk_e: DEPTH_DOMINATED (0.000) -> physical size (provisional)
+    it3  MEASURE   clk_a=-1.716   clk_b=5.6      clk_e=-0.606     CONFIRM size (+0.838 on clk_e)
+    it3..it8       clk_a DEPTH -> P1, P2, P3 gated PROVEN, applied, reverted. Same as run 2.
+
+**Buffer-only closes two of three groups by itself**, clk_a at +1.75 and
+clk_b at +5.556, where the combined lever left clk_a at −1.716. Then sizing,
+applied for clk_e, gains 0.838 ns on clk_e and moves clk_a from +1.75 to
+−1.716. The per-group G5 bar looks only at the targeted group, so it
+confirmed that step, and from there the run is run 2 again: same final state
+(−1.716, 5.6, −0.606), same three reverts.
+
+Scored: P1 (clk_b closes under buffer-only) correct. P2 correct in letter
+(clk_a +1.75 after the first physical step) and **wrong in mechanism**: the
+registration credited sizing on a DEPTH group, and no physical step ever
+targeted clk_a. **P3 wrong**: 0 physical steps reverted, and the one that
+should have been is exactly the sizing step. P4 (no more than 8 iterations)
+and P5 (buffer-only never applied to a DEPTH group) correct. The registration
+also named the wrong clock in P1 (clk_b for clk_e); amendment 1 records that,
+dated at iteration 2 of the run, and P1 was scored as written.
+
+## Run 4: G5 across all groups
+
+Registered at iteration 5 of run 3 (`PREREGISTRATION_g5_total.md`), before
+the code changed: `--g5 total` keeps a provisional step only if the sum over
+groups of min(worst slack, 0) strictly improves. 4 iterations, 106.6 s:
+
+    it1  MEASURE   clk_a=-13.167  clk_b=-18.957  clk_e=-25.957   total=-58.081
+    it2  MEASURE   clk_a=1.75     clk_b=5.556    clk_e=-1.444    total=-1.444    CONFIRM buffer
+    it3  MEASURE   clk_a=-1.716   clk_b=5.6      clk_e=-0.606    total=-2.322    REVERT size
+    it4  MEASURE   clk_a=1.75     clk_b=5.556    clk_e=-1.444
+    it4  CLASSIFY  clk_e: DEPTH_DOMINATED, sizing already tried -> rtl
+    it4  STOP      no_proposal_on_path (binding modules aes_decipher_block, aes_inv_sbox)
+
+P6 to P9 all correct, P6 having been registered as arithmetic on data already
+seen. The loop ends with **1 group violating instead of 2**, total −1.444
+against −2.322, in 4 iterations against 8, and it gets there by refusing a
+step, not by finding a better one. It does not close clk_e: all 6 AES
+proposals target `aes_key_mem`, and after buffering the clk_e path is in the
+decipher block and the inverse S-box. "No lever left" is the honest end.
+
+Mechanism, stated as a hypothesis: ABC's `upsize;dnsize` sees one delay
+target for the whole netlist, not three clocks, so `dnsize` shrinks cells
+that only clk_a's constraint makes critical. Not tested.
+
 ## What running it found, which reading it would not have
 
-Two defects, both in the loop, both caught by the loop doing the wrong thing
+Three defects, all in the loop, all caught by the loop doing the wrong thing
 visibly. The pre-fix log is kept at
-`experiments/closed_loop/run_v3_before_fixes.jsonl` rather than deleted.
+`experiments/closed_loop/run_v3_before_fixes.jsonl` rather than deleted, and
+the third (a per-group bar confirming a cross-group regression) is run 3
+above, kept as `run_v3_verdict.jsonl`.
 
 **1. It gated proposals against a module that was not on the path.** Under v3
 the binding violation after buffering was `clk_a`, in the RV32I domain. The
@@ -157,4 +222,6 @@ right, produces a plausible number, and is measuring the wrong thing.
 ## Files
 
 `tools/slacksmith.py`, `tools/show_run.py`, `sdc/make_v3.py`,
-`sdc/bench_top_v3.sdc`, `experiments/closed_loop/`.
+`sdc/bench_top_v3.sdc`, `experiments/closed_loop/` (logs `run_v2.jsonl`,
+`run_v3_before_fixes.jsonl`, `run_v3_final.jsonl`, `run_v3_verdict.jsonl`,
+`run_v3_g5total.jsonl`; registrations and scorers alongside).

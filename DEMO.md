@@ -74,6 +74,21 @@ so it routes to RTL, and then:
     it5  REVERT  P2: clk_a -1.716 -> -2.201, G5_no_improvement
     it7  REVERT  P3: clk_a -1.716 -> -2.02,  G5_no_improvement
 
+Then the run that refuses a physical step, 20 seconds:
+
+    python3 tools/show_run.py experiments/closed_loop/run_v3_g5total.jsonl
+
+    it2  MEASURE   clk_a=1.75    clk_b=5.556  clk_e=-1.444   physical=buffer   total=-1.444
+    it3  MEASURE   clk_a=-1.716  clk_b=5.6    clk_e=-0.606   physical=buffer+size  total=-2.322
+    it3  G5 TOTAL  -1.444 -> -2.322 (not improved)
+    it3  REVERT    size: clk_e -1.444 -> -0.606, G5_no_improvement
+    it4  STOP      no_proposal_on_path
+
+Say: sizing gained 0.838 ns on the group it was aimed at and cost `clk_a`
+3.466 ns. The earlier bar, which only looked at the target group, kept it. This
+one measures every group and reverted it: 4 iterations instead of 8, 1 group
+violating instead of 2, and it says so when it runs out of levers.
+
 Say:
 
 > Three transforms, all formally proven correct, all making the number worse.

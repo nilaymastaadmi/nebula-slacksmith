@@ -359,11 +359,14 @@ def main():
                     for c in (("buffer", "size") if comp == "both" else (comp,)):
                         phys[c] = False
                     tried_phys.add(comp)
+                    why = ("total violation not improved" if a.g5 == "total"
+                           else "no improvement")
                     print(f"  REVERT physical {comp}: {pending['clock']} "
-                          f"{before} -> {now}, no improvement.")
+                          f"{before} -> {now}, {why}.")
                     record(iter=it, step="revert", lever="physical", component=comp,
                            clock=pending["clock"], before=before, after=now,
-                           reason="G5_no_improvement")
+                           reason=("G5_total_no_improvement" if a.g5 == "total"
+                                   else "G5_no_improvement"))
                     pending = None
                     continue
                 print(f"  CONFIRM physical {comp}: {pending['clock']} "
@@ -375,11 +378,14 @@ def main():
             else:
                 if not improved:
                     file_subs.pop(pending["key"], None)
+                    why = ("total violation not improved" if a.g5 == "total"
+                           else "no improvement")
                     print(f"  REVERT {pending['id']}: {pending['clock']} "
-                          f"{before} -> {now}, no improvement. G4 passed, G5 did not.")
+                          f"{before} -> {now}, {why}. G4 passed, G5 did not.")
                     record(iter=it, step="revert", proposal=pending["id"],
                            clock=pending["clock"], before=before, after=now,
-                           reason="G5_no_improvement")
+                           reason=("G5_total_no_improvement" if a.g5 == "total"
+                                   else "G5_no_improvement"))
                     pending = None
                     continue
                 print(f"  CONFIRM {pending['id']}: {pending['clock']} "
