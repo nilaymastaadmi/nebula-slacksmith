@@ -58,7 +58,10 @@ FANOUT_SHARE_HI = 0.50  # >=50% of path delay from such cells -> fanout
 FANOUT_SHARE_LO = 0.20  # <=20% -> depth
 
 CELL_RE = re.compile(r"(sky130_fd_sc_hd__\w+)\s+(\\?\S+?)\s*\((.*?)\);", re.S)
-SUB_RE = re.compile(r"^\s*([A-Za-z_]\w*)\s+(\\?\S+?)\s*\((.*?)\);", re.S | re.M)
+# Submodule TYPE names can also be parameterised (\$paramod\...), so the type
+# group accepts any non-space run; the KEYWORDS filter below rejects Verilog
+# keywords that would otherwise match this shape.
+SUB_RE = re.compile(r"^\s*(\\?[^\s(]+)\s+(\\?\S+?)\s*\((.*?)\);", re.S | re.M)
 CONN_RE = re.compile(r"\.(\w+)\((.*?)\)")
 KEYWORDS = {"module", "endmodule", "input", "output", "inout", "wire", "reg",
             "assign", "parameter", "localparam", "always", "initial",
@@ -75,7 +78,14 @@ def parse_netlist(path):
     txt = open(path, encoding="utf-8", errors="replace").read()
 
     raw = {}
-    for m in re.finditer(r"^module\s+(\\?[\w$.]+)\s*\((.*?)^endmodule",
+    # Module names may be Yosys parameterised names such as
+    # \$paramod\opReg\WIDTH=s32'00000000000000000000000000100000 , which
+    # contain '=', quotes and backslashes. The earlier pattern [\w$.]+ never
+    # matched those headers, so every cell inside a parameterised submodule
+    # was unresolvable and read as fanout None. Found 2026-09-02 on the DSP
+    # and tv80 designs of the Dr. RTL benchmark; this project's own benchmark
+    # has no parameterised modules and never exercised it.
+    for m in re.finditer(r"^module\s+(\\?[^\s(]+)\s*\((.*?)^endmodule",
                          txt, re.S | re.M):
         name = m.group(1).lstrip("\\")
         body = m.group(2)
@@ -100,6 +110,7 @@ def parse_netlist(path):
         stripped = CELL_RE.sub("", body)
         subs = []
         for mtype, inst, conns in SUB_RE.findall(stripped):
+            mtype = mtype.lstrip("\\")
             if mtype in KEYWORDS:
                 continue
             subs.append((mtype, inst.lstrip("\\"), _conns(conns)))

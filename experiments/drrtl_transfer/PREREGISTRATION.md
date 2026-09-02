@@ -143,6 +143,44 @@ netlists, the named-call scorecard, and the phase 2 table. A result where the
 classifier does not transfer is more useful than one where it does, because
 it bounds a claim this report currently makes on N=1 benchmark.
 
+## Amendment 2026-09-02, after run 1, before run 2
+
+Run 1 (commit `534bc35`, preserved unchanged in `results_run1_as_registered/`)
+timed 15 of 20 designs. The other 5 were recorded as NO_PATH and that label
+was **wrong**: OpenSTA could not read those netlists at all. Two causes, both
+flow compatibility, neither a property of the designs:
+
+1. `LSTM` declares 38 `signed` ports, which OpenSTA's Verilog reader rejects.
+2. `FIFO`, `SPI`, `UART`, `pcie` use sync-reset flops. `dfflibmap` cannot map
+   the `$_SDFF_*` forms, and Yosys wrote them out as behavioral `always`
+   blocks. This project's own benchmark uses async resets everywhere and
+   never produced them.
+
+A third defect surfaced in the classifier on `DSP` and `tv80`: instances in
+**parameterised** submodules (`\$paramod\...` names containing `=`, quotes and
+backslashes) never matched the module-header regex, so 5 and 10 cells on
+those paths respectively resolved to fanout `None` and their DEPTH verdicts
+rested on unresolved fanout.
+
+Changes, all to tooling and none to thresholds or the 0.9x rule:
+
+- Synthesis adds `opt -nodffe -nosdff; dfflegalize ...` before `dfflibmap`,
+  strips `signed` from netlist declarations, and labels any netlist that
+  still carries `always` or `signed` as `FLOW_FAIL`.
+- The STA helper labels an unreadable netlist `STA_READ_FAIL`. An empty
+  result is never again recorded as a verdict.
+- `tools/classify_path.py` accepts parameterised module and instance-type
+  names.
+
+Because the flow changed, **all 20 designs are re-run identically** rather
+than only the 5 that failed, so treatment stays uniform. For the 15 designs
+run 1 timed, run 2's numbers are expected to match run 1 exactly wherever the
+design has no sync-reset flops; any difference is reported.
+
+The predictions above are scored against **run 2**. Run 1 is reported next to
+it, including that prediction 1 ("all 20 time and classify") was already
+false at the tooling level before any design got a chance to falsify it.
+
 ## What would make this study void
 
 - Any design dropped after being timed.

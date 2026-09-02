@@ -32,10 +32,26 @@ PY
 synth () {  # $1 name $2 src $3 ext $4 top $5 out $6 abc-script-or-empty
   local rv="read_verilog"; [ "$3" = "sv" ] && rv="read_verilog -sv"
   local abc="abc -liberty $LIB $DU"; [ -n "$6" ] && abc="$abc -script $6"
-  $Y -p "$rv $2; hierarchy -check -top $4; synth -top $4; dfflibmap -liberty $LIB; $abc; opt_clean -purge; write_verilog -noattr $5; stat" \
+  # Amendment 2026-09-02 (see PREREGISTRATION.md). Run 1 left flops that
+  # dfflibmap could not map (sync-reset \$_SDFF_* variants; this project's own
+  # benchmark uses async resets everywhere and never produced them) in the
+  # netlist as behavioral always blocks, which OpenSTA cannot read. Convert
+  # enables and sync resets into plain flops plus muxes and legalize to the
+  # forms sky130hd has, BEFORE mapping. This is the same class of fix as the
+  # opt_clean -purge added for OpenSTA's reader in docs/measurement-methodology.md.
+  local legal="opt -nodffe -nosdff; dfflegalize -cell \$_DFF_P_ 01 -cell \$_DFF_PN0_ 01 -cell \$_DFF_PP0_ 01 -cell \$_DFF_PN1_ 01 -cell \$_DFF_PP1_ 01 -cell \$_DLATCH_P_ 01 -cell \$_DLATCH_N_ 01"
+  $Y -p "$rv $2; hierarchy -check -top $4; synth -top $4; $legal; dfflibmap -liberty $LIB; $abc; opt_clean -purge; write_verilog -noattr $5; stat" \
      > $5.log 2>&1
   [ -s "$5" ] || { echo "  synth FAILED for $1"; return 1; }
-  grep -cE "^\s+sky130_fd_sc_hd__" $5 >/dev/null || true
+  # OpenSTA's Verilog reader rejects 'signed' on port and net declarations.
+  # Signedness carries no meaning in a gate netlist, so it is stripped.
+  sed -i -E 's/^(\s*(input|output|inout|wire|reg))\s+signed\s+/\1 /' $5
+  # A netlist that still carries behavioral constructs is a flow failure and
+  # is labelled as one. Run 1 let this through and it surfaced as NO_PATH.
+  if grep -qE '^\s*always|^\s*(input|output|inout|wire|reg)\s+signed' $5; then
+    echo "  FLOW_FAIL for $1: behavioral or signed constructs remain in netlist"
+    return 2
+  fi
   return 0
 }
 
@@ -49,6 +65,9 @@ puts "---CLOCK:clk---"
 report_checks -path_delay max -from [all_registers -clock_pins] -to [all_registers -data_pins] -group_path_count 1 -digits 3
 EOF
   $STA -no_init -no_splash -exit $5.tcl > $5 2>&1
+  # A netlist OpenSTA cannot read must say so. Run 1 returned an empty string
+  # here on a syntax error and the caller recorded NO_PATH for 5 designs.
+  if grep -qE '^Error' $5; then echo READ_FAIL; return; fi
   # Dash FIRST inside the bracket. "[\-0-9.]" makes POSIX grep read a range
   # from backslash to zero and abort with "Invalid range end", which turned
   # every design into NO_PATH on the first run of this script.
@@ -62,12 +81,17 @@ while IFS=$'\t' read -r name top clk rst ext; do
   src=$DR/rtl_dataset/$name.v0.$ext
   d=$W/$name; mkdir -p $d
   echo "=== $name ($top) ==="
-  synth $name $src $ext $top $d/A.v ""     || { printf "%s\t%s\tSYNTH_FAIL\n" $name $top >> $RES/summary.tsv; continue; }
-  synth $name $src $ext $top $d/B.v "$BUF" || { printf "%s\t%s\tSYNTH_FAIL_B\n" $name $top >> $RES/summary.tsv; continue; }
+  synth $name $src $ext $top $d/A.v ""; rc=$?
+  if [ $rc -ne 0 ]; then lab=SYNTH_FAIL; [ $rc -eq 2 ] && lab=FLOW_FAIL; printf "%s\t%s\t%s\n" $name $top $lab >> $RES/summary.tsv; continue; fi
+  synth $name $src $ext $top $d/B.v "$BUF"; rc=$?
+  if [ $rc -ne 0 ]; then lab=SYNTH_FAIL_B; [ $rc -eq 2 ] && lab=FLOW_FAIL_B; printf "%s\t%s\t%s\n" $name $top $lab >> $RES/summary.tsv; continue; fi
   ca=$(grep -cE "sky130_fd_sc_hd__" $d/A.v); cb=$(grep -cE "sky130_fd_sc_hd__" $d/B.v)
 
   # pass 1: loose clock, measure the requirement
   s1=$(sta_r2r $d/A.v $top $clk 1000 $d/loose.rpt)
+  if [ "$s1" = "READ_FAIL" ]; then
+    echo "  STA could not read the netlist"; printf "%s\t%s\t%s\t%s\tSTA_READ_FAIL\n" $name $top $ca $cb >> $RES/summary.tsv; continue
+  fi
   if [ -z "$s1" ]; then
     echo "  NO reg-to-reg path"; printf "%s\t%s\t%s\t%s\tNO_PATH\n" $name $top $ca $cb >> $RES/summary.tsv; continue
   fi
