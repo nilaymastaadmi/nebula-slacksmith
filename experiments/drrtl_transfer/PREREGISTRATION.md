@@ -269,6 +269,36 @@ Predictions:
 
 Void conditions as above. Results in `phase3/`.
 
+## Phase 4, registered 2026-09-02 after phase 3, before any variant is timed
+
+Dr. RTL **high-confidence skill #8**: "high-fanout combinational condition
+wire, replicate equivalent local wires for separate consumers". Phase 2 could
+not apply it because the four remaining FANOUT designs' top nets are
+synthesis temporaries; `phase4_trace.py` walked each back to RTL:
+
+| design | high-fanout net is | fanout | replication applied |
+|---|---|---|---|
+| aes | `i_start & o_done`, gating a 128-bit key mux | 129 | 4 wires, one per 32-bit slice of `valid_key` |
+| communication | `bit_count > 0` shift enable on a 64-bit register | 70 | 3 wires: low half, high half, counter |
+| datapath | `col_en = col_en_host \| col_en_w_bypass`, two consumer blocks | 35 | `col_en_a` for the IV/BKP mux, `col_en_b` for the column registers |
+| arm_cpu2 | multi-level instruction decode of `rom_data` | 93 | **not attempted**; no single RTL wire to replicate |
+
+Each design gets plain and `(* keep *)` variants, generated as single-anchor
+substitutions on the gold source. Each variant is synthesized as A (no
+lever) and B (**buffer-only**, phase 3's isolated fanout lever), timed at the
+scored run's own period, re-classified, and gated (EQY, k=0) against gold.
+
+Predictions:
+
+12. Plain replication changes the worst path's top-cell fanout by **less
+    than 20%** on at least 2 of 3 designs, because ABC merges functionally
+    identical wires. Medium-high; this is H2's mechanism, which phase 2
+    could not test because there the consumer cone was monolithic.
+13. `(* keep *)` replication cuts that fanout by at least **2x** on at least
+    2 of 3, and its slack gain is **below buffer-only's** on all 3. Medium.
+14. All 6 variants are PROVEN at G4: wire replication adds no state. Medium-
+    high, and registered because a failure here would be news.
+
 ## What would make this study void
 
 - Any design dropped after being timed.
