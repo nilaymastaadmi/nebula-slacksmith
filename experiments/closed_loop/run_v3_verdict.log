@@ -1,0 +1,49 @@
+start 2026-09-02T21:02:34+00:00 commit fd8f6ba
+dont_use flags: 72
+engine: sta   clocks: clk_a, clk_b, clk_e
+
+=== iteration 1 ===
+measure: clk_a=-13.167  clk_b=-18.957  clk_e=-25.957
+classify clk_e: FANOUT_DOMINATED (fanout share 0.9139) -> physical
+apply: physical buffer (provisional) -> abc buffer,-N,16
+
+=== iteration 2 ===
+measure: clk_a=1.75  clk_b=5.556  clk_e=-1.444
+  CONFIRM physical buffer: clk_e -25.957 -> -1.444 (+24.513)
+classify clk_e: DEPTH_DOMINATED (fanout share 0.0) -> rtl
+apply: physical size (provisional) -> abc buffer,-N,16;upsize;dnsize
+
+=== iteration 3 ===
+measure: clk_a=-1.716  clk_b=5.6  clk_e=-0.606
+  CONFIRM physical size: clk_e -1.444 -> -0.606 (+0.838)
+classify clk_a: DEPTH_DOMINATED (fanout share 0.0) -> rtl
+  gate P1 (operator_sharing_addsub): G3=PASS G4=PROVEN
+  APPLY P1 provisionally -> re-measure, confirm or revert on clk_a
+
+=== iteration 4 ===
+measure: clk_a=-2.026  clk_b=5.6  clk_e=-0.606
+  REVERT P1: clk_a -1.716 -> -2.026, no improvement. G4 passed, G5 did not.
+
+=== iteration 5 ===
+measure: clk_a=-1.716  clk_b=5.6  clk_e=-0.606
+classify clk_a: DEPTH_DOMINATED (fanout share 0.0) -> rtl
+  gate P2 (operator_sharing_shifter): G3=PASS G4=PROVEN
+  APPLY P2 provisionally -> re-measure, confirm or revert on clk_a
+
+=== iteration 6 ===
+measure: clk_a=-2.201  clk_b=5.6  clk_e=-0.606
+  REVERT P2: clk_a -1.716 -> -2.201, no improvement. G4 passed, G5 did not.
+
+=== iteration 7 ===
+measure: clk_a=-1.716  clk_b=5.6  clk_e=-0.606
+classify clk_a: DEPTH_DOMINATED (fanout share 0.0) -> rtl
+  gate P3 (operator_sharing_comparator): G3=PASS G4=PROVEN
+  APPLY P3 provisionally -> re-measure, confirm or revert on clk_a
+
+=== iteration 8 ===
+measure: clk_a=-2.02  clk_b=5.6  clk_e=-0.606
+  REVERT P3: clk_a -1.716 -> -2.02, no improvement. G4 passed, G5 did not.
+
+wrote /home/toshn/slacksmith_v3_verdict/SUMMARY.md
+wrote /home/toshn/slacksmith_v3_verdict/decisions.jsonl
+exit 0 2026-09-02T21:07:56+00:00

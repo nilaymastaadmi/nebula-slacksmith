@@ -46,8 +46,16 @@ def trajectory(log):
 
 
 def final_slacks(log):
-    m = [r for r in log if r.get("step") == "measure"]
-    return m[-1]["slacks"] if m else {}
+    """State the run leaves the design in: the last measurement that was not
+    undone by a revert. A revert restores the state measured before the
+    reverted step, so it pops the measurement taken with that step applied."""
+    stack = []
+    for r in log:
+        if r.get("step") == "measure":
+            stack.append(r["slacks"])
+        elif r.get("step") == "revert" and stack:
+            stack.pop()
+    return stack[-1] if stack else {}
 
 
 def iterations(log):
@@ -88,17 +96,27 @@ def main(base_path, treat_path):
         print(f"   unregistered: clk_e after buffer-only = {e} "
               f"({'closed' if e is not None and e >= 0 else 'not closed'}; blunt run ended at -0.606)")
 
-    # P2: clk_a after its first physical step is better than -1.716.
-    clk_a_first = None
+    # P2: "clk_a after its first physical step is better than -1.716, because
+    # the verdict policy applies sizing to a DEPTH group". Two readings are
+    # printed: the letter (clk_a after the run's first physical step, whatever
+    # it targeted) and the mechanism (a physical step targeting clk_a).
+    first_any = None
+    first_a = None
     for r in applies:
-        if r.get("clock") == "clk_a":
-            nxt = [m for m in treat if m.get("step") == "measure" and m["iter"] > r["iter"]]
-            if nxt:
-                clk_a_first = (r.get("component"), nxt[0]["slacks"].get("clk_a"))
-            break
-    p2 = clk_a_first is not None and clk_a_first[1] > -1.716
+        nxt = [m for m in treat if m.get("step") == "measure" and m["iter"] > r["iter"]]
+        if not nxt:
+            continue
+        if first_any is None:
+            first_any = (r.get("component"), r.get("clock"), nxt[0]["slacks"].get("clk_a"))
+        if r.get("clock") == "clk_a" and first_a is None:
+            first_a = (r.get("component"), nxt[0]["slacks"].get("clk_a"))
+    p2_letter = first_any is not None and first_any[2] > -1.716
+    p2_mech = first_a is not None and first_a[1] > -1.716
     print(f"P2 clk_a after first physical step better than -1.716: "
-          f"{'CORRECT' if p2 else 'WRONG'} (step={clk_a_first})")
+          f"letter {'CORRECT' if p2_letter else 'WRONG'} "
+          f"(first step {first_any[0]} targeted {first_any[1]}, clk_a = {first_any[2]}); "
+          f"mechanism {'CORRECT' if p2_mech else 'WRONG'} "
+          f"(physical step targeting clk_a: {first_a}); final clk_a = {ft.get('clk_a')}")
 
     # P3: at least one physical step reverted.
     print(f"P3 at least one physical step reverted: "
