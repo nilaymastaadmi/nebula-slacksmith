@@ -1,1 +1,7 @@
 variant	abc	cells	slack	max_fanout_any	max_fanout_PC	max_fanout_PC_dup
+gold	A	7883	-5.761	4163	1131	0
+gold	B	7968	11.754	4163	1131	0
+skill7_plain	A	8021	-6.208	4171	3	1175
+skill7_plain	B	8106	10.795	4171	3	1175
+skill7_keep	A	8021	-6.208	4171	3	1175
+skill7_keep	B	8106	10.795	4171	3	1175

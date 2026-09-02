@@ -148,14 +148,64 @@ zero fanout-attributable delay is the sizing effect again, at its largest.
   0.50 threshold; small threshold moves would relabel them.
 - Three amendments to get one run right. Left visible.
 
-## Phase 2 (registered predictions 6 and 7), status
+## Phase 2 (registered predictions 6 and 7): Dr. RTL skill #7 on `cpu_fsm`
 
-Groundwork done (`phase2_probe.sh`): `cpu_fsm`'s `PC` is an RTL register
-(`output reg [7:0] PC`) with one high-fanout consumer, `IR <= imem[PC]`, which
-is the textbook case for Dr. RTL skill #7. `aes`'s `o_done` (register bit,
-fanout 34) is a second target. The other three FANOUT designs' top nets are
-synthesis temporaries, which is skill #8's case and needs hand tracing.
-Variants and results are in `phase2/` when run.
+**Run on 1 of the 5 FANOUT designs, not all 5 as registered.** `cpu_fsm` is
+the only one whose top-fanout net is an RTL register (`output reg [7:0] PC`,
+bit 2 driving **1,131** loads, 32.954 ns in one cell, 96% of the path). The
+other four top nets are synthesis temporaries, which is Dr. RTL skill #8's
+case and needs hand tracing; `aes`'s `o_done` (fanout 34) is a possible
+second target. Phase 2 is therefore partial and is reported as partial.
+
+Skill #7 as written: duplicate the register driving the high-fanout net and
+split its consumers. `PC` has one wide consumer, the fetch `IR <= imem[PC]`,
+plus the output port and the three branch adders. `PC_dup` was added with
+identical updates and the fetch was pointed at it (`phase2/cpu_fsm_skill7_*.v`,
+generated as six single-anchor substitutions on the gold source). Two
+variants: plain, and with `(* keep *)` on the copy so ABC cannot merge it.
+All six netlists timed at the scored run's own period for this design,
+51.849 ns, reg-to-reg, same flow.
+
+| variant | abc | cells | slack | max fanout any | on `PC` | on `PC_dup` |
+|---|---|---|---|---|---|---|
+| gold | A | 7,883 | -5.761 | 4,163 | **1,131** | 0 |
+| gold | B, lever | 7,968 | **+11.754** | 4,163 | 1,131 | 0 |
+| skill #7 plain | A | 8,021 | **-6.208** | 4,171 | 3 | **1,175** |
+| skill #7 plain | B, lever | 8,106 | +10.795 | 4,171 | 3 | 1,175 |
+| skill #7 keep | A | 8,021 | -6.208 | 4,171 | 3 | 1,175 |
+| skill #7 keep | B, lever | 8,106 | +10.795 | 4,171 | 3 | 1,175 |
+
+**The load moved; it did not split.** `PC`'s fanout falls from 1,131 to 3 and
+`PC_dup` inherits 1,175, because the fetch mux is one cone. Max fanout on any
+net changes by +0.2%. Slack gets **worse by 0.447 ns**, 138 cells and 16
+flops are added, and `(* keep *)` changes nothing because there was nothing
+for ABC to merge: the two registers have disjoint consumers. On the same
+design the physical lever gains **+17.515 ns**.
+
+**Both variants are rejected at G3**: declared k=0, flop count +16. That is
+the same rule that caught A6 in batch 2. It is also worth stating against
+us: register duplication is behaviourally state-preserving, and the right
+obligation for it is sequential equivalence (branch 1, `dsec`), which the
+typed library has but the k=0 flop-count precondition prevents reaching. Dr.
+RTL's Jasper SEC would accept this transform; our gate rejects it by
+construction. That is a limitation of G3 as implemented, not evidence the
+transform is wrong.
+
+Predictions:
+
+6. Plain duplication changes max fanout by less than 20%: **CONFIRMED** on
+   this design (+0.2% overall; the register's own load moved 1,131 to
+   1,175). The registered mechanism, ABC re-merging, is **not** what
+   happened; the consumer cone was monolithic, so there was nothing to split.
+   Right prediction, wrong mechanism, recorded.
+7. With `(* keep *)`, fanout splits and the slack gain is below the lever's:
+   **half wrong**. Fanout did not split at all; the comparison holds
+   trivially (-0.447 versus +17.515).
+
+One design, one literal application of the skill. A finer split, duplicating
+per byte lane of the fetch mux, might divide the cone; the skill's own text
+("aligned with consumer cones") does not say how, and this is what a model
+following it as written produces.
 
 ## Files
 

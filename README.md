@@ -60,6 +60,15 @@ shortens a net's load delay:
 So SlackSmith routes **twice**: the fix by measured path pathology, the proof
 obligation by declared transform type.
 
+**3. And we tested that on designs we did not write.** The 20 human-written
+designs published with Dr. RTL (ICCAD 2026), pre-registered, same flow, same
+unchanged thresholds: 15 in scope, **5 FANOUT / 2 MIXED / 8 DEPTH**, byte-
+identical across two independent runs. The physical lever closed **5 of 5**
+fanout-dominated designs outright and 4 of 8 depth-dominated ones, with a
+7.5x higher median gain on the former. Three of five registered predictions
+were wrong, including the primary one, and the write-up says exactly how.
+`experiments/drrtl_transfer/`.
+
 ## Run it
 
     python3 tools/slacksmith.py \

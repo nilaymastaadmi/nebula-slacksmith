@@ -1,0 +1,4 @@
+  "id": "cpu_fsm_skill7_keep",
+  "G1": "PASS",
+  "G2": "PASS",
+  "G3": "FAIL(declared k=0 but flop count changed by +16)",

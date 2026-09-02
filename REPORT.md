@@ -324,6 +324,17 @@ Second, **after buffering the remaining violations are depth-dominated.** Re-tig
 
 **The two levers are sequential, not alternative.** Buffer, re-measure, then propose RTL. `docs/path-classification.md` carries the five-case validation table and the two limitations we know about, including that fanout is undercounted for buses crossing a hierarchy boundary, which makes DEPTH_DOMINATED the weaker of the two verdicts.
 
+**Does any of this transfer off our own benchmark?** We pre-registered a test on the 20 human-written designs published with Dr. RTL (ICCAD 2026), the strongest prior work, whose analyzer routes "wide fan-out" to logic restructuring by having the model read the report. Same flow, same unchanged thresholds, each design at 0.9x its own measured requirement, then the physical lever. 15 of 20 are in scope (FIFO uses async-load flops no sky130 cell implements; SPI, UART and pcie infer latches, which our own G2 rejects; LSTM has no registers). Of those 15: **5 FANOUT_DOMINATED, 2 MIXED, 8 DEPTH_DOMINATED**, and the run is deterministic to the byte across two independent executions.
+
+| verdict | n | lever closes it alone | lever gain, median | min | max |
+|---|---|---|---|---|---|
+| FANOUT_DOMINATED | 5 | **5 of 5** | **3.623** | 1.542 | 17.515 |
+| DEPTH_DOMINATED | 8 | 4 of 8 | 0.481 | 0.000 | 2.851 |
+
+Three of the five registered predictions were **wrong**, including the primary one, which said the lever would help fewer than half of the DEPTH designs. It helped 6 of 8, because `upsize; dnsize` is gate *sizing* and sizing helps any path: the lever we compared the classifier against does two things. What the classifier actually predicts on designs it has never seen is **magnitude** (7.5x median) and **closure** (5 of 5 against 4 of 8). The fanout finding transfers at a lower rate than on our benchmark (33%, 47% with MIXED), and one external design outdoes ours: `cpu_fsm`'s program counter drives **1,131 loads** and burns 32.954 ns in one cell. The classifier's verdict on one design, `arm_cpu2`, flips with how enable flops are legalized, and it took three dated amendments to get one run right; both are in `experiments/drrtl_transfer/` rather than smoothed away.
+
+We then applied Dr. RTL's **high-confidence skill #7**, "duplicate register copies and split fanout cones", exactly as written to that `cpu_fsm` path. `PC`'s fanout fell from 1,131 to 3 because the copy inherited **1,175**: the fetch mux is one cone, so the load moved and did not split. Slack got **worse** by 0.447 ns, 16 flops were added, `(* keep *)` changed nothing, and our precondition gate rejected it as not k=0. The physical lever gains +17.515 ns on the same design. One design, one literal application, and the gate's rejection is partly on us: register duplication wants a sequential obligation, which the library has and the k=0 flop-count check prevents reaching.
+
 ### 7.3 The closed loop
 
 `tools/slacksmith.py` runs all of the above as one command: **measure, classify, route, apply, re-measure, repeat**, stopping when every group meets, when no lever remains, or at `--max-iters`. Every decision, its evidence and its outcome go to `decisions.jsonl`.
