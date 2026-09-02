@@ -1,0 +1,37 @@
+---CLOCK:clk---
+Startpoint: byte_controller/bit_controller/_421_
+            (rising edge-triggered flip-flop clocked by clk)
+Endpoint: byte_controller/bit_controller/_420_
+          (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ byte_controller/bit_controller/_421_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.385    0.385 v byte_controller/bit_controller/_421_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.605    0.991 v byte_controller/bit_controller/_295_/X (sky130_fd_sc_hd__or4_1)
+   0.353    1.343 ^ byte_controller/bit_controller/_297_/Y (sky130_fd_sc_hd__nor4_1)
+   0.492    1.836 ^ byte_controller/bit_controller/_300_/Y (sky130_fd_sc_hd__nor4b_1)
+   0.581    2.416 v byte_controller/bit_controller/_303_/X (sky130_fd_sc_hd__or4b_1)
+   0.741    3.157 ^ byte_controller/bit_controller/_305_/Y (sky130_fd_sc_hd__o41ai_1)
+   0.521    3.679 ^ byte_controller/bit_controller/_361_/X (sky130_fd_sc_hd__and3_1)
+   0.200    3.879 ^ byte_controller/bit_controller/_415_/X (sky130_fd_sc_hd__a22o_1)
+   0.000    3.879 ^ byte_controller/bit_controller/_420_/D (sky130_fd_sc_hd__dfrtp_1)
+            3.879   data arrival time
+
+   3.550    3.550   clock clk (rise edge)
+   0.000    3.550   clock network delay (ideal)
+   0.000    3.550   clock reconvergence pessimism
+            3.550 ^ byte_controller/bit_controller/_420_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.066    3.484   library setup time
+            3.484   data required time
+-----------------------------------------------------------
+            3.484   data required time
+           -3.879   data arrival time
+-----------------------------------------------------------
+           -0.395   slack (VIOLATED)
+
+

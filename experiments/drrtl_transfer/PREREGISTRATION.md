@@ -214,6 +214,32 @@ Predictions 1 and 2 are scored against the 15 in-scope designs with the 5
 out-of-scope ones listed, not silently dropped: the registration's "all 20"
 wording is kept and marked as failed at the tooling and design-property level.
 
+## Amendment 3, 2026-09-02, after run 3, before run 4
+
+Run 3 (preserved in `results_run3_legalized/`) did **not** reproduce run 1.
+`dfflegalize` with an explicit cell list restructured enable-polarity flops
+and changed **7 of 15** in-scope netlists: `datapath`'s measured requirement
+moved 7.688 to 9.258 ns, `arm_cpu2` read DEPTH_DOMINATED at 0.089 (run 1:
+FANOUT_DOMINATED 0.609; run 2: DEPTH 0.132), and `simple_spi`, `i2c`, `tv80`,
+`arm_cpu1`, `vending_machine` all moved. None of this rescued a failure,
+because the 5 failures are design properties.
+
+The conclusion is that **run 1's flow, the project's unmodified standard
+flow, was correct for every in-scope design**, and the only defect in run 1
+was five labels. Amendments 1 and 2 changed the flow on a wrong hypothesis
+(sync-reset flops) and are reverted for run 4, which keeps only what was
+actually needed: the `signed` strip (affects `LSTM` only, which has no
+registers anyway) and the READ_FAIL / NO_PATH / FLOW_FAIL labels.
+
+**Run 4 is the scored run.** It must reproduce run 1's 15 timed rows
+**exactly**; that is now a determinism check on the flow, and any deviation
+is reported. Runs 2 and 3 are reported together as a **flow-sensitivity
+study**: the classifier's verdict on `arm_cpu2` depends on how enable flops
+are legalized, and that is a limitation of the classifier, stated.
+
+Three amendments to get one run right is itself a finding about this study,
+and it is left visible rather than squashed into a clean history.
+
 ## What would make this study void
 
 - Any design dropped after being timed.

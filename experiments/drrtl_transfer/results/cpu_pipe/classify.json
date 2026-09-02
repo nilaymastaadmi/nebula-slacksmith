@@ -1,0 +1,40 @@
+{
+  "verdict": "DEPTH_DOMINATED",
+  "recommended_lever": "RTL transform through the typed gate",
+  "slack_ns": -0.85,
+  "met": false,
+  "path_delay_ns": 8.409,
+  "cells_on_path": 36,
+  "cells_above_fanout_hi": 0,
+  "fanout_delay_ns": 0,
+  "fanout_delay_share": 0.0,
+  "unresolved_cells": 0,
+  "top_cells": [
+    {
+      "inst": "m0/_2257_",
+      "cell": "sky130_fd_sc_hd__dfxtp_1",
+      "incr_ns": 1.514,
+      "fanout": 3,
+      "module": "dcpu16_mbus"
+    },
+    {
+      "inst": "x0/_1916_",
+      "cell": "sky130_fd_sc_hd__xnor3_1",
+      "incr_ns": 0.455,
+      "fanout": 3,
+      "module": "dcpu16_alu"
+    },
+    {
+      "inst": "x0/_1931_",
+      "cell": "sky130_fd_sc_hd__xnor3_1",
+      "incr_ns": 0.423,
+      "fanout": 3,
+      "module": "dcpu16_alu"
+    }
+  ],
+  "thresholds": {
+    "fanout_hi": 32,
+    "fanout_share_hi": 0.5,
+    "fanout_share_lo": 0.2
+  }
+}

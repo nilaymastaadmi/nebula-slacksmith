@@ -46,7 +46,14 @@ synth () {  # $1 name $2 src $3 ext $4 top $5 out $6 abc-script-or-empty
   # arm_cpu2's verdict. sky130hd has enable flops (edfxtp); let dfflibmap map
   # them. '-nosdff' stays: sky130hd has no sync-reset flop.
   local legal="opt -nosdff; dfflegalize -cell \$_DFF_P_ 01 -cell \$_DFF_PN0_ 01 -cell \$_DFF_PP0_ 01 -cell \$_DFF_PN1_ 01 -cell \$_DFF_PP1_ 01 -cell \$_DFFE_PP_ 01 -cell \$_DFFE_PN0P_ 01 -cell \$_DFFE_PP0P_ 01 -cell \$_DFFE_PN1P_ 01 -cell \$_DFFE_PP1P_ 01 -cell \$_DLATCH_P_ 01 -cell \$_DLATCH_N_ 01"
-  $Y -p "$rv $2; hierarchy -check -top $4; synth -top $4; $legal; dfflibmap -liberty $LIB; $abc; opt_clean -purge; write_verilog -noattr $5; stat" \
+  # Run 4 amendment: the legalization step is REMOVED. Runs 2 and 3 showed it
+  # altered 7 of 15 in-scope netlists and rescued none of the 5 failures,
+  # which are design properties (async-load flops, latches, no registers).
+  # Run 1's flow, the project's standard flow, was correct for every in-scope
+  # design; what run 1 got wrong was five labels. $legal is kept defined for
+  # the record and is not used. Runs 2 and 3 are reported as a flow-sensitivity
+  # study, not as the score.
+  $Y -p "$rv $2; hierarchy -check -top $4; synth -top $4; dfflibmap -liberty $LIB; $abc; opt_clean -purge; write_verilog -noattr $5; stat" \
      > $5.log 2>&1
   [ -s "$5" ] || { echo "  synth FAILED for $1"; return 1; }
   # OpenSTA's Verilog reader rejects 'signed' on port and net declarations.

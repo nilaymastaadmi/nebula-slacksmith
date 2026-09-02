@@ -1,0 +1,32 @@
+---CLOCK:clk---
+Startpoint: uut_tx_block/_413_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: uut_tx_block/_451_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ uut_tx_block/_413_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.384    0.384 v uut_tx_block/_413_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.600    0.984 v uut_tx_block/_200_/X (sky130_fd_sc_hd__or4_1)
+   0.359    1.343 v uut_tx_block/_201_/X (sky130_fd_sc_hd__or3_1)
+   3.753    5.096 ^ uut_tx_block/_210_/Y (sky130_fd_sc_hd__nor3_1)
+   0.389    5.485 v uut_tx_block/_384_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.000    5.485 v uut_tx_block/_451_/D (sky130_fd_sc_hd__dfrtp_1)
+            5.485   data arrival time
+
+   5.233    5.233   clock clk (rise edge)
+   0.000    5.233   clock network delay (ideal)
+   0.000    5.233   clock reconvergence pessimism
+            5.233 ^ uut_tx_block/_451_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.329    4.904   library setup time
+            4.904   data required time
+-----------------------------------------------------------
+            4.904   data required time
+           -5.485   data arrival time
+-----------------------------------------------------------
+           -0.581   slack (VIOLATED)
+
+

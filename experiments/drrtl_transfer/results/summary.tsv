@@ -1,0 +1,21 @@
+design	top	mapped_cells_A	mapped_cells_B	required_ns	period_ns	slack_A	slack_B	delta_B	verdict	fanout_share	path_delay	cells_on_path	top_cell	top_incr	top_fanout	top_module
+vending_machine	vending_machine	13706	13734	0.772	0.695	-0.077	-0.077	0.0	DEPTH_DOMINATED	0.0	0.642	5	sky130_fd_sc_hd__dfrtp_1	0.346	2	vending_machine
+ticket_machine	ticket_machine	18	18	0.791	0.712	-0.080	-0.079	0.001	DEPTH_DOMINATED	0.0	0.67	5	sky130_fd_sc_hd__dfxtp_1	0.294	4	ticket_machine
+LSTM	lstm_cell	5527	5531	NO_PATH
+DSP	DSP	2891	2907	18.666	16.799	-1.867	0.984	2.851	DEPTH_DOMINATED	0.0503	18.554	53	sky130_fd_sc_hd__dfxtp_1	1.11	1	$paramod$c225f133c799dffa7694d3e3731c4b5b42f427d1\RegMux
+simple_spi	simple_spi_top	316	322	3.239	2.915	-0.324	0.095	0.419	DEPTH_DOMINATED	0.0	2.867	8	sky130_fd_sc_hd__nor4_1	0.652	7	simple_spi_top
+cpu_fsm	mini_cpu	7883	7968	57.61	51.849	-5.761	11.754	17.515	FANOUT_DOMINATED	0.9591	57.494	13	sky130_fd_sc_hd__dfxtp_1	32.954	1131	mini_cpu
+FIFO	fifo	FLOW_FAIL
+SPI	spi	FLOW_FAIL
+UART	uart_top_design	FLOW_FAIL
+controller	control_unit	128	129	1.823	1.641	-0.182	0.173	0.355	DEPTH_DOMINATED	0.0	1.694	8	sky130_fd_sc_hd__dfrtp_1	0.389	6	control_unit
+router	router_top	895	905	3.274	2.947	-0.327	-0.156	0.171	MIXED	0.4603	2.911	8	sky130_fd_sc_hd__dfxtp_1	1.34	36	router_fifo
+cpu_pipe	dcpu16_cpu	3476	3529	8.5	7.65	-0.850	-0.269	0.581	DEPTH_DOMINATED	0.0	8.409	36	sky130_fd_sc_hd__dfxtp_1	1.514	3	dcpu16_mbus
+pcie	top	FLOW_FAIL
+datapath	datapath	5510	5710	9.258	8.332	-0.926	4.636	5.562	FANOUT_DOMINATED	0.6514	9.005	16	sky130_fd_sc_hd__a2111oi_0	5.866	65	datapath
+i2c	i2c_master_top	573	587	3.945	3.55	-0.395	0.583	0.978	DEPTH_DOMINATED	0.0	3.878	10	sky130_fd_sc_hd__o41ai_1	0.741	7	i2c_master_bit_ctrl
+tv80	tv80s	3995	4120	10.006	9.005	-1.001	-0.618	0.383	DEPTH_DOMINATED	0.0	9.873	27	sky130_fd_sc_hd__o21ai_0	2.191	0	$paramod$72d3ea3f60e4f9118b34d0adb77cce095874acc8\tv80_mcode
+aes	key_expansion_128aes	3269	3285	5.267	4.74	-0.527	1.015	1.542	FANOUT_DOMINATED	0.9157	5.126	5	sky130_fd_sc_hd__and2_0	3.943	129	key_expansion_128aes
+communication	sync_serial_communication_tx_rx	286	302	5.814	5.233	-0.581	3.042	3.623	FANOUT_DOMINATED	0.6842	5.485	7	sky130_fd_sc_hd__nor3_1	3.753	70	tx_block
+arm_cpu1	arm9_compatiable_code	18026	18827	31.018	27.916	-3.103	12.830	15.933	MIXED	0.3995	30.888	74	sky130_fd_sc_hd__nor2_1	12.34	267	arm9_compatiable_code
+arm_cpu2	risclite_mx	7336	7687	9.72	8.748	-0.972	0.937	1.909	DEPTH_DOMINATED	0.0893	9.611	29	sky130_fd_sc_hd__clkinv_1	0.858	64	risclite_mx

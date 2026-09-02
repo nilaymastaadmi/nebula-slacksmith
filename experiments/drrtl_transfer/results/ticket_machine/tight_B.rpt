@@ -1,0 +1,30 @@
+---CLOCK:clk---
+Startpoint: _25_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: _25_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ _25_/CLK (sky130_fd_sc_hd__dfxtp_1)
+   0.294    0.294 v _25_/Q (sky130_fd_sc_hd__dfxtp_1)
+   0.134    0.428 v _14_/Y (sky130_fd_sc_hd__nor4b_1)
+   0.242    0.670 v _15_/X (sky130_fd_sc_hd__a221o_1)
+   0.000    0.670 v _25_/D (sky130_fd_sc_hd__dfxtp_1)
+            0.670   data arrival time
+
+   0.712    0.712   clock clk (rise edge)
+   0.000    0.712   clock network delay (ideal)
+   0.000    0.712   clock reconvergence pessimism
+            0.712 ^ _25_/CLK (sky130_fd_sc_hd__dfxtp_1)
+  -0.122    0.590   library setup time
+            0.590   data required time
+-----------------------------------------------------------
+            0.590   data required time
+           -0.670   data arrival time
+-----------------------------------------------------------
+           -0.079   slack (VIOLATED)
+
+
