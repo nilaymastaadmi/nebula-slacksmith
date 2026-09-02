@@ -39,7 +39,13 @@ synth () {  # $1 name $2 src $3 ext $4 top $5 out $6 abc-script-or-empty
   # enables and sync resets into plain flops plus muxes and legalize to the
   # forms sky130hd has, BEFORE mapping. This is the same class of fix as the
   # opt_clean -purge added for OpenSTA's reader in docs/measurement-methodology.md.
-  local legal="opt -nodffe -nosdff; dfflegalize -cell \$_DFF_P_ 01 -cell \$_DFF_PN0_ 01 -cell \$_DFF_PP0_ 01 -cell \$_DFF_PN1_ 01 -cell \$_DFF_PP1_ 01 -cell \$_DLATCH_P_ 01 -cell \$_DLATCH_N_ 01"
+  # Run 3 amendment: '-nodffe' removed. Run 2 showed it rescued none of the
+  # four unreadable designs (they fail for async-load flops and latches, see
+  # PREREGISTRATION.md) and it unrolled enable flops into muxes on 6 others,
+  # changing their netlists (cpu_fsm 7,883 -> 12,196 cells) and flipping
+  # arm_cpu2's verdict. sky130hd has enable flops (edfxtp); let dfflibmap map
+  # them. '-nosdff' stays: sky130hd has no sync-reset flop.
+  local legal="opt -nosdff; dfflegalize -cell \$_DFF_P_ 01 -cell \$_DFF_PN0_ 01 -cell \$_DFF_PP0_ 01 -cell \$_DFF_PN1_ 01 -cell \$_DFF_PP1_ 01 -cell \$_DFFE_PP_ 01 -cell \$_DFFE_PN0P_ 01 -cell \$_DFFE_PP0P_ 01 -cell \$_DFFE_PN1P_ 01 -cell \$_DFFE_PP1P_ 01 -cell \$_DLATCH_P_ 01 -cell \$_DLATCH_N_ 01"
   $Y -p "$rv $2; hierarchy -check -top $4; synth -top $4; $legal; dfflibmap -liberty $LIB; $abc; opt_clean -purge; write_verilog -noattr $5; stat" \
      > $5.log 2>&1
   [ -s "$5" ] || { echo "  synth FAILED for $1"; return 1; }
@@ -67,7 +73,13 @@ EOF
   $STA -no_init -no_splash -exit $5.tcl > $5 2>&1
   # A netlist OpenSTA cannot read must say so. Run 1 returned an empty string
   # here on a syntax error and the caller recorded NO_PATH for 5 designs.
-  if grep -qE '^Error' $5; then echo READ_FAIL; return; fi
+  # Two different failures print "Error". A Verilog syntax error means the
+  # netlist is unreadable: READ_FAIL. "report_checks command failed" means
+  # the -from/-to register collections were empty, i.e. the design has no
+  # registers (LSTM: 0 flops): that is a genuine NO_PATH, and run 2 mislabelled
+  # it READ_FAIL by matching any Error line.
+  if grep -qE 'syntax error' $5; then echo READ_FAIL; return; fi
+  if grep -qE 'report_checks command failed' $5; then return; fi
   # Dash FIRST inside the bracket. "[\-0-9.]" makes POSIX grep read a range
   # from backslash to zero and abort with "Invalid range end", which turned
   # every design into NO_PATH on the first run of this script.

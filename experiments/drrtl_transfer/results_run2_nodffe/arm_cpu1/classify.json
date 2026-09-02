@@ -1,0 +1,40 @@
+{
+  "verdict": "MIXED",
+  "recommended_lever": "buffer first, then re-measure before proposing RTL",
+  "slack_ns": -3.103,
+  "met": false,
+  "path_delay_ns": 30.904,
+  "cells_on_path": 79,
+  "cells_above_fanout_hi": 2,
+  "fanout_delay_ns": 13.962,
+  "fanout_delay_share": 0.4518,
+  "unresolved_cells": 0,
+  "top_cells": [
+    {
+      "inst": "_17280_",
+      "cell": "sky130_fd_sc_hd__nor2_1",
+      "incr_ns": 12.061,
+      "fanout": 265,
+      "module": "arm9_compatiable_code"
+    },
+    {
+      "inst": "_19014_",
+      "cell": "sky130_fd_sc_hd__a222oi_1",
+      "incr_ns": 1.983,
+      "fanout": 2,
+      "module": "arm9_compatiable_code"
+    },
+    {
+      "inst": "_25237_",
+      "cell": "sky130_fd_sc_hd__a21oi_1",
+      "incr_ns": 1.901,
+      "fanout": 57,
+      "module": "arm9_compatiable_code"
+    }
+  ],
+  "thresholds": {
+    "fanout_hi": 32,
+    "fanout_share_hi": 0.5,
+    "fanout_share_lo": 0.2
+  }
+}

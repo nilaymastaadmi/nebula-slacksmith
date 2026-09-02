@@ -181,6 +181,39 @@ The predictions above are scored against **run 2**. Run 1 is reported next to
 it, including that prediction 1 ("all 20 time and classify") was already
 false at the tooling level before any design got a chance to falsify it.
 
+## Amendment 2, 2026-09-02, after run 2, before run 3
+
+Run 2 (preserved in `results_run2_nodffe/`) showed the sync-reset hypothesis
+above was **wrong**. What actually keeps four designs out of this flow:
+
+- `FIFO`: 32 `$_ALDFF_PN_` **async-load** flops (the reset branch loads a
+  non-constant value). No sky130 standard cell implements that.
+- `SPI`, `UART`, `pcie`: **inferred latches** (`$_DLATCH_NP0_`: 65, 41 and
+  several). This project's own gate G2 rejects latches by policy.
+
+These are properties of the designs, and they are **out of scope for a
+stated reason**, labelled `FLOW_FAIL`. `LSTM` has **0 flops** (the cell is
+combinational as published), so no reg-to-reg path exists: `NO_PATH`, which
+run 2 mislabelled `STA_READ_FAIL` by matching any OpenSTA "Error" line. The
+helper now distinguishes a Verilog syntax error from an empty register
+collection.
+
+Run 2 also introduced a change that should not have been made. `opt -nodffe`
+unrolled enable flops into muxes on 6 designs that timed fine in run 1,
+changing their netlists (`cpu_fsm` 7,883 to 12,196 mapped cells) and
+flipping `arm_cpu2` from FANOUT_DOMINATED (0.609) to DEPTH_DOMINATED (0.132).
+sky130hd has enable flops (`edfxtp`); the option was unnecessary and is
+removed for run 3. `opt -nosdff` stays, since sky130hd has no sync-reset flop.
+
+**Run 3 is the scored run.** It is expected to reproduce run 1 exactly on the
+15 designs run 1 timed; any difference is reported. The `arm_cpu2` verdict
+flip between runs 1 and 2 is itself reported as a **flow sensitivity of the
+classifier on 1 of 15 designs**, whichever way run 3 lands.
+
+Predictions 1 and 2 are scored against the 15 in-scope designs with the 5
+out-of-scope ones listed, not silently dropped: the registration's "all 20"
+wording is kept and marked as failed at the tooling and design-property level.
+
 ## What would make this study void
 
 - Any design dropped after being timed.

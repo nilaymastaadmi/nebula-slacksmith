@@ -1,0 +1,33 @@
+---CLOCK:clk---
+Startpoint: fifo[0].f/_923_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: fifo[0].f/_951_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ fifo[0].f/_923_/CLK (sky130_fd_sc_hd__dfxtp_1)
+   1.340    1.340 ^ fifo[0].f/_923_/Q (sky130_fd_sc_hd__dfxtp_1)
+   0.617    1.957 v fifo[0].f/_478_/X (sky130_fd_sc_hd__mux4_2)
+   0.143    2.100 ^ fifo[0].f/_482_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.232    2.332 v fifo[0].f/_483_/Y (sky130_fd_sc_hd__o22ai_1)
+   0.484    2.815 v fifo[0].f/_484_/X (sky130_fd_sc_hd__o41a_1)
+   0.335    3.150 v fifo[0].f/_583_/X (sky130_fd_sc_hd__mux2_1)
+   0.000    3.150 v fifo[0].f/_951_/D (sky130_fd_sc_hd__dfxtp_1)
+            3.150   data arrival time
+
+   2.947    2.947   clock clk (rise edge)
+   0.000    2.947   clock network delay (ideal)
+   0.000    2.947   clock reconvergence pessimism
+            2.947 ^ fifo[0].f/_951_/CLK (sky130_fd_sc_hd__dfxtp_1)
+  -0.123    2.824   library setup time
+            2.824   data required time
+-----------------------------------------------------------
+            2.824   data required time
+           -3.150   data arrival time
+-----------------------------------------------------------
+           -0.327   slack (VIOLATED)
+
+

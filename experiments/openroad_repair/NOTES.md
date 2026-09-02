@@ -126,6 +126,33 @@ pairs signals. The third is a Yosys liberty-to-formal plumbing problem. None
 of the three produced a counterexample or any evidence of inequivalence; they
 produced no evidence at all.
 
+**Attempt 4, 2026-09-02: real cell models, and the proof simply did not
+finish.** oss-cad-suite ships sky130 functional models with its own EQY
+example, plus `formal_pdk_proc.py`, the preprocessing EQY itself uses.
+Coverage was checked first: 79 of 79 cell types in `A.v` and 220 of 220 in
+`repaired.v` are defined, zero missing, before and after preprocessing. With
+those models `prep` completed (the wall attempt 3 hit), the SMT2 model was
+built in 10 s, and `yosys-smtbmc` with bitwuzla started BMC at depth 4 with
+`multiclock on` across five clocks and roughly 16,000 flops. It had not
+finished **step 0** after more than 60 minutes of wall time and was killed.
+`timeout` had killed `sby` at 3,000 s but orphaned the engine, the same
+solver-in-its-own-process-group problem `tools/run_proof.py` already handles
+with a session kill; `equiv_miter.sh` now does the same.
+
+| attempt | what happened |
+|---|---|
+| 4. bounded miter, real sky130 models, BMC depth 4, multiclock | reads, elaborates, solver did not complete step 0 in 60+ min; **no counterexample, no proof** |
+
+Attempt 4 is a different kind of failure from the first three: the obligation
+was correctly formed and the tool ran out of time, not out of plumbing. It
+also surfaced a caveat that would have to be handled before any result from
+this route could be trusted: OpenROAD's Verilog writer emits named constant
+nets (`u_aes_b/one_`, `u_aes_b/zero_`, one pair per module instance, 899
+connections in total) with **no drivers**, because this 2022 build has no
+`insert_tiecells`. In a formal model an undriven net is a free variable, so
+even a completed run would need those nets tied before a counterexample could
+be believed.
+
 So what supports the result is the structural check above (identical flop
 count, buffers added, inverters reduced), the fact that both runs of the flow
 reproduce every number exactly, and `repair_design`'s documented contract.
