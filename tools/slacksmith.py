@@ -80,6 +80,11 @@ BOTH = _HEAD + ";buffer,-N,16;upsize;dnsize"
 BUFFER_SCRIPT = BOTH   # name kept: experiments/closed_loop/context_control.py imports it
 
 
+def total_violation(slacks):
+    """Sum over reported groups of min(worst slack, 0). 0 means all met."""
+    return round(sum(min(v, 0.0) for v in slacks.values() if v is not None), 3)
+
+
 def abc_script_for(phys):
     """ABC script for the currently applied physical components, or None."""
     if phys["buffer"] and phys["size"]:
@@ -253,6 +258,10 @@ def main():
     ap.add_argument("--lever-policy", choices=["blunt", "verdict"], default="blunt",
                     help="blunt: buffer+size at once (every run before 2026-09-03); "
                          "verdict: the classifier picks the component")
+    ap.add_argument("--g5", choices=["target", "total"], default="target",
+                    help="target: a provisional step is kept if the group it targeted "
+                         "improved (every run before 2026-09-03); total: kept only if "
+                         "the sum over groups of min(worst slack, 0) strictly improved")
     a = ap.parse_args()
     if a.lever_policy == "verdict" and a.engine != "sta":
         ap.error("--lever-policy verdict splits the abc script; it is sta-only "
@@ -321,7 +330,8 @@ def main():
         shown = "  ".join(f"{c}={slacks[c]}" for c in a.clocks)
         print(f"measure: {shown}")
         record(iter=it, step="measure", engine=a.engine, slacks=slacks,
-               physical=dict(phys), lever_policy=a.lever_policy,
+               physical=dict(phys), lever_policy=a.lever_policy, g5=a.g5,
+               total_violation=total_violation(slacks),
                rtl_applied=sorted(file_subs.values()))
         history.append((it, dict(slacks)))
 
@@ -329,7 +339,20 @@ def main():
         if pending:
             now = slacks.get(pending["clock"])
             before = pending["prev_slack"]
-            improved = now is not None and now > before
+            if a.g5 == "total":
+                # PREREGISTRATION_g5_total.md: the step is kept only if the
+                # sum over reported groups of min(worst slack, 0) strictly
+                # improves. A gain on the targeted group that is paid for by
+                # another group going from met to violating is a revert.
+                t_before = total_violation(pending["prev_slacks"])
+                t_after = total_violation(slacks)
+                improved = t_after > t_before
+                print(f"  G5 total: {t_before} -> {t_after} "
+                      f"({'improved' if improved else 'not improved'})")
+                record(iter=it, step="g5_total", total_before=t_before,
+                       total_after=t_after, improved=improved)
+            else:
+                improved = now is not None and now > before
             if pending.get("kind") == "physical":
                 comp = pending["component"]
                 if not improved:
@@ -399,7 +422,8 @@ def main():
                        how=abc_script_for(phys), provisional=True,
                        clock=worst, prev_slack=slacks[worst])
                 pending = {"kind": "physical", "component": comp,
-                           "clock": worst, "prev_slack": slacks[worst]}
+                           "clock": worst, "prev_slack": slacks[worst],
+                           "prev_slacks": dict(slacks)}
                 continue
             if lever == "physical":
                 print("every physical component applied or reverted and the "
@@ -487,7 +511,8 @@ def main():
                     open(variant_abs, "w", encoding="utf-8").write(spliced)
                 file_subs[key] = os.path.relpath(variant_abs, a.rtl_dir)
                 pending = {"id": p["id"], "key": key, "clock": worst,
-                           "prev_slack": slacks[worst]}
+                           "prev_slack": slacks[worst],
+                           "prev_slacks": dict(slacks)}
                 accepted = True
                 print(f"  APPLY {p['id']} provisionally -> re-measure, "
                       f"confirm or revert on {worst}")
