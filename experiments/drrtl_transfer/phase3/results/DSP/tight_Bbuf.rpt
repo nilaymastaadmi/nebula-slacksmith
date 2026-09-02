@@ -1,0 +1,80 @@
+---CLOCK:clk---
+Startpoint: opReg/_35_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: carryOutReg/_4_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ opReg/_35_/CLK (sky130_fd_sc_hd__dfxtp_1)
+   1.118    1.118 ^ opReg/_35_/Q (sky130_fd_sc_hd__dfxtp_1)
+   0.373    1.491 v _419_/X (sky130_fd_sc_hd__or2b_2)
+   0.148    1.639 v _420_/X (sky130_fd_sc_hd__buf_8)
+   0.139    1.779 v _427_/X (sky130_fd_sc_hd__buf_6)
+   0.079    1.857 ^ _568_/Y (sky130_fd_sc_hd__nor2_1)
+   0.073    1.931 v _570_/Y (sky130_fd_sc_hd__nor3_1)
+   0.398    2.329 v PostAS/_0556_/X (sky130_fd_sc_hd__maj3_1)
+   0.390    2.719 v PostAS/_0557_/X (sky130_fd_sc_hd__maj3_1)
+   0.340    3.059 ^ PostAS/_0559_/Y (sky130_fd_sc_hd__a221oi_1)
+   0.119    3.178 v PostAS/_0561_/Y (sky130_fd_sc_hd__o31ai_1)
+   0.190    3.368 ^ PostAS/_0563_/Y (sky130_fd_sc_hd__a21oi_1)
+   0.142    3.510 v PostAS/_0565_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.408    3.917 v PostAS/_0566_/X (sky130_fd_sc_hd__maj3_1)
+   0.371    4.289 v PostAS/_0567_/X (sky130_fd_sc_hd__maj3_1)
+   0.388    4.677 v PostAS/_0568_/X (sky130_fd_sc_hd__maj3_1)
+   0.393    5.070 v PostAS/_0569_/X (sky130_fd_sc_hd__maj3_1)
+   0.393    5.463 v PostAS/_0570_/X (sky130_fd_sc_hd__maj3_1)
+   0.393    5.856 v PostAS/_0571_/X (sky130_fd_sc_hd__maj3_1)
+   0.391    6.247 v PostAS/_0572_/X (sky130_fd_sc_hd__maj3_1)
+   0.391    6.638 v PostAS/_0573_/X (sky130_fd_sc_hd__maj3_1)
+   0.393    7.031 v PostAS/_0574_/X (sky130_fd_sc_hd__maj3_1)
+   0.391    7.422 v PostAS/_0575_/X (sky130_fd_sc_hd__maj3_1)
+   0.391    7.812 v PostAS/_0576_/X (sky130_fd_sc_hd__maj3_1)
+   0.391    8.203 v PostAS/_0577_/X (sky130_fd_sc_hd__maj3_1)
+   0.406    8.609 v PostAS/_0578_/X (sky130_fd_sc_hd__maj3_1)
+   0.375    8.985 v PostAS/_0579_/X (sky130_fd_sc_hd__maj3_1)
+   0.386    9.371 v PostAS/_0580_/X (sky130_fd_sc_hd__maj3_1)
+   0.391    9.761 v PostAS/_0581_/X (sky130_fd_sc_hd__maj3_1)
+   0.382   10.144 v PostAS/_0582_/X (sky130_fd_sc_hd__maj3_1)
+   0.389   10.532 v PostAS/_0583_/X (sky130_fd_sc_hd__maj3_1)
+   0.388   10.921 v PostAS/_0584_/X (sky130_fd_sc_hd__maj3_1)
+   0.400   11.320 v PostAS/_0585_/X (sky130_fd_sc_hd__maj3_1)
+   0.363   11.683 v PostAS/_0586_/X (sky130_fd_sc_hd__maj3_1)
+   0.396   12.079 v PostAS/_0587_/X (sky130_fd_sc_hd__maj3_1)
+   0.366   12.445 ^ PostAS/_0589_/Y (sky130_fd_sc_hd__a221oi_1)
+   0.107   12.552 v PostAS/_0591_/Y (sky130_fd_sc_hd__o31ai_1)
+   0.391   12.943 v PostAS/_0592_/X (sky130_fd_sc_hd__maj3_1)
+   0.393   13.336 v PostAS/_0593_/X (sky130_fd_sc_hd__maj3_1)
+   0.391   13.727 v PostAS/_0594_/X (sky130_fd_sc_hd__maj3_1)
+   0.392   14.119 v PostAS/_0595_/X (sky130_fd_sc_hd__maj3_1)
+   0.393   14.512 v PostAS/_0596_/X (sky130_fd_sc_hd__maj3_1)
+   0.393   14.905 v PostAS/_0597_/X (sky130_fd_sc_hd__maj3_1)
+   0.393   15.299 v PostAS/_0598_/X (sky130_fd_sc_hd__maj3_1)
+   0.393   15.692 v PostAS/_0599_/X (sky130_fd_sc_hd__maj3_1)
+   0.403   16.095 v PostAS/_0600_/X (sky130_fd_sc_hd__maj3_1)
+   0.366   16.462 ^ PostAS/_0603_/Y (sky130_fd_sc_hd__a221oi_1)
+   0.121   16.582 v PostAS/_0605_/Y (sky130_fd_sc_hd__o31ai_1)
+   0.373   16.955 v PostAS/_0606_/X (sky130_fd_sc_hd__maj3_1)
+   0.386   17.341 v PostAS/_0607_/X (sky130_fd_sc_hd__maj3_1)
+   0.161   17.503 v PostAS/_0612_/Y (sky130_fd_sc_hd__nor3b_1)
+   0.387   17.889 v PostAS/_1130_/X (sky130_fd_sc_hd__o32a_2)
+   0.122   18.012 ^ carryOutReg/_2_/Y (sky130_fd_sc_hd__mux2i_1)
+   0.044   18.055 v carryOutReg/_3_/Y (sky130_fd_sc_hd__nor2_1)
+   0.000   18.055 v carryOutReg/_4_/D (sky130_fd_sc_hd__dfxtp_1)
+           18.055   data arrival time
+
+  16.799   16.799   clock clk (rise edge)
+   0.000   16.799   clock network delay (ideal)
+   0.000   16.799   clock reconvergence pessimism
+           16.799 ^ carryOutReg/_4_/CLK (sky130_fd_sc_hd__dfxtp_1)
+  -0.114   16.685   library setup time
+           16.685   data required time
+-----------------------------------------------------------
+           16.685   data required time
+          -18.055   data arrival time
+-----------------------------------------------------------
+           -1.371   slack (VIOLATED)
+
+

@@ -39,31 +39,6 @@ The reason latency is off-limits is real. Insert a pipeline stage and the design
 
 **What we built.** Transforms are *typed*. The model does not emit free-text Verilog and hope; it emits a declared transform type, and that declaration mechanically determines which proof obligation is generated. A transform whose obligation cannot be discharged is never reported as a result.
 
-```
-   RTL  ──►  Yosys ──► OpenSTA ──►  critical path report
-                                          │
-                                          ▼
-                         ┌────────────────────────────────┐
-                         │  LLM: emits a TYPED transform  │
-                         │  {def_id, target, k, source}   │
-                         └────────────────┬───────────────┘
-                                          ▼
-              G1 parse ─► G2 elaborate ─► G3 precondition
-                                          │
-                    the DECLARED type selects the obligation
-                                          ▼
-        ┌──────────────┬──────────────┬──────────────┬──────────────┐
-        │ k=0          │ k>0 rigid    │ k>0 elastic  │ re-encoded   │
-        │ equivalence  │ k-padded     │ stream       │ mapped-state │
-        │ EQY / dsec   │ miter        │ equivalence  │ + bijection  │
-        └──────┬───────┴──────┬───────┴──────┬───────┴──────┬───────┘
-               └──────────────┴──── PDR / BMC / k-induction ─┘
-                                          │
-                        PROVEN ───────────┴─────────── REFUTED
-                           │                              │
-                    G5 remeasure timing          counterexample, discarded
-```
-
 The interface classifier (§6.1) decides rigid versus elastic; the declared latency delta decides padded versus plain. Nothing about that routing is left to the model.
 
 | declared | obligation branch | discharged by |
@@ -333,6 +308,8 @@ Second, **after buffering the remaining violations are depth-dominated.** Re-tig
 
 Three of the five registered predictions were **wrong**, including the primary one, which said the lever would help fewer than half of the DEPTH designs. It helped 6 of 8, because `upsize; dnsize` is gate *sizing* and sizing helps any path: the lever we compared the classifier against does two things. What the classifier actually predicts on designs it has never seen is **magnitude** (7.5x median) and **closure** (5 of 5 against 4 of 8). The fanout finding transfers at a lower rate than on our benchmark (33%, 47% with MIXED), and one external design outdoes ours: `cpu_fsm`'s program counter drives **1,131 loads** and burns 32.954 ns in one cell. The classifier's verdict on one design, `arm_cpu2`, flips with how enable flops are legalized, and it took three dated amendments to get one run right; both are in `experiments/drrtl_transfer/` rather than smoothed away.
 
+So we split the lever, pre-registered, into buffer-only and sizing-only on the same 15 designs. **Buffering alone is net harmful on depth-dominated designs** (median **−0.019 ns**, worse on 5 of 8) and closes 4 of 5 fanout-dominated ones (median **+3.282**). That is the claim the classifier makes, measured against the component it models; prediction 4 was right about buffering and wrong about the lever it was tested with. Sizing turned out stronger and broader than registered, helping 7 of 8 depth designs and fanout designs 5x more, so 2 of those 4 predictions were wrong too. On `cpu_fsm`, buffer-only gains +18.974 against the combined lever's +11.754: sizing after buffering gave back 7.2 ns, one design, not claimed as a rule.
+
 We then applied Dr. RTL's **high-confidence skill #7**, "duplicate register copies and split fanout cones", exactly as written to that `cpu_fsm` path. `PC`'s fanout fell from 1,131 to 3 because the copy inherited **1,175**: the fetch mux is one cone, so the load moved and did not split. Slack got **worse** by 0.447 ns, 16 flops were added, `(* keep *)` changed nothing, and our precondition gate rejected it as not k=0. The physical lever gains +17.515 ns on the same design. One design, one literal application, and the gate's rejection is partly on us: register duplication wants a sequential obligation, which the library has and the k=0 flop-count check prevents reaching.
 
 ### 7.3 The closed loop
@@ -408,4 +385,4 @@ The demo video walks the pipeline end to end on the real benchmark: a timing rep
 
 Everything reproduces from the repository. Each experiment directory holds its sources, its `.sby` or `.eqy` configuration, and its raw logs; proofs re-run with `sby -f <config> pdr` or `python3 tools/run_proof.py`. Cold-clone reproduction was verified by copying each experiment directory alone into a scratch tree and running the committed configuration unchanged.
 
-**Limits we would rather state than be asked.** N = 6 proposals, one batch, one target module, one model: these are outcomes, not rates with confidence intervals. The flow stops at technology mapping, so absolute violation numbers are an upper bound and no place-and-route data is included. The precondition layer did not screen anything in this batch. And the four transforms that are formally proven correct mostly made timing worse, which is the honest result: **proof and profit are independent questions, and we measured both.**
+**Limits we would rather state than be asked.** N = 12 proposals across two batches, two target modules, one proposer model: outcomes, not rates with confidence intervals. The physical flow reaches CTS and global routing, not detailed routing or signoff, and `repair_design`'s equivalence is unverified after four attempts. The classifier's thresholds were chosen on our benchmark and one external verdict is flow-sensitive. The proposer in the closed loop is offline by design. And of the seven transforms formally proven correct across both batches, three made their own path group worse, and all three tried in the post-buffering context were reverted, which is the honest result: **proof and profit are independent questions, and we measured both.**

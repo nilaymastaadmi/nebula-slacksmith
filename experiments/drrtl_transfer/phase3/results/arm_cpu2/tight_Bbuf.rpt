@@ -1,0 +1,54 @@
+---CLOCK:clk---
+Startpoint: _14347_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: _14394_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ _14347_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   1.223    1.223 ^ _14347_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.167    1.390 v _07692_/Y (sky130_fd_sc_hd__mux2i_1)
+   0.412    1.802 ^ _07694_/Y (sky130_fd_sc_hd__a211oi_1)
+   0.166    1.969 v _07695_/Y (sky130_fd_sc_hd__xnor2_1)
+   0.428    2.396 v _07697_/X (sky130_fd_sc_hd__maj3_1)
+   0.392    2.788 v _07698_/X (sky130_fd_sc_hd__maj3_1)
+   0.392    3.180 v _07699_/X (sky130_fd_sc_hd__maj3_1)
+   0.402    3.582 v _07700_/X (sky130_fd_sc_hd__maj3_1)
+   0.251    3.833 v _07710_/X (sky130_fd_sc_hd__o211a_1)
+   0.424    4.257 ^ _07712_/Y (sky130_fd_sc_hd__o311ai_0)
+   0.164    4.421 v _07716_/Y (sky130_fd_sc_hd__a311oi_1)
+   0.445    4.866 ^ _07719_/Y (sky130_fd_sc_hd__o311ai_0)
+   0.164    5.030 v _07723_/Y (sky130_fd_sc_hd__a311oi_1)
+   0.445    5.475 ^ _07725_/Y (sky130_fd_sc_hd__o311ai_0)
+   0.194    5.669 v _07729_/Y (sky130_fd_sc_hd__a311oi_1)
+   0.354    6.023 v _07731_/X (sky130_fd_sc_hd__o311a_2)
+   0.426    6.449 ^ _07733_/Y (sky130_fd_sc_hd__o311ai_0)
+   0.196    6.645 v _07737_/Y (sky130_fd_sc_hd__a311oi_1)
+   0.455    7.099 ^ _07742_/Y (sky130_fd_sc_hd__o311ai_0)
+   0.196    7.295 v _07746_/Y (sky130_fd_sc_hd__a311oi_1)
+   0.376    7.671 ^ _07749_/Y (sky130_fd_sc_hd__o311ai_0)
+   0.252    7.923 ^ _07752_/X (sky130_fd_sc_hd__a31o_2)
+   0.504    8.427 v _07759_/X (sky130_fd_sc_hd__xnor3_4)
+   0.251    8.678 ^ _07782_/Y (sky130_fd_sc_hd__a211oi_1)
+   0.196    8.875 v _07784_/Y (sky130_fd_sc_hd__o22ai_2)
+   0.233    9.107 ^ _07922_/Y (sky130_fd_sc_hd__a211oi_1)
+   0.092    9.200 v _07927_/Y (sky130_fd_sc_hd__o31ai_1)
+   0.000    9.200 v _14394_/D (sky130_fd_sc_hd__dfrtp_1)
+            9.200   data arrival time
+
+   8.773    8.773   clock clk (rise edge)
+   0.000    8.773   clock network delay (ideal)
+   0.000    8.773   clock reconvergence pessimism
+            8.773 ^ _14394_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.127    8.646   library setup time
+            8.646   data required time
+-----------------------------------------------------------
+            8.646   data required time
+           -9.200   data arrival time
+-----------------------------------------------------------
+           -0.553   slack (VIOLATED)
+
+
