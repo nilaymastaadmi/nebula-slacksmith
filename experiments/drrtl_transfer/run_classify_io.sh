@@ -22,10 +22,18 @@ read_verilog $1
 link_design $2
 create_clock -name clk -period $5 [get_ports $3]
 set_false_path -from [get_ports $4]
+# I/O paths are timed ONLY if the ports carry a delay constraint. Leaving them
+# unconstrained does not mean "zero delay", it means "excluded", which is why
+# the first version of this pass reproduced the reg-to-reg table exactly and
+# timed nothing new. Zero external delay, stated explicitly.
+set_input_delay  0 -clock clk [all_inputs -no_clocks]
+set_output_delay 0 -clock clk [all_outputs]
 puts "---CLOCK:clk---"
 report_checks -path_delay max -group_path_count 1 -digits 3
 EOF
   $STA -no_init -no_splash -exit $6.tcl > $6 2>&1
+  if grep -qE 'syntax error' $6; then echo READ_FAIL; return; fi
+  if grep -qE 'command failed' $6; then return; fi
   grep -E "(-?[0-9.]+)[[:space:]]+slack \((MET|VIOLATED)\)" $6 | tail -1 | awk '{print $1}'
 }
 
@@ -37,6 +45,7 @@ while IFS=$'\t' read -r name top clk rst ext; do
   [ -s $d/A.v ] && [ -s $d/B.v ] || { printf "%s\t%s\tNO_NETLIST\n" $name $top >> $RES/summary.tsv; continue; }
   echo "=== $name ==="
   s1=$(sta_all $d/A.v $top $clk $rst 1000 $d/io_loose.rpt)
+  [ "$s1" = "READ_FAIL" ] && { printf "%s\t%s\tSTA_READ_FAIL\n" $name $top >> $RES/summary.tsv; continue; }
   [ -z "$s1" ] && { printf "%s\t%s\tNO_PATH\n" $name $top >> $RES/summary.tsv; continue; }
   req=$(python3 -c "print(round(1000.0 - ($s1), 3))")
   per=$(python3 -c "print(round(0.9 * ($req), 3))")

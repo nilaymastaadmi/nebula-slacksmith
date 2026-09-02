@@ -1,0 +1,43 @@
+---CLOCK:clk---
+Startpoint: key_gen (input port clocked by clk)
+Endpoint: SBOX/SBOX[3]/_293_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ input external delay
+   0.000    0.000 ^ key_gen (in)
+   0.895    0.895 ^ _4964_/X (sky130_fd_sc_hd__or2_2)
+   0.195    1.090 v KEY_EXPANDER/_183_/Y (sky130_fd_sc_hd__inv_1)
+   0.296    1.386 v KEY_EXPANDER/_252_/X (sky130_fd_sc_hd__clkbuf_1)
+   0.106    1.492 ^ KEY_EXPANDER/_494_/Y (sky130_fd_sc_hd__nand2_1)
+   0.050    1.542 v KEY_EXPANDER/_495_/Y (sky130_fd_sc_hd__nand2_1)
+   0.336    1.878 ^ _4222_/Y (sky130_fd_sc_hd__a222oi_1)
+   0.246    2.124 v _4223_/Y (sky130_fd_sc_hd__nand2_1)
+   0.577    2.702 ^ SBOX/SBOX[3]/_170_/X (sky130_fd_sc_hd__xnor3_1)
+   0.245    2.947 v SBOX/SBOX[3]/_172_/X (sky130_fd_sc_hd__xnor3_1)
+   0.304    3.251 ^ SBOX/SBOX[3]/_174_/Y (sky130_fd_sc_hd__mux2i_1)
+   0.213    3.464 ^ SBOX/SBOX[3]/_255_/Y (sky130_fd_sc_hd__xnor2_1)
+   0.078    3.542 v SBOX/SBOX[3]/_280_/Y (sky130_fd_sc_hd__nor2_1)
+   0.146    3.687 ^ SBOX/SBOX[3]/_282_/Y (sky130_fd_sc_hd__o32ai_1)
+   0.168    3.855 ^ SBOX/SBOX[3]/_283_/Y (sky130_fd_sc_hd__xnor2_1)
+   0.124    3.979 ^ SBOX/SBOX[3]/_284_/Y (sky130_fd_sc_hd__xnor2_1)
+   0.000    3.979 ^ SBOX/SBOX[3]/_293_/D (sky130_fd_sc_hd__dfxtp_1)
+            3.979   data arrival time
+
+   6.919    6.919   clock clk (rise edge)
+   0.000    6.919   clock network delay (ideal)
+   0.000    6.919   clock reconvergence pessimism
+            6.919 ^ SBOX/SBOX[3]/_293_/CLK (sky130_fd_sc_hd__dfxtp_1)
+  -0.072    6.847   library setup time
+            6.847   data required time
+-----------------------------------------------------------
+            6.847   data required time
+           -3.979   data arrival time
+-----------------------------------------------------------
+            2.868   slack (MET)
+
+

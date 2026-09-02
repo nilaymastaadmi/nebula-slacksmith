@@ -44,8 +44,16 @@ print(f"  identical rows: {same}   differing rows: {diff}")
 
 # ---- scope
 timed = {d: r for d, r in R4.items() if f(r.get("slack_A")) is not None}
-labels = {d: (r.get("mapped_cells_A") if f(r.get("slack_A")) is None else "timed")
-          for d, r in R4.items()}
+KNOWN = ("NO_PATH", "FLOW_FAIL", "FLOW_FAIL_B", "SYNTH_FAIL", "SYNTH_FAIL_B", "STA_READ_FAIL")
+def label(r):
+    if f(r.get("slack_A")) is not None:
+        return "timed"
+    # the runner writes the label in whichever column it reached; find it
+    for v in r.values():
+        if v in KNOWN:
+            return v
+    return "UNKNOWN"
+labels = {d: label(r) for d, r in R4.items()}
 out_of_scope = {d: l for d, l in labels.items() if l != "timed"}
 print(f"\n## Scope: {len(timed)} timed, {len(out_of_scope)} not: "
       + ", ".join(f"{d}={l}" for d, l in out_of_scope.items()))
