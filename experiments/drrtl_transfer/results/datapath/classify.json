@@ -1,0 +1,40 @@
+{
+  "verdict": "FANOUT_DOMINATED",
+  "recommended_lever": "buffering / gate sizing, not RTL",
+  "slack_ns": -0.769,
+  "met": false,
+  "path_delay_ns": 7.438,
+  "cells_on_path": 16,
+  "cells_above_fanout_hi": 2,
+  "fanout_delay_ns": 4.716,
+  "fanout_delay_share": 0.634,
+  "unresolved_cells": 0,
+  "top_cells": [
+    {
+      "inst": "_3786_",
+      "cell": "sky130_fd_sc_hd__a211oi_1",
+      "incr_ns": 2.577,
+      "fanout": 35,
+      "module": "datapath"
+    },
+    {
+      "inst": "_3787_",
+      "cell": "sky130_fd_sc_hd__a21oi_1",
+      "incr_ns": 2.139,
+      "fanout": 64,
+      "module": "datapath"
+    },
+    {
+      "inst": "_3957_",
+      "cell": "sky130_fd_sc_hd__a221oi_1",
+      "incr_ns": 0.564,
+      "fanout": 1,
+      "module": "datapath"
+    }
+  ],
+  "thresholds": {
+    "fanout_hi": 32,
+    "fanout_share_hi": 0.5,
+    "fanout_share_lo": 0.2
+  }
+}

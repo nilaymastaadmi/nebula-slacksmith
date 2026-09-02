@@ -1,0 +1,53 @@
+---CLOCK:clk---
+Startpoint: i_tv80_core/_3783_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: i_tv80_core/_3837_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ i_tv80_core/_3783_/CLK (sky130_fd_sc_hd__dfxtp_1)
+   1.694    1.694 ^ i_tv80_core/_3783_/Q (sky130_fd_sc_hd__dfxtp_1)
+   0.276    1.970 ^ i_tv80_core/i_mcode/_1434_/X (sky130_fd_sc_hd__or4_1)
+   0.174    2.144 ^ i_tv80_core/i_mcode/_1435_/X (sky130_fd_sc_hd__buf_2)
+   0.105    2.249 v i_tv80_core/i_mcode/_1437_/Y (sky130_fd_sc_hd__o22ai_1)
+   0.213    2.463 ^ i_tv80_core/i_mcode/_1441_/Y (sky130_fd_sc_hd__nor3_1)
+   0.105    2.568 v i_tv80_core/i_mcode/_1450_/Y (sky130_fd_sc_hd__nand3_1)
+   0.516    3.083 v i_tv80_core/i_mcode/_1469_/X (sky130_fd_sc_hd__or4_1)
+   0.263    3.346 ^ i_tv80_core/i_mcode/_1552_/Y (sky130_fd_sc_hd__nor4_1)
+   0.155    3.501 v i_tv80_core/i_mcode/_1576_/Y (sky130_fd_sc_hd__nand4_1)
+   0.099    3.600 ^ i_tv80_core/i_mcode/_2409_/Y (sky130_fd_sc_hd__nor2_1)
+   0.058    3.658 v i_tv80_core/i_mcode/_2410_/Y (sky130_fd_sc_hd__a2111oi_0)
+   2.221    5.879 ^ i_tv80_core/i_mcode/_2415_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.372    6.251 v i_tv80_core/_2246_/Y (sky130_fd_sc_hd__mux2i_1)
+   0.492    6.744 v i_tv80_core/_2250_/X (sky130_fd_sc_hd__maj3_2)
+   0.249    6.993 v i_tv80_core/_2256_/X (sky130_fd_sc_hd__o211a_1)
+   0.230    7.223 ^ i_tv80_core/_2259_/Y (sky130_fd_sc_hd__o311ai_2)
+   0.157    7.379 v i_tv80_core/_2261_/Y (sky130_fd_sc_hd__a31oi_1)
+   0.354    7.733 v i_tv80_core/_2262_/X (sky130_fd_sc_hd__maj3_2)
+   0.280    8.013 ^ i_tv80_core/_2267_/Y (sky130_fd_sc_hd__nor4_2)
+   0.191    8.204 ^ i_tv80_core/_2271_/X (sky130_fd_sc_hd__o41a_2)
+   0.068    8.272 v i_tv80_core/_2273_/Y (sky130_fd_sc_hd__o31ai_2)
+   0.313    8.585 v i_tv80_core/_3392_/X (sky130_fd_sc_hd__maj3_2)
+   0.166    8.751 v i_tv80_core/_3395_/X (sky130_fd_sc_hd__xor2_1)
+   0.293    9.044 ^ i_tv80_core/_3396_/Y (sky130_fd_sc_hd__a222oi_1)
+   0.166    9.210 ^ i_tv80_core/_3398_/X (sky130_fd_sc_hd__o211a_1)
+   0.081    9.290 v i_tv80_core/_3401_/Y (sky130_fd_sc_hd__o211ai_1)
+   0.000    9.290 v i_tv80_core/_3837_/D (sky130_fd_sc_hd__dfxtp_1)
+            9.290   data arrival time
+
+   8.817    8.817   clock clk (rise edge)
+   0.000    8.817   clock network delay (ideal)
+   0.000    8.817   clock reconvergence pessimism
+            8.817 ^ i_tv80_core/_3837_/CLK (sky130_fd_sc_hd__dfxtp_1)
+  -0.126    8.691   library setup time
+            8.691   data required time
+-----------------------------------------------------------
+            8.691   data required time
+           -9.290   data arrival time
+-----------------------------------------------------------
+           -0.599   slack (VIOLATED)
+
+
