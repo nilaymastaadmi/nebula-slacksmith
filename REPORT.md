@@ -29,9 +29,13 @@ So SlackSmith routes twice. It routes the **proof obligation** by declared trans
 
 Timing closure is manual because static timing analysis speaks in cells and nets while RTL speaks in `always` blocks. An LLM bridges those two representations well. The difficulty is not proposing a rewrite; it is knowing whether the rewrite is correct.
 
-Every published agentic RTL optimizer that holds a formal gate refuses to change latency. Dr. RTL (ICCAD 2026) states it explicitly: it preserves micro-architecture "including pipeline latency", permitting only "latency-preserving sequential restructuring". RTLScout runs on the open Yosys/OpenROAD flow but verifies with `abc cec`, which is combinational and structurally cannot see an added register.
+**Scoped precisely, because the loose version is false.** Generation-mode agents write any latency they like. The accurate claim is that we found no published system that both *changes* latency and *discharges a formal obligation for it*. Dr. RTL (ICCAD 2026) says so explicitly: it preserves micro-architecture "including pipeline latency", permitting only "latency-preserving sequential restructuring". RTLScout runs on the open Yosys/OpenROAD flow; its primary gate is a Verilator testbench, with `abc cec` secondary and skipped entirely on most of its sequential benchmarks, and CEC is combinational so it structurally cannot see an added register.
 
-The reason is real. Insert a pipeline stage and the design is no longer equivalent under any conventional miter; it is equivalent only under a latency offset the checker must be told about. So the profitable transforms are forbidden because the available checkers cannot express them.
+Two closer neighbours deserve naming rather than omitting. **ASPEN** (MLCAD 2025) and **ROVER** (TCAD 2024) both pair rewriting with formal justification, and both use obligations that are equational and combinational. Neither can express "agree modulo k cycles, under back-pressure". Ours is temporal, which is the actual difference and a narrower claim than novelty.
+
+**And measuring how often the model is wrong is not new either.** Dr. RTL already reports an 86% SEC pass rate. What we did not find measured anywhere is the rate at which a *weaker* checker would have wrongly **accepted** an invalid rewrite, which is the four-checker matrix in §6.2 and §7, and the question that matters if your tool ships with a testbench gate.
+
+The reason latency is off-limits is real. Insert a pipeline stage and the design is no longer equivalent under any conventional miter; it is equivalent only under a latency offset the checker must be told about. So the profitable transforms are forbidden because the available checkers cannot express them.
 
 **What we built.** Transforms are *typed*. The model does not emit free-text Verilog and hope; it emits a declared transform type, and that declaration mechanically determines which proof obligation is generated. A transform whose obligation cannot be discharged is never reported as a result.
 
@@ -100,15 +104,7 @@ All four branches are proven on real RTL, not toys (§6).
 | D | `clk_d` | /5 | reloading timer, two compares |
 | E | `clk_e` | /2 | 16 x 32-bit config file + **AES-128** |
 
-Crossings form a ring A→B→C→D→E→A. Every multi-bit crossing is a gray-pointer async FIFO; every single-bit control crossing is a two-flop synchronizer:
-
-| # | src → dst | signal | structure | launch | capture |
-|---|---|---|---|---|---|
-| 1 | A → B | `a2b_wdata[15:0]` | `async_fifo` DW=16, 8 deep | `clk_a/2` | `clk_b/3` |
-| 2 | B → C | `b2c_ctrl` (toggle) | `sync2ff` | `clk_b/3` | `clk_c/4` |
-| 3 | C → D | `c2d_wdata[7:0]` | `async_fifo` DW=8, 8 deep | `clk_c/4` | `clk_d/5` |
-| 4 | D → E | `d2e_ctrl` (toggle) | `sync2ff` | `clk_d/5` | `clk_e/2` |
-| 5 | E → A | `e2a_wdata[31:0]` | `async_fifo` DW=32, 4 deep | `clk_e/2` | `clk_a` |
+Crossings form a ring A→B→C→D→E→A. Every multi-bit crossing is a gray-pointer async FIFO (`a2b_wdata[15:0]` 8 deep, `c2d_wdata[7:0]` 8 deep, `e2a_wdata[31:0]` 4 deep); every single-bit control crossing is a two-flop synchronizer (`b2c_ctrl`, `d2e_ctrl`).
 
 Four of the five crossings both launch *and* capture on generated clocks, which is what makes this harder than a single-clock design. Single-bit crossings carry a toggle rather than a pulse, so a slow destination cannot miss a narrow source pulse. FIFO pointers are gray-coded and `full`/`empty` are registered from the *next* pointer value, so a consumer driving `rinc = ~rempty` cannot form a loop.
 
@@ -134,19 +130,9 @@ Three findings changed how we report every number (`docs/measurement-methodology
 
 ### 5.1 Setting a closure target that means something
 
-The v1 periods were chosen as illustrative and non-harmonic when the benchmark was 3,584 cells. The benchmark is now 55,413 cells containing an RV32I core and two AES-128 cores, and an 8 ns `clk_a` target demands roughly four times what a single-cycle RV32I with async-read memory can physically reach in sky130. Against a target like that, moving WNS from −25 ns to −24 ns is not progress toward anything.
+The v1 periods were chosen as illustrative when the benchmark was 3,584 cells. It is now 55,413 with an RV32I core and two AES-128 cores, and an 8 ns `clk_a` target demands roughly four times what a single-cycle RV32I with async-read memory can reach in sky130. Against a target like that, moving WNS from −25 ns to −24 ns is not progress toward anything.
 
-So we measured what each domain actually requires, then set `sdc/bench_top_v2.sdc` about 10% tighter than that:
-
-| domain | v1 | measured requirement | v2 target | bound by |
-|---|---|---|---|---|
-| `clk_a` | 8.0 | 33.29 | 30.0 | RV32I core |
-| `clk_b` | 11.0 | 29.49 | 26.5 | AES-128 |
-| `clk_e` | 9.0 | 29.49 | 26.5 | AES-128 |
-| `clk_c` | 6.0 | 2.46 | 3.0 | met |
-| `clk_d` | 13.0 | 7.19 | 8.0 | met |
-
-Generated-clock `-edges` are relative to master edges, so they scale with the new periods and no edge list changed. v1 is retained unchanged as the frozen record for every earlier measurement: revising a target with disclosure is not the same as editing constraints mid-campaign, which stays forbidden.
+So we measured what each domain requires and set `sdc/bench_top_v2.sdc` about 10% tighter: `clk_a` 33.29 measured to 30.0 target, `clk_b` and `clk_e` 29.49 to 26.5, with `clk_c` and `clk_d` already met and tightened to 3.0 and 8.0. Generated-clock `-edges` are relative to master edges, so they scale automatically and no edge list changed. v1 is retained unchanged as the frozen record for every earlier measurement: revising a target with disclosure is not the same as editing constraints mid-campaign, which stays forbidden. `sdc/bench_top_v3.sdc` (§7.3) later applies the same method again, to the flow that includes the buffering pass.
 
 Under v2, and after the correction below, the baseline **meets** `clk_a` at +1.333 ns, with `clk_a_div2` at −0.543 and the two AES-bound domains at −4.957 each. **Read those against §7.2**, which shows what they become once wires exist.
 
@@ -306,6 +292,16 @@ That control has no placement and no parasitics, so we then ran the real thing. 
 | clk_e | −47.683 | **+19.529 MET** | **+67.212** |
 
 **All three groups close**, at a measured cost of **+20.2% area** (448,840 to 539,351 µm², 40% to 48% utilization). Flop count is identical at 7,959 flattened on both sides, with 960 buffers added, and both runs of the flow reproduce every number exactly.
+
+**And the closure survives a clock tree.** Those numbers use ideal clocks, which is the standard context for `repair_design` and not a signoff number, so we ran CTS and global routing on the same flow:
+
+| point | clk_a | clk_b | clk_e | clock network |
+|---|---|---|---|---|
+| post-place | +17.593 | +12.367 | +19.529 | **ideal** |
+| post-CTS | **+17.616** | **+8.694** | **+18.428** | **propagated** |
+| post-global-route | **+17.117** | **+8.987** | **+18.647** | **propagated** |
+
+Every group meets at every point, for 7,833 µm² (+1.45%) and 1,547 clock buffers. `clk_b` pays 3.673 ns for its tree, and the mechanism is in the same report: its launch path sits **3.514 ns** deeper than its capture path, so the imbalance and the slack loss agree to 0.16 ns. `clk_a`, at 2.463 ns of insertion but only 0.090 ns of imbalance, is essentially free. Propagation was verified rather than assumed: 6 `clock network delay (ideal)` lines before CTS, 12 `(propagated)` after, and insertion delay exactly 0.0 before. `report_clock_skew` printed empty on this build, so the imbalance figures come from the path reports and no skew number is claimed. Details and the unexplained `clk_e` capture reading are in `experiments/openroad_cts/NOTES.md`.
 
 One thing is **not** verified, and we would rather say so than round it up. The ABC control got a 49,923-of-49,924 internal equivalence check. `repair_design` did not: three attempts failed for tooling reasons, twice because `equiv_make` matches by name and `repair_design` splits nets when it buffers them (86 equivalence points in one attempt, 1 in the other), and once because liberty-derived cells stay blackboxes in the bounded miter. **None produced a counterexample; they produced no evidence either way.** What supports the result is the structural check, the exact reproducibility, and the pass's documented contract. Closing this properly needs functional sky130 cell models, and it is listed as open work.
 

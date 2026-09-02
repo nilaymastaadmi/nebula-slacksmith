@@ -2,200 +2,128 @@
 
 **Latency-changing RTL optimization with automatically generated proof obligations.**
 
-Entry for *Nebula* — Astera Labs @ BITS Pilani, Goa campus.
-Track: Digital — *Constraint Optimization through RTL Enhancement Using Generative AI*.
+Entry for *Nebula*, Astera Labs @ BITS Pilani Goa. Track A (Digital):
+*Constraint Optimization through RTL Enhancement Using Generative AI*.
+
+Nilay Toshniwal and Shivani Chaudhary.
+Full write-up: **[REPORT.md](REPORT.md)**. Demo shot list: **[DEMO.md](DEMO.md)**.
 
 ---
 
-## The thesis in one line
+## The idea
 
-Every published agentic RTL optimiser that holds a formal gate refuses to change
-pipeline latency — not because latency changes are unprofitable, but because
-equivalence checking across differing latencies is hard. SlackSmith proposes
-transforms that change latency **and writes their proof obligation itself.**
+Transforms are **typed**. The model does not emit free-text Verilog and hope; it
+declares a transform type, and that declaration mechanically selects the proof
+obligation:
 
-## Status
+| declared | obligation | discharged by |
+|---|---|---|
+| k = 0, state-preserving | combinational / sequential equivalence | EQY, `abc dsec` |
+| k > 0, rigid interface | k-padded miter | SymbiYosys, BMC + PDR |
+| k > 0, elastic interface | stream equivalence | SymbiYosys + `cover` |
+| k = 0, re-encoded state | mapped-state equivalence | SymbiYosys + bijection |
 
-| | |
+All four branches are proven on real RTL. Latency-changing transforms become
+checkable, which is what the published systems avoid.
+
+## What we actually measured, which is the point
+
+We built both halves and then measured the half everyone assumes works. An LLM
+pointed at a timing report fails **two** different ways.
+
+**1. It proposes things that are wrong.** Two pre-registered batches, N = 12,
+every proposal frozen before any gate ran (git proves the ordering). 3 formally
+refuted, 1 rejected at precondition, 1 unresolved. The best one:
+
+| checker on proposal P4 | verdict |
 |---|---|
-| Abstract | Submitted 9 Aug 2026 |
-| Shortlisting | 12 Aug 2026 |
-| Final submission | 15 Sept 2026 |
-| Presentations | 25 Sept 2026, 9 AM |
-| **Build window** | **34 days from shortlisting** |
+| EQY formal | **CAUGHT** in 46 s, counterexample `a=ae19f605, shamt=7` |
+| the design's own shipped firmware, 400 cycles | **MISSED** |
+| 20,000 random instruction words | **MISSED** |
+| directed SRAI on a negative operand | CAUGHT |
 
-**The spine is proven.** A k-padded miter discharges a real pipelining transform
-under k-induction — an unbounded proof, not a bounded check — and three mutants
-confirm it is not vacuous. See [`experiments/toy_miter/NOTES.md`](experiments/toy_miter/NOTES.md).
+P4 saves 208 cells, passes every precondition, and breaks SRA for every
+negative operand. The file it edits carries a comment warning about exactly
+that defect, ten lines above the code it changed.
 
-| Case | BMC(24) | k-induction | |
+**2. It aims correct transforms at the wrong variable.** The binding paths on
+this benchmark are **59% to 91% fanout-attributable delay**, and no RTL rewrite
+shortens a net's load delay:
+
+| lever, same clock group, same SDC | clk_b gain | changes RTL? | parasitics? |
 |---|---|---|---|
-| K=0, claims latency preserved | FAILED | FAILED | ✅ |
-| **K=1, correct** | **PASSED** | **PASSED** | ✅ |
-| K=2, wrong latency claim | FAILED | FAILED | ✅ |
-| K=1, arithmetic mutated | FAILED | FAILED | ✅ |
+| best LLM RTL transform, batch 1 | +0.485 | yes | no |
+| best LLM RTL transform, batch 2 | +4.925 | yes | no |
+| ABC buffering control | +17.557 | no | no |
+| **OpenROAD `repair_design`** | **+55.805** | **no** | **yes** |
 
-## The finding that shapes the plan
+So SlackSmith routes **twice**: the fix by measured path pathology, the proof
+obligation by declared transform type.
 
-**PDR hung >440s on an 8-bit multiplier; SMT proved the same property in under a
-second.** SMT reasons about multiplication in the bit-vector theory; AIG-based
-PDR bit-blasts it and hits a wall. That is the AES-128 hardness problem in
-miniature, found on day one on a toy.
+## Run it
 
-Consequences: engine portfolio racing is load-bearing, not optional. AES will be
-the case that times out — say so before a judge finds it. And report three
-outcomes, always: **proved / refuted-with-counterexample / unresolved.** A
-timeout folded into "passed" is the one thing that destroys credibility with this
-panel.
+    python3 tools/slacksmith.py \
+      --sdc sdc/bench_top_v2.sdc \
+      --liberty ~/sta_work/sky130hd_tt.lib \
+      --sta-bin ~/tools/OpenSTA/build/sta \
+      --clock clk_a --clock clk_b --clock clk_e \
+      --workdir ~/run --engine sta
+
+Closes the benchmark in **2 iterations, 46.7 seconds**, and writes every
+routing decision with its evidence to `decisions.jsonl`.
+
+## The benchmark
+
+`bench_top`, **55,413 standard cells**. Five asynchronous domains, each with
+its own async reset and its own in-RTL generated clock including odd /3 and /5
+dividers. Gray-code async FIFOs on every multi-bit crossing, two-flop
+synchronizers on every single-bit one. An RV32I core and two AES-128 cores.
+The SDC is written once and frozen; no `set_multicycle_path` anywhere, because
+a multicycle exception manufactures slack without changing the design.
 
 ## Layout
 
 ```
-docs/
-  brochure-analysis.md    event facts, all three tracks, failure modes, strategy
-  research-findings.md    literature verification, prior art, transplants
-  abstracts/              the two abstracts as written
-experiments/
-  toy_miter/              the day-one de-risking experiment (working)
+REPORT.md                  the submission. tools/render_report.py measures its page count
+DEMO.md                    shot list for the demo video
+rtl/                       bench_top and its five domains; rtl/aes is vendored, BSD-2
+sdc/                       v1 frozen, v2 closure targets, v3 generated by make_v3.py
+tools/  slacksmith.py      the closed loop
+        classify_path.py   routes the fix by fanout-attributable delay share
+        gate_proposal.py   routes the obligation by declared type, runs G1 to G4
+        remeasure.py       synthesis + STA, with the null control that has 0.000 noise
+        verdict_regression.sh  P4 must read REFUTED, A2 must read UNRESOLVED
+docs/   measurement-methodology.md   four findings that changed how we report numbers
+        path-classification.md       the classifier, its 5-case validation, its 2 limits
+        closed-loop.md               the loop, and the bugs running it exposed
+experiments/               every number above, with the command that produced it
 ```
 
-## Known corrections to make in the final report
+## What we got wrong
 
-The abstract was submitted before the literature survey completed. Four claims
-need scoping in the report — owning them reads better than being caught:
+Kept deliberately, because a submission that cannot show its corrections is
+not measuring anything. Full list in REPORT.md §9. The two worth naming here:
 
-1. *"Every agentic RTL optimiser published in 2026 leaves latency alone"* is
-   false as stated. Generation-mode agents write any latency they like. Rescope:
-   none both **changes** latency **and** discharges a formal obligation for it.
-2. RTLScout's `abc cec` is its **secondary** gate — the primary is a Verilator
-   testbench — and CEC is skipped entirely for most of its sequential benchmarks.
-3. Dr. RTL **already reports an 86% SEC pass rate**, so "we measure how often the
-   model is wrong" is not new. Reframe to the four-checker matrix: the rate at
-   which a *weaker* checker would have wrongly accepted an invalid rewrite.
-4. **ASPEN** (MLCAD 2025) and **ROVER** (TCAD 2024) are uncited and close.
-   Differentiator: their obligations are equational and combinational and cannot
-   express "agree modulo k cycles under back-pressure." Ours is temporal.
+**Our own gate reported a solver timeout as a refutation.** EQY prints the same
+line for a counterexample and for running out of depth, and we matched on the
+string. Caught only because a partition failed while all 128 partitions feeding
+it had passed. `tools/verdict_regression.sh` now pins both directions.
 
-Also outstanding: the benchmark needs **generated clocks and multi-ratio dividers**
-in the frozen SDC — both are explicit organizer requirements currently unmet.
+**Every number we published before 2026-09-01 was zero-parasitic.** With
+placement parasitics the `clk_a` baseline we reported as "+1.333, meets" is
+**−36.723**. The baseline-versus-variant comparisons survive, because both
+sides always used one consistent model. The absolute closure claims did not.
 
-## Second result: the obligation must depend on the interface
+## Honest limits
 
-[`experiments/vr_miter/`](experiments/vr_miter/NOTES.md) points the *same*
-k-padded obligation at a valid/ready pair with back-pressure. It is **refuted in
-0 seconds** — and the design is correct. Stream equivalence proves the same pair
-holds.
-
-| Obligation | BMC(20) | k-induction |
-|---|---|---|
-| k-padded (wrong for this interface) | **REFUTED** | refuted |
-| stream equivalence (right) | **PROVED BOUNDED** | unresolved |
-
-The first assertion to break is *valid alignment*, not data: under back-pressure
-the two designs hold different numbers of in-flight transactions, so no fixed
-cycle offset exists. **A tool emitting a k-padded obligation for a valid/ready
-interface reports a correct transform as broken.**
-
-That gives the two-branch rule its evidence:
-
-```
-rigid interface        -> k-padded miter       (proved unbounded)
-valid/ready interface  -> stream equivalence   (proved bounded)
-```
-
-Automatically choosing between them from the interface is the core technical
-idea, and it is now motivated by a measured false negative rather than an
-argument.
-
-## Third result: the obligation is now chosen automatically
-
-[`experiments/classify/`](experiments/classify/NOTES.md) picks the obligation
-from the interface, in three passes — lexical, structural, formal.
-
-| Module | Lexical | Structural | Formal | Verdict |
-|---|---|---|---|---|
-| `mac_ref` | no candidate | — | — | **RIGID** |
-| `mac_vr_ref` | `out_ready` | reaches `$dff.D` | PASSED | **ELASTIC** |
-| `alias_names` (`vld`/`rdy`) | `o_rdy` | reaches `$dff.D` | PASSED | **ELASTIC** |
-| `axi_style` (AXI prefixes) | `m_axis_tready` | reaches `$dff.D` | PASSED | **ELASTIC** |
-| `costume_ready` | `out_ready` | **REJECTED** | **FAILED** | **RIGID** |
-
-Pass 3 proves **output stability under back-pressure** — valid held with ready
-low must leave data and valid unchanged — so the verdict is a discharged
-obligation rather than a heuristic.
-
-`costume_ready` is the case that earns the machinery: handshake-shaped ports, not
-elastic. Both later passes reject it by *independent* arguments — the signal
-never reaches state, and the data changes while stalled.
-
-**Known unsafe direction:** exotic flow control (credit-based) misses the lexical
-pass and is classified rigid, which would emit a k-padded miter for an elastic
-interface. Unknown should default to elastic. Not yet done.
-
-## Fourth result: the existing checkers, measured
-
-[`experiments/cec_check/`](experiments/cec_check/NOTES.md) runs the real tools at
-the correct transform from `toy_miter/`. Every checker got a positive control
-first, so a FAIL means it rejected a correct transform.
-
-| Checker | control | ref vs opt (latency +1) |
-|---|---|---|
-| `yosys-abc cec` | equivalent ✓ | **cannot build the miter** |
-| `yosys-abc dsec` | equivalent ✓ | **NOT EQUIVALENT** |
-| **EQY** | PASS ✓ | **FAIL**, 1/1 partitions |
-| padded miter | — | **PASSED, unbounded** |
-
-They fail for *different* reasons, and that is the point. `cec` does not answer
-"no" — it cannot construct the comparison (`Networks have different number of
-latches. Miter computation has failed.`). `dsec` and EQY *can* set up the
-comparison and correctly answer no, because the designs are genuinely not
-cycle-for-cycle equivalent.
-
-None of them can express equivalence modulo k cycles, so a pipeline gated on any
-of them can only ever reject a latency change. **That is the routing decision in
-the abstract, now measured rather than asserted.**
-
-## Fifth result: simulation accepts what formal refutes
-
-[`experiments/sim_check/`](experiments/sim_check/NOTES.md) is the fourth checker
-and the dangerous direction — not rejecting correct transforms, but **accepting
-invalid ones.** It is also what agentic RTL tools actually gate on: RTLScout's
-primary gate is a Verilator testbench.
-
-| Mutant | SIM lazy | SIM aggr | FORMAL | |
-|---|---|---|---|---|
-| `mut0_correct` | PASS | PASS | **PASSED** | control ✅ |
-| `mut1_stale_c` | **PASS** | FAIL | **FAILED** | escaped the lazy testbench |
-| `mut2_rare` | **PASS** | **PASS** | **FAILED** | **escaped both** |
-| `mut3_trunc` | FAIL | FAIL | **FAILED** | simulation worked |
-
-`mut1_stale_c` is the classic pipelining bug — stage 2 adding the current `c` to
-a product one cycle old. It is invisible to a testbench that holds `c` constant,
-which is precisely what a directed MAC test looks like. **The verdict tracks
-stimulus quality, not bug severity** — so a simulation-gated error rate measures
-the testbench, not the model.
-
-`mut2_rare` survived 20,000 random vectors in both regimes and formal refuted it
-instantly.
-
-**Honest limit: n=3, hand-picked. That is a mechanism, not a statistic.** The
-real number needs a corpus of model-proposed rewrites, stratified, with
-Clopper–Pearson intervals and a power calculation.
-
-## Next
-
-1. Discharge stream equivalence **unbounded** with a strengthening invariant, or
-   record it as permanently bounded and say so.
-2. Generate the pass-3 wrapper from the port list (currently template-bound), and
-   add the input-side no-loss obligation to complete the elastic contract.
-3. Confirm **EQY rejects** the rigid K=1 pair — "we ran it, here is the error"
-   beats a citation.
-4. Build the corpus for the four-checker matrix. **That is the paper**, and it
-   stands alone even if the optimizer improves nothing.
-
-## Reproduce
-
-```bash
-apt-get install -y yosys z3      # yosys ships yosys-smtbmc and yosys-abc
-cd experiments/toy_miter && ./run.sh 24
-```
+- The proposer is offline. The loop selects, gates and measures proposals
+  frozen before any gate ran. It does not generate them, because the
+  anti-tuning rule in both pre-registrations forbids generating a proposal
+  after seeing a gate result.
+- `repair_design`'s equivalence is **not** verified. Three attempts failed for
+  tooling reasons and none produced a counterexample, which is not the same as
+  passing. See `experiments/openroad_repair/NOTES.md`.
+- The classifier's thresholds were chosen after looking at this benchmark.
+  They are not validated on any held-out design.
+- N = 12 proposals, one proposer model. These are outcomes, not rates with
+  confidence intervals.
