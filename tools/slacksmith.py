@@ -63,11 +63,48 @@ from classify_path import classify
 
 REPO = os.path.dirname(HERE)
 
-# The buffering physical lever. Yosys ships this in its -liberty -constr
+# The physical lever, split. Yosys ships buffer/upsize in its -liberty -constr
 # script and not in the plain -liberty script, which is why this flow was not
 # running it. Commas become spaces when abc parses a +script argument.
-BUFFER_SCRIPT = ("+strash;&get,-n;&fraig,-x;&put;scorr;dc2;dretime;strash;"
-                 "&get,-n;&dch,-f;&nf;&put;buffer,-N,16;upsize;dnsize")
+#
+# experiments/drrtl_transfer/ phase 3 measured the two components on 15
+# external designs: buffering alone is net harmful on depth-dominated paths
+# (median -0.019 ns) and closes 4 of 5 fanout-dominated ones; sizing helps
+# both, fanout paths 5x more. So --lever-policy verdict lets the classifier
+# choose the component; --lever-policy blunt applies both, as every run
+# before 2026-09-03 did.
+_HEAD = "+strash;&get,-n;&fraig,-x;&put;scorr;dc2;dretime;strash;&get,-n;&dch,-f;&nf;&put"
+BUF_ONLY = _HEAD + ";buffer,-N,16"
+SIZE_ONLY = _HEAD + ";upsize;dnsize"
+BOTH = _HEAD + ";buffer,-N,16;upsize;dnsize"
+BUFFER_SCRIPT = BOTH   # name kept: experiments/closed_loop/context_control.py imports it
+
+
+def abc_script_for(phys):
+    """ABC script for the currently applied physical components, or None."""
+    if phys["buffer"] and phys["size"]:
+        return BOTH
+    if phys["buffer"]:
+        return BUF_ONLY
+    if phys["size"]:
+        return SIZE_ONLY
+    return None
+
+
+def choose_physical(verdict, phys, tried, policy):
+    """Which physical component to apply next, or None.
+
+    blunt:   both components at once, once.
+    verdict: FANOUT/MIXED -> buffer-only, then sizing.  DEPTH -> sizing only.
+    A component that was applied and reverted is in `tried` and not retried.
+    """
+    if policy == "blunt":
+        return None if (phys["buffer"] or phys["size"] or "both" in tried) else "both"
+    order = ["buffer", "size"] if verdict in ("FANOUT_DOMINATED", "MIXED") else ["size"]
+    for c in order:
+        if not phys[c] and c not in tried:
+            return c
+    return None
 
 
 def sh(cmd, **kw):
@@ -213,7 +250,13 @@ def main():
     ap.add_argument("--engine", choices=["sta", "openroad"], default="sta")
     ap.add_argument("--max-iters", type=int, default=6)
     ap.add_argument("--gate-timeout", type=int, default=420)
+    ap.add_argument("--lever-policy", choices=["blunt", "verdict"], default="blunt",
+                    help="blunt: buffer+size at once (every run before 2026-09-03); "
+                         "verdict: the classifier picks the component")
     a = ap.parse_args()
+    if a.lever_policy == "verdict" and a.engine != "sta":
+        ap.error("--lever-policy verdict splits the abc script; it is sta-only "
+                 "(repair_design has no buffer/size split)")
 
     a.liberty = os.path.expanduser(a.liberty)
     a.sta_bin = os.path.expanduser(a.sta_bin)
@@ -249,11 +292,15 @@ def main():
     physical_applied = False
     tried = set()
     history = []
-    # An RTL proposal is provisionally applied, then confirmed or reverted on
-    # the NEXT measurement. Passing the formal gate means it is correct, not
-    # that it helps: batch 1 had 4 transforms formally proven and 3 of them
-    # made timing worse. G5 is a separate bar and this is where it is applied.
+    # Any step, RTL or physical, is provisionally applied, then confirmed or
+    # reverted on the NEXT measurement. Passing the formal gate means an RTL
+    # transform is correct, not that it helps: batch 1 had 4 transforms
+    # formally proven and 3 of them made timing worse. Physical steps get the
+    # same bar since 2026-09-03: on cpu_fsm, sizing applied after buffering
+    # gave back 7.2 ns (experiments/drrtl_transfer/ phase 3).
     pending = None
+    phys = {"buffer": False, "size": False}   # applied physical components
+    tried_phys = set()                          # components applied and reverted
 
     print(f"dont_use flags: {ndu}")
     print(f"engine: {a.engine}   clocks: {', '.join(a.clocks)}")
@@ -262,39 +309,62 @@ def main():
         print(f"\n=== iteration {it} ===")
         files = [file_subs.get(f, f) for f in rtl_files]
 
-        abc = BUFFER_SCRIPT if (physical_applied and a.engine == "sta") else None
+        physical_applied = phys["buffer"] or phys["size"]
+        abc = abc_script_for(phys) if a.engine == "sta" else None
         slacks, reports, net = measure_sta(a, files, a.workdir, f"it{it}", abc)
 
         if a.engine == "openroad":
+            # repair_design is one pass; the split lever exists only for abc.
             slacks, reports, net = measure_openroad(
                 a, net, a.workdir, f"it{it}_or", physical_applied)
 
         shown = "  ".join(f"{c}={slacks[c]}" for c in a.clocks)
         print(f"measure: {shown}")
         record(iter=it, step="measure", engine=a.engine, slacks=slacks,
-               physical_applied=physical_applied,
+               physical=dict(phys), lever_policy=a.lever_policy,
                rtl_applied=sorted(file_subs.values()))
         history.append((it, dict(slacks)))
 
-        # G5 on anything the RTL lever applied last iteration.
+        # G5 on whatever was applied last iteration, RTL or physical.
         if pending:
             now = slacks.get(pending["clock"])
             before = pending["prev_slack"]
-            if now is None or now <= before:
-                file_subs.pop(pending["key"], None)
-                print(f"  REVERT {pending['id']}: {pending['clock']} "
-                      f"{before} -> {now}, no improvement. G4 passed, G5 did not.")
-                record(iter=it, step="revert", proposal=pending["id"],
+            improved = now is not None and now > before
+            if pending.get("kind") == "physical":
+                comp = pending["component"]
+                if not improved:
+                    for c in (("buffer", "size") if comp == "both" else (comp,)):
+                        phys[c] = False
+                    tried_phys.add(comp)
+                    print(f"  REVERT physical {comp}: {pending['clock']} "
+                          f"{before} -> {now}, no improvement.")
+                    record(iter=it, step="revert", lever="physical", component=comp,
+                           clock=pending["clock"], before=before, after=now,
+                           reason="G5_no_improvement")
+                    pending = None
+                    continue
+                print(f"  CONFIRM physical {comp}: {pending['clock']} "
+                      f"{before} -> {now} ({now - before:+.3f})")
+                record(iter=it, step="confirm", lever="physical", component=comp,
                        clock=pending["clock"], before=before, after=now,
-                       reason="G5_no_improvement")
+                       gain=round(now - before, 3))
                 pending = None
-                continue
-            print(f"  CONFIRM {pending['id']}: {pending['clock']} "
-                  f"{before} -> {now} ({now - before:+.3f})")
-            record(iter=it, step="confirm", proposal=pending["id"],
-                   clock=pending["clock"], before=before, after=now,
-                   gain=round(now - before, 3))
-            pending = None
+            else:
+                if not improved:
+                    file_subs.pop(pending["key"], None)
+                    print(f"  REVERT {pending['id']}: {pending['clock']} "
+                          f"{before} -> {now}, no improvement. G4 passed, G5 did not.")
+                    record(iter=it, step="revert", proposal=pending["id"],
+                           clock=pending["clock"], before=before, after=now,
+                           reason="G5_no_improvement")
+                    pending = None
+                    continue
+                print(f"  CONFIRM {pending['id']}: {pending['clock']} "
+                      f"{before} -> {now} ({now - before:+.3f})")
+                record(iter=it, step="confirm", proposal=pending["id"],
+                       clock=pending["clock"], before=before, after=now,
+                       gain=round(now - before, 3))
+                pending = None
 
         violated = [c for c in a.clocks
                     if slacks.get(c) is not None and slacks[c] < 0]
@@ -314,14 +384,42 @@ def main():
                cells_on_path=cls.get("cells_on_path"),
                top_cells=cls.get("top_cells"), lever=lever)
 
-        if lever == "physical":
+        if a.lever_policy == "verdict":
+            # The classifier picks the component (registered 2026-09-03,
+            # experiments/closed_loop/PREREGISTRATION_verdict_lever.md):
+            # FANOUT/MIXED: buffer-only, then sizing, then stop.
+            # DEPTH: sizing-only, then the RTL proposals.
+            # Each step is provisional; the G5 block above reverts it.
+            comp = choose_physical(cls["verdict"], phys, tried_phys, "verdict")
+            if comp:
+                phys[comp] = True
+                print(f"apply: physical {comp} (provisional) -> "
+                      f"abc {abc_script_for(phys).split(';&put;')[-1]}")
+                record(iter=it, step="apply", lever="physical", component=comp,
+                       how=abc_script_for(phys), provisional=True,
+                       clock=worst, prev_slack=slacks[worst])
+                pending = {"kind": "physical", "component": comp,
+                           "clock": worst, "prev_slack": slacks[worst]}
+                continue
+            if lever == "physical":
+                print("every physical component applied or reverted and the "
+                      "group still violates. no lever left for it.")
+                record(iter=it, step="stop", reason="physical_exhausted",
+                       clock=worst, physical=dict(phys),
+                       tried_physical=sorted(tried_phys))
+                break
+            # DEPTH with sizing already on: fall through to the RTL lever.
+
+        elif lever == "physical":
+            # blunt: the pre-2026-09-03 behaviour, kept so earlier runs
+            # reproduce. One combined step, not provisional.
             if physical_applied:
                 print("physical lever already applied and the group still "
                       "violates. no lever left for it.")
                 record(iter=it, step="stop", reason="physical_exhausted",
                        clock=worst)
                 break
-            physical_applied = True
+            phys["buffer"] = phys["size"] = True
             print(f"apply: physical lever "
                   f"({'repair_design' if a.engine=='openroad' else 'abc buffer/upsize/dnsize'})")
             record(iter=it, step="apply", lever="physical",
