@@ -1,0 +1,15 @@
+{
+  "id": "datapath_skill8_keep",
+  "def_id": "drrtl_skill8_condition_replication",
+  "declared_k": 0,
+  "G1": "PASS",
+  "G2": "PASS",
+  "gold_cells": 6040,
+  "gate_cells": 6046,
+  "gold_dff": 3452,
+  "gate_dff": 3452,
+  "G3": "PASS",
+  "dff_delta": 0,
+  "G4_tool": "eqy",
+  "G4": "PROVEN"
+}

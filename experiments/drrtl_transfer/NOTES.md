@@ -271,9 +271,80 @@ with the buffering, on this design at this setting. One design, one ABC
 script order, not claimed as a rule; recorded because a judge who reads the
 table will see it.
 
+## Phase 4 (registered predictions 12 to 14): Dr. RTL skill #8, condition-wire replication
+
+`phase4_trace.py` walked the four remaining FANOUT designs' synthesis
+temporaries back to RTL. Three resolved to a single condition wire
+(`aes`: `i_start & o_done` gating a 128-bit key mux, fanout 129;
+`communication`: the `bit_count > 0` shift enable on a 64-bit register,
+fanout 70; `datapath`: `col_en = col_en_host | col_en_w_bypass` with two
+consumer blocks, fanout 35). `arm_cpu2`'s is a multi-level instruction
+decode of `rom_data` and was **not attempted**. Skill #8 as written:
+replicate the wire once per consumer group, plain and with `(* keep *)`.
+Each variant timed at the scored period, as netlist A and against the
+**buffer-only** lever (phase 3's isolated fanout lever), then gated.
+
+| design | variant | slack A | worst-path top fanout | gain vs gold | buffer-only lever | gate |
+|---|---|---|---|---|---|---|
+| aes | gold | -0.527 | 129 | | +1.358 | |
+| aes | plain | -0.527 | 129 | 0.000 | | UNRESOLVED |
+| aes | keep | -0.515 | 128 | +0.012 | | UNRESOLVED |
+| communication | gold | -0.581 | 70 | | +3.282 | |
+| communication | plain | -0.581 | 70 | 0.000 | | PROVEN |
+| communication | keep | **-0.800** | **35** | **-0.219** | | PROVEN |
+| datapath | gold | -0.769 | 35 | | +3.444 | |
+| datapath | plain | -0.712 | 37 | +0.057 | | PROVEN |
+| datapath | keep | **+0.229** | 188 (a different net) | **+0.998, closes** | | PROVEN |
+
+Three different outcomes on three designs:
+
+- **Plain replication is a no-op, 3 of 3.** ABC merged the replicated wires
+  back: aes and communication are byte-identical to gold in slack and
+  fanout, datapath moves by 0.057 ns. This is H2's mechanism, which phase 2
+  could not test because there the consumer cone was monolithic.
+- **`(* keep *)` split the fanout on 1 of 3 and that design got slower.**
+  communication's 70 became 35 and slack went from -0.581 to -0.800: two
+  half-width enables cost more than one full-width one on this path.
+- **`(* keep *)` closed 1 of 3 without splitting the worst net.** datapath
+  went to +0.229 ns, MET, while its worst path moved to a *different* net at
+  fanout 188. The replication helped, and not by the mechanism the skill
+  describes.
+
+On all three the buffer-only lever gains more: +1.358, +3.282, +3.444
+against +0.012, -0.219, +0.998.
+
+**Gate: 4 of 6 PROVEN, 2 of 6 UNRESOLVED, 0 refuted.** Both aes variants hit
+EQY's depth bound on the 128-bit key mux with no counterexample, the same
+class as A2 in batch 2, and are reported as unresolved rather than as
+either verdict.
+
+**Two harness defects, both found by this phase.** The aes variants first
+read `G1 FAIL` twice: `tools/gate_proposal.py` read the input with
+`read_verilog` and no `-sv`, and after that was fixed, it renamed the
+`module` header but not SystemVerilog's `endmodule : name` label, so Yosys
+refused to elaborate. Neither is a verdict on the transform. Both are fixed,
+and `tools/verdict_regression.sh` was re-run afterwards because the gate
+changed.
+
+Predictions:
+
+12. Plain replication changes top fanout by less than 20% on at least 2 of
+    3: **CORRECT**, 3 of 3, by the registered mechanism.
+13. `(* keep *)` cuts fanout at least 2x on at least 2 of 3, and gains less
+    than the buffer-only lever on all 3: **WRONG**. It cut fanout on 1 of 3;
+    the lever comparison held on 3 of 3.
+14. All 6 variants PROVEN: **WRONG**, 4 of 6. The other 2 are unresolved,
+    not refuted, and the reason is a solver bound on a 128-bit mux.
+
+Across phases 2 and 4, Dr. RTL's two high-confidence fanout skills, applied
+as written to their own benchmark's fanout-dominated designs under an
+open-source flow: 0 of 4 applications reduced the worst path's fanout and
+improved timing at once, 1 of 4 closed timing by moving the problem, 2 of 4
+made timing worse, and every one was beaten by buffering alone.
+
 ## Files
 
-`PREREGISTRATION.md` (+3 amendments, +phase 3), `run_classify.sh`, `run_classify_io.sh`,
+`PREREGISTRATION.md` (+3 amendments, +phases 3 and 4), `run_classify.sh`, `run_classify_io.sh`,
 `score.py`, `phase2_probe.sh`, `results/` (scored, run 4),
 `results_run1_as_registered/`, `results_run2_nodffe/`,
 `results_run3_legalized/`, `results_allpaths/`.

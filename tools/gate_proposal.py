@@ -51,9 +51,22 @@ def splice(src, p):
     return src[:i] + p["replacement"] + "\n" + src[j:]
 
 
+def sv_flag(path):
+    """' -sv' when the source uses SystemVerilog constructs. Phase 4 of the
+    transfer study fed this harness a .sv design (aes) and both variants
+    failed G1 before any solver ran, because plain read_verilog rejects
+    always_comb / always_ff / logic. A harness that cannot read the input is
+    not a verdict on the transform, so the flag is derived from the text."""
+    try:
+        t = open(path, encoding="utf-8", errors="replace").read()
+    except OSError:
+        return ""
+    return " -sv" if re.search(r"\b(always_comb|always_ff|logic)\b", t) else ""
+
+
 def stats(yosys, path, top, workdir, tag):
     log = os.path.join(workdir, f"{tag}.synth.log")
-    r = sh([yosys, "-p", f"read_verilog {path}; hierarchy -check -top {top}; synth -top {top}; stat"])
+    r = sh([yosys, "-p", f"read_verilog{sv_flag(path)} {path}; hierarchy -check -top {top}; synth -top {top}; stat"])
     with open(log, "w", encoding="utf-8") as f:
         f.write(r.stdout + r.stderr)
     if r.returncode != 0:
@@ -105,8 +118,16 @@ def main():
         gate_src = io.open(os.path.join(a.repo, p["variant_file"]), encoding="utf-8").read()
     else:
         gate_src = splice(src, p)
-    open(gold, "w", encoding="utf-8").write(src.replace("module " + mod, "module " + mod + "_gold", 1))
-    open(gate, "w", encoding="utf-8").write(gate_src.replace("module " + mod, "module " + mod + "_gate", 1))
+    def rename(text, suffix):
+        # SystemVerilog allows `endmodule : name`; renaming only the header
+        # leaves a mismatched end label and Yosys refuses to elaborate. Found
+        # 2026-09-02 on the aes design of the Dr. RTL benchmark, where both
+        # phase-4 variants failed G1 for this reason and not for any defect.
+        text = text.replace("module " + mod, "module " + mod + suffix, 1)
+        return re.sub(r"(endmodule\s*:\s*)" + re.escape(mod) + r"\b",
+                      r"\g<1>" + mod + suffix, text)
+    open(gold, "w", encoding="utf-8").write(rename(src, "_gold"))
+    open(gate, "w", encoding="utf-8").write(rename(gate_src, "_gate"))
 
     # ---- G1 / G2
     gs, _ = stats(a.yosys, gold, mod + "_gold", wd, "gold")
@@ -143,9 +164,10 @@ def main():
     # rather than the transform.
     if k == 0:
         eqy_cfg = os.path.join(wd, "prop.eqy")
+        svf = sv_flag(gold)
         open(eqy_cfg, "w", encoding="utf-8").write(
-            "[gold]\nread_verilog gold.v\nprep -top " + mod + "_gold\n\n"
-            "[gate]\nread_verilog gate.v\nrename " + mod + "_gate " + mod + "_gold\n"
+            "[gold]\nread_verilog" + svf + " gold.v\nprep -top " + mod + "_gold\n\n"
+            "[gate]\nread_verilog" + svf + " gate.v\nrename " + mod + "_gate " + mod + "_gold\n"
             "prep -top " + mod + "_gold\n\n"
             "[strategy sat]\nuse sat\ndepth 5\n")
         eqy = os.path.expanduser("~/tools/oss-cad-suite/bin/eqy")

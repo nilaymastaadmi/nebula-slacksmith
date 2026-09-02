@@ -1,0 +1,41 @@
+---CLOCK:clk---
+Startpoint: SBOX/SBOX[3]/_293_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: _8360_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ SBOX/SBOX[3]/_293_/CLK (sky130_fd_sc_hd__dfxtp_1)
+   0.412    0.412 ^ SBOX/SBOX[3]/_293_/Q (sky130_fd_sc_hd__dfxtp_1)
+   0.131    0.543 v SBOX/SBOX[3]/_133_/Y (sky130_fd_sc_hd__xnor2_1)
+   0.550    1.093 ^ SBOX/SBOX[3]/_138_/Y (sky130_fd_sc_hd__o41ai_1)
+   0.197    1.290 v SBOX/SBOX[3]/_142_/X (sky130_fd_sc_hd__xor2_1)
+   0.622    1.912 v SBOX/SBOX[3]/_223_/X (sky130_fd_sc_hd__or4bb_2)
+   0.152    2.064 ^ SBOX/SBOX[3]/_224_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.290    2.354 ^ SBOX/SBOX[3]/_227_/Y (sky130_fd_sc_hd__xnor2_1)
+   0.513    2.867 v SBOX/SBOX[3]/_247_/X (sky130_fd_sc_hd__xnor3_4)
+   0.157    3.024 v SBOX/SBOX[3]/_254_/Y (sky130_fd_sc_hd__xnor2_1)
+   0.509    3.533 v KEY_EXPANDER/_335_/X (sky130_fd_sc_hd__or3_2)
+   0.087    3.620 ^ KEY_EXPANDER/_430_/Y (sky130_fd_sc_hd__nand3_1)
+   0.279    3.899 v KEY_EXPANDER/_431_/X (sky130_fd_sc_hd__or2b_2)
+   0.146    4.045 ^ _7031_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.076    4.121 v _7033_/Y (sky130_fd_sc_hd__a21oi_1)
+   0.000    4.121 v _8360_/D (sky130_fd_sc_hd__dfrtp_1)
+            4.121   data arrival time
+
+   6.919    6.919   clock clk (rise edge)
+   0.000    6.919   clock network delay (ideal)
+   0.000    6.919   clock reconvergence pessimism
+            6.919 ^ _8360_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.123    6.796   library setup time
+            6.796   data required time
+-----------------------------------------------------------
+            6.796   data required time
+           -4.121   data arrival time
+-----------------------------------------------------------
+            2.675   slack (MET)
+
+
