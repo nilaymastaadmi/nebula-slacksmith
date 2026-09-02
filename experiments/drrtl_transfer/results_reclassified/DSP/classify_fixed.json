@@ -1,0 +1,45 @@
+{
+  "verdict": "DEPTH_DOMINATED",
+  "recommended_lever": "RTL transform through the typed gate",
+  "slack_ns": -1.867,
+  "met": false,
+  "path_delay_ns": 18.554,
+  "cells_on_path": 53,
+  "cells_above_fanout_hi": 2,
+  "fanout_delay_ns": 2.043,
+  "fanout_delay_share": 0.1101,
+  "unresolved_cells": 0,
+  "fanout_source": "report",
+  "fanout_disagreements": 2,
+  "top_cells": [
+    {
+      "inst": "opReg/_35_",
+      "cell": "sky130_fd_sc_hd__dfxtp_1",
+      "incr_ns": 1.11,
+      "fanout": 53,
+      "module": "$paramod$c225f133c799dffa7694d3e3731c4b5b42f427d1\\RegMux",
+      "netlist_fanout": 1
+    },
+    {
+      "inst": "_396_",
+      "cell": "sky130_fd_sc_hd__nand2b_1",
+      "incr_ns": 0.933,
+      "fanout": 46,
+      "module": "DSP",
+      "netlist_fanout": 46
+    },
+    {
+      "inst": "PostAS/_0852_",
+      "cell": "sky130_fd_sc_hd__maj3_1",
+      "incr_ns": 0.408,
+      "fanout": 3,
+      "module": "PostAddSub",
+      "netlist_fanout": 3
+    }
+  ],
+  "thresholds": {
+    "fanout_hi": 32,
+    "fanout_share_hi": 0.5,
+    "fanout_share_lo": 0.2
+  }
+}

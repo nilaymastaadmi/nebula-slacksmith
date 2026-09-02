@@ -98,8 +98,13 @@ flow missing the buffering pass, and the buffered netlist clears them by 12 to
     it7  REVERT    P3: clk_a -1.716 -> -2.02,  G5_no_improvement
     it8  GATE      P4 k=0 REFUTED / P5 k=1 REFUTED / P6 k=0 PROVEN, applied unconfirmed at max-iters
 
-Both branches fire in the right order. The physical lever alone **closes
-`clk_b` outright** (−18.957 to +5.6). And then the part worth reading twice:
+Correction, 2026-09-03: the `clk_a` verdict in this log is wrong. The path
+is MIXED at fanout share 0.428 (a 387-load net carries 6.762 of its 17.131
+ns); see the correction section below. The log is kept as recorded.
+
+Both branches fire in the order the classifier of the day chose. The
+physical lever alone **closes `clk_b` outright** (−18.957 to +5.6). And
+then the part worth reading twice:
 
 **3 of 3 formally-proven transforms made the group they were aimed at worse,
 and the loop reverted all three by itself.** Each revert restores `clk_a` to
@@ -195,13 +200,66 @@ Mechanism, stated as a hypothesis: ABC's `upsize;dnsize` sees one delay
 target for the whole netlist, not three clocks, so `dnsize` shrinks cells
 that only clk_a's constraint makes critical. Not tested.
 
+## Correction, 2026-09-03: the verdicts in runs 2, 3 and 4 were wrong
+
+Reading run 4's stop line against the OpenSTA report it came from showed
+the 1.952 ns `a21oi_1` the classifier had recorded at **fanout 0 driving 59
+loads**, and the 6.762 ns `and2_1` on the clk_a path it had recorded at
+**fanout 1 driving 387**. Both nets cross a module boundary as a whole-bus
+or concatenated port connection (`.sboxw(tmp_sboxw)`,
+`.imem_data({imem_data[2], imem_data[2], ...})`), and the netlist parser
+charged a connection only when its text equalled a net name exactly. The
+docstring of `tools/classify_path.py` had named "a 6.762 ns delay on a cell
+at fanout 1" as the tell for exactly this class of bug, and the same number
+sat in every v3 log.
+
+Corrected verdicts, same netlists, same reports re-run with
+`-fields {fanout}` (`reclassify_runs.sh`, `reclassified.tsv`):
+
+| path | recorded | corrected |
+|---|---|---|
+| clk_e, iteration 1, before buffering | FANOUT_DOMINATED 0.914 | unchanged |
+| clk_a, after buffering (runs 2, 3) | DEPTH_DOMINATED 0.000 | **MIXED 0.428** |
+| clk_e, after buffering (runs 3, 4) | DEPTH_DOMINATED 0.000 | **MIXED 0.286** |
+
+So the RTL lever in runs 2 and 3 was applied to a path that is 43%
+fanout-bound, and "the residual violation is DEPTH_DOMINATED at fanout
+share 0.000" is withdrawn wherever it was written. The fix expands bus,
+part-select and concatenation connections bit by bit, resolves loads upward
+through output ports as well as downward, and reads OpenSTA's fanout column
+whenever the report carries it (both query strings now ask for it).
+`tools/classify_regression.py` checks 5 fixtures against that column: 0
+disagreements at or above fanout 32.
+
+## Run 5: the corrected classifier
+
+Registered in `PREREGISTRATION_classifier_fixed.md` before the run; same
+policy and bar as run 4. 4 iterations, 115.5 s:
+
+    it1  CLASSIFY  clk_e: FANOUT_DOMINATED (0.9139) -> physical buffer (provisional)
+    it2  MEASURE   clk_a=1.75     clk_b=5.556    clk_e=-1.444     CONFIRM buffer
+    it2  CLASSIFY  clk_e: MIXED (0.2864, 59 loads on the S-box input) -> physical size (provisional)
+    it3  MEASURE   clk_a=-1.716   clk_b=5.6      clk_e=-0.606     total -1.444 -> -2.322, REVERT size
+    it4  CLASSIFY  clk_e: MIXED (0.2864) -> physical
+    it4  STOP      physical_exhausted
+
+P10 to P14 all correct (`score_fixed.py`). The end state is run 4's; the
+reason is different and now true: both physical components have been tried
+on a path that is still 29% fanout-bound, and the loop says so instead of
+looking for an RTL proposal. The RTL lever never fires under SDC v3 with a
+correct classifier. That is the honest summary of runs 2 to 5: the three
+proven-and-reverted transforms were measured on a path the router should
+never have sent them to.
+
 ## What running it found, which reading it would not have
 
-Three defects, all in the loop, all caught by the loop doing the wrong thing
-visibly. The pre-fix log is kept at
-`experiments/closed_loop/run_v3_before_fixes.jsonl` rather than deleted, and
-the third (a per-group bar confirming a cross-group regression) is run 3
-above, kept as `run_v3_verdict.jsonl`.
+Four defects, all caught by the loop doing the wrong thing visibly. The
+pre-fix log is kept at `experiments/closed_loop/run_v3_before_fixes.jsonl`
+rather than deleted; the third (a per-group bar confirming a cross-group
+regression) is run 3 above, kept as `run_v3_verdict.jsonl`; the fourth (the
+classifier undercounting fanout across module boundaries) is the correction
+above, and the logs that carry the wrong verdicts are kept unchanged with
+`reclassified.tsv` beside them.
 
 **1. It gated proposals against a module that was not on the path.** Under v3
 the binding violation after buffering was `clk_a`, in the RV32I domain. The

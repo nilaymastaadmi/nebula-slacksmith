@@ -65,9 +65,10 @@ Say, pointing at the classify line:
 
     python3 tools/show_run.py experiments/closed_loop/run_v3_final.jsonl
 
-Under a target the flow cannot already clear, both branches fire. After
-buffering the residual violation is **DEPTH_DOMINATED at fanout share 0.000**,
-so it routes to RTL, and then:
+Under a target the flow cannot already clear, both branches fire. In this
+log the classifier of the day called the residual `clk_a` violation
+DEPTH_DOMINATED and routed it to RTL (corrected 2026-09-03: the path is
+MIXED at 0.428, see below), and then:
 
     it2  GATE    P1 (operator_sharing_addsub) G4=PROVEN
     it3  REVERT  P1: clk_a -1.716 -> -2.026, G5_no_improvement
@@ -76,18 +77,23 @@ so it routes to RTL, and then:
 
 Then the run that refuses a physical step, 20 seconds:
 
-    python3 tools/show_run.py experiments/closed_loop/run_v3_g5total.jsonl
+    python3 tools/show_run.py experiments/closed_loop/run_v3_fixed.jsonl
 
     it2  MEASURE   clk_a=1.75    clk_b=5.556  clk_e=-1.444   physical=buffer   total=-1.444
+    it2  CLASSIFY  clk_e: MIXED (fanout share 0.2864, 6.816 ns over 15 cells) -> physical
     it3  MEASURE   clk_a=-1.716  clk_b=5.6    clk_e=-0.606   physical=buffer+size  total=-2.322
     it3  G5 TOTAL  -1.444 -> -2.322 (not improved)
-    it3  REVERT    size: clk_e -1.444 -> -0.606, G5_no_improvement
-    it4  STOP      no_proposal_on_path
+    it3  REVERT    size: clk_e -1.444 -> -0.606, G5_total_no_improvement
+    it4  STOP      physical_exhausted
 
 Say: sizing gained 0.838 ns on the group it was aimed at and cost `clk_a`
 3.466 ns. The earlier bar, which only looked at the target group, kept it. This
 one measures every group and reverted it: 4 iterations instead of 8, 1 group
-violating instead of 2, and it says so when it runs out of levers.
+violating instead of 2, and it says so when it runs out of levers. If asked
+why the earlier logs say DEPTH_DOMINATED here: the classifier was
+undercounting fanout across module boundaries, we found it by reading our
+own log against the OpenSTA report, and the correction is in the repo with
+the wrong logs kept.
 
 Say:
 

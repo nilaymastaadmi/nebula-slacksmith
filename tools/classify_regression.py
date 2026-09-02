@@ -32,25 +32,33 @@ import classify_path as cp  # noqa: E402
 
 FIX = os.path.join(HERE, "..", "experiments", "classifier_regression")
 
-# (netlist.gz, report stem, expected verdict, expected share, expected top fanout)
+# (netlist.gz, report stem, top, expected verdict, expected share,
+#  expected top-cell fanout). Expected values are OpenSTA's, read from the
+# fanout report, so the netlist-only path is being checked against the tool
+# that timed the path, not against itself.
 CASES = [
-    ("v3_bufonly_it4.v.gz", "v3_bufonly_it4_clk_e", "MIXED", 0.2864, 59),
-    ("v3_bufsize_it3.v.gz", "v3_bufsize_it3_clk_a", "MIXED", 0.4277, 387),
+    ("v3_bufonly_it4.v.gz", "v3_bufonly_it4_clk_e", "bench_top", "MIXED", 0.2864, 59),
+    ("v3_bufsize_it3.v.gz", "v3_bufsize_it3_clk_a", "bench_top", "MIXED", 0.4277, 387),
+    # Dr. RTL designs (experiments/drrtl_transfer/): output-port cases, where
+    # the driven net's loads sit in the parent module.
+    ("drrtl_tv80_A.v.gz", "drrtl_tv80_A", "tv80s", "MIXED", 0.3684, 34),
+    ("drrtl_DSP_A.v.gz", "drrtl_DSP_A", "DSP", "DEPTH_DOMINATED", 0.1101, 53),
+    ("drrtl_cpu_pipe_A.v.gz", "drrtl_cpu_pipe_A", "dcpu16_cpu", "DEPTH_DOMINATED", 0.18, 78),
 ]
 
 
 def main():
     tmp = tempfile.mkdtemp(prefix="classify_reg_")
     failures = 0
-    for gz, stem, want_v, want_share, want_fo in CASES:
+    for gz, stem, top, want_v, want_share, want_fo in CASES:
         net = os.path.join(tmp, gz[:-3])
         with gzip.open(os.path.join(FIX, gz), "rb") as fi, open(net, "wb") as fo:
             shutil.copyfileobj(fi, fo)
         with_f = open(os.path.join(FIX, stem + ".fanout.rpt"), encoding="utf-8").read()
         without = open(os.path.join(FIX, stem + ".rpt"), encoding="utf-8").read()
 
-        a = cp.classify(with_f, net)
-        b = cp.classify(without, net)
+        a = cp.classify(with_f, net, top)
+        b = cp.classify(without, net, top)
         print(f"== {stem}")
         print(f"   report column : {a['verdict']} share={a['fanout_delay_share']} "
               f"top fanout={a['top_cells'][0]['fanout']} source={a['fanout_source']}")
@@ -68,7 +76,7 @@ def main():
         for r in rows:
             if r["report_fanout"] is None:
                 continue
-            fo, _owner = cp.resolve_fanout(mods, "bench_top", r["inst"])
+            fo, _owner = cp.resolve_fanout(mods, top, r["inst"])
             if fo != r["report_fanout"]:
                 (hi_dis if r["report_fanout"] >= cp.FANOUT_HI else low_dis).append(
                     (r["inst"].split("/")[-1], r["cell"], r["incr"], r["report_fanout"], fo))

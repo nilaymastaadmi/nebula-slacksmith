@@ -170,13 +170,19 @@ def parse_netlist(path):
                          txt, re.S | re.M):
         name = m.group(1).lstrip("\\")
         body = m.group(2)
-        inputs = set()
+        inputs, outputs = set(), set()
         for decl in re.findall(
                 r"^\s*input\s+(?:wire\s+)?(?:\[[^\]]*\]\s*)?(.+?);", body, re.M):
             for tok in decl.split(","):
                 tok = _norm(tok)
                 if tok:
                     inputs.add(tok)
+        for decl in re.findall(
+                r"^\s*output\s+(?:wire\s+|reg\s+)?(?:\[[^\]]*\]\s*)?(.+?);", body, re.M):
+            for tok in decl.split(","):
+                tok = _norm(tok)
+                if tok:
+                    outputs.add(tok)
         # Declared widths, needed to expand whole-bus connections.
         widths = {}
         for msb, lsb, names in DECL_RE.findall(body):
@@ -202,8 +208,10 @@ def parse_netlist(path):
             if mtype in KEYWORDS:
                 continue
             subs.append((mtype, inst.lstrip("\\"), _conns(conns)))
-        raw[name] = {"inputs": inputs, "widths": widths, "cells": cells,
-                     "drv": drv, "own_loads": own_loads, "subs": subs}
+        raw[name] = {"inputs": inputs, "outputs": outputs, "widths": widths,
+                     "cells": cells, "drv": drv, "own_loads": own_loads,
+                     "subs": subs,
+                     "inst_conns": {i: (t, c) for t, i, c in subs}}
 
     # Leaf-first resolution. port_pins[module]["pins"][port_bit] is the
     # number of leaf input pins that port bit ultimately drives inside that
@@ -255,16 +263,59 @@ def parse_netlist(path):
     return raw
 
 
+def _upward(mods, chain, mod, net):
+    """Loads a net collects ABOVE its module: when `net` is (a bit of) an
+    output port of `mod`, follow the instance connection into the parent and
+    add the parent's loads on that net, repeating while the parent net is
+    itself an output port. `chain` is [(parent_module, instance_name), ...]
+    from the top down to the instance of `mod`.
+
+    Second half of the 2026-09-03 fix. Leaf-first resolution charges loads
+    downward only; a flop inside a submodule driving 53 leaf pins in its
+    parent read as fanout 1 (DSP), and a cell driving a parent-side net
+    through an output port read as fanout 0 (tv80, 2.225 ns).
+    """
+    total = 0
+    while chain:
+        parent, inst = chain.pop()
+        md = mods.get(mod)
+        pmd = mods.get(parent)
+        if md is None or pmd is None:
+            break
+        base = net.split("[")[0]
+        if base not in md["outputs"]:
+            break
+        entry = pmd["inst_conns"].get(inst)
+        if entry is None:
+            break
+        conn = dict(entry[1]).get(base)
+        if conn is None:
+            break
+        pbits = _port_bits(base, md["widths"].get(base))
+        nbits = _bits(conn, pmd["widths"])
+        if net not in pbits:
+            break
+        idx = pbits.index(net)
+        if idx >= len(nbits) or nbits[idx] is None:
+            break
+        pnet = nbits[idx]
+        total += pmd["loads"].get(pnet, 0)
+        mod, net = parent, pnet
+    return total
+
+
 def resolve_fanout(mods, top, inst_path):
     """Walk a hierarchical instance path; return (fanout, owning module)."""
     parts = inst_path.split("/")
     cur = top
+    chain = []
     for p in parts[:-1]:
         if cur not in mods:
             return None, None
         nxt = mods[cur]["subs"].get(p)
         if nxt is None:
             return None, None
+        chain.append((cur, p))
         cur = nxt
     leaf = parts[-1]
     if cur not in mods or leaf not in mods[cur]["cells"]:
@@ -272,10 +323,11 @@ def resolve_fanout(mods, top, inst_path):
         if len(hits) != 1:
             return None, None
         cur = hits[0]
+        chain = []          # no known instance path: downward loads only
     net = mods[cur]["drv"].get(leaf)
     if net is None:
         return None, cur
-    return mods[cur]["loads"].get(net, 0), cur
+    return mods[cur]["loads"].get(net, 0) + _upward(mods, chain, cur, net), cur
 
 
 def parse_path(report_text):

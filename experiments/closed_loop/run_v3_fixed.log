@@ -1,0 +1,29 @@
+start 2026-09-02T21:27:02+00:00 commit bb165ad
+dont_use flags: 72
+engine: sta   clocks: clk_a, clk_b, clk_e
+
+=== iteration 1 ===
+measure: clk_a=-13.167  clk_b=-18.957  clk_e=-25.957
+classify clk_e: FANOUT_DOMINATED (fanout share 0.9139) -> physical
+apply: physical buffer (provisional) -> abc buffer,-N,16
+
+=== iteration 2 ===
+measure: clk_a=1.75  clk_b=5.556  clk_e=-1.444
+  G5 total: -58.081 -> -1.444 (improved)
+  CONFIRM physical buffer: clk_e -25.957 -> -1.444 (+24.513)
+classify clk_e: MIXED (fanout share 0.2864) -> physical
+apply: physical size (provisional) -> abc buffer,-N,16;upsize;dnsize
+
+=== iteration 3 ===
+measure: clk_a=-1.716  clk_b=5.6  clk_e=-0.606
+  G5 total: -1.444 -> -2.322 (not improved)
+  REVERT physical size: clk_e -1.444 -> -0.606, total violation not improved.
+
+=== iteration 4 ===
+measure: clk_a=1.75  clk_b=5.556  clk_e=-1.444
+classify clk_e: MIXED (fanout share 0.2864) -> physical
+every physical component applied or reverted and the group still violates. no lever left for it.
+
+wrote /home/toshn/slacksmith_v3_fixed/SUMMARY.md
+wrote /home/toshn/slacksmith_v3_fixed/decisions.jsonl
+exit 0 2026-09-02T21:28:58+00:00

@@ -348,3 +348,50 @@ made timing worse, and every one was beaten by buffering alone.
 `score.py`, `phase2_probe.sh`, `results/` (scored, run 4),
 `results_run1_as_registered/`, `results_run2_nodffe/`,
 `results_run3_legalized/`, `results_allpaths/`.
+
+## Amendment 4 outcome, 2026-09-03: verdicts re-derived with the corrected classifier
+
+The defect and the fix are described in `PREREGISTRATION.md` amendment 4
+and `tools/classify_path.py`; the regression is `tools/classify_regression.py`
+(5 fixtures, 2 from this project's benchmark and tv80, DSP, cpu_pipe from
+this study; 0 disagreements with OpenSTA's fanout column at or above fanout
+32 on all 5). Re-derivation: `reclassify.sh`, same saved netlists, same
+periods, `report_checks -fields {fanout}`. Output in `results_reclassified/`.
+
+| design | old verdict | old share | new verdict | new share | top cell fanout old -> new |
+|---|---|---|---|---|---|
+| tv80 | DEPTH_DOMINATED | 0.000 | **MIXED** | 0.368 | 0 -> 34 |
+| DSP | DEPTH_DOMINATED | 0.050 | DEPTH_DOMINATED | 0.110 | 1 -> 53 |
+| cpu_pipe | DEPTH_DOMINATED | 0.000 | DEPTH_DOMINATED | 0.180 | 3 -> 78 |
+| the other 12 | unchanged | | unchanged | | |
+
+1 of 15 verdicts changed, 3 of 15 shares moved, nothing moved toward DEPTH.
+Corrected split: 5 FANOUT, 3 MIXED, 7 DEPTH.
+
+Re-scored (`rescore_corrected.py`; medians of the per-design gains already
+on the record, nothing re-measured):
+
+| statistic | original grouping | corrected grouping |
+|---|---|---|
+| phase 1, combined lever, median gain FANOUT / DEPTH | 3.623 / 0.481 (7.5x) | 3.623 / 0.581 (6.2x) |
+| phase 1, closes FANOUT / DEPTH | 5 of 5 / 4 of 8 | 5 of 5 / 4 of 7 |
+| phase 3, buffer-only, median gain DEPTH | -0.019, worse on 4 of 8 | **0.000, worse on 3 of 7** |
+| phase 3, buffer-only, median gain FANOUT | +3.282, closes 4 of 5 | unchanged |
+| phase 3, sizing-only, median gain DEPTH / FANOUT | +0.495 / +2.495 | +0.621 / +2.495 |
+| phase 3, MIXED (n=2 -> 3) buffer-only median | +6.602 | -0.041, worse on 2 of 3 |
+
+tv80's own numbers (phase 3): buffer-only -0.151, sizing-only +0.234,
+combined +0.381. Moving it from DEPTH to MIXED removes the design on which
+buffer-only did the most harm from the DEPTH set.
+
+**What survives.** Buffering helps fanout paths (median +3.282, closes 4 of
+5) and does nothing for depth paths (median 0.000). The phrase "net harmful
+on depth paths" does not survive: with tv80 correctly classified the DEPTH
+median is exactly zero and 3 of 7 are worse. Sizing helps both and fanout
+paths 4x more (+2.495 against +0.621; was 5x). The MIXED group is 3 designs
+and is not summarised.
+
+Predictions: P15 correct (nothing moved toward DEPTH), P16 correct (tv80
+changed), **P17 wrong** (1 of 8 DEPTH verdicts changed, 2 predicted), P18
+correct at the boundary (median 0.000, registered as "at or below 0").
+Score for this study is now 8 correct, 1 half, 9 wrong of 18.

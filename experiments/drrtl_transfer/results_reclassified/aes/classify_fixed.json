@@ -1,0 +1,45 @@
+{
+  "verdict": "FANOUT_DOMINATED",
+  "recommended_lever": "buffering / gate sizing, not RTL",
+  "slack_ns": -0.527,
+  "met": false,
+  "path_delay_ns": 5.125,
+  "cells_on_path": 5,
+  "cells_above_fanout_hi": 2,
+  "fanout_delay_ns": 4.694,
+  "fanout_delay_share": 0.9159,
+  "unresolved_cells": 0,
+  "fanout_source": "report",
+  "fanout_disagreements": 1,
+  "top_cells": [
+    {
+      "inst": "_1518_",
+      "cell": "sky130_fd_sc_hd__and2_0",
+      "incr_ns": 3.929,
+      "fanout": 129,
+      "module": "key_expansion_128aes",
+      "netlist_fanout": 129
+    },
+    {
+      "inst": "_3072_",
+      "cell": "sky130_fd_sc_hd__dfstp_2",
+      "incr_ns": 0.765,
+      "fanout": 35,
+      "module": "key_expansion_128aes",
+      "netlist_fanout": 34
+    },
+    {
+      "inst": "_1634_",
+      "cell": "sky130_fd_sc_hd__mux2_1",
+      "incr_ns": 0.431,
+      "fanout": 1,
+      "module": "key_expansion_128aes",
+      "netlist_fanout": 1
+    }
+  ],
+  "thresholds": {
+    "fanout_hi": 32,
+    "fanout_share_hi": 0.5,
+    "fanout_share_lo": 0.2
+  }
+}

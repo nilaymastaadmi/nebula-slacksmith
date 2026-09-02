@@ -1,0 +1,14 @@
+run	iter	clock	old_verdict	old_share	new_verdict	new_share	top_cell	top_incr	old_top_fanout	new_top_fanout
+run_v3_final	1	clk_e	FANOUT_DOMINATED	0.9139	FANOUT_DOMINATED	0.9139	sky130_fd_sc_hd__nor4_1	21.029	300	300
+run_v3_final	2	clk_a	DEPTH_DOMINATED	0.0	MIXED	0.4277	sky130_fd_sc_hd__and2_1	6.762	1	387
+run_v3_final	4	clk_a	DEPTH_DOMINATED	0.0	MIXED	0.4277	sky130_fd_sc_hd__and2_1	6.762	1	387
+run_v3_final	6	clk_a	DEPTH_DOMINATED	0.0	MIXED	0.4277	sky130_fd_sc_hd__and2_1	6.762	1	387
+run_v3_final	8	clk_a	DEPTH_DOMINATED	0.0	MIXED	0.4277	sky130_fd_sc_hd__and2_1	6.762	1	387
+run_v3_verdict	1	clk_e	FANOUT_DOMINATED	0.9139	FANOUT_DOMINATED	0.9139	sky130_fd_sc_hd__nor4_1	21.029	300	300
+run_v3_verdict	2	clk_e	DEPTH_DOMINATED	0.0	MIXED	0.2864	sky130_fd_sc_hd__a21oi_1	1.952	0	59
+run_v3_verdict	3	clk_a	DEPTH_DOMINATED	0.0	MIXED	0.4277	sky130_fd_sc_hd__and2_1	6.762	1	387
+run_v3_verdict	5	clk_a	DEPTH_DOMINATED	0.0	MIXED	0.4277	sky130_fd_sc_hd__and2_1	6.762	1	387
+run_v3_verdict	7	clk_a	DEPTH_DOMINATED	0.0	MIXED	0.4277	sky130_fd_sc_hd__and2_1	6.762	1	387
+run_v3_g5total	1	clk_e	FANOUT_DOMINATED	0.9139	FANOUT_DOMINATED	0.9139	sky130_fd_sc_hd__nor4_1	21.029	300	300
+run_v3_g5total	2	clk_e	DEPTH_DOMINATED	0.0	MIXED	0.2864	sky130_fd_sc_hd__a21oi_1	1.952	0	59
+run_v3_g5total	4	clk_e	DEPTH_DOMINATED	0.0	MIXED	0.2864	sky130_fd_sc_hd__a21oi_1	1.952	0	59
