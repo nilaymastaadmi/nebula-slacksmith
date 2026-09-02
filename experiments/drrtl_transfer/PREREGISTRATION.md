@@ -240,6 +240,35 @@ are legalized, and that is a limitation of the classifier, stated.
 Three amendments to get one run right is itself a finding about this study,
 and it is left visible rather than squashed into a clean history.
 
+## Phase 3, registered 2026-09-02 after phases 1 and 2, before any run
+
+Phase 1's primary prediction failed because the lever it compared the
+classifier against does two things: `buffer -N 16` inserts buffers, and
+`upsize; dnsize` resizes gates. Sizing helps any path; the classifier models
+fanout only. This phase separates them. Same 15 in-scope designs, same
+netlist A, same per-design period from `results/summary.tsv`, three levers:
+
+| lever | ABC script tail |
+|---|---|
+| buffer-only | `... &nf; &put; buffer -N 16` |
+| sizing-only | `... &nf; &put; upsize; dnsize` |
+| both (phase 1's) | `... &nf; &put; buffer -N 16; upsize; dnsize` |
+
+Predictions:
+
+8. **Buffer-only gain separates by verdict**: median buffer-only gain on
+   FANOUT_DOMINATED designs is at least **3x** the median on
+   DEPTH_DOMINATED. Medium-high. This is the claim prediction 4 should have
+   made.
+9. **Sizing-only gain does not separate**: the FANOUT-to-DEPTH ratio of
+   median sizing-only gain is below **2x**. Medium.
+10. Buffer-only alone closes at least **3 of 5** FANOUT designs; sizing-only
+    alone closes at most **2 of 5**. Medium.
+11. On at least **6 of 8** DEPTH designs, sizing-only gain exceeds
+    buffer-only gain. Medium.
+
+Void conditions as above. Results in `phase3/`.
+
 ## What would make this study void
 
 - Any design dropped after being timed.
