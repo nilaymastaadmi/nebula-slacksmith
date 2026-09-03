@@ -286,6 +286,21 @@ the timed one still uses `-noattr`) and `classify_path.src_module_map()`
 maps cell to RTL module by file and line range. The loop uses it whenever
 `--flatten` is on.
 
+Run 8 checks that end to end (`PREREGISTRATION_srcmap.md`, P39 and P40 both
+correct): the trajectory is run 6's measurement for measurement, so the
+extra write does not perturb synthesis, and the binding cell on iterations 2
+and 3 is now attributed to **`aes_encipher_block`**. That is not the module
+that binds on the hierarchical flow, which is `aes_decipher_block` with
+`aes_inv_sbox`. **The flow decides which module an RTL proposal should
+target**, and a batch written against the hierarchical answer would have
+been aimed at a module that no longer binds.
+
+The limit is measured, not guessed: attribution covers the 5,567 cells
+Yosys kept a `src` for, largely registers. Iteration 1's binding cell is a
+`nor4_1` that ABC produced during technology mapping, carries no `src`, and
+still reads `bench_top`. The filter works on a path's endpoints, not on
+every cell in between.
+
 **Every v3 number before this section is a hierarchical-flow number.** They
 are not wrong; they are numbers for a flow that could not see across module
 ports, and on this benchmark that flow, not the RTL, was the largest lever

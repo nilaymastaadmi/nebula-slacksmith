@@ -4,7 +4,7 @@ A shot list, not a storyboard. Every command below is real, runs on this
 repository, and the expected output is what it actually printed. Target
 runtime **5 minutes**. Record the terminal; no slides needed except beat 0.
 
-Total live compute in the demo is about **60 seconds** (beat 2). Everything
+Total live compute in the demo is about **50 seconds** (beat 2). Everything
 else is either instant or replayed from a committed log, so nothing has to be
 waited on with the camera running.
 
@@ -25,16 +25,36 @@ Do not oversell here. The measurements are the demo.
 
 ## Beat 1. The benchmark, 20 seconds.
 
-    python3 -c "print(open('rtl/bench_top.v').read().count('\n'), 'lines')"
+    python3 tools/bench_size.py
 
-Say: 55,413 standard cells, five asynchronous clock domains, each with its own
-async reset and its own in-RTL generated clock including odd /3 and /5
-dividers, gray-code async FIFOs on every multi-bit crossing, an RV32I core and
-two AES-128 cores. Not a toy.
+Prints, from a committed netlist fixture:
+
+    48,616 standard cells instantiated under bench_top
+     8,274 flip-flops
+    30,264 cells written in the netlist text across 25 modules (each module
+           body once; AES is instantiated twice)
+         5 clock domains, 5 in-RTL generated clocks, including odd /3 and /5
+     6,639 lines of RTL across 32 files
+
+Say: five asynchronous clock domains, each with its own async reset and its
+own in-RTL generated clock including odd /3 and /5 dividers, gray-code async
+FIFOs on every multi-bit crossing, an RV32I core and two AES-128 cores. Not
+a toy.
+
+The third line is there on purpose. A hierarchical netlist writes each module
+once however often it is instantiated, and this design instantiates AES
+twice, so counting cells in the file text undercounts it by 18,352. We made
+that mistake once. `tools/demo_check.sh` has Yosys flatten the same fixture
+and counts cells in the file Yosys writes; the two agree exactly (48,616
+cells, 8,274 flops) and the check fails if they ever stop agreeing.
+
+The v2 benchmark that §4 of the report describes is **55,413** cells; the
+fixture here is the later buffered-and-sized netlist, which is why this
+prints a different number. Quote the one on screen.
 
 ---
 
-## Beat 2. The closed loop, one command, 60 seconds. **This is the demo.**
+## Beat 2. The closed loop, one command, 50 seconds. **This is the demo.**
 
     python3 tools/slacksmith.py \
       --sdc sdc/bench_top_v2.sdc \
@@ -43,14 +63,24 @@ two AES-128 cores. Not a toy.
       --clock clk_a --clock clk_b --clock clk_e \
       --workdir ~/demo_run --engine sta
 
-Actual output, 2 iterations, 46.7 s:
+Actual output, 2 iterations, **48 to 50 s across two runs on 2026-09-03**,
+exactly as the command prints it:
 
-    it1  MEASURE   clk_a=1.333  clk_b=-4.957  clk_e=-4.957
-    it1  CLASSIFY  clk_b: FANOUT_DOMINATED (0.9139, 30.602 ns over 9 cells) -> physical
-                     21.029 ns  nor4_1  fanout=300  u_aes_b/u_core/keymem/_07883_
-    it1  APPLY     physical: abc buffer -N 16; upsize; dnsize
-    it2  MEASURE   clk_a=12.784  clk_b=12.6  clk_e=20.394
-    it2  STOP      all_met
+    === iteration 1 ===
+    measure: clk_a=1.333  clk_b=-4.957  clk_e=-4.957
+    classify clk_b: FANOUT_DOMINATED (fanout share 0.9139) -> physical
+    apply: physical lever (abc buffer/upsize/dnsize)
+
+    === iteration 2 ===
+    measure: clk_a=12.784  clk_b=12.6  clk_e=20.394
+    ALL REPORTED GROUPS MEET. stopping.
+
+`tools/show_run.py ~/demo_run/decisions.jsonl` replays the same run with the
+per-cell evidence under each classify line, which is the better thing to
+point at:
+
+    it1  CLASSIFY  clk_b: FANOUT_DOMINATED (fanout share 0.9139, 30.602 ns over 9 cells) -> physical
+                    21.029 ns  sky130_fd_sc_hd__nor4_1  fanout=300  u_aes_b/u_core/keymem/_07883_
 
 Say, pointing at the classify line:
 
@@ -153,12 +183,27 @@ precedes every result. Then:
 > And every number we published before that was zero-parasitic. With wires,
 > the baseline we reported as "+1.333, meets" is actually **−36.7**.
 
+Then the one that is worse for us than any of those. One flag on the
+synthesis command, no buffering, no RTL, no placement:
+
+    grep -E "^(A|C) " experiments/flatten_control/results/summary.tsv | cut -f1,5,7
+
+> Synthesizing flat instead of hierarchically moves `clk_a` by **+22.4 ns**.
+> Across the module boundary the mapper can see that our own wrapper ties
+> twenty instruction bits together, and it deletes the decode logic we had
+> been trying to optimize. The 387-load net we were chasing does not get
+> buffered. It stops existing.
+>
+> Every number before that slide is a hierarchical-flow number, and they are
+> all labelled. On this benchmark the flow was a bigger lever than anything
+> we proposed.
+
 ---
 
 ## Beat 6. What we caught in ourselves, 40 seconds.
 
-> Five defects, all found by running things rather than reading them.
-> The one worth naming: our own gate reported a solver **timeout** as a
+> Six defects, all found by running things rather than reading them.
+> Two worth naming. Our own gate reported a solver **timeout** as a
 > **refutation**, because EQY prints the same line for both. We only noticed
 > because a partition failed while all 128 partitions feeding it had passed.
 
@@ -167,6 +212,17 @@ precedes every result. Then:
 > That is now a standing regression: P4 must read REFUTED, A2 must read
 > UNRESOLVED, and any change that moves either is wrong.
 
+> The second is worse. Our path classifier undercounted fanout across module
+> boundaries. Its own docstring named the tell, "a 6.762 nanosecond cell at
+> fanout 1", and that exact number sat in every log we produced for three
+> days under a DEPTH verdict. The cell drives 387 loads.
+
+    python3 tools/classify_regression.py
+
+> Five fixtures, checked cell by cell against OpenSTA's own fanout column,
+> zero disagreements above the threshold. Every wrong log is still in the
+> repository next to the corrected verdicts.
+
 Close on:
 
 > The gate is not the contribution. The measurement is. We can tell you which
@@ -174,12 +230,26 @@ Close on:
 
 ---
 
+## Before recording
+
+    bash tools/demo_check.sh
+
+Runs every command in this file, including beat 2's live compute, and fails
+if any exits non-zero or prints something other than what is written above.
+A demo script last verified days ago is a liability on stage.
+
 ## Recording notes
 
 - Terminal at 110 columns or wider, or the classify lines wrap badly.
 - Beat 2 is the only live compute. If the room is slow, pre-run it into a
   file and `cat` it, but say that you are doing so.
 - Do not read the tables aloud. Point at one number per table.
-- If asked "did you close the design", the honest answer is: **yes at the
-  placement level with `repair_design`, and see `experiments/openroad_cts/`
-  for what a clock tree does to that.**
+- If asked "did you close the design", the honest answer is: **under the v2
+  target, yes, at the placement level with `repair_design`, and
+  `experiments/openroad_cts/` shows what a clock tree does to that. Under
+  the tighter v3 target, no: two of three groups close and `clk_e` ends
+  0.319 ns short zero-parasitic, 0.952 ns short with placement parasitics.
+  We know exactly which net it is and that our SDC never set a max-fanout
+  limit for `repair_design` to repair against. We did not add one, because
+  changing a frozen constraint to improve our own number is the thing the
+  freeze exists to prevent.**

@@ -58,3 +58,23 @@ would be measured outside the router's own decision. Writing one anyway,
 after seeing which module binds, is also precisely the tuning both proposer
 registrations forbid. The target is recorded here so a future batch has a
 registered starting point; it is not generated now.
+
+## Outcome, 2026-09-03
+
+Run 8 (`run_v3_srcmap.jsonl`, scorer `score_srcmap.py`): **P39 and P40 both
+correct.** The trajectory is run 6's, measurement for measurement, and the
+final state is identical (+11.158 / +5.665 / −0.319), so the attributed
+netlist write does not perturb the flow. Module attribution:
+
+| iteration | top cells, run 6 | top cells, run 8 |
+|---|---|---|
+| 1 | bench_top, bench_top, bench_top | bench_top, bench_top, bench_top |
+| 2 | bench_top, bench_top, bench_top | **aes_encipher_block**, bench_top, bench_top |
+| 3 | bench_top, bench_top, bench_top | **aes_encipher_block**, bench_top, bench_top |
+
+The stated limit shows exactly where it bites. In iterations 2 and 3 the
+binding cell is a flop, Yosys kept its `src`, and the loop now knows the
+module. In iteration 1 it is a `nor4_1` that ABC produced during technology
+mapping, which carries no `src`, so it still reads `bench_top`. The RTL
+lever can filter on the module owning a path's endpoints; it cannot claim
+the owner of every cell in between.
