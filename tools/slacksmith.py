@@ -53,7 +53,7 @@ Usage:
       --proposals experiments/llm_proposer_aes/proposals \\
       --workdir ~/slacksmith_run --engine sta
 """
-import argparse, json, os, re, shutil, subprocess, sys, time
+import argparse, hashlib, json, os, re, shutil, subprocess, sys, time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -79,6 +79,31 @@ BUF_ONLY = _HEAD + ";buffer,-N,16"
 SIZE_ONLY = _HEAD + ";upsize;dnsize"
 BOTH = _HEAD + ";buffer,-N,16;upsize;dnsize"
 BUFFER_SCRIPT = BOTH   # name kept: experiments/closed_loop/context_control.py imports it
+
+
+EXCEPTION_RE = re.compile(
+    r"^\s*(set_false_path|set_multicycle_path|set_max_delay|set_min_delay|"
+    r"set_disable_timing|set_case_analysis)\b", re.M)
+
+
+def sdc_fingerprint(path):
+    """(sha256, line count, {exception statement: count}) for an SDC file.
+
+    G0, constraint integrity. Every gate from G1 to G5 checks the DESIGN, and
+    none of them can see the constraints. experiments/sdc_integrity/ measured
+    what that gap is worth: one `set_multicycle_path 2 -setup -from clk_e -to
+    clk_e` takes clk_e from -0.319 VIOLATED to +4.860 MET on a byte-identical
+    netlist, which is more than this project's best proven RTL transform. No
+    equivalence checker can catch that, because the two designs are the same
+    file. A slack number means nothing without the constraints it was measured
+    under, so the loop records them and can be told to refuse a mismatch.
+    """
+    data = open(path, "rb").read()
+    text = data.decode("utf-8", errors="replace")
+    exc = {}
+    for m in EXCEPTION_RE.finditer(text):
+        exc[m.group(1)] = exc.get(m.group(1), 0) + 1
+    return (hashlib.sha256(data).hexdigest(), len(text.splitlines()), exc)
 
 
 def total_violation(slacks):
@@ -265,6 +290,10 @@ def main():
     ap.add_argument("--lever-policy", choices=["blunt", "verdict"], default="blunt",
                     help="blunt: buffer+size at once (every run before 2026-09-03); "
                          "verdict: the classifier picks the component")
+    ap.add_argument("--expect-sdc-sha", default=None,
+                    help="G0: refuse to run unless the SDC's sha256 starts with this. "
+                         "A slack number is only meaningful under known constraints; "
+                         "see experiments/sdc_integrity/.")
     ap.add_argument("--flatten", action="store_true",
                     help="synth -flatten before abc, so the buffering pass sees across "
                          "module ports (experiments/flatten_control/). Default off keeps "
@@ -301,6 +330,15 @@ def main():
     if ndu < 2:
         sys.exit(f"FATAL: dont_use returned {ndu} flags, expected >= 2")
 
+    # G0: constraint integrity. See sdc_fingerprint().
+    sdc_sha, sdc_lines, sdc_exc = sdc_fingerprint(a.sdc)
+    print(f"G0 sdc: {os.path.basename(a.sdc)} sha256 {sdc_sha[:16]} "
+          f"{sdc_lines} lines, timing exceptions {sdc_exc or 'none'}")
+    if a.expect_sdc_sha and not sdc_sha.startswith(a.expect_sdc_sha):
+        sys.exit(f"FATAL G0: sdc sha256 {sdc_sha} does not match the expected "
+                 f"{a.expect_sdc_sha}. Refusing to report slack measured under "
+                 f"constraints that are not the registered ones.")
+
     log_path = os.path.join(a.workdir, "decisions.jsonl")
     log = open(log_path, "a", encoding="utf-8")
 
@@ -311,6 +349,10 @@ def main():
         return kw
 
     t0 = time.time()
+    # After t0: record() stamps every row with time.time() - t0.
+    record(step="g0_sdc", sdc=os.path.basename(a.sdc), sha256=sdc_sha,
+           lines=sdc_lines, timing_exceptions=sdc_exc)
+
     rtl_files = list(remeasure.BENCH_TOP_FILES)
     file_subs = {}          # original rtl file -> accepted variant path
     physical_applied = False
