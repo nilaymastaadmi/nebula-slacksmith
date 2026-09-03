@@ -251,6 +251,36 @@ correct classifier. That is the honest summary of runs 2 to 5: the three
 proven-and-reverted transforms were measured on a path the router should
 never have sent them to.
 
+## Runs 6 and 7: the flat flow
+
+`experiments/flatten_control/` found that the hierarchical flow was blind
+to the two nets behind both residual v3 violations (387 and 59 loads across
+a module port), and that flattening alone moves clk_a by **+22.446 ns**:
+across the boundary ABC collapses the decode logic the RV32I wrapper's tied
+instruction bits make redundant. `--flatten` puts the loop on that flow.
+Registered in `PREREGISTRATION_flat.md`; 3 iterations, 125 s:
+
+    it1  MEASURE   clk_a=9.279    clk_b=-4.065   clk_e=-15.762
+    it1  CLASSIFY  clk_e: FANOUT_DOMINATED (0.9547) -> physical buffer (provisional)
+    it2  MEASURE   clk_a=10.362   clk_b=5.665    clk_e=-0.613     CONFIRM buffer (total -19.827 -> -0.613)
+    it2  CLASSIFY  clk_e: MIXED (0.3221) -> physical size (provisional)
+    it3  MEASURE   clk_a=11.158   clk_b=5.665    clk_e=-0.319     CONFIRM size (total -0.613 -> -0.319)
+    it3  STOP      physical_exhausted
+
+P29 to P32 correct. Run 7 adds `--buffer-pi` (ABC `buffer -p`) and is
+identical measurement for measurement (P33 wrong): in this flow ABC's
+buffer command does not reach flop outputs, and the 136-load flop output on
+the clk_e path stays. Two of three groups close by 5.665 and 11.158 ns;
+clk_e ends 0.319 ns short. "Physical exhausted" is true for this flow; what
+is left is OpenROAD's `repair_design` on the flat netlist, or an RTL change
+at the S-box input register, and the second needs the module filter to work
+on a flat netlist, which it does not.
+
+**Every v3 number before this section is a hierarchical-flow number.** They
+are not wrong; they are numbers for a flow that could not see across module
+ports, and on this benchmark that flow, not the RTL, was the largest lever
+the project had.
+
 ## What running it found, which reading it would not have
 
 Four defects, all caught by the loop doing the wrong thing visibly. The

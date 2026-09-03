@@ -93,3 +93,38 @@ than 32 loads is on F's worst clk_e path. Medium. Prediction 27: F does not
 close clk_e. Low-medium; registered so that a close is a scored surprise
 and not a claim written after the fact. Prediction 28: G's clk_e is above
 F's, as E's was above D's. Medium.
+
+## Amendment 1 outcome: arms F and G
+
+F is byte-identical to D and G to E, all three clocks, to the decimal
+(F: +10.362 / +5.665 / −0.613; G: +11.158 / +5.665 / −0.319).
+`buffer -N 16 -p` changed nothing: the 136-load flop output is still the
+top cell of the clk_e path at 1.897 ns. In this flow ABC's buffer command
+does not reach flop outputs even when told to buffer primary inputs, so the
+switch that was supposed to be the next lever is a measured no-op. **P26
+wrong, P27 correct, P28 correct** only because G equals E. Flatten control
+total: 5 of 10 predictions correct.
+
+The tool that does buffer that net is OpenROAD's `repair_design` (+55.805
+on the hierarchical netlist, `experiments/openroad_repair/`); running it on
+the flat netlist is the next physical step and is not done here.
+
+## Runs 6 and 7: the closed loop on the flat flow
+
+`experiments/closed_loop/PREREGISTRATION_flat.md`, logs `run_v3_flat.jsonl`
+and `run_v3_flatpi.jsonl`, scorer `score_flat.py`.
+
+    it1  MEASURE   clk_a=9.279    clk_b=-4.065   clk_e=-15.762   (= arm C)
+    it1  CLASSIFY  clk_e: FANOUT_DOMINATED (0.9547) -> physical buffer (provisional)
+    it2  MEASURE   clk_a=10.362   clk_b=5.665    clk_e=-0.613    (= arm D)  total -19.827 -> -0.613, CONFIRM buffer
+    it2  CLASSIFY  clk_e: MIXED (0.3221) -> physical size (provisional)
+    it3  MEASURE   clk_a=11.158   clk_b=5.665    clk_e=-0.319    (= arm E)  total -0.613 -> -0.319, CONFIRM size
+    it3  CLASSIFY  clk_e: MIXED (0.3374) -> physical
+    it3  STOP      physical_exhausted
+
+Run 6: 3 iterations, 125 s, **P29 to P32 correct**; the sizing step is
+confirmed here where run 5 reverted it, because on the flat netlist it
+improves the total. Run 7 (`--buffer-pi`): identical measurement for
+measurement, 124 s, **P33 wrong**. On the flat flow the loop closes two of
+three groups by 5.665 and 11.158 ns and stops honestly on the third with
+one 136-load flop output left, which is out of ABC's reach.

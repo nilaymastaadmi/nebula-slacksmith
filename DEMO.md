@@ -89,7 +89,10 @@ Then the run that refuses a physical step, 20 seconds:
 Say: sizing gained 0.838 ns on the group it was aimed at and cost `clk_a`
 3.466 ns. The earlier bar, which only looked at the target group, kept it. This
 one measures every group and reverted it: 4 iterations instead of 8, 1 group
-violating instead of 2, and it says so when it runs out of levers. If asked
+violating instead of 2, and it says so when it runs out of levers. Then the
+flat flow, 10 seconds: `python3 tools/show_run.py
+experiments/closed_loop/run_v3_flat.jsonl`, 3 iterations, both physical
+steps confirmed, `clk_a` +11.158, `clk_b` +5.665, `clk_e` −0.319. If asked
 why the earlier logs say DEPTH_DOMINATED here: the classifier was
 undercounting fanout across module boundaries, we found it by reading our
 own log against the OpenSTA report, and the correction is in the repo with

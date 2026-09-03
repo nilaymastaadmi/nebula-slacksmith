@@ -77,6 +77,11 @@ post-buffering paths was wrong, the fix is regression-checked against
 OpenSTA's own fanout column, and the wrong logs are kept.
 `tools/classify_regression.py`, `docs/closed-loop.md`.
 
+**5. The flow was the biggest lever.** Flattening before ABC moves `clk_a`
+by +22.4 ns with no buffering at all; flat plus buffering closes 2 of 3
+groups under SDC v3 and leaves `clk_e` at −0.319. Every earlier number is a
+hierarchical-flow number and is labelled so. `experiments/flatten_control/`.
+
 ## Run it
 
     python3 tools/slacksmith.py \
