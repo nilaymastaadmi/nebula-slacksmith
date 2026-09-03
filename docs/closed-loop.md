@@ -272,9 +272,19 @@ identical measurement for measurement (P33 wrong): in this flow ABC's
 buffer command does not reach flop outputs, and the 136-load flop output on
 the clk_e path stays. Two of three groups close by 5.665 and 11.158 ns;
 clk_e ends 0.319 ns short. "Physical exhausted" is true for this flow; what
-is left is OpenROAD's `repair_design` on the flat netlist, or an RTL change
-at the S-box input register, and the second needs the module filter to work
-on a flat netlist, which it does not.
+is left is OpenROAD's `repair_design` on the flat netlist, which
+`experiments/openroad_flat/` then measured: it gains +4.513 ns on `clk_e`
+after ABC's work (the two levers compose) and still leaves the group at
+−0.952 with parasitics, because a 65-load net is not a violation for a
+flow whose SDC sets no `set_max_fanout`.
+
+The RTL lever on a flat netlist needed one fix. Flattening renames every
+cell, so the on-path module filter had nothing to match. Yosys stamps each
+cell with the source line that created it, so `tools/remeasure.py` now
+writes a second netlist **with** attributes (OpenSTA cannot read those, so
+the timed one still uses `-noattr`) and `classify_path.src_module_map()`
+maps cell to RTL module by file and line range. The loop uses it whenever
+`--flatten` is on.
 
 **Every v3 number before this section is a hierarchical-flow number.** They
 are not wrong; they are numbers for a flow that could not see across module

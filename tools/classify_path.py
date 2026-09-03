@@ -48,7 +48,7 @@ Usage:
   python3 tools/classify_path.py --report path.rpt --netlist mapped.v
   python3 tools/classify_path.py --report path.rpt --netlist mapped.v --json
 """
-import argparse, json, re, sys
+import argparse, json, os, re, sys
 
 DRIVER_PINS = {"X", "Y", "Q", "Q_N", "SUM", "COUT", "CO"}
 
@@ -263,6 +263,63 @@ def parse_netlist(path):
     return raw
 
 
+SRC_CELL_RE = re.compile(
+    r'\(\*\s*src\s*=\s*"([^"]+)"\s*\*\)\s*\n\s*(sky130_fd_sc_hd__\w+)\s+(\\?\S+?)\s*\(',
+    re.M)
+
+
+def module_line_ranges(rtl_files):
+    """{abs file path: [(module, first_line, last_line), ...]}."""
+    out = {}
+    for path in rtl_files:
+        try:
+            lines = open(path, encoding="utf-8", errors="replace").read().splitlines()
+        except OSError:
+            continue
+        spans, cur = [], None
+        for i, l in enumerate(lines, 1):
+            m = re.match(r"\s*module\s+(\w+)", l)
+            if m:
+                cur = [m.group(1), i, len(lines)]
+            elif re.match(r"\s*endmodule", l) and cur:
+                cur[2] = i
+                spans.append(tuple(cur))
+                cur = None
+        if cur:
+            spans.append(tuple(cur))
+        out[os.path.realpath(path)] = spans
+    return out
+
+
+def src_module_map(attr_netlist, rtl_files):
+    """{flat cell instance: RTL module} from Yosys `src` attributes.
+
+    A flattened netlist carries no hierarchy in its instance names, so the
+    loop's RTL lever cannot tell which module a cell came from. Yosys does
+    know: it stamps every cell with the source line that created it. This
+    reads those attributes out of a netlist written WITHOUT -noattr and maps
+    file plus line back to the declaring module. Added 2026-09-03, when
+    experiments/flatten_control/ moved the flow to -flatten.
+    """
+    ranges = module_line_ranges(rtl_files)
+    txt = open(attr_netlist, encoding="utf-8", errors="replace").read()
+    out = {}
+    for src, _ctype, inst in SRC_CELL_RE.findall(txt):
+        inst = inst.lstrip("\\")
+        # src may list several locations separated by '|'; the first is the
+        # cell's own origin.
+        first = src.split("|")[0]
+        m = re.match(r"(.*):(\d+)", first)
+        if not m:
+            continue
+        f, line = os.path.realpath(m.group(1)), int(m.group(2))
+        for name, lo, hi in ranges.get(f, ()):
+            if lo <= line <= hi:
+                out[inst] = name
+                break
+    return out
+
+
 def _upward(mods, chain, mod, net):
     """Loads a net collects ABOVE its module: when `net` is (a bit of) an
     output port of `mod`, follow the instance connection into the parent and
@@ -358,7 +415,7 @@ def parse_path(report_text):
     return rows, slack, met
 
 
-def classify(report_text, netlist_path, top="bench_top"):
+def classify(report_text, netlist_path, top="bench_top", src_map=None):
     rows, slack, met = parse_path(report_text)
     if not rows:
         return {"verdict": "UNPARSED",
@@ -374,6 +431,10 @@ def classify(report_text, netlist_path, top="bench_top"):
     disagree = 0
     for r in rows:
         fo, owner = resolve_fanout(mods, top, r["inst"]) if mods else (None, None)
+        # On a flat netlist every cell belongs to the top module, so module
+        # ownership comes from Yosys src attributes when they are available.
+        if src_map:
+            owner = src_map.get(r["inst"].split("/")[-1], owner)
         r["netlist_fanout"], r["module"] = fo, owner
         if have_report:
             # Driver pins carry the count; the CLK and D rows have none and
@@ -430,10 +491,17 @@ def main():
     ap.add_argument("--netlist", default=None)
     ap.add_argument("--top", default="bench_top")
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--attr-netlist", default=None,
+                    help="netlist written WITHOUT -noattr; its src attributes give "
+                         "module ownership on a flattened netlist")
+    ap.add_argument("--rtl-file", action="append", default=[],
+                    help="RTL source for the src->module map; repeatable")
     a = ap.parse_args()
 
+    smap = (src_module_map(a.attr_netlist, a.rtl_file)
+            if a.attr_netlist and a.rtl_file else None)
     res = classify(open(a.report, encoding="utf-8", errors="replace").read(),
-                   a.netlist, a.top)
+                   a.netlist, a.top, smap)
     if a.json:
         print(json.dumps(res, indent=2)); return
     print(f"verdict             : {res['verdict']}")

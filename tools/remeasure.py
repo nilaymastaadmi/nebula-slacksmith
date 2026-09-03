@@ -125,6 +125,10 @@ def synth_bench_top(yosys_bin, rtl_dir, files, liberty, workdir, mapped_name,
     mapped_path = os.path.join(workdir, mapped_name)
     abc_extra = f" -script {abc_script}" if abc_script else ""
     flat = " -flatten" if flatten else ""
+    # A second copy WITH attributes. OpenSTA cannot read those, so the timed
+    # netlist keeps -noattr; this one exists only so classify_path.py can map
+    # a flattened netlist's cells back to their RTL modules via src.
+    attr_path = os.path.join(workdir, "mapped_attr.v")
     script = (
         f"read_verilog {paths}; "
         f"hierarchy -check -top {extra_yosys_top}; "
@@ -139,6 +143,7 @@ def synth_bench_top(yosys_bin, rtl_dir, files, liberty, workdir, mapped_name,
         # netlist that synthesized cleanly and could not be timed at all
         # (1,386 such names). -purge removes all of them and the netlist reads.
         f"opt_clean -purge; "
+        f"write_verilog {attr_path}; "
         f"write_verilog -noattr {mapped_path}"
     )
     proc = run([yosys_bin, "-p", script])

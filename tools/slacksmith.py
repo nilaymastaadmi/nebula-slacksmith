@@ -59,6 +59,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import remeasure
 import gate_proposal
+import classify_path
 from classify_path import classify
 
 REPO = os.path.dirname(HERE)
@@ -143,7 +144,7 @@ def measure_sta(a, rtl_files, workdir, tag, abc_script):
         extra_yosys_top=a.top, abc_script=abc_script, flatten=a.flatten)
     slacks, out = remeasure.sta_slack(
         a.sta_bin, a.liberty, net, a.top, a.sdc, a.clocks, d)
-    return slacks, split_reports(out, a.clocks), net
+    return slacks, split_reports(out, a.clocks), net, os.path.join(d, "mapped_attr.v")
 
 
 OR_TCL = """read_lef {plat}/lef/sky130_fd_sc_hd.tlef
@@ -334,7 +335,7 @@ def main():
 
         physical_applied = phys["buffer"] or phys["size"]
         abc = abc_script_for(phys, a.buffer_pi) if a.engine == "sta" else None
-        slacks, reports, net = measure_sta(a, files, a.workdir, f"it{it}", abc)
+        slacks, reports, net, attr_net = measure_sta(a, files, a.workdir, f"it{it}", abc)
 
         if a.engine == "openroad":
             # repair_design is one pass; the split lever exists only for abc.
@@ -418,7 +419,13 @@ def main():
             break
 
         worst = min(violated, key=lambda c: slacks[c])
-        cls = classify(reports[worst], net, top=a.top)
+        # On a flat netlist cell names carry no hierarchy, so module ownership
+        # (which the RTL lever filters on) comes from Yosys src attributes.
+        smap = None
+        if a.flatten and os.path.exists(attr_net):
+            smap = classify_path.src_module_map(
+                attr_net, [os.path.join(a.rtl_dir, f) for f in rtl_files])
+        cls = classify(reports[worst], net, top=a.top, src_map=smap)
         lever = route(cls["verdict"])
         print(f"classify {worst}: {cls['verdict']} "
               f"(fanout share {cls.get('fanout_delay_share')}) -> {lever}")
