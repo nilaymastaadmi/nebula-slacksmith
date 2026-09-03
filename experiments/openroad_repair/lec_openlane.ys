@@ -1,0 +1,66 @@
+# Logic equivalence check of repair_design's output, following the recipe
+# OpenLane uses in scripts/yosys/logic_equiv_check.tcl.
+#
+# Four attempts before this one failed (see NOTES.md). A literature check on
+# 2026-09-03 explained each:
+#
+#   1/2. `equiv_make` matches WIRE NAMES, not compare points. Comparing a
+#        Yosys hierarchical netlist against an OpenROAD flat one puts almost
+#        no names in common, which is why 55K cells yielded 86 equivalence
+#        points with enormous proof cones. Both inputs here are written by
+#        OpenROAD, so they share one name domain.
+#   3.   A k-padded sequential miter under `sby prove` is k-induction over
+#        the whole design. Buffer insertion and gate resizing are a
+#        COMBINATIONAL problem once you cut at the flops, so that handed the
+#        solver a far harder question than the one being asked.
+#   4.   `formal_pdk_proc.py` was unnecessary: `read_liberty` WITHOUT `-lib`
+#        builds real functional models from each cell's `function` attribute.
+#
+# Buffers are never compare points. Inserting 10,000 of them adds zero
+# compare points and only lengthens combinational cones, which structural
+# hashing collapses. The compare-point set is fixed by the flop and port
+# set, and repair_design changes neither.
+#
+#   usage: yosys -s experiments/openroad_repair/lec_openlane.ys
+
+read_liberty -ignore_miss_func -ignore_miss_dir /home/toshn/sta_work/sky130hd_tt.lib
+read_verilog /home/toshn/or_repair/prerepair.v
+splitnets -ports
+hierarchy -top bench_top
+flatten
+rename -top gold
+design -stash gold
+
+read_liberty -ignore_miss_func -ignore_miss_dir /home/toshn/sta_work/sky130hd_tt.lib
+read_verilog /home/toshn/or_repair/repaired.v
+splitnets -ports
+hierarchy -top bench_top
+flatten
+rename -top gate
+design -stash gate
+
+design -copy-from gold -as gold gold
+design -copy-from gate -as gate gate
+
+equiv_make gold gate equiv
+prep -flatten -top equiv
+equiv_status
+
+# Every flop in this benchmark has an ASYNCHRONOUS active-low reset, by the
+# RTL's own stated rule. Yosys' SAT backend has no model for an async FF and
+# says so: "No SAT model available for async FF cell ($_DFF_PN0_). Consider
+# running `async2sync` or `clk2fflogic` first." async2sync rewrites the async
+# reset into synchronous logic; it is applied to the merged design, so gold
+# and gate are transformed identically and the comparison stays sound.
+# clk2fflogic is the heavier alternative and is what made the divider proof
+# intractable in experiments/fsm_reencode/, so async2sync is the right one.
+async2sync
+equiv_status
+
+# Cheap structural sweep first, then SAT, then induction only if needed.
+equiv_struct
+equiv_status
+equiv_simple -seq 10
+equiv_status
+equiv_induct -seq 4
+equiv_status -assert

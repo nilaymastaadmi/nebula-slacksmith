@@ -182,3 +182,88 @@ liberty-derived whiteboxes, which would make the bounded miter run.
 
     bash experiments/openroad_repair/run.sh          # flow + both timing points
     bash experiments/openroad_repair/verify.sh       # equivalence
+
+---
+
+# Attempt 5: PROVEN, 2026-09-03
+
+    Found 5832 $equiv cells in equiv:
+      Of those cells 5832 are proven and 0 are unproven.
+      Equivalence successfully proven!
+
+    38.10 s, 2.67 GB peak, Yosys 0.67, no commercial tool.
+
+`repair_design`'s output is formally equivalent to its input. The pair is
+the `MF16-C` arm of `experiments/max_fanout/`: OpenROAD's own `prerepair.v`
+(25,920 cells) against `repaired.v` (27,578 cells), so **1,658 cells were
+added and the logic is unchanged**. Script: `lec_openlane.ys`, which is
+OpenLane's `scripts/yosys/logic_equiv_check.tcl` recipe adapted.
+
+## Why four attempts failed, each for its own reason
+
+A literature check on 2026-09-03 diagnosed all four. None of them was the
+hard research problem we had assumed.
+
+**1 and 2. `equiv_make` matches wire names, not compare points.** It walks
+every wire and pairs same-named ones. Comparing a Yosys *hierarchical*
+netlist against an OpenROAD *flat* one leaves almost no names in common,
+because flat writing renames every instance (`b1.r1` becomes `\b1/r1`). That
+is the whole explanation for 86 equivalence points in a 55K-cell design:
+not a solver limit, a naming mismatch. Feeding it two netlists **both
+written by OpenROAD**, in one name domain, gives **5,800** points instead of
+86, a 67x increase, and shrinks every proof cone accordingly.
+
+**3. We asked a sequential question.** A k-padded miter under `sby prove` is
+k-induction over the entire design. Buffer insertion and gate resizing are
+**combinational** once you cut at the flops, so we had handed the solver a
+problem exponentially harder than the one we actually had.
+
+**4. `formal_pdk_proc.py` was unnecessary.** `read_liberty` **without**
+`-lib` builds real functional models from each cell's `function` attribute.
+We had spent an attempt substituting models by hand that Yosys will build
+itself from the same liberty file.
+
+**And one more, found by running attempt 5 and reading the error.** Yosys'
+SAT backend has no model for an asynchronous flop:
+
+    ERROR: No SAT model available for async FF cell ($_DFF_PN0_).
+    Consider running `async2sync` or `clk2fflogic` first.
+
+Every flop in this benchmark has an async active-low reset, by the RTL's own
+stated rule, so this was guaranteed to fire. `async2sync` fixes it in one
+line. It is applied to the merged `equiv` module, so gold and gate are
+transformed identically and the comparison stays sound. `clk2fflogic` is the
+heavier alternative and is exactly what made the divider proof intractable
+in `experiments/fsm_reencode/`, so the light one is also the right one.
+
+## The insight that makes it easy
+
+**A buffer is never a compare point.** Compare points are primary outputs,
+register data inputs and black-box inputs. Insert ten thousand buffers and
+you add zero compare points; you only lengthen combinational cones, which
+structural hashing collapses. The compare-point set is fixed by the flop and
+port set, and `repair_design` changes neither. That is why commercial LEC
+tools treat post-placement netlists as routine, and why this should always
+have been a 38-second job.
+
+## What this does and does not establish
+
+**Does:** the logic of this netlist pair is unchanged. The +55.805 ns and
++40.665 ns physical results are no longer an unverified transformation.
+
+**Does not:** prove `repair_design` correct in general. This is
+**translation validation per run**, re-proving each pair rather than proving
+the algorithm, which is exactly what OpenROAD itself does and what the
+industry does. It also says nothing about whether the timing improvement is
+real; that is a separate claim resting on separate evidence.
+
+**Not yet run on every pair.** Only `MF16-C` is proven. The check is cheap
+enough to run on all of them and that is the obvious next step.
+
+## The route we did not need
+
+OpenROAD's current flow uses **kepler-formal** (GPL-3.0) for exactly this
+check, wired into `flow/scripts/cts.tcl` after `repair_timing`, and its
+`src/tst/include/tst/lec.h` records that the older EQY-based harness sat
+inert for years for the same name-matching reason we hit. Worth knowing, and
+we did not need it: the Yosys already in this repository was enough.

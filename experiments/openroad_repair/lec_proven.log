@@ -1,0 +1,43 @@
+# Verdict extract from the full Yosys log (263613 lines).
+# Reproduce in full with: yosys -s experiments/openroad_repair/lec_openlane.ys
+
+start 2026-09-03T06:11:43+00:00
+gold: 25920 cells
+gate: 27578 cells
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+...
+1442:11. Executing EQUIV_MAKE pass (creating equiv checking module).
+223337:13. Executing EQUIV_STATUS pass.
+223338:Found 5832 $equiv cells in equiv:
+229140:Found a total of 5800 unproven $equiv cells.
+229142:14. Executing ASYNC2SYNC pass.
+240376:15. Executing EQUIV_STATUS pass.
+240377:Found 5832 $equiv cells in equiv:
+246179:Found a total of 5800 unproven $equiv cells.
+246181:16. Executing EQUIV_STRUCT pass.
+246186:17. Executing EQUIV_STATUS pass.
+246187:Found 5832 $equiv cells in equiv:
+251989:Found a total of 5800 unproven $equiv cells.
+251991:18. Executing EQUIV_SIMPLE pass.
+251992:Found 5800 unproven $equiv cells (5800 groups) in equiv:
+263593:Proved 5800 previously unproven $equiv cells.
+263595:19. Executing EQUIV_STATUS pass.
+263596:Found 5832 $equiv cells in equiv:
+263598:  Equivalence successfully proven!
+263600:20. Executing EQUIV_INDUCT pass.
+263601:No selected unproven $equiv cells found in equiv.
+263602:Proved 0 previously unproven $equiv cells.
+263604:21. Executing EQUIV_STATUS pass.
+263605:Found 5832 $equiv cells in equiv:
+263607:  Equivalence successfully proven!
+...
+  Of those cells 5832 are proven and 0 are unproven.
+  Equivalence successfully proven!
+
+End of script. Logfile hash: 0d4604bd9b, time: 38.10s, user: 64.38s, system: 3.33s, MEM: 2669.43 MB peak
+Yosys 0.67+94 (git sha1 7defa5186-dirty, Release, Clang /usr/bin/clang++ 18.1.8)
+Time spent: 29% 5x opt_clean (18 sec), 14% 4x opt_merge (9 sec), ...
+yosys exit: 0
+done 2026-09-03T06:12:23+00:00
