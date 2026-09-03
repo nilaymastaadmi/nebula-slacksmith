@@ -276,7 +276,11 @@ is left is OpenROAD's `repair_design` on the flat netlist, which
 `experiments/openroad_flat/` then measured: it gains +4.513 ns on `clk_e`
 after ABC's work (the two levers compose) and still leaves the group at
 −0.952 with parasitics, because a 65-load net is not a violation for a
-flow whose SDC sets no `set_max_fanout`.
+flow whose SDC sets no `set_max_fanout`. Supplying one
+(`experiments/max_fanout/`) enforces the rule and makes `clk_e` **worse**
+at the registered limit: the buffers that split those nets sit on the path.
+The best measured configuration is flat, ABC buffer and size, then
+`repair_design` at a limit of 32, at `clk_e` −0.684.
 
 The RTL lever on a flat netlist needed one fix. Flattening renames every
 cell, so the on-path module filter had nothing to match. Yosys stamps each

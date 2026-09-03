@@ -1,0 +1,421 @@
+OpenROAD f12e2f474102bfb875eeee57fb610d7d7de17770 
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ODB-0222] Reading LEF file: /home/toshn/orfs/flow/platforms/sky130hd/lef/sky130_fd_sc_hd.tlef
+[INFO ODB-0223]     Created 13 technology layers
+[INFO ODB-0224]     Created 25 technology vias
+[INFO ODB-0226] Finished LEF file:  /home/toshn/orfs/flow/platforms/sky130hd/lef/sky130_fd_sc_hd.tlef
+[INFO ODB-0222] Reading LEF file: /home/toshn/orfs/flow/platforms/sky130hd/lef/sky130_fd_sc_hd_merged.lef
+[INFO ODB-0225]     Created 441 library cells
+[INFO ODB-0226] Finished LEF file:  /home/toshn/orfs/flow/platforms/sky130hd/lef/sky130_fd_sc_hd_merged.lef
+=====> FLOORPLAN
+[WARNING IFP-0028] Core area lower left (2.000, 2.000) snapped to (2.300, 2.720).
+[INFO IFP-0001] Added 300 rows of 1778 sites.
+Found 0 macro blocks.
+Using 1u default distance from corners.
+Using 2 tracks default min distance between IO pins.
+[INFO PPL-0010] Tentative 0 to set up sections.
+[INFO PPL-0001] Number of slots          2998
+[INFO PPL-0002] Number of I/O            90
+[INFO PPL-0003] Number of I/O w/sink     90
+[INFO PPL-0004] Number of I/O w/o sink   0
+[INFO PPL-0005] Slots per section        200
+[INFO PPL-0006] Slots increase factor    0.01
+[INFO PPL-0008] Successfully assigned pins to sections.
+[INFO PPL-0012] I/O nets HPWL: 39759.75 um.
+=====> GLOBAL PLACEMENT
+[INFO GPL-0002] DBU: 1000
+[INFO GPL-0003] SiteSize: 460 2720
+[INFO GPL-0004] CoreAreaLxLy: 2300 2720
+[INFO GPL-0005] CoreAreaUxUy: 820180 818720
+[INFO GPL-0006] NumInstances: 26958
+[INFO GPL-0007] NumPlaceInstances: 26958
+[INFO GPL-0008] NumFixedInstances: 0
+[INFO GPL-0009] NumDummyInstances: 0
+[INFO GPL-0010] NumNets: 27014
+[INFO GPL-0011] NumPins: 102746
+[INFO GPL-0012] DieAreaLxLy: 0 0
+[INFO GPL-0013] DieAreaUxUy: 822350 822350
+[INFO GPL-0014] CoreAreaLxLy: 2300 2720
+[INFO GPL-0015] CoreAreaUxUy: 820180 818720
+[INFO GPL-0016] CoreArea: 667390080000
+[INFO GPL-0017] NonPlaceInstsArea: 0
+[INFO GPL-0018] PlaceInstsArea: 267879417600
+[INFO GPL-0019] Util(%): 40.14
+[INFO GPL-0020] StdInstsArea: 267879417600
+[INFO GPL-0021] MacroInstsArea: 0
+[InitialPlace]  Iter: 1 CG residual: 0.00736587 HPWL: 255655100
+[InitialPlace]  Iter: 2 CG residual: 0.00722457 HPWL: 270459419
+[InitialPlace]  Iter: 3 CG residual: 0.00414160 HPWL: 275694270
+[InitialPlace]  Iter: 4 CG residual: 0.00359964 HPWL: 273449564
+[InitialPlace]  Iter: 5 CG residual: 0.00403622 HPWL: 270181823
+[InitialPlace]  Iter: 6 CG residual: 0.00490631 HPWL: 264209606
+[InitialPlace]  Iter: 7 CG residual: 0.00325505 HPWL: 263012356
+[InitialPlace]  Iter: 8 CG residual: 0.00381808 HPWL: 260246018
+[InitialPlace]  Iter: 9 CG residual: 0.00290812 HPWL: 256363151
+[InitialPlace]  Iter: 10 CG residual: 0.00296443 HPWL: 254839462
+[InitialPlace]  Iter: 11 CG residual: 0.00261210 HPWL: 253426714
+[InitialPlace]  Iter: 12 CG residual: 0.00294831 HPWL: 252508771
+[InitialPlace]  Iter: 13 CG residual: 0.00222717 HPWL: 250593437
+[InitialPlace]  Iter: 14 CG residual: 0.00238369 HPWL: 249465068
+[InitialPlace]  Iter: 15 CG residual: 0.00213282 HPWL: 247742502
+[InitialPlace]  Iter: 16 CG residual: 0.00161583 HPWL: 247043373
+[InitialPlace]  Iter: 17 CG residual: 0.00112238 HPWL: 245829528
+[InitialPlace]  Iter: 18 CG residual: 0.00078185 HPWL: 245449582
+[InitialPlace]  Iter: 19 CG residual: 0.00083228 HPWL: 244999359
+[InitialPlace]  Iter: 20 CG residual: 0.00095797 HPWL: 245130491
+[INFO GPL-0031] FillerInit: NumGCells: 41059
+[INFO GPL-0032] FillerInit: NumGNets: 27014
+[INFO GPL-0033] FillerInit: NumGPins: 102746
+[INFO GPL-0023] TargetDensity: 0.60
+[INFO GPL-0024] AveragePlaceInstArea: 9936917
+[INFO GPL-0025] IdealBinArea: 16561528
+[INFO GPL-0026] IdealBinCnt: 40297
+[INFO GPL-0027] TotalBinArea: 667390080000
+[INFO GPL-0028] BinCnt: 128 128
+[INFO GPL-0029] BinSize: 6390 6375
+[INFO GPL-0030] NumBins: 16384
+[NesterovSolve] Iter: 1 overflow: 0.994506 HPWL: 66811396
+[NesterovSolve] Iter: 10 overflow: 0.989205 HPWL: 72369005
+[NesterovSolve] Iter: 20 overflow: 0.986891 HPWL: 74344760
+[NesterovSolve] Iter: 30 overflow: 0.986706 HPWL: 74756224
+[NesterovSolve] Iter: 40 overflow: 0.986779 HPWL: 74678180
+[NesterovSolve] Iter: 50 overflow: 0.986017 HPWL: 74268413
+[NesterovSolve] Iter: 60 overflow: 0.986769 HPWL: 73781037
+[NesterovSolve] Iter: 70 overflow: 0.987347 HPWL: 73583963
+[NesterovSolve] Iter: 80 overflow: 0.98776 HPWL: 73551831
+[NesterovSolve] Iter: 90 overflow: 0.987694 HPWL: 73481098
+[NesterovSolve] Iter: 100 overflow: 0.987789 HPWL: 73286858
+[NesterovSolve] Iter: 110 overflow: 0.98812 HPWL: 73007092
+[NesterovSolve] Iter: 120 overflow: 0.988273 HPWL: 72761718
+[NesterovSolve] Iter: 130 overflow: 0.98828 HPWL: 72647795
+[NesterovSolve] Iter: 140 overflow: 0.988224 HPWL: 72741714
+[NesterovSolve] Iter: 150 overflow: 0.98801 HPWL: 73173755
+[NesterovSolve] Iter: 160 overflow: 0.987619 HPWL: 74215739
+[NesterovSolve] Iter: 170 overflow: 0.986821 HPWL: 76680351
+[NesterovSolve] Iter: 180 overflow: 0.985468 HPWL: 82520792
+[NesterovSolve] Iter: 190 overflow: 0.983239 HPWL: 93092860
+[NesterovSolve] Iter: 200 overflow: 0.979039 HPWL: 110766990
+[NesterovSolve] Iter: 210 overflow: 0.971999 HPWL: 137175870
+[NesterovSolve] Iter: 220 overflow: 0.962442 HPWL: 166367972
+[NesterovSolve] Iter: 230 overflow: 0.952094 HPWL: 200937287
+[NesterovSolve] Iter: 240 overflow: 0.93862 HPWL: 247437144
+[NesterovSolve] Iter: 250 overflow: 0.920762 HPWL: 303577619
+[NesterovSolve] Iter: 260 overflow: 0.899325 HPWL: 354769725
+[NesterovSolve] Iter: 270 overflow: 0.875205 HPWL: 398863809
+[NesterovSolve] Iter: 280 overflow: 0.848916 HPWL: 450426698
+[NesterovSolve] Iter: 290 overflow: 0.819109 HPWL: 501043112
+[NesterovSolve] Iter: 300 overflow: 0.785834 HPWL: 586150653
+[NesterovSolve] Iter: 310 overflow: 0.751265 HPWL: 616189573
+[NesterovSolve] Iter: 320 overflow: 0.710566 HPWL: 645698985
+[NesterovSolve] Iter: 330 overflow: 0.666655 HPWL: 667640258
+[NesterovSolve] Iter: 340 overflow: 0.618959 HPWL: 697341565
+[NesterovSolve] Iter: 350 overflow: 0.569107 HPWL: 714138874
+[NesterovSolve] Iter: 360 overflow: 0.519314 HPWL: 720331474
+[NesterovSolve] Iter: 370 overflow: 0.463395 HPWL: 719679695
+[NesterovSolve] Iter: 380 overflow: 0.418032 HPWL: 725679182
+[NesterovSolve] Iter: 390 overflow: 0.368119 HPWL: 732342678
+[NesterovSolve] Iter: 400 overflow: 0.328573 HPWL: 734148819
+[NesterovSolve] Iter: 410 overflow: 0.297386 HPWL: 738119292
+[NesterovSolve] Iter: 420 overflow: 0.263553 HPWL: 742979647
+[NesterovSolve] Iter: 430 overflow: 0.231708 HPWL: 750536674
+[NesterovSolve] Iter: 440 overflow: 0.202791 HPWL: 758816454
+[NesterovSolve] Iter: 450 overflow: 0.174548 HPWL: 766349760
+[NesterovSolve] Iter: 460 overflow: 0.151799 HPWL: 772456363
+[NesterovSolve] Iter: 470 overflow: 0.127686 HPWL: 777284018
+[NesterovSolve] Iter: 480 overflow: 0.107993 HPWL: 781300864
+[NesterovSolve] Finished with Overflow: 0.099685
+=====> TIMING BEFORE repair_design
+---CLOCK:clk_a---
+Startpoint: _42601_ (rising edge-triggered flip-flop clocked by clk_a)
+Endpoint: _47587_ (rising edge-triggered flip-flop clocked by clk_a)
+Path Group: clk_a
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk_a (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ _42601_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.719    0.719 ^ _42601_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.485    1.205 v _21679_/X (sky130_fd_sc_hd__or3b_2)
+   0.228    1.433 v _21680_/X (sky130_fd_sc_hd__buf_2)
+   0.270    1.703 ^ _21718_/Y (sky130_fd_sc_hd__a22oi_1)
+   0.253    1.956 ^ _21724_/X (sky130_fd_sc_hd__maj3_1)
+   0.167    2.123 ^ _21726_/X (sky130_fd_sc_hd__a21o_1)
+   0.168    2.291 ^ _21734_/X (sky130_fd_sc_hd__a21o_1)
+   0.079    2.369 v _21740_/Y (sky130_fd_sc_hd__a21oi_2)
+   0.219    2.589 v _21745_/X (sky130_fd_sc_hd__o21a_1)
+   0.202    2.791 ^ _21750_/Y (sky130_fd_sc_hd__o21ai_2)
+   0.258    3.049 ^ _21751_/X (sky130_fd_sc_hd__maj3_2)
+   0.221    3.270 ^ _21752_/X (sky130_fd_sc_hd__maj3_2)
+   0.230    3.500 ^ _21753_/X (sky130_fd_sc_hd__maj3_2)
+   0.080    3.580 v _21758_/Y (sky130_fd_sc_hd__a21oi_2)
+   0.350    3.930 v _21759_/X (sky130_fd_sc_hd__maj3_2)
+   0.258    4.188 v _21765_/X (sky130_fd_sc_hd__o211a_1)
+   0.360    4.548 ^ _22058_/Y (sky130_fd_sc_hd__o31ai_1)
+   0.236    4.784 ^ _22062_/X (sky130_fd_sc_hd__and3_1)
+   0.091    4.875 v _27716_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.111    4.986 ^ _27717_/Y (sky130_fd_sc_hd__nand2_1)
+   0.000    4.986 ^ _47587_/D (sky130_fd_sc_hd__dfrtp_1)
+            4.986   data arrival time
+
+  15.500   15.500   clock clk_a (rise edge)
+   0.000   15.500   clock network delay (ideal)
+   0.000   15.500   clock reconvergence pessimism
+           15.500 ^ _47587_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.071   15.429   library setup time
+           15.429   data required time
+-----------------------------------------------------------
+           15.429   data required time
+           -4.986   data arrival time
+-----------------------------------------------------------
+           10.443   slack (MET)
+
+
+---CLOCK:clk_b---
+Startpoint: _47373_ (rising edge-triggered flip-flop clocked by clk_b)
+Endpoint: _47407_ (rising edge-triggered flip-flop clocked by clk_b)
+Path Group: clk_b
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk_b (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ _47373_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.423    0.423 v _47373_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.311    0.734 v _28155_/X (sky130_fd_sc_hd__or2_2)
+   0.142    0.876 v _28156_/X (sky130_fd_sc_hd__clkbuf_1)
+   2.117    2.994 ^ _28157_/Y (sky130_fd_sc_hd__nor2_1)
+   2.010    5.004 ^ _28158_/X (sky130_fd_sc_hd__clkbuf_1)
+   2.215    7.219 ^ _28159_/X (sky130_fd_sc_hd__buf_1)
+   2.042    9.261 ^ _28220_/X (sky130_fd_sc_hd__clkbuf_1)
+   1.356   10.616 v _28239_/Y (sky130_fd_sc_hd__a221oi_1)
+   0.449   11.066 v _28240_/X (sky130_fd_sc_hd__xor2_1)
+   0.241   11.307 ^ _28242_/Y (sky130_fd_sc_hd__a22oi_1)
+   0.084   11.391 v _28243_/Y (sky130_fd_sc_hd__nand2_1)
+   0.000   11.391 v _47407_/D (sky130_fd_sc_hd__dfrtp_1)
+           11.391   data arrival time
+
+  12.500   12.500   clock clk_b (rise edge)
+   0.000   12.500   clock network delay (ideal)
+   0.000   12.500   clock reconvergence pessimism
+           12.500 ^ _47407_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.129   12.371   library setup time
+           12.371   data required time
+-----------------------------------------------------------
+           12.371   data required time
+          -11.391   data arrival time
+-----------------------------------------------------------
+            0.980   slack (MET)
+
+
+---CLOCK:clk_e---
+Startpoint: _44678_ (rising edge-triggered flip-flop clocked by clk_e)
+Endpoint: _44803_ (rising edge-triggered flip-flop clocked by clk_e)
+Path Group: clk_e
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk_e (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ _44678_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.420    0.420 v _44678_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.164    0.584 v _34353_/Y (sky130_fd_sc_hd__nand2b_1)
+   0.134    0.718 v _34354_/X (sky130_fd_sc_hd__clkbuf_1)
+   1.238    1.956 ^ _34365_/Y (sky130_fd_sc_hd__nor2_1)
+   2.228    4.184 ^ _38086_/X (sky130_fd_sc_hd__clkbuf_1)
+   2.400    6.584 ^ _38087_/X (sky130_fd_sc_hd__buf_1)
+   2.180    8.764 ^ _38349_/X (sky130_fd_sc_hd__clkbuf_1)
+   1.265   10.029 v _39123_/Y (sky130_fd_sc_hd__a221oi_1)
+   0.418   10.447 v _39124_/X (sky130_fd_sc_hd__xor2_1)
+   0.211   10.658 ^ _39125_/Y (sky130_fd_sc_hd__a22oi_1)
+   0.119   10.777 v _39126_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.000   10.777 v _44803_/D (sky130_fd_sc_hd__dfrtp_1)
+           10.777   data arrival time
+
+   5.500    5.500   clock clk_e (rise edge)
+   0.000    5.500   clock network delay (ideal)
+   0.000    5.500   clock reconvergence pessimism
+            5.500 ^ _44803_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.189    5.311   library setup time
+            5.311   data required time
+-----------------------------------------------------------
+            5.311   data required time
+          -10.777   data arrival time
+-----------------------------------------------------------
+           -5.465   slack (VIOLATED)
+
+
+design_area BEFORE:
+Design area 267879 u^2 40% utilization.
+=====> REPAIR_DESIGN
+[INFO RSZ-0058] Using max wire length 1828um.
+[INFO RSZ-0034] Found 8 slew violations.
+[INFO RSZ-0035] Found 26 fanout violations.
+[INFO RSZ-0036] Found 5 capacitance violations.
+[INFO RSZ-0038] Inserted 514 buffers in 29 nets.
+[INFO RSZ-0039] Resized 5911 instances.
+=====> DETAILED PLACEMENT
+[WARNING DPL-0011] Could not find power special net.
+Placement Analysis
+---------------------------------
+total displacement     116937.1 u
+average displacement        4.3 u
+max displacement           66.5 u
+original HPWL          823306.8 u
+legalized HPWL         946665.6 u
+delta HPWL                   15 %
+
+=====> TIMING AFTER repair_design
+---CLOCK:clk_a---
+Startpoint: _42601_ (rising edge-triggered flip-flop clocked by clk_a)
+Endpoint: _47587_ (rising edge-triggered flip-flop clocked by clk_a)
+Path Group: clk_a
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk_a (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ _42601_/CLK (sky130_fd_sc_hd__dfrtp_4)
+   0.526    0.526 v _42601_/Q (sky130_fd_sc_hd__dfrtp_4)
+   0.212    0.737 v repeater72/X (sky130_fd_sc_hd__buf_4)
+   0.544    1.281 v _21719_/X (sky130_fd_sc_hd__or4bb_1)
+   0.454    1.735 ^ _21723_/Y (sky130_fd_sc_hd__a2111oi_1)
+   0.324    2.059 ^ _21724_/X (sky130_fd_sc_hd__maj3_1)
+   0.183    2.241 ^ _21726_/X (sky130_fd_sc_hd__a21o_1)
+   0.189    2.430 ^ _21734_/X (sky130_fd_sc_hd__a21o_1)
+   0.129    2.559 v _21740_/Y (sky130_fd_sc_hd__a21oi_1)
+   0.244    2.803 v _21745_/X (sky130_fd_sc_hd__o21a_1)
+   0.201    3.004 ^ _21750_/Y (sky130_fd_sc_hd__o21ai_2)
+   0.259    3.263 ^ _21751_/X (sky130_fd_sc_hd__maj3_1)
+   0.238    3.501 ^ _21752_/X (sky130_fd_sc_hd__maj3_1)
+   0.277    3.778 ^ _21753_/X (sky130_fd_sc_hd__maj3_1)
+   0.108    3.886 v _21758_/Y (sky130_fd_sc_hd__a21oi_2)
+   0.417    4.303 v _21759_/X (sky130_fd_sc_hd__maj3_1)
+   0.283    4.586 v _21765_/X (sky130_fd_sc_hd__o211a_1)
+   0.312    4.898 ^ _22058_/Y (sky130_fd_sc_hd__o31ai_2)
+   0.287    5.184 ^ _22062_/X (sky130_fd_sc_hd__and3_1)
+   0.116    5.300 v _27716_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.075    5.375 ^ _27717_/Y (sky130_fd_sc_hd__nand2_1)
+   0.000    5.375 ^ _47587_/D (sky130_fd_sc_hd__dfrtp_1)
+            5.375   data arrival time
+
+  15.500   15.500   clock clk_a (rise edge)
+   0.000   15.500   clock network delay (ideal)
+   0.000   15.500   clock reconvergence pessimism
+           15.500 ^ _47587_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.067   15.433   library setup time
+           15.433   data required time
+-----------------------------------------------------------
+           15.433   data required time
+           -5.375   data arrival time
+-----------------------------------------------------------
+           10.058   slack (MET)
+
+
+---CLOCK:clk_b---
+Startpoint: _47376_ (rising edge-triggered flip-flop clocked by clk_b)
+Endpoint: _42816_ (rising edge-triggered flip-flop clocked by clk_b)
+Path Group: clk_b
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk_b (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ _47376_/CLK (sky130_fd_sc_hd__dfrtp_4)
+   0.577    0.577 v _47376_/Q (sky130_fd_sc_hd__dfrtp_4)
+   0.244    0.822 v repeater49/X (sky130_fd_sc_hd__buf_4)
+   0.168    0.989 v repeater48/X (sky130_fd_sc_hd__buf_6)
+   0.201    1.190 v repeater47/X (sky130_fd_sc_hd__buf_4)
+   0.168    1.359 v _22712_/Y (sky130_fd_sc_hd__nor2b_1)
+   0.175    1.533 v _22713_/X (sky130_fd_sc_hd__probec_p_8)
+   0.722    2.255 ^ _22717_/Y (sky130_fd_sc_hd__a222oi_1)
+   0.165    2.420 v _22718_/Y (sky130_fd_sc_hd__nand2_8)
+   0.525    2.946 ^ _22741_/Y (sky130_fd_sc_hd__a22oi_4)
+   0.173    3.119 v _22742_/Y (sky130_fd_sc_hd__nor2_8)
+   0.195    3.314 ^ _22946_/Y (sky130_fd_sc_hd__nand2_2)
+   0.106    3.420 v _22947_/Y (sky130_fd_sc_hd__a21oi_1)
+   0.265    3.685 ^ _22948_/Y (sky130_fd_sc_hd__a221oi_1)
+   0.137    3.822 v _22949_/Y (sky130_fd_sc_hd__o21ai_2)
+   0.548    4.370 v _23327_/X (sky130_fd_sc_hd__or4_1)
+   0.270    4.640 ^ _23328_/Y (sky130_fd_sc_hd__nor4_1)
+   0.179    4.819 v _23329_/Y (sky130_fd_sc_hd__nand4b_2)
+   0.943    5.762 ^ _23330_/Y (sky130_fd_sc_hd__nor4_4)
+   0.244    6.007 v _23331_/Y (sky130_fd_sc_hd__xnor2_4)
+   0.412    6.419 ^ _23332_/Y (sky130_fd_sc_hd__xnor2_4)
+   0.207    6.626 v _24689_/Y (sky130_fd_sc_hd__xnor2_2)
+   0.188    6.813 ^ _24690_/Y (sky130_fd_sc_hd__nand2_8)
+   0.167    6.980 v _27143_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.000    6.980 v _42816_/D (sky130_fd_sc_hd__dfrtp_1)
+            6.980   data arrival time
+
+  12.500   12.500   clock clk_b (rise edge)
+   0.000   12.500   clock network delay (ideal)
+   0.000   12.500   clock reconvergence pessimism
+           12.500 ^ _42816_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.162   12.338   library setup time
+           12.338   data required time
+-----------------------------------------------------------
+           12.338   data required time
+           -6.980   data arrival time
+-----------------------------------------------------------
+            5.358   slack (MET)
+
+
+---CLOCK:clk_e---
+Startpoint: _44958_ (rising edge-triggered flip-flop clocked by clk_e)
+Endpoint: _46603_ (rising edge-triggered flip-flop clocked by clk_e)
+Path Group: clk_e
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk_e (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ _44958_/CLK (sky130_fd_sc_hd__dfrtp_4)
+   0.450    0.450 ^ _44958_/Q (sky130_fd_sc_hd__dfrtp_4)
+   0.220    0.670 ^ repeater69/X (sky130_fd_sc_hd__buf_4)
+   0.235    0.906 ^ repeater68/X (sky130_fd_sc_hd__buf_4)
+   0.185    1.091 ^ repeater67/X (sky130_fd_sc_hd__buf_6)
+   0.225    1.316 ^ repeater64/X (sky130_fd_sc_hd__buf_4)
+   0.251    1.567 ^ repeater62/X (sky130_fd_sc_hd__clkbuf_4)
+   0.173    1.740 ^ _32468_/X (sky130_fd_sc_hd__or3b_1)
+   0.150    1.890 v _32470_/Y (sky130_fd_sc_hd__nand4_4)
+   0.723    2.613 ^ _32471_/Y (sky130_fd_sc_hd__a22oi_4)
+   0.201    2.814 v _32537_/Y (sky130_fd_sc_hd__nand2_8)
+   0.209    3.023 ^ _32543_/Y (sky130_fd_sc_hd__nand2_2)
+   0.103    3.126 v _32615_/Y (sky130_fd_sc_hd__nor2_1)
+   0.331    3.457 ^ _32852_/Y (sky130_fd_sc_hd__a2111oi_0)
+   0.178    3.635 v _32853_/Y (sky130_fd_sc_hd__o2111ai_1)
+   0.441    4.076 ^ _32858_/Y (sky130_fd_sc_hd__nor4_1)
+   0.159    4.235 v _32866_/Y (sky130_fd_sc_hd__nand3_1)
+   0.682    4.917 v _32893_/X (sky130_fd_sc_hd__or4_4)
+   0.401    5.318 ^ _32894_/Y (sky130_fd_sc_hd__xnor2_4)
+   0.202    5.520 v _33218_/Y (sky130_fd_sc_hd__xnor2_4)
+   0.410    5.930 ^ _33383_/Y (sky130_fd_sc_hd__xnor2_4)
+   0.221    6.152 ^ _33540_/Y (sky130_fd_sc_hd__xnor2_2)
+   0.140    6.292 v _33541_/Y (sky130_fd_sc_hd__nand2_8)
+   0.191    6.482 ^ _34809_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.000    6.482 ^ _46603_/D (sky130_fd_sc_hd__dfrtp_1)
+            6.482   data arrival time
+
+   5.500    5.500   clock clk_e (rise edge)
+   0.000    5.500   clock network delay (ideal)
+   0.000    5.500   clock reconvergence pessimism
+            5.500 ^ _46603_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.093    5.407   library setup time
+            5.407   data required time
+-----------------------------------------------------------
+            5.407   data required time
+           -6.482   data arrival time
+-----------------------------------------------------------
+           -1.075   slack (VIOLATED)
+
+
+design_area AFTER:
+Design area 330523 u^2 50% utilization.
