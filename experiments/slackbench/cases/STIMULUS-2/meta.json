@@ -1,0 +1,7 @@
+{ "case": "STIMULUS-2", "class": "STIMULUS", "top": "sb_acc",
+  "ground_truth": "NOT_EQUIVALENT", "k": 0,
+  "clk": "clk", "rst": "rst_n",
+  "inputs":  {"en": 1, "d": 8},
+  "outputs": {"acc": 16},
+  "circular_for": [],
+  "note": "wrong only on back-to-back enables" }

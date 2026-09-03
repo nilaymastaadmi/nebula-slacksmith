@@ -1,0 +1,18 @@
+{
+ "case": "CDC-1",
+ "class": "CDC",
+ "top": "sb_cdc",
+ "ground_truth": "EQUIVALENT",
+ "k": -1,
+ "clk": "clk_dst",
+ "rst": "rst_n",
+ "inputs": {
+  "flag_src": 1
+ },
+ "outputs": {
+  "flag_dst": 1
+ },
+ "circular_for": [],
+ "note": "2-flop synchronizer reduced to 1; functionally a latency change, the real defect is the removed metastability guard and is invisible to every functional method",
+ "ground_truth_corrected": "was NOT_EQUIVALENT; wrong on publication, caught by the first harness run, see NOTES.md amendment 2"
+}

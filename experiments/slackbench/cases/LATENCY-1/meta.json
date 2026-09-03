@@ -1,0 +1,7 @@
+{ "case": "LATENCY-1", "class": "LATENCY", "top": "sb_mac",
+  "ground_truth": "EQUIVALENT", "k": 1,
+  "clk": "clk", "rst": "rst_n",
+  "inputs":  {"a": 8, "b": 8, "c": 16},
+  "outputs": {"y": 16},
+  "circular_for": ["miter_k"],
+  "note": "correct k=+1 pipeline cut; c pipelined alongside the product" }

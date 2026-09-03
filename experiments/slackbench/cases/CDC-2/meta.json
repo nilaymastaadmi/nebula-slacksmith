@@ -1,0 +1,7 @@
+{ "case": "CDC-2", "class": "CDC", "top": "sb_ptr",
+  "ground_truth": "EQUIVALENT", "k": 0,
+  "clk": "clk", "rst": "rst_n",
+  "inputs":  {"inc": 1},
+  "outputs": {"ptr_sync": 4},
+  "circular_for": [],
+  "note": "gray encoder moved across the synchronizer; functionally identical, the crossing bus is now raw binary" }

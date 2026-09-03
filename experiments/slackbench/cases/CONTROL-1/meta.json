@@ -1,0 +1,7 @@
+{ "case": "CONTROL-1", "class": "CONTROL", "top": "sb_sel",
+  "ground_truth": "EQUIVALENT", "k": 0,
+  "clk": "clk", "rst": "rst_n",
+  "inputs":  {"sel": 1, "a": 8, "b": 8, "c": 16},
+  "outputs": {"y": 16},
+  "circular_for": [],
+  "note": "operator sharing, one multiplier feeding both mux arms" }

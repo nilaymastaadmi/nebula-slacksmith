@@ -1,0 +1,7 @@
+{ "case": "STIMULUS-1", "class": "STIMULUS", "top": "sb_mac",
+  "ground_truth": "NOT_EQUIVALENT", "k": 0,
+  "clk": "clk", "rst": "rst_n",
+  "inputs":  {"a": 8, "b": 8, "c": 16},
+  "outputs": {"y": 16},
+  "circular_for": [],
+  "note": "wrong on a=0xA5,b=0x3C only, 1 of 65536" }

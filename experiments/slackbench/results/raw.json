@@ -1,0 +1,402 @@
+[
+ {
+  "case": "CDC-1",
+  "class": "CDC",
+  "truth": "NOT_EQUIVALENT",
+  "k": -1,
+  "checker": "cec",
+  "verdict": "CANNOT",
+  "detail": "cannot build a miter: gold 3 latches / 5 inputs, gate 2 / 4",
+  "circular": false
+ },
+ {
+  "case": "CDC-1",
+  "class": "CDC",
+  "truth": "NOT_EQUIVALENT",
+  "k": -1,
+  "checker": "dsec",
+  "verdict": "CANNOT",
+  "detail": "cannot build a miter: gold 3 latches / 5 inputs, gate 2 / 4",
+  "circular": false
+ },
+ {
+  "case": "CDC-1",
+  "class": "CDC",
+  "truth": "NOT_EQUIVALENT",
+  "k": -1,
+  "checker": "sim_lazy",
+  "verdict": "ACCEPT",
+  "detail": "19997 cycles, no difference",
+  "circular": false
+ },
+ {
+  "case": "CDC-1",
+  "class": "CDC",
+  "truth": "NOT_EQUIVALENT",
+  "k": -1,
+  "checker": "sim_aggr",
+  "verdict": "ACCEPT",
+  "detail": "19997 cycles, no difference",
+  "circular": false
+ },
+ {
+  "case": "CDC-1",
+  "class": "CDC",
+  "truth": "NOT_EQUIVALENT",
+  "k": -1,
+  "checker": "miter_k",
+  "verdict": "ACCEPT",
+  "detail": "sat proof succeeded",
+  "circular": false
+ },
+ {
+  "case": "CDC-2",
+  "class": "CDC",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "cec",
+  "verdict": "REJECT",
+  "detail": "Input pattern:  lo01=0 lo12=0 pi04=0 pi01=1 lo00=0 pi03=1",
+  "circular": false
+ },
+ {
+  "case": "CDC-2",
+  "class": "CDC",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "dsec",
+  "verdict": "REJECT",
+  "detail": "Networks are NOT EQUIVALENT after simulation.   Time =     0.01 sec",
+  "circular": false
+ },
+ {
+  "case": "CDC-2",
+  "class": "CDC",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "sim_lazy",
+  "verdict": "ACCEPT",
+  "detail": "19998 cycles, no difference",
+  "circular": false
+ },
+ {
+  "case": "CDC-2",
+  "class": "CDC",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "sim_aggr",
+  "verdict": "ACCEPT",
+  "detail": "19998 cycles, no difference",
+  "circular": false
+ },
+ {
+  "case": "CDC-2",
+  "class": "CDC",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "miter_k",
+  "verdict": "REJECT",
+  "detail": "counterexample found by the padded miter",
+  "circular": false
+ },
+ {
+  "case": "CONTROL-1",
+  "class": "CONTROL",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "cec",
+  "verdict": "ACCEPT",
+  "detail": "Networks are equivalent after structural hashing.  Time =     0.00 sec",
+  "circular": false
+ },
+ {
+  "case": "CONTROL-1",
+  "class": "CONTROL",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "dsec",
+  "verdict": "ACCEPT",
+  "detail": "Networks are equivalent.  Time =     0.00 sec",
+  "circular": false
+ },
+ {
+  "case": "CONTROL-1",
+  "class": "CONTROL",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "sim_lazy",
+  "verdict": "ACCEPT",
+  "detail": "19998 cycles, no difference",
+  "circular": false
+ },
+ {
+  "case": "CONTROL-1",
+  "class": "CONTROL",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "sim_aggr",
+  "verdict": "ACCEPT",
+  "detail": "19998 cycles, no difference",
+  "circular": false
+ },
+ {
+  "case": "CONTROL-1",
+  "class": "CONTROL",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "miter_k",
+  "verdict": "ACCEPT",
+  "detail": "sat proof succeeded",
+  "circular": false
+ },
+ {
+  "case": "CONTROL-2",
+  "class": "CONTROL",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "cec",
+  "verdict": "CANNOT",
+  "detail": "cannot build a miter: gold 3 latches / 5 inputs, gate 4 / 6",
+  "circular": false
+ },
+ {
+  "case": "CONTROL-2",
+  "class": "CONTROL",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "dsec",
+  "verdict": "CANNOT",
+  "detail": "cannot build a miter: gold 3 latches / 5 inputs, gate 4 / 6",
+  "circular": false
+ },
+ {
+  "case": "CONTROL-2",
+  "class": "CONTROL",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "sim_lazy",
+  "verdict": "ACCEPT",
+  "detail": "19998 cycles, no difference",
+  "circular": false
+ },
+ {
+  "case": "CONTROL-2",
+  "class": "CONTROL",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "sim_aggr",
+  "verdict": "ACCEPT",
+  "detail": "19998 cycles, no difference",
+  "circular": false
+ },
+ {
+  "case": "CONTROL-2",
+  "class": "CONTROL",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "miter_k",
+  "verdict": "REJECT",
+  "detail": "counterexample found by the padded miter",
+  "circular": true
+ },
+ {
+  "case": "LATENCY-1",
+  "class": "LATENCY",
+  "truth": "EQUIVALENT",
+  "k": 1,
+  "checker": "cec",
+  "verdict": "CANNOT",
+  "detail": "cannot build a miter: gold 17 latches / 50 inputs, gate 49 / 82",
+  "circular": false
+ },
+ {
+  "case": "LATENCY-1",
+  "class": "LATENCY",
+  "truth": "EQUIVALENT",
+  "k": 1,
+  "checker": "dsec",
+  "verdict": "CANNOT",
+  "detail": "cannot build a miter: gold 17 latches / 50 inputs, gate 49 / 82",
+  "circular": false
+ },
+ {
+  "case": "LATENCY-1",
+  "class": "LATENCY",
+  "truth": "EQUIVALENT",
+  "k": 1,
+  "checker": "sim_lazy",
+  "verdict": "ACCEPT",
+  "detail": "19997 cycles, no difference",
+  "circular": false
+ },
+ {
+  "case": "LATENCY-1",
+  "class": "LATENCY",
+  "truth": "EQUIVALENT",
+  "k": 1,
+  "checker": "sim_aggr",
+  "verdict": "ACCEPT",
+  "detail": "19997 cycles, no difference",
+  "circular": false
+ },
+ {
+  "case": "LATENCY-1",
+  "class": "LATENCY",
+  "truth": "EQUIVALENT",
+  "k": 1,
+  "checker": "miter_k",
+  "verdict": "ACCEPT",
+  "detail": "sat proof succeeded",
+  "circular": true
+ },
+ {
+  "case": "LATENCY-2",
+  "class": "LATENCY",
+  "truth": "NOT_EQUIVALENT",
+  "k": 1,
+  "checker": "cec",
+  "verdict": "CANNOT",
+  "detail": "cannot build a miter: gold 17 latches / 50 inputs, gate 33 / 66",
+  "circular": false
+ },
+ {
+  "case": "LATENCY-2",
+  "class": "LATENCY",
+  "truth": "NOT_EQUIVALENT",
+  "k": 1,
+  "checker": "dsec",
+  "verdict": "CANNOT",
+  "detail": "cannot build a miter: gold 17 latches / 50 inputs, gate 33 / 66",
+  "circular": false
+ },
+ {
+  "case": "LATENCY-2",
+  "class": "LATENCY",
+  "truth": "NOT_EQUIVALENT",
+  "k": 1,
+  "checker": "sim_lazy",
+  "verdict": "ACCEPT",
+  "detail": "19997 cycles, no difference",
+  "circular": false
+ },
+ {
+  "case": "LATENCY-2",
+  "class": "LATENCY",
+  "truth": "NOT_EQUIVALENT",
+  "k": 1,
+  "checker": "sim_aggr",
+  "verdict": "REJECT",
+  "detail": "differs at cycle 3: ['50412'] vs ['58886']",
+  "circular": false
+ },
+ {
+  "case": "LATENCY-2",
+  "class": "LATENCY",
+  "truth": "NOT_EQUIVALENT",
+  "k": 1,
+  "checker": "miter_k",
+  "verdict": "REJECT",
+  "detail": "counterexample found by the padded miter",
+  "circular": false
+ },
+ {
+  "case": "STIMULUS-1",
+  "class": "STIMULUS",
+  "truth": "NOT_EQUIVALENT",
+  "k": 0,
+  "checker": "cec",
+  "verdict": "REJECT",
+  "detail": "Input pattern:  pi29=1 pi02=1 pi15=0 pi01=0 pi14=0 pi03=0 pi13=1 pi04=0 pi07=1 pi10=1 pi05",
+  "circular": false
+ },
+ {
+  "case": "STIMULUS-1",
+  "class": "STIMULUS",
+  "truth": "NOT_EQUIVALENT",
+  "k": 0,
+  "checker": "dsec",
+  "verdict": "REJECT",
+  "detail": "Networks are NOT EQUIVALENT after simulation.   Time =     0.09 sec",
+  "circular": false
+ },
+ {
+  "case": "STIMULUS-1",
+  "class": "STIMULUS",
+  "truth": "NOT_EQUIVALENT",
+  "k": 0,
+  "checker": "sim_lazy",
+  "verdict": "ACCEPT",
+  "detail": "19998 cycles, no difference",
+  "circular": false
+ },
+ {
+  "case": "STIMULUS-1",
+  "class": "STIMULUS",
+  "truth": "NOT_EQUIVALENT",
+  "k": 0,
+  "checker": "sim_aggr",
+  "verdict": "ACCEPT",
+  "detail": "19998 cycles, no difference",
+  "circular": false
+ },
+ {
+  "case": "STIMULUS-1",
+  "class": "STIMULUS",
+  "truth": "NOT_EQUIVALENT",
+  "k": 0,
+  "checker": "miter_k",
+  "verdict": "REJECT",
+  "detail": "counterexample found by the padded miter",
+  "circular": false
+ },
+ {
+  "case": "STIMULUS-2",
+  "class": "STIMULUS",
+  "truth": "NOT_EQUIVALENT",
+  "k": 0,
+  "checker": "cec",
+  "verdict": "CANNOT",
+  "detail": "cannot build a miter: gold 17 latches / 27 inputs, gate 18 / 28",
+  "circular": false
+ },
+ {
+  "case": "STIMULUS-2",
+  "class": "STIMULUS",
+  "truth": "NOT_EQUIVALENT",
+  "k": 0,
+  "checker": "dsec",
+  "verdict": "CANNOT",
+  "detail": "cannot build a miter: gold 17 latches / 27 inputs, gate 18 / 28",
+  "circular": false
+ },
+ {
+  "case": "STIMULUS-2",
+  "class": "STIMULUS",
+  "truth": "NOT_EQUIVALENT",
+  "k": 0,
+  "checker": "sim_lazy",
+  "verdict": "REJECT",
+  "detail": "differs at cycle 2: ['14'] vs ['7']",
+  "circular": false
+ },
+ {
+  "case": "STIMULUS-2",
+  "class": "STIMULUS",
+  "truth": "NOT_EQUIVALENT",
+  "k": 0,
+  "checker": "sim_aggr",
+  "verdict": "REJECT",
+  "detail": "differs at cycle 2: ['61'] vs ['3']",
+  "circular": false
+ },
+ {
+  "case": "STIMULUS-2",
+  "class": "STIMULUS",
+  "truth": "NOT_EQUIVALENT",
+  "k": 0,
+  "checker": "miter_k",
+  "verdict": "REJECT",
+  "detail": "counterexample found by the padded miter",
+  "circular": false
+ }
+]

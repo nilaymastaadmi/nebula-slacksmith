@@ -1,0 +1,7 @@
+{ "case": "LATENCY-2", "class": "LATENCY", "top": "sb_mac",
+  "ground_truth": "NOT_EQUIVALENT", "k": 1,
+  "clk": "clk", "rst": "rst_n",
+  "inputs":  {"a": 8, "b": 8, "c": 16},
+  "outputs": {"y": 16},
+  "circular_for": [],
+  "note": "c not pipelined; stage 2 adds current c to previous product" }

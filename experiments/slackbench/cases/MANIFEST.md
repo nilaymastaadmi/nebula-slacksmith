@@ -13,7 +13,7 @@ module name on both sides.
 | LATENCY-2 | LATENCY | **NOT EQUIVALENT** at any offset | +1 declared |
 | STIMULUS-1 | STIMULUS | **NOT EQUIVALENT** | 0 |
 | STIMULUS-2 | STIMULUS | **NOT EQUIVALENT** | 0 |
-| CDC-1 | CDC | latency offset, **and a protocol defect no functional checker sees** | −1 |
+| CDC-1 | CDC | **EQUIVALENT** modulo a latency offset, and a protocol defect no functional checker sees (corrected, see NOTES.md amendment 2) | −1 |
 | CDC-2 | CDC | **EQUIVALENT**, and a protocol defect no functional checker sees | 0 |
 | CONTROL-1 | CONTROL | **EQUIVALENT** | 0 |
 | CONTROL-2 | CONTROL | **EQUIVALENT** | 0 |

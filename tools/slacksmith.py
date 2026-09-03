@@ -184,6 +184,7 @@ place_pins -hor_layers met3 -ver_layers met2
 source {plat}/setRC.tcl
 global_placement -density 0.60
 estimate_parasitics -placement
+{prewrite}
 {repair}
 {reports}
 write_verilog {outnet}
@@ -191,18 +192,40 @@ exit
 """
 
 
+def lec_check(a, gold, gate, workdir):
+    """G6: is the netlist repair_design produced the same logic it was given?
+
+    Returns the verdict dict from tools/lec_check.py, or None if the check
+    was not applicable. Until 2026-09-03 the physical lever was taken on
+    trust because four attempts to verify it had failed; it costs 38 s.
+    """
+    if not (os.path.exists(gold) and os.path.exists(gate)):
+        return {"verdict": "ERROR", "reason": "netlist pair not written"}
+    r = sh([sys.executable, os.path.join(HERE, "lec_check.py"),
+            "--gold", gold, "--gate", gate, "--liberty", a.liberty,
+            "--top", a.top, "--workdir", os.path.join(workdir, "lec"),
+            "--yosys-bin", a.yosys_bin])
+    try:
+        return json.loads(r.stdout[r.stdout.index("{"):])
+    except (ValueError, json.JSONDecodeError):
+        return {"verdict": "ERROR", "reason": "unparsable lec_check output",
+                "stderr": r.stderr[-400:]}
+
+
 def measure_openroad(a, netlist, workdir, tag, do_repair):
     d = os.path.join(workdir, tag)
     os.makedirs(d, exist_ok=True)
     repair = ("repair_design\ndetailed_placement\nestimate_parasitics -placement"
               if do_repair else "")
+    prenet = os.path.join(d, "prerepair.v")
+    prewrite = f"write_verilog {prenet}" if do_repair else ""
     reports = "\n".join(
         f'puts "---CLOCK:{c}---"\n'
         f'report_checks -path_delay max -to [get_clocks {c}] '
         f'-group_count 1 -digits 3 -fields {{fanout}}' for c in a.clocks)
     tcl = OR_TCL.format(plat=a.platform, lib=a.liberty, net=netlist, top=a.top,
-                        sdc=a.sdc, repair=repair, reports=reports,
-                        outnet=os.path.join(d, "out.v"))
+                        sdc=a.sdc, repair=repair, prewrite=prewrite,
+                        reports=reports, outnet=os.path.join(d, "out.v"))
     tp = os.path.join(d, "flow.tcl")
     open(tp, "w").write(tcl)
     r = sh([a.openroad_bin, "-no_init", "-exit", tp])
@@ -215,7 +238,9 @@ def measure_openroad(a, netlist, workdir, tag, do_repair):
         m = re.findall(r"([\-0-9.]+)\s+slack \((?:MET|VIOLATED)\)",
                        reports_by_clk[c])
         slacks[c] = float(m[-1]) if m else None
-    return slacks, reports_by_clk, os.path.join(d, "out.v")
+    outnet = os.path.join(d, "out.v")
+    lec = lec_check(a, prenet, outnet, d) if (do_repair and not a.no_lec) else None
+    return slacks, reports_by_clk, outnet, lec
 
 
 # ----------------------------------------------------------------- routing
@@ -290,6 +315,10 @@ def main():
     ap.add_argument("--lever-policy", choices=["blunt", "verdict"], default="blunt",
                     help="blunt: buffer+size at once (every run before 2026-09-03); "
                          "verdict: the classifier picks the component")
+    ap.add_argument("--no-lec", action="store_true",
+                    help="skip G6, the equivalence check on repair_design's output. "
+                         "Off by default: a physical step whose logic is unverified "
+                         "is not a result (experiments/openroad_repair/).")
     ap.add_argument("--expect-sdc-sha", default=None,
                     help="G0: refuse to run unless the SDC's sha256 starts with this. "
                          "A slack number is only meaningful under known constraints; "
@@ -381,8 +410,20 @@ def main():
 
         if a.engine == "openroad":
             # repair_design is one pass; the split lever exists only for abc.
-            slacks, reports, net = measure_openroad(
+            slacks, reports, net, lec = measure_openroad(
                 a, net, a.workdir, f"it{it}_or", physical_applied)
+            if lec:
+                v = lec.get("verdict")
+                print(f"  G6 lec: {v} ({lec.get('compare_points')} compare points, "
+                      f"{lec.get('unproven')} unproven)")
+                record(iter=it, step="g6_lec", **lec)
+                if v != "PROVEN":
+                    # A physical step whose logic we cannot vouch for is not a
+                    # result. Same rule the RTL lever has always had.
+                    print(f"  STOP: repair_design output is {v}. A timing number "
+                          f"from a netlist we cannot prove equivalent is not a result.")
+                    record(iter=it, step="stop", reason=f"G6_{v}")
+                    break
 
         shown = "  ".join(f"{c}={slacks[c]}" for c in a.clocks)
         print(f"measure: {shown}")
