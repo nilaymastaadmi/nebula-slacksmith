@@ -1,0 +1,7 @@
+{ "case": "XPROP-1", "class": "XPROP", "top": "sb_stat",
+  "ground_truth": "NOT_EQUIVALENT", "k": 0,
+  "clk": "clk", "rst": "rst_n",
+  "inputs":  {"we": 1, "d": 8},
+  "outputs": {"status": 8},
+  "circular_for": [],
+  "note": "reset dropped; difference is observable only through a register that is unknown until first written. Registered separately in PREREGISTRATION_xprop.md and never folded into any Tier B count." }
