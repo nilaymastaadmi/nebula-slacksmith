@@ -144,3 +144,31 @@ excellent.**
 - Reporting a single score per checker instead of a confusion matrix.
 - Using a case to score the tool that established its ground truth without
   the `CIRCULAR` exclusion.
+
+## Amendment 1, 2026-09-03, before any Tier B case is built
+
+The size clause above says "exactly 8 cases, two each in LATENCY, STIMULUS,
+CDC and CONTROL, plus the CONSTRAINT and XPROP cases counted inside those
+two." **"Those two" has no referent. That is my drafting error**, caught on
+re-reading before construction, and it is resolved here rather than left to
+be resolved conveniently later.
+
+Resolution, and the reasoning:
+
+- **Tier B is the eight cases**, two each in LATENCY, STIMULUS, CDC and
+  CONTROL. The list is fixed in `cases/MANIFEST.md`, written before any
+  checker runs.
+- **CONSTRAINT moves to Tier A.** Its measurement already exists in
+  `experiments/sdc_integrity/`, taken earlier the same day and before this
+  registration was committed. By this file's own rule I cannot unsee it, so
+  it is archival and excluded from Tier B headlines. It is still reported,
+  because it is the only class no equivalence checker can catch.
+- **XPROP is not built and is reported as absent.** It was named in the
+  class table and never allocated a slot in the size clause. Adding a ninth
+  case now would break the fixed count, which exists precisely so cases
+  cannot be added once results are visible. It is listed as a known gap in
+  the suite rather than quietly dropped from the class table.
+
+Predictions 1 to 6 are unchanged. Prediction 3 concerns the CONSTRAINT case
+and is now scored against Tier A, which weakens it to a wiring check on the
+harness, which is all it ever was.
