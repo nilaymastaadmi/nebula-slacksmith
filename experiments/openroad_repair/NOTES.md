@@ -293,3 +293,28 @@ gates. A fresh ABC mapping does not satisfy it at all.
 **So G6 is wired into the OpenROAD engine and not into the ABC path**, and
 that was a measurement rather than a guess. The ABC buffering lever in the
 `sta` engine remains unverified, and the report says so.
+
+## Every arm, not just one
+
+`lec_all_arms.sh` re-runs each `repair_design` arm this project reports and
+proves its own netlist pair. Results in `lec_arms/summary.tsv`.
+
+| arm | SDC | verdict | compare points | unproven | seconds |
+|---|---|---|---|---|---|
+| OR-C | v3 | **PROVEN** | 5,832 | 0 | 43 |
+| OR-E | v3 | **PROVEN** | 5,832 | 0 | 39 |
+| MF16-E | v3 + max fanout 16 | **PROVEN** | 5,832 | 0 | 40 |
+| MF8-E | v3 + max fanout 8 | **PROVEN** | 5,832 | 0 | 41 |
+| MF32-E | v3 + max fanout 32 | **PROVEN** | 5,832 | 0 | 40 |
+| MF16-C | v3 + max fanout 16 | **PROVEN** | 5,832 | 0 | 38 |
+
+**Six of six, 0 unproven, under 45 seconds each.** So every physical result
+this project reports is now formally proven equivalent to the netlist it was
+given, not just the one pair checked first.
+
+The compare-point count is identical across all six, which is the expected
+consistency signal rather than a coincidence: compare points are flops and
+ports, all six arms come from the same RTL, and `repair_design` changes
+neither. An arm that came back with a different count would mean the flow had
+altered the sequential boundary, which is exactly the precondition this check
+requires.

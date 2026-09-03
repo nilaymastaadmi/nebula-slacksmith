@@ -1,0 +1,7 @@
+arm	netlist	sdc	verdict	compare_points	proven	unproven	seconds
+OR-C	mapped.v	bench_top_v3.sdc	PROVEN	5832	5832	0	43
+OR-E	mapped.v	bench_top_v3.sdc	PROVEN	5832	5832	0	39
+MF16-E	mapped.v	bench_top_v3_mf16.sdc	PROVEN	5832	5832	0	40
+MF8-E	mapped.v	bench_top_v3_mf8.sdc	PROVEN	5832	5832	0	41
+MF32-E	mapped.v	bench_top_v3_mf32.sdc	PROVEN	5832	5832	0	40
+MF16-C	mapped.v	bench_top_v3_mf16.sdc	PROVEN	5832	5832	0	38

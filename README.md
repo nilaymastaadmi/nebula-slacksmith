@@ -82,6 +82,25 @@ by +22.4 ns with no buffering at all; flat plus buffering closes 2 of 3
 groups under SDC v3 and leaves `clk_e` at −0.319. Every earlier number is a
 hierarchical-flow number and is labelled so. `experiments/flatten_control/`.
 
+**6. Two gates nothing else in this class has.** **G0, constraint
+integrity**: one `set_multicycle_path` line takes a group from −0.319
+VIOLATED to +4.860 MET on a byte-identical netlist, which is more than our
+best proven RTL transform bought and which **no equivalence checker can
+catch**, because the two designs are the same file. The loop now hashes the
+SDC, counts its timing exceptions, and can refuse. **G6, physical
+equivalence**: `repair_design`'s output is proven equivalent to its input,
+5,832 compare points in 38 seconds, after four failed attempts whose causes
+are all named. A physical step whose logic we cannot vouch for now stops the
+loop. `experiments/sdc_integrity/`, `tools/lec_check.py`.
+
+**7. We built the exam and published our own score on it.** SlackBench is a
+suite of RTL transform pairs with declared ground truth, built to defeat
+specific checker abstractions, used to grade **verification methodologies**
+rather than designs or testbenches. The literature search found nothing like
+it. Our own checker gets two of eight wrong, which was registered in advance,
+because a suite its author aces is evidence the suite was rigged.
+`experiments/slackbench/`.
+
 ## Run it
 
     python3 tools/slacksmith.py \

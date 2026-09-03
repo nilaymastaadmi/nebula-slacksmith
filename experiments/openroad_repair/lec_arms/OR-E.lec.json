@@ -1,0 +1,10 @@
+{
+ "gold": "/home/toshn/or_repair/prerepair.v",
+ "gate": "/home/toshn/or_repair/repaired.v",
+ "compare_points": 5832,
+ "proven": 5832,
+ "unproven": 0,
+ "yosys_says_proven": true,
+ "log": "/home/toshn/lec_OR-E/lec.log",
+ "verdict": "PROVEN"
+}

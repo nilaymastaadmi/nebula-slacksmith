@@ -230,6 +230,44 @@ Close on:
 
 ---
 
+## Beat 7. The cheat no equivalence checker can catch, 30 seconds.
+
+    bash experiments/sdc_integrity/run.sh
+
+One netlist, 26,958 cells, identical in every row. Only the constraints vary.
+
+    baseline_honest           11.158     5.665    -0.319
+    mcp_whole_clk_e           11.158     5.665     4.860
+
+> One line of SDC closes the group. It is worth 5.179 nanoseconds, which is
+> more than our best formally-proven RTL transform bought, for changing
+> nothing at all. Every equivalence checker we own would call these two
+> designs equivalent, correctly, because they are the same file. Proof of
+> equivalence is necessary and nowhere near sufficient for believing a
+> timing number.
+>
+> So the loop hashes the SDC, counts its timing exceptions, and refuses to
+> report slack measured under constraints that are not the registered ones.
+
+---
+
+## Beat 8. We built the exam, 45 seconds.
+
+    column -t -s $'\t' experiments/slackbench/results/raw.tsv
+
+> Eight transform pairs with ground truth we declared before running any
+> checker, each built to defeat a specific checker's abstraction. One wrong
+> transform survived forty thousand simulated cycles. Combinational and
+> sequential equivalence checking could not even express five of the eight
+> questions. Two checkers confidently rejected a pair that is provably
+> equivalent.
+>
+> And ours is wrong twice. We registered in advance that it should not sweep
+> its own suite, because a benchmark its author aces tells you about the
+> benchmark, not the tool.
+
+---
+
 ## Before recording
 
     bash tools/demo_check.sh

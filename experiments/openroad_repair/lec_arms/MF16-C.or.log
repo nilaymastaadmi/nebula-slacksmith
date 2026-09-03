@@ -1,0 +1,23 @@
+running OpenROAD (netlist: /home/toshn/flatexp/C/mapped.v)
+openroad exit: 0
+=== slacks ===
+=====> FLOORPLAN
+=====> GLOBAL PLACEMENT
+=====> TIMING BEFORE repair_design
+---CLOCK:clk_a---
+            7.539   slack (MET)
+---CLOCK:clk_b---
+          -28.855   slack (VIOLATED)
+---CLOCK:clk_e---
+          -41.943   slack (VIOLATED)
+Design area 263069 u^2 40% utilization.
+=====> REPAIR_DESIGN
+=====> DETAILED PLACEMENT
+=====> TIMING AFTER repair_design
+---CLOCK:clk_a---
+           10.052   slack (MET)
+---CLOCK:clk_b---
+            5.489   slack (MET)
+---CLOCK:clk_e---
+           -1.278   slack (VIOLATED)
+Design area 324885 u^2 50% utilization.
