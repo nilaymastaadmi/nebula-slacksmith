@@ -12,6 +12,13 @@ verify OpenROAD's `repair_design` had failed. All four failed for mundane
 reasons (see experiments/openroad_repair/NOTES.md); the check actually costs
 38 seconds. With this, every step the loop takes carries a proof.
 
+SCOPE, MEASURED. This works when the two netlists share a name domain and
+the same sequential boundary, which is what `repair_design` guarantees: it
+inserts buffers and resizes gates and touches neither. Comparing two
+independently technology-mapped netlists (two separate ABC runs) does NOT
+work: measured, it ran 1,800 s without a verdict. See
+experiments/openroad_repair/NOTES.md.
+
 THE GUARD THAT MATTERS. `equiv_make` pairs wires by NAME. Hand it two
 netlists from different name domains and it silently produces almost no
 equivalence points, then cheerfully proves all of them. That is exactly how

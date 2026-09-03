@@ -267,3 +267,29 @@ check, wired into `flow/scripts/cts.tcl` after `repair_timing`, and its
 `src/tst/include/tst/lec.h` records that the older EQY-based harness sat
 inert for years for the same name-matching reason we hit. Worth knowing, and
 we did not need it: the Yosys already in this repository was enough.
+
+## The boundary of this method, measured not assumed
+
+Two controls were run through `tools/lec_check.py`:
+
+| pair | what differs | result |
+|---|---|---|
+| `prerepair.v` vs `repaired.v` | `repair_design` added 1,658 cells | **PROVEN**, 5,832 points, 38 s |
+| flat arm C vs flat arm E | two independent ABC runs, different scripts | **TIMEOUT at 1,800 s** |
+
+The second is the honest limit. Arm C and arm E come from the same RTL and
+are almost certainly equivalent, but each was technology-mapped by its own
+ABC invocation, so cell and net names diverge everywhere. `equiv_make` pairs
+wires by name, finds few anchors, and the proof cones become the whole
+design again. **Thirty minutes without a verdict is not evidence of
+inequivalence**; it is evidence that this method does not reach that case.
+
+This is exactly the precondition the OpenROAD flow states for gate-level
+LEC: no change of sequential boundaries, and no change in the names of
+hierarchical instances, sequential instances and top terminals.
+`repair_design` satisfies it because it only inserts buffers and resizes
+gates. A fresh ABC mapping does not satisfy it at all.
+
+**So G6 is wired into the OpenROAD engine and not into the ABC path**, and
+that was a measurement rather than a guess. The ABC buffering lever in the
+`sta` engine remains unverified, and the report says so.
