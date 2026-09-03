@@ -1,0 +1,30 @@
+start 2026-09-02T21:49:03+00:00 commit f523c44
+dont_use flags: 72
+
+=== arm A: flatten=False abc=default
+  clk_a: slack -13.167  FANOUT_DOMINATED share 0.7402  top sky130_fd_sc_hd__and2_0 9.494 ns fanout 387  max fanout on path 387
+  clk_b: slack -18.957  FANOUT_DOMINATED share 0.9139  top sky130_fd_sc_hd__nor4_1 21.029 ns fanout 300  max fanout on path 300
+  clk_e: slack -25.957  FANOUT_DOMINATED share 0.9139  top sky130_fd_sc_hd__nor4_1 21.029 ns fanout 300  max fanout on path 300
+
+=== arm B: flatten=False abc=buffer,-N,16
+  clk_a: slack 1.75  NO_ACTION share 0.3172  top sky130_fd_sc_hd__and2_2 3.747 ns fanout 387  max fanout on path 387
+  clk_b: slack 5.556  NO_ACTION share 0.2864  top sky130_fd_sc_hd__a21oi_1 1.952 ns fanout 59  max fanout on path 59
+  clk_e: slack -1.444  MIXED share 0.2864  top sky130_fd_sc_hd__a21oi_1 1.952 ns fanout 59  max fanout on path 59
+
+=== arm C: flatten=True abc=default
+  clk_a: slack 9.279  NO_ACTION share 0.2991  top sky130_fd_sc_hd__nor3b_1 1.824 ns fanout 32  max fanout on path 32
+  clk_b: slack -4.065  FANOUT_DOMINATED share 0.8382  top sky130_fd_sc_hd__nor2_1 7.45 ns fanout 128  max fanout on path 131
+  clk_e: slack -15.762  FANOUT_DOMINATED share 0.9547  top sky130_fd_sc_hd__nor4_1 17.567 ns fanout 256  max fanout on path 256
+
+=== arm D: flatten=True abc=buffer,-N,16
+  clk_a: slack 10.362  NO_ACTION share 0.0  top sky130_fd_sc_hd__dlygate4sd3_1 0.619 ns fanout 5  max fanout on path 22
+  clk_b: slack 5.665  NO_ACTION share 0.0  top sky130_fd_sc_hd__dfstp_2 0.515 ns fanout 4  max fanout on path 4
+  clk_e: slack -0.613  MIXED share 0.3221  top sky130_fd_sc_hd__dfrtp_1 1.897 ns fanout 136  max fanout on path 136
+
+=== arm E: flatten=True abc=buffer,-N,16;upsize;dnsize
+  clk_a: slack 11.158  NO_ACTION share 0.0  top sky130_fd_sc_hd__dfrtp_1 0.502 ns fanout 22  max fanout on path 22
+  clk_b: slack 5.665  NO_ACTION share 0.0  top sky130_fd_sc_hd__dfstp_2 0.515 ns fanout 4  max fanout on path 4
+  clk_e: slack -0.319  MIXED share 0.3374  top sky130_fd_sc_hd__dfrtp_1 1.888 ns fanout 136  max fanout on path 136
+
+wrote /mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/flatten_control/results/summary.tsv
+exit 0 2026-09-02T21:54:51+00:00

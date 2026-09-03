@@ -134,7 +134,7 @@ def measure_sta(a, rtl_files, workdir, tag, abc_script):
     os.makedirs(d, exist_ok=True)
     net = remeasure.synth_bench_top(
         a.yosys_bin, a.rtl_dir, rtl_files, a.liberty, d, "mapped.v",
-        extra_yosys_top=a.top, abc_script=abc_script)
+        extra_yosys_top=a.top, abc_script=abc_script, flatten=a.flatten)
     slacks, out = remeasure.sta_slack(
         a.sta_bin, a.liberty, net, a.top, a.sdc, a.clocks, d)
     return slacks, split_reports(out, a.clocks), net
@@ -258,6 +258,14 @@ def main():
     ap.add_argument("--lever-policy", choices=["blunt", "verdict"], default="blunt",
                     help="blunt: buffer+size at once (every run before 2026-09-03); "
                          "verdict: the classifier picks the component")
+    ap.add_argument("--flatten", action="store_true",
+                    help="synth -flatten before abc, so the buffering pass sees across "
+                         "module ports (experiments/flatten_control/). Default off keeps "
+                         "the hierarchical flow every run before 2026-09-03 used. On a "
+                         "flat netlist the classifier cannot attribute cells to modules, "
+                         "so the RTL lever cannot select a proposal.")
+    ap.add_argument("--buffer-pi", action="store_true",
+                    help="add -p to ABC's buffer command (buffer flop outputs too)")
     ap.add_argument("--g5", choices=["target", "total"], default="target",
                     help="target: a provisional step is kept if the group it targeted "
                          "improved (every run before 2026-09-03); total: kept only if "
@@ -319,7 +327,7 @@ def main():
         files = [file_subs.get(f, f) for f in rtl_files]
 
         physical_applied = phys["buffer"] or phys["size"]
-        abc = abc_script_for(phys) if a.engine == "sta" else None
+        abc = abc_script_for(phys, a.buffer_pi) if a.engine == "sta" else None
         slacks, reports, net = measure_sta(a, files, a.workdir, f"it{it}", abc)
 
         if a.engine == "openroad":
@@ -331,6 +339,7 @@ def main():
         print(f"measure: {shown}")
         record(iter=it, step="measure", engine=a.engine, slacks=slacks,
                physical=dict(phys), lever_policy=a.lever_policy, g5=a.g5,
+               flatten=a.flatten, buffer_pi=a.buffer_pi,
                total_violation=total_violation(slacks),
                rtl_applied=sorted(file_subs.values()))
         history.append((it, dict(slacks)))
@@ -423,9 +432,9 @@ def main():
             if comp:
                 phys[comp] = True
                 print(f"apply: physical {comp} (provisional) -> "
-                      f"abc {abc_script_for(phys).split(';&put;')[-1]}")
+                      f"abc {abc_script_for(phys, a.buffer_pi).split(';&put;')[-1]}")
                 record(iter=it, step="apply", lever="physical", component=comp,
-                       how=abc_script_for(phys), provisional=True,
+                       how=abc_script_for(phys, a.buffer_pi), provisional=True,
                        clock=worst, prev_slack=slacks[worst])
                 pending = {"kind": "physical", "component": comp,
                            "clock": worst, "prev_slack": slacks[worst],

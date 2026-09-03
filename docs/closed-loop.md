@@ -282,4 +282,7 @@ right, produces a plausible number, and is measuring the wrong thing.
 `tools/slacksmith.py`, `tools/show_run.py`, `sdc/make_v3.py`,
 `sdc/bench_top_v3.sdc`, `experiments/closed_loop/` (logs `run_v2.jsonl`,
 `run_v3_before_fixes.jsonl`, `run_v3_final.jsonl`, `run_v3_verdict.jsonl`,
-`run_v3_g5total.jsonl`; registrations and scorers alongside).
+`run_v3_g5total.jsonl`, `run_v3_fixed.jsonl`; registrations, scorers,
+`reclassify_runs.sh` and `reclassified.tsv` alongside).
+`tools/classify_regression.py` is the standing check on the classifier, as
+`tools/verdict_regression.sh` is on the gate.

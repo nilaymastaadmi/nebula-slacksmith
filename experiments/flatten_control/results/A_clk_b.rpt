@@ -1,0 +1,36 @@
+
+Startpoint: u_aes_b/u_core/keymem/_13696_
+            (rising edge-triggered flip-flop clocked by clk_b)
+Endpoint: u_aes_b/u_core/keymem/_15624_
+          (rising edge-triggered flip-flop clocked by clk_b)
+Path Group: clk_b
+Path Type: max
+
+Fanout    Delay     Time   Description
+-----------------------------------------------------------------
+          0.000    0.000   clock clk_b (rise edge)
+          0.000    0.000   clock network delay (ideal)
+          0.000    0.000 ^ u_aes_b/u_core/keymem/_13696_/CLK (sky130_fd_sc_hd__dfrtp_1)
+    52    0.923    0.923 v u_aes_b/u_core/keymem/_13696_/Q (sky130_fd_sc_hd__dfrtp_1)
+   300   21.029   21.952 ^ u_aes_b/u_core/keymem/_07883_/Y (sky130_fd_sc_hd__nor4_1)
+     6    1.525   23.478 v u_aes_b/u_core/keymem/_07893_/Y (sky130_fd_sc_hd__nor2_1)
+   153    6.016   29.493 ^ u_aes_b/u_core/keymem/_08792_/Y (sky130_fd_sc_hd__nor2_1)
+     2    0.196   29.689 v u_aes_b/u_core/keymem/_09202_/Y (sky130_fd_sc_hd__a221oi_1)
+    15    0.779   30.468 ^ u_aes_b/u_core/keymem/_09204_/Y (sky130_fd_sc_hd__nor2_1)
+     1    0.134   30.602 v u_aes_b/u_core/keymem/_13502_/Y (sky130_fd_sc_hd__a21oi_1)
+          0.000   30.602 v u_aes_b/u_core/keymem/_15624_/D (sky130_fd_sc_hd__dfrtp_1)
+                  30.602   data arrival time
+
+         12.500   12.500   clock clk_b (rise edge)
+          0.000   12.500   clock network delay (ideal)
+          0.000   12.500   clock reconvergence pessimism
+                  12.500 ^ u_aes_b/u_core/keymem/_15624_/CLK (sky130_fd_sc_hd__dfrtp_1)
+         -0.855   11.645   library setup time
+                  11.645   data required time
+-----------------------------------------------------------------
+                  11.645   data required time
+                 -30.602   data arrival time
+-----------------------------------------------------------------
+                 -18.957   slack (VIOLATED)
+
+

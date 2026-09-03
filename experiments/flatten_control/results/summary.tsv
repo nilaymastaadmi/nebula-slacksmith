@@ -1,0 +1,16 @@
+arm	flatten	abc	cells	clock	slack	verdict	share	path_delay	cells_on_path	top_cell	top_incr	top_fanout	max_fanout_on_path	fanout_source
+A	False	default	28844	clk_a	-13.167	FANOUT_DOMINATED	0.7402	28.373	31	sky130_fd_sc_hd__and2_0	9.494	387	387	report
+A	False	default	28844	clk_b	-18.957	FANOUT_DOMINATED	0.9139	30.602	9	sky130_fd_sc_hd__nor4_1	21.029	300	300	report
+A	False	default	28844	clk_e	-25.957	FANOUT_DOMINATED	0.9139	30.602	9	sky130_fd_sc_hd__nor4_1	21.029	300	300	report
+B	False	buffer_only	30264	clk_a	1.75	NO_ACTION	0.3172	13.621	37	sky130_fd_sc_hd__and2_2	3.747	387	387	report
+B	False	buffer_only	30264	clk_b	5.556	NO_ACTION	0.2864	6.816	15	sky130_fd_sc_hd__a21oi_1	1.952	59	59	report
+B	False	buffer_only	30264	clk_e	-1.444	MIXED	0.2864	6.816	15	sky130_fd_sc_hd__a21oi_1	1.952	59	59	report
+C	True	default	25920	clk_a	9.279	NO_ACTION	0.2991	6.099	21	sky130_fd_sc_hd__nor3b_1	1.824	32	32	report
+C	True	default	25920	clk_b	-4.065	FANOUT_DOMINATED	0.8382	16.438	13	sky130_fd_sc_hd__nor2_1	7.45	128	131	report
+C	True	default	25920	clk_e	-15.762	FANOUT_DOMINATED	0.9547	20.473	6	sky130_fd_sc_hd__nor4_1	17.567	256	256	report
+D	True	buffer_only	26958	clk_a	10.362	NO_ACTION	0.0	5.017	22	sky130_fd_sc_hd__dlygate4sd3_1	0.619	5	22	report
+D	True	buffer_only	26958	clk_b	5.665	NO_ACTION	0.0	0.515	3	sky130_fd_sc_hd__dfstp_2	0.515	4	4	report
+D	True	buffer_only	26958	clk_e	-0.613	MIXED	0.3221	5.889	19	sky130_fd_sc_hd__dfrtp_1	1.897	136	136	report
+E	True	buffer_size	26958	clk_a	11.158	NO_ACTION	0.0	4.221	22	sky130_fd_sc_hd__dfrtp_1	0.502	22	22	report
+E	True	buffer_size	26958	clk_b	5.665	NO_ACTION	0.0	0.515	3	sky130_fd_sc_hd__dfstp_2	0.515	4	4	report
+E	True	buffer_size	26958	clk_e	-0.319	MIXED	0.3374	5.595	19	sky130_fd_sc_hd__dfrtp_1	1.888	136	136	report

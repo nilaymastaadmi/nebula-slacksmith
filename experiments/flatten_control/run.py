@@ -17,15 +17,23 @@ REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
 sys.path.insert(0, os.path.join(REPO, "tools"))
 import remeasure                      # noqa: E402
 import classify_path                  # noqa: E402
-from slacksmith import BUF_ONLY, BOTH  # noqa: E402
+from slacksmith import BUF_ONLY, BOTH, _HEAD  # noqa: E402
 
 CLOCKS = ("clk_a", "clk_b", "clk_e")
+# Amendment 1: -p buffers ABC's primary inputs, which is where flop outputs
+# sit once dfflibmap has mapped the flops before abc runs.
+BUF_P = _HEAD + ";buffer,-N,16,-p"
+BOTH_P = _HEAD + ";buffer,-N,16,-p;upsize;dnsize"
+ABC_LABEL = {None: "default", BUF_ONLY: "buffer_only", BOTH: "buffer_size",
+             BUF_P: "buffer_pi", BOTH_P: "buffer_pi_size"}
 ARMS = [
     ("A", False, None),
     ("B", False, BUF_ONLY),
     ("C", True, None),
     ("D", True, BUF_ONLY),
     ("E", True, BOTH),
+    ("F", True, BUF_P),
+    ("G", True, BOTH_P),
 ]
 
 
@@ -74,7 +82,10 @@ def main():
         sys.exit(f"FATAL: dont_use returned {ndu} flags, expected >= 2")
     print(f"dont_use flags: {ndu}")
 
-    rows = []
+    # A partial run (--arms FG) keeps the rows of arms it does not re-run.
+    prev = os.path.join(res, "summary.json")
+    rows = [r for r in (json.load(open(prev)) if os.path.exists(prev) else [])
+            if r["arm"] not in a.arms]
     for arm, flat, abc in ARMS:
         if arm not in a.arms:
             continue
@@ -93,8 +104,7 @@ def main():
             top = (cl.get("top_cells") or [{}])[0]
             rows_c, _s, _m = classify_path.parse_path(rpt)
             maxfo = max((r["report_fanout"] or 0) for r in rows_c) if rows_c else None
-            row = dict(arm=arm, flatten=flat, abc=("default" if abc is None else
-                       ("buffer_only" if abc == BUF_ONLY else "buffer_size")),
+            row = dict(arm=arm, flatten=flat, abc=ABC_LABEL.get(abc, abc),
                        cells=cells, clock=c, slack=cl.get("slack_ns"), verdict=cl.get("verdict"),
                        share=cl.get("fanout_delay_share"), path_delay=cl.get("path_delay_ns"),
                        cells_on_path=cl.get("cells_on_path"), top_cell=top.get("cell"),
@@ -105,6 +115,7 @@ def main():
                   f"top {row['top_cell']} {row['top_incr']} ns fanout {row['top_fanout']}  "
                   f"max fanout on path {maxfo}")
 
+    rows.sort(key=lambda r: (r["arm"], CLOCKS.index(r["clock"])))
     keys = list(rows[0].keys())
     with open(os.path.join(res, "summary.tsv"), "w") as f:
         f.write("\t".join(keys) + "\n")

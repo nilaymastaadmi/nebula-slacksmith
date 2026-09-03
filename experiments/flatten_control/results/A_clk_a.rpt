@@ -1,0 +1,58 @@
+
+Startpoint: u_rv32_a/u_core/_11355_
+            (rising edge-triggered flip-flop clocked by clk_a)
+Endpoint: u_rv32_a/u_core/_11696_
+          (rising edge-triggered flip-flop clocked by clk_a)
+Path Group: clk_a
+Path Type: max
+
+Fanout    Delay     Time   Description
+-----------------------------------------------------------------
+          0.000    0.000   clock clk_a (rise edge)
+          0.000    0.000   clock network delay (ideal)
+          0.000    0.000 ^ u_rv32_a/u_core/_11355_/CLK (sky130_fd_sc_hd__dfrtp_1)
+    15    0.470    0.470 v u_rv32_a/u_core/_11355_/Q (sky130_fd_sc_hd__dfrtp_1)
+     4    0.235    0.705 v u_rv32_a/_1264_/Y (sky130_fd_sc_hd__nand2b_1)
+    37    0.372    1.077 ^ u_rv32_a/_1265_/Y (sky130_fd_sc_hd__clkinv_1)
+   387    9.494   10.571 ^ u_rv32_a/_1268_/X (sky130_fd_sc_hd__and2_0)
+    49    5.660   16.231 v u_rv32_a/u_core/_05624_/Y (sky130_fd_sc_hd__clkinv_1)
+    30    1.163   17.394 v u_rv32_a/u_core/_05661_/X (sky130_fd_sc_hd__and2_0)
+     1    0.459   17.853 ^ u_rv32_a/u_core/_05820_/Y (sky130_fd_sc_hd__a222oi_1)
+     1    0.150   18.003 v u_rv32_a/u_core/_05826_/Y (sky130_fd_sc_hd__nand4b_1)
+    22    0.364   18.367 v u_rv32_a/u_core/_05845_/X (sky130_fd_sc_hd__o21a_1)
+    60    2.333   20.700 ^ u_rv32_a/u_core/_07399_/Y (sky130_fd_sc_hd__mux2i_1)
+     5    0.380   21.080 v u_rv32_a/u_core/_07496_/Y (sky130_fd_sc_hd__xnor2_1)
+     3    0.392   21.472 v u_rv32_a/u_core/_07503_/X (sky130_fd_sc_hd__o221a_1)
+     3    0.315   21.787 v u_rv32_a/u_core/_07505_/X (sky130_fd_sc_hd__o311a_1)
+     2    0.291   22.078 v u_rv32_a/u_core/_07507_/X (sky130_fd_sc_hd__o311a_1)
+     3    0.427   22.505 ^ u_rv32_a/u_core/_07510_/Y (sky130_fd_sc_hd__o311ai_0)
+     2    0.149   22.654 v u_rv32_a/u_core/_07515_/Y (sky130_fd_sc_hd__a31oi_1)
+     3    0.444   23.098 ^ u_rv32_a/u_core/_07518_/Y (sky130_fd_sc_hd__o311ai_0)
+     2    0.165   23.263 v u_rv32_a/u_core/_07519_/Y (sky130_fd_sc_hd__a311oi_1)
+     1    0.281   23.544 ^ u_rv32_a/u_core/_07523_/Y (sky130_fd_sc_hd__o311ai_0)
+     1    0.125   23.669 v u_rv32_a/u_core/_07525_/Y (sky130_fd_sc_hd__a311oi_1)
+     2    0.392   24.061 ^ u_rv32_a/u_core/_07530_/Y (sky130_fd_sc_hd__a2111oi_0)
+     2    0.134   24.195 v u_rv32_a/u_core/_07539_/Y (sky130_fd_sc_hd__a21oi_1)
+     1    0.142   24.337 ^ u_rv32_a/u_core/_08016_/Y (sky130_fd_sc_hd__nor3_1)
+     1    0.094   24.431 v u_rv32_a/u_core/_08017_/Y (sky130_fd_sc_hd__a21oi_1)
+     1    0.199   24.631 ^ u_rv32_a/u_core/_08018_/Y (sky130_fd_sc_hd__xnor2_1)
+     1    0.082   24.713 v u_rv32_a/u_core/_08041_/Y (sky130_fd_sc_hd__o21ai_0)
+     1    0.176   24.889 v u_rv32_a/u_core/_08042_/X (sky130_fd_sc_hd__o21a_1)
+    32    3.144   28.033 ^ u_rv32_a/u_core/_08048_/Y (sky130_fd_sc_hd__a2111oi_0)
+     1    0.341   28.374 v u_rv32_a/u_core/_09426_/Y (sky130_fd_sc_hd__o21ai_0)
+          0.000   28.374 v u_rv32_a/u_core/_11696_/D (sky130_fd_sc_hd__dfrtp_1)
+                  28.374   data arrival time
+
+         15.500   15.500   clock clk_a (rise edge)
+          0.000   15.500   clock network delay (ideal)
+          0.000   15.500   clock reconvergence pessimism
+                  15.500 ^ u_rv32_a/u_core/_11696_/CLK (sky130_fd_sc_hd__dfrtp_1)
+         -0.292   15.208   library setup time
+                  15.208   data required time
+-----------------------------------------------------------------
+                  15.208   data required time
+                 -28.374   data arrival time
+-----------------------------------------------------------------
+                 -13.167   slack (VIOLATED)
+
+
