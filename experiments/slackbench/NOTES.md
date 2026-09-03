@@ -162,12 +162,23 @@ an inconsistent pair, but induction is free to start there and report a
 counterexample that no execution can reach. PDR computes reachability and
 both false alarms disappear: CDC-2 and CONTROL-2 both prove, unbounded.
 
-This is the same split this repository already measured a month earlier in
+This is the same split this repository measured a month earlier in
 `experiments/fsm_reencode/`, where `prove` did not close and `pdr` did on the
-identical property. **We had the result and did not carry it forward into the
-gate.** The practical consequence is that the fourth obligation branch does
-not need a hand-supplied state bijection to work on these cases; it needs a
-reachability-aware engine.
+identical property.
+
+**Correction, and it cuts against an earlier draft of this file.** That draft
+said "we had the result and did not carry it forward into the gate." Checked
+rather than assumed: `tools/gate_proposal.py` discharges k>0 obligations with
+`run_proof.py --tasks bmc,pdr` and accepts only on `pdr ... PROVEN`, and k=0
+obligations with EQY. **The production gate never relied on temporal induction
+alone.** The induction-only discharge was a shortcut in *this harness*, which
+I wrote fresh. So the `miter_k` row measures a configuration we do not ship,
+and the honest reading is that it is a reasonable baseline anyone might build,
+while `miter_pdr` is the closer analogue of the real gate.
+
+The practical consequence stands: the fourth obligation branch does not need a
+hand-supplied state bijection on these cases, it needs a reachability-aware
+engine, and the shipped gate already uses one.
 
 **PDR is right on 7 of 8 and wrong on none**, at the cost of one timeout on
 the k=+1 pipeline cut with a 16-bit multiplier in its cone. That is the
@@ -182,10 +193,13 @@ suite is exactly why that rule exists.
 
 ## Prediction 6, re-scored honestly
 
-Our tool is two tools here. Discharged by induction it is **wrong twice**.
-Discharged by PDR it is **wrong zero times but declines once**. Neither is a
-perfect score, so prediction 6 holds either way, and reporting only the PDR
-row would be the cherry-pick the registration exists to prevent.
+Our tool is two tools here, and only one of them is ours. Discharged by
+induction, which is **not** what SlackSmith ships, it is wrong twice.
+Discharged by PDR, which is what the real gate does, it is **wrong zero times
+and declines once**. So the shipped configuration scores 7 of 8, not 6, and
+prediction 6 still holds because a decline is not a perfect score. Both rows
+stay published: dropping the induction row now that it looks worse would be
+the cherry-pick the registration exists to prevent.
 
 ## Prediction 2 is now scored properly, and it is WRONG
 

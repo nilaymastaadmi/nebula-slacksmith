@@ -1,0 +1,16 @@
+[
+ {
+  "case": "XPROP-1",
+  "checker": "sim_eq",
+  "truth": "NOT_EQUIVALENT",
+  "verdict": "ACCEPT",
+  "detail": "0 mismatching cycles of 500"
+ },
+ {
+  "case": "XPROP-1",
+  "checker": "sim_neq",
+  "truth": "NOT_EQUIVALENT",
+  "verdict": "REJECT",
+  "detail": "50 mismatching cycles of 500"
+ }
+]

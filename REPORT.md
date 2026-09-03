@@ -308,9 +308,9 @@ Every RTL benchmark we found grades a *design* or a *testbench*. **SlackBench gr
 | `cec` / `dsec` | 2 | 0 | 1 | 5 |
 | EQY | 3 | 0 | 0 | 5 |
 | sim lazy / aggressive | 6 / 7 | **2 / 1** | 0 | 0 |
-| ours, induction / PDR | 6 / **7** | 0 | **2** / 0 | 0 / 1 |
+| miter, induction / **PDR (shipped)** | 6 / **7** | 0 | **2** / 0 | 0 / 1 |
 
-Four findings. **A wrong transform survived 40,000 simulated cycles**, wrong on one input pair in 65,536, with that pair published in advance. **Combinational and sequential EC could not express 5 of 8 questions**, each refusal evidenced by latch counts. **`cec` and `dsec` both confidently rejected an equivalent pair**, because they match latches positionally and the state holds binary where it held gray: a checker answering a different question than the one asked can be wrong without signalling that it changed the question. And **our own checker is wrong twice under induction and zero times under PDR**, because induction quantifies over unreachable states, the same split §6 recorded and we had not carried into the gate. **The engine that never lies is the one that sometimes refuses.**
+Four findings. **A wrong transform survived 40,000 simulated cycles**, wrong on one input pair in 65,536, with that pair published in advance. **Combinational and sequential EC could not express 5 of 8 questions**, each refusal evidenced by latch counts. **`cec` and `dsec` both confidently rejected an equivalent pair**, because they match latches positionally and the state holds binary where it held gray: a checker answering a different question than the one asked can be wrong without signalling that it changed the question. And **a k-padded miter is wrong twice under temporal induction and zero times under PDR**, because induction quantifies over states no execution reaches. The shipped gate already discharges with BMC plus PDR and accepts only on PDR, so it scores **7 of 8 with one decline**; the induction row is a baseline anyone might build, kept published rather than dropped once it looked worse. **The engine that never lies is the one that sometimes refuses.**
 
 **One of six registered predictions is wrong**: EQY declines both STIMULUS cases rather than refuting one. Prediction 6 registered that our own gate should not sweep its own exam. It did not. `experiments/slackbench/`.
 

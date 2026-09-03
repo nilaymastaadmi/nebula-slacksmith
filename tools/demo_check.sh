@@ -91,6 +91,53 @@ bash tools/verdict_regression.sh > $HOME/b6.txt 2>&1
 tail -6 $HOME/b6.txt
 chk "beat 6 verdict regression" $HOME/b6.txt "P4" "A2"
 
+echo "=== beat 7: the cheat no equivalence checker can catch"
+bash experiments/sdc_integrity/run.sh > $HOME/b7s.txt 2>&1
+grep -E "constraint variant|baseline_honest|mcp_whole_clk_e|cell count" $HOME/b7s.txt
+chk "beat 7 one SDC line closes the group" $HOME/b7s.txt \
+  "baseline_honest" "mcp_whole_clk_e" "26958 cells"
+python3 - <<'PY' > $HOME/b7cmp.txt 2>&1
+import os, re
+t = open(os.path.expanduser("~/b7s.txt"), encoding="utf-8", errors="replace").read()
+def row(name):
+    m = re.search(rf"^{name}\s+(\S+)\s+(\S+)\s+(\S+)", t, re.M)
+    return [float(x) for x in m.groups()] if m else None
+h, c = row("baseline_honest"), row("mcp_whole_clk_e")
+# the claim the narrator makes: clk_e goes from violated to met on an
+# identical netlist, and clk_a/clk_b do not move at all.
+ok = (h and c and h[2] < 0 < c[2] and h[0] == c[0] and h[1] == c[1])
+print(f"honest {h}  tampered {c}  gain {round(c[2]-h[2],3) if h and c else '?'}")
+print("BEAT7 OK" if ok else "BEAT7 CLAIM BROKEN")
+PY
+cat $HOME/b7cmp.txt
+chk "beat 7 claim still true" $HOME/b7cmp.txt "BEAT7 OK"
+
+echo "=== beat 8: the exam"
+column -t -s $'\t' experiments/slackbench/results/raw.tsv > $HOME/b8.txt 2>&1
+head -3 $HOME/b8.txt
+python3 - <<'PY' > $HOME/b8cmp.txt 2>&1
+import csv, os
+rows = list(csv.DictReader(open("experiments/slackbench/results/raw.tsv",
+                                encoding="utf-8"), delimiter="\t"))
+def v(case, ck):
+    for r in rows:
+        if r["case"] == case and r["checker"] == ck:
+            return r["verdict"]
+# the three claims beat 8 makes out loud
+esc = v("STIMULUS-1", "sim_lazy") == "ACCEPT" and v("STIMULUS-1", "sim_aggr") == "ACCEPT"
+cannot = sum(1 for r in rows if r["checker"] == "cec" and r["verdict"] == "CANNOT")
+false_alarm = v("CDC-2", "cec") == "REJECT" and v("CDC-2", "dsec") == "REJECT"
+ours_wrong = sum(1 for r in rows if r["checker"] == "miter_k"
+                 and ((r["truth"] == "EQUIVALENT") != (r["verdict"] == "ACCEPT"))
+                 and r["verdict"] != "CANNOT")
+print(f"escaped both sims: {esc}   cec CANNOT count: {cannot}   "
+      f"cec+dsec false alarm on CDC-2: {false_alarm}   induction wrong: {ours_wrong}")
+print("BEAT8 OK" if (esc and cannot == 5 and false_alarm and ours_wrong == 2)
+      else "BEAT8 CLAIM BROKEN")
+PY
+cat $HOME/b8cmp.txt
+chk "beat 8 claims still true" $HOME/b8cmp.txt "BEAT8 OK"
+
 echo "=== classifier regression (not a beat, but the demo cites it)"
 python3 tools/classify_regression.py > $HOME/b7.txt 2>&1
 tail -2 $HOME/b7.txt
