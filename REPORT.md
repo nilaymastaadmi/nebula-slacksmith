@@ -301,7 +301,7 @@ A third defect surfaced in the gate: a string-match fix read P4's concrete count
 
 ### 7.4 SlackBench: we built the exam and published our own score
 
-Every RTL benchmark we found grades a *design* or a *testbench*. **SlackBench grades a verification methodology.** Eight transform pairs, ground truth and trap class committed **before any checker ran on them**, each built to defeat a specific checker's abstraction; a literature search found nothing equivalent. The score is a confusion matrix, never one number, because a checker that rejects everything would otherwise win. Case-by-case matrix in `experiments/slackbench/NOTES.md`; totals over 8 cases:
+Every RTL benchmark we found grades a *design* or a *testbench*. **SlackBench grades a verification methodology.** Eight transform pairs, ground truth and trap class committed **before any checker ran on them**, each built to defeat a specific checker's abstraction; a literature search found nothing equivalent. The score is a confusion matrix, never one number, because a checker that rejects everything would otherwise win. Totals over 8 cases, case-by-case in `NOTES.md`:
 
 | checker | correct | wrongly ACCEPTED | wrongly REJECTED | cannot express |
 |---|---|---|---|---|
@@ -312,7 +312,7 @@ Every RTL benchmark we found grades a *design* or a *testbench*. **SlackBench gr
 
 Four findings. **A wrong transform survived 40,000 simulated cycles**, wrong on one input pair in 65,536, with that pair published in advance. **Combinational and sequential EC could not express 5 of 8 questions**, each refusal evidenced by latch counts. **`cec` and `dsec` both confidently rejected an equivalent pair**, because they match latches positionally: a checker answering a different question than the one asked can be wrong without signalling it changed the question. And **a k-padded miter is wrong twice under temporal induction and zero times under PDR**, because induction quantifies over states no execution reaches. The shipped gate discharges with BMC plus PDR and accepts only on PDR, scoring **7 of 8 with one decline**; the induction row is kept published rather than dropped once it looked worse. **The engine that never lies is the one that sometimes refuses.**
 
-**One of six registered predictions is wrong**: EQY declines both STIMULUS cases rather than refuting one. Prediction 6 registered that our own gate should not sweep its own exam, and it did not. A separately registered X-propagation addendum adds one more: on identical stimulus, a testbench comparing with `==` accepts a dropped reset while `!==` catches it in 50 cycles, so **the verdict is a property of the comparison operator, not the design.** `experiments/slackbench/`.
+**One of six registered predictions is wrong**: EQY declines both STIMULUS cases rather than refuting one. Prediction 6 registered that our own gate should not sweep its own exam, and it did not. A separately registered X-propagation addendum adds one more: on identical stimulus, a testbench comparing with `==` accepts a dropped reset while `!==` catches it in 50 cycles, so **the verdict is a property of the comparison operator, not the design.** A quarantined archival column adds eight more cases, carrying no prediction and never added to a sealed count. `experiments/slackbench/`.
 
 ---
 
