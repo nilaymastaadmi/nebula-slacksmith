@@ -85,12 +85,18 @@ def total_violation(slacks):
     return round(sum(min(v, 0.0) for v in slacks.values() if v is not None), 3)
 
 
-def abc_script_for(phys):
-    """ABC script for the currently applied physical components, or None."""
+def abc_script_for(phys, buffer_pi=False):
+    """ABC script for the currently applied physical components, or None.
+
+    buffer_pi adds -p to ABC's buffer command so flop outputs (primary
+    inputs from ABC's point of view once dfflibmap has run) are buffered
+    too; experiments/flatten_control/NOTES.md amendment 1, 2026-09-03.
+    Without it the scripts are byte-identical to BUF_ONLY / BOTH."""
+    buf = ";buffer,-N,16" + (",-p" if buffer_pi else "")
     if phys["buffer"] and phys["size"]:
-        return BOTH
+        return _HEAD + buf + ";upsize;dnsize"
     if phys["buffer"]:
-        return BUF_ONLY
+        return _HEAD + buf
     if phys["size"]:
         return SIZE_ONLY
     return None
