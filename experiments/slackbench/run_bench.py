@@ -119,7 +119,18 @@ MITER = """module sb_miter (input wire clk, input wire rst_n{extra_in});
   gold_dut u_gold (.{clk}(clk), .{rst}(rst_n){conn_gold});
   gate_dut u_gate (.{clk}(clk), .{rst}(rst_n){conn_gate});
 {delay}
-  reg [7:0] warm;
+  // A proof engine starts from an ARBITRARY state unless told otherwise, so
+  // the miter must force a real reset first: without this, PDR reports a
+  // counterexample even for a trivially equivalent pair, which is a harness
+  // artifact and not a finding. `boot` carries an initial value, which gives
+  // the engine a defined starting point, and the assume holds rst_n low long
+  // enough for the async resets inside both DUTs to take effect.
+  reg [1:0] boot = 2'd0;
+  always @(posedge clk) if (boot != 2'd3) boot <= boot + 2'd1;
+  always @(posedge clk) if (boot < 2'd2) assume (!rst_n);
+  always @(posedge clk) if (boot >= 2'd2) assume (rst_n);
+
+  reg [7:0] warm = 8'h0;
   always @(posedge clk or negedge rst_n)
     if (!rst_n) warm <= 8'h0; else if (warm < 8'hF0) warm <= warm + 8'h1;
   always @(posedge clk) if (rst_n && warm > 8'd{warmup}) begin
@@ -287,6 +298,112 @@ def check_miter(a, c, wd):
     return "ERROR", o.strip()[-140:]
 
 
+EQY_CFG = """[options]
+
+[gold]
+read_verilog {gold}
+prep -top {top}
+
+[gate]
+read_verilog {gate}
+prep -top {top}
+
+[strategy sat]
+use sat
+depth {depth}
+"""
+
+
+def check_eqy(a, c, wd):
+    """EQY, the partitioned equivalence checker this project's own gate uses.
+
+    Added after the first run (see NOTES.md): prediction 2 named EQY and the
+    first harness did not run it, which was the most conspicuous hole in the
+    suite. No case was touched to add it.
+    """
+    d = os.path.join(wd, "eqy")
+    if os.path.isdir(d):
+        import shutil as _sh; _sh.rmtree(d, ignore_errors=True)
+    cfg = os.path.join(wd, "run.eqy")
+    open(cfg, "w").write(EQY_CFG.format(
+        gold=os.path.join(c["dir"], "gold.v"), gate=os.path.join(c["dir"], "gate.v"),
+        top=c["top"], depth=10))
+    r = sh([a.eqy, "-f", "-d", d, cfg], timeout=900)
+    o = r.stdout + r.stderr
+    open(os.path.join(wd, "eqy.log"), "w", errors="replace").write(o)
+    if "Successfully proved designs equivalent" in o:
+        return "ACCEPT", "all partitions proved"
+    if "Reached maximum number of time steps" in o:
+        # The A2 lesson: bound exhaustion is NOT a refutation.
+        return "CANNOT", "depth bound reached, not a refutation"
+    if re.search(r"Assert failed|model found", o):
+        return "REJECT", "counterexample in a partition"
+    if "Failed to prove equivalence" in o:
+        return "CANNOT", "failed to prove, no counterexample reported"
+    if r.returncode == 124:
+        return "CANNOT", "timeout"
+    return "ERROR", o.strip()[-140:]
+
+
+SBY_CFG = """[options]
+mode prove
+depth {depth}
+
+[engines]
+abc pdr
+
+[script]
+read_verilog {gold}
+rename {top} gold_dut
+design -stash gold
+read_verilog {gate}
+rename {top} gate_dut
+design -stash gate
+design -copy-from gold -as gold_dut gold_dut
+design -copy-from gate -as gate_dut gate_dut
+read_verilog -formal {miter}
+prep -top sb_miter -flatten
+
+[files]
+{gold}
+{gate}
+{miter}
+"""
+
+
+def check_miter_pdr(a, c, wd):
+    """The same obligation, discharged by PDR instead of temporal induction.
+
+    Added after the first run. Temporal induction quantifies over ALL states,
+    including unreachable ones, so it fails on a re-encoded design where the
+    gate's state space is a strict subset (a one-hot register is never 011).
+    PDR computes reachability and does not have that problem. This is the
+    same split this project already measured in experiments/fsm_reencode/:
+    `prove` did not close and `pdr` did, on the identical property.
+    """
+    m = os.path.join(wd, "miter.v")
+    gen_miter(c, m)
+    d = os.path.join(wd, "sby")
+    if os.path.isdir(d):
+        import shutil as _sh; _sh.rmtree(d, ignore_errors=True)
+    cfg = os.path.join(wd, "run.sby")
+    open(cfg, "w").write(SBY_CFG.format(
+        gold=os.path.join(c["dir"], "gold.v"), gate=os.path.join(c["dir"], "gate.v"),
+        miter=m, top=c["top"], depth=20))
+    r = sh([a.sby, "-f", "-d", d, cfg], timeout=900)
+    o = r.stdout + r.stderr
+    open(os.path.join(wd, "sby.log"), "w", errors="replace").write(o)
+    if "PASS" in o and "DONE (PASS" in o:
+        return "ACCEPT", "PDR proved, unbounded"
+    if "DONE (FAIL" in o or "Assert failed" in o:
+        return "REJECT", "PDR found a counterexample"
+    if r.returncode == 124:
+        return "CANNOT", "timeout"
+    if "DONE (UNKNOWN" in o or "ERROR" in o:
+        return "CANNOT", "PDR did not settle"
+    return "ERROR", o.strip()[-140:]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--workdir", required=True)
@@ -294,13 +411,17 @@ def main():
     ap.add_argument("--abc", default=os.path.expanduser("~/tools/oss-cad-suite/bin/yosys-abc"))
     ap.add_argument("--iverilog", default=os.path.expanduser("~/tools/oss-cad-suite/bin/iverilog"))
     ap.add_argument("--vvp", default=os.path.expanduser("~/tools/oss-cad-suite/bin/vvp"))
+    ap.add_argument("--eqy", default=os.path.expanduser("~/tools/oss-cad-suite/bin/eqy"))
+    ap.add_argument("--sby", default=os.path.expanduser("~/tools/oss-cad-suite/bin/sby"))
     a = ap.parse_args()
     a.workdir = os.path.expanduser(a.workdir)
 
     checkers = [("cec", check_cec), ("dsec", check_dsec),
+                ("eqy", check_eqy),
                 ("sim_lazy", lambda A, C, W: check_sim_pair(A, C, W, True)),
                 ("sim_aggr", lambda A, C, W: check_sim_pair(A, C, W, False)),
-                ("miter_k", check_miter)]
+                ("miter_k", check_miter),
+                ("miter_pdr", check_miter_pdr)]
 
     rows = []
     for c in load_cases():

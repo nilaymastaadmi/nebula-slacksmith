@@ -2,7 +2,7 @@
  {
   "case": "CDC-1",
   "class": "CDC",
-  "truth": "NOT_EQUIVALENT",
+  "truth": "EQUIVALENT",
   "k": -1,
   "checker": "cec",
   "verdict": "CANNOT",
@@ -12,7 +12,7 @@
  {
   "case": "CDC-1",
   "class": "CDC",
-  "truth": "NOT_EQUIVALENT",
+  "truth": "EQUIVALENT",
   "k": -1,
   "checker": "dsec",
   "verdict": "CANNOT",
@@ -22,7 +22,17 @@
  {
   "case": "CDC-1",
   "class": "CDC",
-  "truth": "NOT_EQUIVALENT",
+  "truth": "EQUIVALENT",
+  "k": -1,
+  "checker": "eqy",
+  "verdict": "ACCEPT",
+  "detail": "all partitions proved",
+  "circular": false
+ },
+ {
+  "case": "CDC-1",
+  "class": "CDC",
+  "truth": "EQUIVALENT",
   "k": -1,
   "checker": "sim_lazy",
   "verdict": "ACCEPT",
@@ -32,7 +42,7 @@
  {
   "case": "CDC-1",
   "class": "CDC",
-  "truth": "NOT_EQUIVALENT",
+  "truth": "EQUIVALENT",
   "k": -1,
   "checker": "sim_aggr",
   "verdict": "ACCEPT",
@@ -42,11 +52,21 @@
  {
   "case": "CDC-1",
   "class": "CDC",
-  "truth": "NOT_EQUIVALENT",
+  "truth": "EQUIVALENT",
   "k": -1,
   "checker": "miter_k",
   "verdict": "ACCEPT",
   "detail": "sat proof succeeded",
+  "circular": false
+ },
+ {
+  "case": "CDC-1",
+  "class": "CDC",
+  "truth": "EQUIVALENT",
+  "k": -1,
+  "checker": "miter_pdr",
+  "verdict": "ACCEPT",
+  "detail": "PDR proved, unbounded",
   "circular": false
  },
  {
@@ -74,6 +94,16 @@
   "class": "CDC",
   "truth": "EQUIVALENT",
   "k": 0,
+  "checker": "eqy",
+  "verdict": "CANNOT",
+  "detail": "failed to prove, no counterexample reported",
+  "circular": false
+ },
+ {
+  "case": "CDC-2",
+  "class": "CDC",
+  "truth": "EQUIVALENT",
+  "k": 0,
   "checker": "sim_lazy",
   "verdict": "ACCEPT",
   "detail": "19998 cycles, no difference",
@@ -97,6 +127,16 @@
   "checker": "miter_k",
   "verdict": "REJECT",
   "detail": "counterexample found by the padded miter",
+  "circular": false
+ },
+ {
+  "case": "CDC-2",
+  "class": "CDC",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "miter_pdr",
+  "verdict": "ACCEPT",
+  "detail": "PDR proved, unbounded",
   "circular": false
  },
  {
@@ -124,6 +164,16 @@
   "class": "CONTROL",
   "truth": "EQUIVALENT",
   "k": 0,
+  "checker": "eqy",
+  "verdict": "ACCEPT",
+  "detail": "all partitions proved",
+  "circular": false
+ },
+ {
+  "case": "CONTROL-1",
+  "class": "CONTROL",
+  "truth": "EQUIVALENT",
+  "k": 0,
   "checker": "sim_lazy",
   "verdict": "ACCEPT",
   "detail": "19998 cycles, no difference",
@@ -150,6 +200,16 @@
   "circular": false
  },
  {
+  "case": "CONTROL-1",
+  "class": "CONTROL",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "miter_pdr",
+  "verdict": "ACCEPT",
+  "detail": "PDR proved, unbounded",
+  "circular": false
+ },
+ {
   "case": "CONTROL-2",
   "class": "CONTROL",
   "truth": "EQUIVALENT",
@@ -167,6 +227,16 @@
   "checker": "dsec",
   "verdict": "CANNOT",
   "detail": "cannot build a miter: gold 3 latches / 5 inputs, gate 4 / 6",
+  "circular": false
+ },
+ {
+  "case": "CONTROL-2",
+  "class": "CONTROL",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "eqy",
+  "verdict": "ACCEPT",
+  "detail": "all partitions proved",
   "circular": false
  },
  {
@@ -200,6 +270,16 @@
   "circular": true
  },
  {
+  "case": "CONTROL-2",
+  "class": "CONTROL",
+  "truth": "EQUIVALENT",
+  "k": 0,
+  "checker": "miter_pdr",
+  "verdict": "ACCEPT",
+  "detail": "PDR proved, unbounded",
+  "circular": false
+ },
+ {
   "case": "LATENCY-1",
   "class": "LATENCY",
   "truth": "EQUIVALENT",
@@ -217,6 +297,16 @@
   "checker": "dsec",
   "verdict": "CANNOT",
   "detail": "cannot build a miter: gold 17 latches / 50 inputs, gate 49 / 82",
+  "circular": false
+ },
+ {
+  "case": "LATENCY-1",
+  "class": "LATENCY",
+  "truth": "EQUIVALENT",
+  "k": 1,
+  "checker": "eqy",
+  "verdict": "CANNOT",
+  "detail": "failed to prove, no counterexample reported",
   "circular": false
  },
  {
@@ -250,6 +340,16 @@
   "circular": true
  },
  {
+  "case": "LATENCY-1",
+  "class": "LATENCY",
+  "truth": "EQUIVALENT",
+  "k": 1,
+  "checker": "miter_pdr",
+  "verdict": "CANNOT",
+  "detail": "timeout",
+  "circular": false
+ },
+ {
   "case": "LATENCY-2",
   "class": "LATENCY",
   "truth": "NOT_EQUIVALENT",
@@ -267,6 +367,16 @@
   "checker": "dsec",
   "verdict": "CANNOT",
   "detail": "cannot build a miter: gold 17 latches / 50 inputs, gate 33 / 66",
+  "circular": false
+ },
+ {
+  "case": "LATENCY-2",
+  "class": "LATENCY",
+  "truth": "NOT_EQUIVALENT",
+  "k": 1,
+  "checker": "eqy",
+  "verdict": "CANNOT",
+  "detail": "failed to prove, no counterexample reported",
   "circular": false
  },
  {
@@ -300,6 +410,16 @@
   "circular": false
  },
  {
+  "case": "LATENCY-2",
+  "class": "LATENCY",
+  "truth": "NOT_EQUIVALENT",
+  "k": 1,
+  "checker": "miter_pdr",
+  "verdict": "REJECT",
+  "detail": "PDR found a counterexample",
+  "circular": false
+ },
+ {
   "case": "STIMULUS-1",
   "class": "STIMULUS",
   "truth": "NOT_EQUIVALENT",
@@ -316,7 +436,17 @@
   "k": 0,
   "checker": "dsec",
   "verdict": "REJECT",
-  "detail": "Networks are NOT EQUIVALENT after simulation.   Time =     0.09 sec",
+  "detail": "Networks are NOT EQUIVALENT after simulation.   Time =     0.12 sec",
+  "circular": false
+ },
+ {
+  "case": "STIMULUS-1",
+  "class": "STIMULUS",
+  "truth": "NOT_EQUIVALENT",
+  "k": 0,
+  "checker": "eqy",
+  "verdict": "CANNOT",
+  "detail": "failed to prove, no counterexample reported",
   "circular": false
  },
  {
@@ -350,6 +480,16 @@
   "circular": false
  },
  {
+  "case": "STIMULUS-1",
+  "class": "STIMULUS",
+  "truth": "NOT_EQUIVALENT",
+  "k": 0,
+  "checker": "miter_pdr",
+  "verdict": "REJECT",
+  "detail": "PDR found a counterexample",
+  "circular": false
+ },
+ {
   "case": "STIMULUS-2",
   "class": "STIMULUS",
   "truth": "NOT_EQUIVALENT",
@@ -367,6 +507,16 @@
   "checker": "dsec",
   "verdict": "CANNOT",
   "detail": "cannot build a miter: gold 17 latches / 27 inputs, gate 18 / 28",
+  "circular": false
+ },
+ {
+  "case": "STIMULUS-2",
+  "class": "STIMULUS",
+  "truth": "NOT_EQUIVALENT",
+  "k": 0,
+  "checker": "eqy",
+  "verdict": "CANNOT",
+  "detail": "failed to prove, no counterexample reported",
   "circular": false
  },
  {
@@ -397,6 +547,16 @@
   "checker": "miter_k",
   "verdict": "REJECT",
   "detail": "counterexample found by the padded miter",
+  "circular": false
+ },
+ {
+  "case": "STIMULUS-2",
+  "class": "STIMULUS",
+  "truth": "NOT_EQUIVALENT",
+  "k": 0,
+  "checker": "miter_pdr",
+  "verdict": "REJECT",
+  "detail": "PDR found a counterexample",
   "circular": false
  }
 ]

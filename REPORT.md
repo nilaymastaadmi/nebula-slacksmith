@@ -158,16 +158,7 @@ Two limits: pass 3 is bounded (depth 16), and exotic flow control that misses th
 
 ### 6.2 Why simulation is not a substitute, measured on four mutants
 
-Before the LLM experiment we measured the same question on hand-built mutants of a known-correct transform, with a correct control:
-
-| mutant | lazy testbench | aggressive testbench | formal |
-|---|---|---|---|
-| `mut0_correct` (control) | PASS | PASS | **PASSED** |
-| `mut1_stale_c` | **PASS** | FAIL | **FAILED** |
-| `mut2_rare` | **PASS** | **PASS** | **FAILED** |
-| `mut3_trunc` | FAIL | FAIL | **FAILED** |
-
-`mut1_stale_c` is the classic pipelining bug, stage 2 adding the current operand to a product one cycle old, invisible to any testbench that holds that operand constant. `mut2_rare` survived 20,000 random vectors in both regimes and formal refuted it instantly. §7 reproduces this on a real LLM proposal rather than a hand-built mutant.
+Before the LLM experiment we measured the same question on four hand-built mutants of a known-correct transform, with a correct control that every method passes. **Two of the three invalid mutants escaped a realistic simulation gate.** One is the classic pipelining bug, stage 2 adding the current operand to a product one cycle old, invisible to any testbench holding that operand constant; the other is wrong on roughly one input in a million and survived 20,000 random vectors in both regimes, where formal refuted it instantly. §7 reproduces this on a real LLM proposal, and §7.4 turns it into a suite.
 
 ---
 
@@ -234,15 +225,11 @@ Batch 2 targets `aes_key_mem`, which holds the worst path on `clk_b` and `clk_e`
 
 **The precondition gate fired for the first time.** Batch 1's most useful miss was that *zero* proposals were rejected at precondition, which we reported as evidence that the layer was a type check rather than a legality check. A6 splits a 15-entry array into two 8-entry arrays, which is 16 words of storage where the design had 15. It declared k = 0, the flop count moved by +256, and G3 rejected it before any solver ran. That is the case the check exists for: a transform that silently changes state would otherwise have had a **combinational** obligation generated for it, which is the wrong obligation.
 
-**A5 is why we registered a control.** It only unrolls a reset loop, is functionally identical, and touches nothing on the read path, yet it moves `clk_b` by +0.436 ns (and `clk_a` by exactly 0.000). So +0.436 is this module's same-module remapping floor, and A4's honest figure is **+4.489 above a change that does nothing**.
+**A5 is why we registered a control.** It only unrolls a reset loop and touches nothing on the read path, yet moves `clk_b` by +0.436 ns. That is this module's same-module remapping floor, so A4's honest figure is **+4.489 above a change that does nothing**.
 
-**A2 is the batch's real finding, and it is a bug in our gate.** A2 splits `key_mem` into four 32-bit arrays and is equivalent by inspection. The gate said REFUTED, one failing partition out of 573, and it looked like a second P4. Three things did not fit: simulation had gold and gate agreeing on all 16 values of `round`; EQY had proved **128 of 128** `tmp_round_key` partitions while failing the output that is a plain alias of them; and the partition's own log ends `Reached maximum number of time steps -> proof failed`, which is a **bound**, not a counterexample. EQY prints the same summary line for both, and we matched on the string. The gate now reads each failing partition's log and separates `model found` from depth exhaustion.
+**A2 is the batch's real finding, and it is a bug in our gate.** A2 is equivalent by inspection; the gate said REFUTED on one partition of 573 and it looked like a second P4. Three things did not fit: simulation agreed on all 16 values of `round`; EQY had proved **128 of 128** partitions feeding the output it failed; and that partition's log ends `Reached maximum number of time steps`, which is a **bound**, not a counterexample. EQY prints the same summary line for both and we matched on the string. The gate now separates `model found` from depth exhaustion, and we checked the correction does not cascade: P4's log carries concrete values, independently confirmed by directed simulation, so **P4 stands**.
 
-We checked whether the correction cascades, rather than assuming. It does not. P4's log ends `SAT temporal induction proof finished - model found for base case: FAIL!` with concrete values (`a = ae19f605`, `shamt = 7`, gold `alu_out = ff5c33ec`, the arithmetic shift), and that had already been confirmed independently by directed simulation. P5 and A3 were refuted by BMC, which reports a trace. **P4 stands.**
-
-Two hypotheses about A2 were tested and both were wrong before the log gave the answer, and one is a trap worth passing on: clamping `round` to its reachable range *outside* the designs changed nothing, because **EQY proves each partition with its inputs as free variables**, so an external constraint never reaches the partition's cone.
-
-We would rather report this than the version where A2 is a second headline refutation. Bugs that hide a result behind UNRESOLVED are the safe direction, and our standing rule caught two of those in this batch. A bug that turns a non-result into a confident REFUTED is the dangerous direction, and no rule caught it: what caught it was a partition failing while everything feeding it passed.
+One trap worth passing on: clamping `round` to its reachable range *outside* the designs changed nothing, because **EQY proves each partition with its inputs as free variables**, so an external constraint never reaches the cone. Bugs that hide a result behind UNRESOLVED are the safe direction and our standing rule caught two here. A bug that turns a non-result into a confident REFUTED is the dangerous direction, and no rule caught it: what caught it was a partition failing while everything feeding it passed.
 
 ### 7.2 The second router: which lever, before which transform
 
@@ -254,13 +241,7 @@ The control, registered in advance and committed before its output was read: syn
 
 That control has no placement and no parasitics, so we ran **OpenROAD**, the one organizer-named tool this project had not used: tech and cell LEF, floorplan at 40% utilization, the platform's `setRC.tcl`, global placement, placement parasitics, then `repair_design` and detailed placement, on the same unbuffered netlist.
 
-| clock | before `repair_design` | after | delta |
-|---|---|---|---|
-| clk_a | −36.723 | **+17.593 MET** | **+54.316** |
-| clk_b | −43.438 | **+12.367 MET** | **+55.805** |
-| clk_e | −47.683 | **+19.529 MET** | **+67.212** |
-
-**All three groups close**, at a measured cost of **+20.2% area** (448,840 to 539,351 µm², 40% to 48% utilization). Flop count is identical at 7,959 flattened on both sides, with 960 buffers added, and both runs of the flow reproduce every number exactly.
+**All three groups close**: `clk_a` −36.723 to **+17.593**, `clk_b` −43.438 to **+12.367**, `clk_e` −47.683 to **+19.529**, gains of +54.316, +55.805 and +67.212, at a measured cost of **+20.2% area**. Flop count is identical at 7,959 flattened on both sides, 960 buffers added, and both runs reproduce every number exactly.
 
 **And the closure survives a clock tree.** Those numbers use ideal clocks, which is the standard context for `repair_design` and not a signoff number, so we ran CTS and global routing on the same flow:
 
@@ -290,9 +271,9 @@ Second, **after buffering the remaining violations are mixed, not depth-dominate
 
 Three of five registered predictions were **wrong**, including the primary one, which said the lever would help fewer than half the DEPTH designs. It helped 6 of 8 as then classified, because `upsize; dnsize` is gate *sizing* and sizing helps any path: the lever we tested the classifier against does two things. What the classifier predicts on unseen designs is **magnitude** (6.2x median) and **closure** (5 of 5 against 4 of 7). One verdict flips with how enable flops are legalized, and three dated amendments were needed to get one run right.
 
-So we split the lever, pre-registered, into buffer-only and sizing-only on the same designs. **Buffering alone does nothing for depth-dominated designs** (median **0.000 ns**, worse on 3 of 7 in the corrected grouping; −0.019 and 4 of 8 as first classified, the design that moved being the one buffering hurt most) and closes 4 of 5 fanout-dominated ones (median **+3.282**). That is the claim the classifier makes, measured against the component it models. Sizing turned out stronger and broader than registered, helping 6 of 7 depth designs and fanout designs 4x more, so 2 of those 4 predictions were wrong too. On `cpu_fsm`, buffer-only gains +18.974 against the combined lever's +11.754, on one design, not claimed as a rule.
+Splitting the lever, pre-registered, into buffer-only and sizing-only: **buffering alone does nothing for depth-dominated designs** (median **0.000 ns**, worse on 3 of 7) and closes 4 of 5 fanout-dominated ones (median **+3.282**), which is the claim the classifier makes, measured against the component it models. Sizing proved stronger and broader than registered, so 2 more of those 4 predictions were wrong.
 
-We then applied Dr. RTL's two high-confidence fanout skills as written. **Skill #7**, duplicating a register to split a fanout cone, moved `cpu_fsm`'s `PC` load rather than splitting it: fanout fell from 1,131 to 3 because the copy inherited **1,175**, the fetch mux being one cone, and slack got **worse** by 0.447 ns. **Skill #8**, replicating a high-fanout condition wire per consumer, was a no-op on 3 of 3 designs because ABC merged the copies back; with `(* keep *)` it split the fanout on one, which then got **slower**. Buffering alone beat both skills everywhere tried, and across the two, **0 of 4 applications both reduced the worst path's fanout and improved timing**.
+We then applied Dr. RTL's two high-confidence fanout skills as written. Skill #7 duplicated a register and **moved** `cpu_fsm`'s load rather than splitting it, the copy inheriting 1,175 of the original 1,131 because the fetch mux is one cone, and slack got **worse**. Skill #8 was a no-op on 3 of 3 designs because ABC merged the copies back. Buffering alone beat both everywhere tried, and across the two, **0 of 4 applications both reduced the worst path's fanout and improved timing**. Per-design numbers, all four phases and every amendment are in `experiments/drrtl_transfer/NOTES.md`.
 
 ### 7.3 The closed loop
 
@@ -317,6 +298,21 @@ The v3 run: 8 iterations, 449.3 s. The physical lever alone **closes `clk_b` out
 A third defect surfaced in the gate: a string-match fix read P4's concrete counterexample as **UNRESOLVED**. Caught by re-running proposals with known verdicts, now the standing regression: **P4 must read REFUTED and A2 must read UNRESOLVED**.
 
 **Honest limit on the phrase.** The proposer is offline: the loop selects from proposals frozen before any gate ran, gates and measures them, and does not generate them, because the anti-tuning rule forbids generating a proposal after seeing a gate result.
+
+### 7.4 SlackBench: we built the exam and published our own score
+
+Every RTL benchmark we found grades a *design* or a *testbench*. **SlackBench grades a verification methodology.** Eight transform pairs, ground truth and trap class committed **before any checker ran on them**, each built to defeat a specific checker's abstraction; a literature search found nothing equivalent. The score is a confusion matrix, never one number, because a checker that rejects everything would otherwise win. Case-by-case matrix in `experiments/slackbench/NOTES.md`; totals over 8 cases:
+
+| checker | correct | wrongly ACCEPTED | wrongly REJECTED | cannot express |
+|---|---|---|---|---|
+| `cec` / `dsec` | 2 | 0 | 1 | 5 |
+| EQY | 3 | 0 | 0 | 5 |
+| sim lazy / aggressive | 6 / 7 | **2 / 1** | 0 | 0 |
+| ours, induction / PDR | 6 / **7** | 0 | **2** / 0 | 0 / 1 |
+
+Four findings. **A wrong transform survived 40,000 simulated cycles**, wrong on one input pair in 65,536, with that pair published in advance. **Combinational and sequential EC could not express 5 of 8 questions**, each refusal evidenced by latch counts. **`cec` and `dsec` both confidently rejected an equivalent pair**, because they match latches positionally and the state holds binary where it held gray: a checker answering a different question than the one asked can be wrong without signalling that it changed the question. And **our own checker is wrong twice under induction and zero times under PDR**, because induction quantifies over unreachable states, the same split §6 recorded and we had not carried into the gate. **The engine that never lies is the one that sometimes refuses.**
+
+**One of six registered predictions is wrong**: EQY declines both STIMULUS cases rather than refuting one. Prediction 6 registered that our own gate should not sweep its own exam. It did not. `experiments/slackbench/`.
 
 ---
 
