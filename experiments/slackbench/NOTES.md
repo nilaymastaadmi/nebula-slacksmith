@@ -1,10 +1,27 @@
 # SlackBench Tier B: results
 
+> ## Read this first: what in this file is current
+> This document is written in the order the work happened, and **three things
+> in the first half were superseded by the update at the bottom**. The record
+> is kept rather than rewritten, but do not quote from above without checking
+> here:
+>
+> | claim in the first half | status |
+> |---|---|
+> | the five-checker matrix | **superseded.** EQY and a PDR discharge were added; the current matrix has seven checkers and is under "Update" below |
+> | "six of six predictions correct" | **superseded. The tally is 5 of 6**; running EQY turned prediction 2 into a miss |
+> | "our checker is wrong twice ... this harness implements only two of the four branches" | **false about the shipped gate.** It discharges with BMC plus PDR and accepts only on PDR, scoring 7 of 8. The induction-only run was a shortcut in this harness |
+> | CDC-1's ground truth | corrected from NOT EQUIVALENT to EQUIVALENT, amendment 2 below |
+>
+> The **current** results are the matrix and counts under "Update: two
+> checkers added, and the reachability result". The XPROP addendum is scored
+> separately in `NOTES_xprop.md` and belongs to no Tier B number.
+
 Registered at `5c88521`, amended at `0b7e3fe`, cases committed at `c9786f2`
 **before any checker ran on them**. Harness `run_bench.py`, raw output in
 `results/raw.tsv`.
 
-## The matrix
+## The matrix (FIRST RUN, five checkers, SUPERSEDED below)
 
 `ACCEPT` = the checker says the pair is fine. `REJECT` = it says they differ.
 `CANNOT` = it cannot express the question at all. Bold marks a **wrong**
@@ -21,7 +38,7 @@ answer against the manifest's ground truth.
 | CONTROL-1 | EQUIVALENT | ACCEPT | ACCEPT | ACCEPT | ACCEPT | ACCEPT |
 | CONTROL-2 | EQUIVALENT | CANNOT | CANNOT | ACCEPT | ACCEPT | **REJECT** |
 
-Counts, and this is why the score is never one number:
+Counts as of the first run. **Superseded**; the seven-checker counts are below.
 
 | checker | correct | wrongly ACCEPTED | wrongly REJECTED | could not express |
 |---|---|---|---|---|
@@ -53,6 +70,8 @@ gray. **A checker answering a different question than the one asked can be
 confidently wrong**, and neither tool signals that it changed the question.
 
 **4. Our own checker is wrong twice, which was registered in advance.**
+*(Superseded in one respect: the paragraph below blames a missing branch in
+this harness. The shipped gate uses PDR and scores 7 of 8. See the update.)*
 `miter_k` false-alarms on CDC-2 for the same latch-correspondence reason, and
 on CONTROL-2, the one-hot re-encoding. CONTROL-2 is the honest one: SlackSmith's
 type router is *supposed* to send a re-encoded design to the mapped-state
@@ -67,7 +86,7 @@ three of them for a reason that has nothing to do with the crossing. Prediction
 4 holds, including for us: **SlackSmith proves module-level equivalence and has
 no notion of a protocol.**
 
-## Predictions, scored
+## Predictions, scored at the first run (tally superseded: 5 of 6)
 
 1. **Correct.** `cec` returns CANNOT on both LATENCY cases rather than a verdict.
 2. **Superseded, see the update below: WRONG.** EQY was not run at the time
@@ -106,7 +125,7 @@ The correct reading of this suite is therefore that **one of its eight ground
 truths was wrong on first publication and the harness caught it**, which is
 the same class of finding as everything else in this repository.
 
-## Known gaps
+## Known gaps as of the first run (superseded list below)
 
 - **XPROP has no case**, per amendment 1.
 - **Two of four obligation branches are implemented in this harness**, so

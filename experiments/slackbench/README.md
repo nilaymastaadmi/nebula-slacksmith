@@ -75,6 +75,13 @@ Plus a separately registered XPROP addendum in `cases_xprop/`, kept out of
 every Tier B number because Tier B's results were already visible when it was
 written.
 
+**Tier A** (`TIER_A.md`) is eight archival cases lifted from experiments whose
+verdicts were already committed, including a real LLM proposal that its own
+design's firmware and 20,000 random vectors both missed, a checker that
+returned PROVEN in zero seconds for a design that deadlocks, and one SDC line
+worth +5.179 ns on a byte-identical netlist. They carry no prediction, they
+test nothing, and they are never added to a Tier B count.
+
 ## Limits, stated
 
 - **Eight cases on five small designs.** These are outcomes, not rates.
@@ -93,4 +100,8 @@ written.
 `PREREGISTRATION.md` and `PREREGISTRATION_xprop.md` (written first),
 `cases/MANIFEST.md` (ground truth and counterexamples), `run_bench.py`,
 `run_xprop.py`, `NOTES.md` and `NOTES_xprop.md` (results and scoring),
-`results/`.
+`TIER_A.md` (the archival column), `results/`.
+
+`NOTES.md` opens with a notice saying which of its numbers are current: it is
+written in the order the work happened and three claims in its first half are
+superseded further down.
