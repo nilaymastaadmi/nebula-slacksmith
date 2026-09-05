@@ -1,0 +1,548 @@
+<title>SlackSmith Explorer</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --ground:#f2f5f4; --surface:#ffffff; --sunk:#e8edeb;
+  --ink:#0f1a1d; --ink-2:#3a4b50; --muted:#66787d; --line:#d3dcda;
+  --accent:#9c6212; --accent-soft:#f3e7d3;
+  --met:#1a6d4a; --met-soft:#dcefe4;
+  --bad:#a1352a; --bad-soft:#f6e0dc;
+  --cannot:#5a5470; --cannot-soft:#e7e4ee;
+  --shadow:0 1px 2px rgba(15,26,29,.06),0 8px 24px -16px rgba(15,26,29,.28);
+  --sans:"IBM Plex Sans",ui-sans-serif,system-ui,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"Cascadia Mono","Consolas",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0c1316; --surface:#131e22; --sunk:#0a1013;
+    --ink:#e7edeb; --ink-2:#b3c2c2; --muted:#7e9195; --line:#24343a;
+    --accent:#d9a04a; --accent-soft:#2c2317;
+    --met:#5cbb8d; --met-soft:#122a20;
+    --bad:#e58a76; --bad-soft:#2c1815;
+    --cannot:#a9a1c4; --cannot-soft:#1e1c29;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -18px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0c1316; --surface:#131e22; --sunk:#0a1013;
+  --ink:#e7edeb; --ink-2:#b3c2c2; --muted:#7e9195; --line:#24343a;
+  --accent:#d9a04a; --accent-soft:#2c2317;
+  --met:#5cbb8d; --met-soft:#122a20;
+  --bad:#e58a76; --bad-soft:#2c1815;
+  --cannot:#a9a1c4; --cannot-soft:#1e1c29;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -18px rgba(0,0,0,.9);
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px 72px}
+h1,h2,h3{text-wrap:balance;margin:0}
+a{color:var(--accent)}
+code,.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- masthead ---------------------------------------------------------- */
+header{border-bottom:1px solid var(--line);background:var(--surface)}
+.mast{max-width:1120px;margin:0 auto;padding:26px 24px 20px;
+  display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;justify-content:space-between}
+.brand h1{font-size:26px;font-weight:600;letter-spacing:-.015em}
+.brand .sub{font-family:var(--mono);font-size:12px;color:var(--muted);
+  letter-spacing:.06em;text-transform:uppercase;margin-top:5px}
+.disclaim{max-width:44ch;font-size:12.5px;color:var(--ink-2);
+  border-left:2px solid var(--accent);padding-left:11px;line-height:1.5}
+
+/* ---- tabs -------------------------------------------------------------- */
+nav{background:var(--surface);border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:20}
+.tabs{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;gap:2px;overflow-x:auto}
+.tab{appearance:none;background:none;border:0;border-bottom:2px solid transparent;
+  font:inherit;font-size:13.5px;font-weight:500;color:var(--muted);
+  padding:11px 14px;cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tab .n{font-family:var(--mono);font-size:11px;color:var(--muted);margin-right:6px}
+
+/* ---- generic ----------------------------------------------------------- */
+.lede{margin:26px 0 22px;font-size:16px;color:var(--ink-2);max-width:68ch}
+.lede strong{color:var(--ink);font-weight:600}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);
+  font-size:11px;font-weight:500;padding:2px 7px;border-radius:3px;
+  letter-spacing:.03em;white-space:nowrap}
+.pill.ok{background:var(--met-soft);color:var(--met)}
+.pill.no{background:var(--bad-soft);color:var(--bad)}
+.pill.hm{background:var(--cannot-soft);color:var(--cannot)}
+.pill.acc{background:var(--accent-soft);color:var(--accent)}
+
+/* ---- loop -------------------------------------------------------------- */
+.split{display:grid;grid-template-columns:280px 1fr;gap:28px;align-items:start}
+@media (max-width:860px){.split{grid-template-columns:1fr}}
+.rail{display:flex;flex-direction:column;gap:6px;position:sticky;top:60px}
+@media (max-width:860px){.rail{position:static}}
+.runbtn{appearance:none;text-align:left;font:inherit;cursor:pointer;
+  background:var(--surface);border:1px solid var(--line);border-left:3px solid transparent;
+  border-radius:5px;padding:11px 13px;color:var(--ink-2)}
+.runbtn:hover{border-color:var(--muted)}
+.runbtn[aria-pressed="true"]{border-left-color:var(--accent);color:var(--ink);
+  box-shadow:var(--shadow)}
+.runbtn .t{font-size:13.5px;font-weight:600;display:block}
+.runbtn .m{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px}
+.runblurb{background:var(--sunk);border-radius:6px;padding:14px 16px;
+  font-size:13.5px;color:var(--ink-2);margin-bottom:22px;max-width:70ch}
+
+.iter{border-top:1px solid var(--line);padding:20px 0 6px}
+.iter:first-of-type{border-top:0}
+.ihead{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+.ino{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);
+  letter-spacing:.06em}
+.itime{font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:auto}
+
+/* slack strip: the numbers are the point, so they get display size */
+.slacks{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.sl{background:var(--surface);border:1px solid var(--line);border-radius:5px;
+  padding:8px 12px;min-width:132px}
+.sl .k{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.05em}
+.sl .v{font-family:var(--mono);font-size:19px;font-weight:500;
+  font-variant-numeric:tabular-nums;line-height:1.25}
+.sl .v.met{color:var(--met)} .sl .v.bad{color:var(--bad)}
+.sl .d{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+.chain{display:flex;flex-direction:column;gap:9px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:5px;
+  padding:11px 14px;display:flex;gap:12px;align-items:flex-start}
+.step .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--muted);min-width:66px;padding-top:2px}
+.step .body{flex:1;min-width:0;font-size:13.5px}
+.step.rev{border-left:3px solid var(--bad)}
+.step.cfm{border-left:3px solid var(--met)}
+.step.gat{border-left:3px solid var(--accent)}
+.kv{font-family:var(--mono);font-size:12.5px;color:var(--ink-2)}
+.gates{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+
+details.ev{margin-top:8px}
+details.ev summary{cursor:pointer;font-size:12.5px;color:var(--accent);
+  font-weight:500;list-style:none}
+details.ev summary::-webkit-details-marker{display:none}
+details.ev summary::before{content:"▸ ";font-family:var(--mono)}
+details.ev[open] summary::before{content:"▾ "}
+.tblwrap{overflow-x:auto;margin-top:9px}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);text-align:left;font-weight:500;padding:5px 10px 5px 0;
+  border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:5px 10px 5px 0;border-bottom:1px solid var(--line);vertical-align:top}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;
+  padding-right:16px;white-space:nowrap}
+td.path{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);
+  word-break:break-all;min-width:190px}
+
+/* ---- gate -------------------------------------------------------------- */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:6px;
+  padding:15px 17px;display:flex;flex-direction:column;gap:9px}
+.pcard.refuted{border-color:var(--bad)}
+.pcard h3{font-size:15px;font-weight:600;display:flex;align-items:center;gap:9px}
+.pcard h3 .id{font-family:var(--mono);color:var(--accent)}
+.pmeta{font-family:var(--mono);font-size:11.5px;color:var(--muted);line-height:1.7}
+.pmeta b{color:var(--ink-2);font-weight:500}
+.why{font-size:13px;color:var(--ink-2)}
+.cex{background:var(--sunk);border-radius:5px;padding:12px 14px;font-size:13px}
+.cex .hl{font-weight:600;color:var(--bad);margin-bottom:6px}
+.wit{font-family:var(--mono);font-size:12.5px;display:grid;
+  grid-template-columns:auto 1fr;gap:2px 14px;margin:8px 0}
+.wit .n{color:var(--muted)}
+.diff{display:flex;gap:18px;font-family:var(--mono);font-size:13px;margin-top:8px;
+  flex-wrap:wrap}
+.diff .g{color:var(--met)} .diff .b{color:var(--bad)}
+.missed{margin-top:9px;font-size:12.5px}
+.missed div{display:flex;justify-content:space-between;gap:14px;
+  padding:3px 0;border-bottom:1px dotted var(--line)}
+.missed .r{font-family:var(--mono);font-size:11.5px}
+.sting{font-size:12.5px;color:var(--ink-2);border-left:2px solid var(--accent);
+  padding-left:11px;margin-top:10px}
+
+/* ---- exam -------------------------------------------------------------- */
+.matrix{overflow-x:auto}
+.matrix table{font-family:var(--mono);font-size:12px;min-width:660px}
+.matrix td{padding:0;border-bottom:1px solid var(--line)}
+.cell{display:block;padding:6px 8px;text-align:center;font-size:11px;font-weight:500}
+.cell.ok{background:var(--met-soft);color:var(--met)}
+.cell.no{background:var(--bad-soft);color:var(--bad)}
+.cell.hm{background:var(--cannot-soft);color:var(--cannot)}
+.cell.ex{color:var(--muted)}
+.rowh{font-weight:600;padding-right:14px;white-space:nowrap}
+.rowh small{display:block;font-weight:400;color:var(--muted);font-size:10.5px}
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;font-size:12.5px;
+  color:var(--ink-2)}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{width:13px;height:13px;border-radius:2px;display:inline-block}
+
+/* ---- cheat ------------------------------------------------------------- */
+.cheat{background:var(--surface);border:1px solid var(--line);border-radius:6px;
+  padding:20px 22px;max-width:760px}
+.cheat table{font-family:var(--mono);font-size:13.5px;margin-top:6px}
+.cheat td.num{font-size:15px}
+.note{font-size:13px;color:var(--ink-2);margin-top:14px;max-width:66ch}
+footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);
+  font-size:12.5px;color:var(--muted);max-width:74ch}
+</style>
+
+<header>
+  <div class="mast">
+    <div class="brand">
+      <h1>SlackSmith Explorer</h1>
+      <div class="sub">Nebula 2026 &middot; Track A &middot; Astera Labs @ BITS Goa</div>
+    </div>
+    <p class="disclaim">This replays logs committed in the repository. Every number
+      below was read out of <code>experiments/</code> when the page was built, including
+      the runs that went badly.</p>
+  </div>
+</header>
+
+<nav>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="t-loop"  aria-selected="true"  aria-controls="p-loop"><span class="n">01</span>The loop</button>
+    <button class="tab" role="tab" id="t-gate"  aria-selected="false" aria-controls="p-gate"><span class="n">02</span>The gate</button>
+    <button class="tab" role="tab" id="t-exam"  aria-selected="false" aria-controls="p-exam"><span class="n">03</span>The exam</button>
+    <button class="tab" role="tab" id="t-cheat" aria-selected="false" aria-controls="p-cheat"><span class="n">04</span>The cheat</button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<section id="p-loop" role="tabpanel" aria-labelledby="t-loop">
+  <p class="lede">Measure, classify, route, apply, re-measure, repeat. The loop stops when
+  every group meets, when no lever is left, or at the iteration cap. <strong>Pick a run and
+  read down.</strong> Each step shows the evidence it decided on, so a routing decision you
+  disagree with can be argued with rather than guessed at.</p>
+  <div class="split">
+    <div class="rail" id="runrail"></div>
+    <div>
+      <div class="runblurb" id="runblurb"></div>
+      <div id="iters"></div>
+    </div>
+  </div>
+</section>
+
+<section id="p-gate" role="tabpanel" aria-labelledby="t-gate" hidden>
+  <p class="lede">Six transforms, proposed by an LLM against a real timing report and
+  <strong>frozen in git before any check ran</strong>. The declared transform type selects
+  the proof obligation; nothing here is free-text Verilog that a human then vetted.
+  <strong>Two are wrong.</strong></p>
+  <div class="pgrid" id="pgrid"></div>
+</section>
+
+<section id="p-exam" role="tabpanel" aria-labelledby="t-exam" hidden>
+  <p class="lede">Every RTL benchmark we could find grades a design or a testbench.
+  <strong>SlackBench grades the checker.</strong> Eight cases, ground truth declared before
+  any checker ran, each built to defeat one abstraction. <strong>Our own checker is in the
+  table and it is wrong twice.</strong></p>
+  <div class="matrix" id="matrix"></div>
+  <div class="legend">
+    <span><i class="sw" style="background:var(--met-soft);border:1px solid var(--met)"></i> recovered the ground truth</span>
+    <span><i class="sw" style="background:var(--bad-soft);border:1px solid var(--bad)"></i> wrong</span>
+    <span><i class="sw" style="background:var(--cannot-soft);border:1px solid var(--cannot)"></i> CANNOT: the question is not expressible by this method</span>
+    <span><i class="sw" style="background:var(--sunk);border:1px solid var(--line)"></i> excluded, would score the tool that established the truth</span>
+  </div>
+  <p class="note"><strong>CANNOT is a first-class answer, not a failure.</strong>
+  Combinational equivalence checking matches state elements one for one, so it cannot compare
+  designs whose flop counts differ. That is not a bug in <code>cec</code>; it is the point of
+  the case. A checker that answers REJECT to everything gets every trap right, which is why
+  a single score per checker is a misuse of this table.</p>
+</section>
+
+<section id="p-cheat" role="tabpanel" aria-labelledby="t-cheat" hidden>
+  <p class="lede">Every equivalence checker on this page answers a question about two
+  netlists. <strong>Here is a way to close a timing group that no equivalence checker can
+  ever catch</strong>, because the design does not change at all.</p>
+  <div class="cheat">
+    <div class="eyebrow">experiments/sdc_integrity &middot; one netlist, 26,958 cells, zero RTL change</div>
+    <div class="tblwrap"><table>
+      <thead><tr><th>constraint variant</th><th style="text-align:right">clk_a</th>
+        <th style="text-align:right">clk_b</th><th style="text-align:right">clk_e</th></tr></thead>
+      <tbody>
+        <tr><td>baseline, honest</td><td class="num">11.158</td><td class="num">5.665</td>
+          <td class="num" style="color:var(--bad)">-0.319</td></tr>
+        <tr><td>one added <code>set_multicycle_path</code></td><td class="num">11.158</td>
+          <td class="num">5.665</td><td class="num" style="color:var(--met)">+4.860</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">One line of SDC moves <code>clk_e</code> from VIOLATED to MET, worth
+    <b>+5.179 ns</b>, on a byte-identical netlist. <code>clk_a</code> and <code>clk_b</code>
+    do not move. Every equivalence checker correctly calls these two designs equivalent,
+    <em>because they are the same file</em>.</p>
+    <p class="note">This is why the gate has a <b>G0</b>: the SDC is fingerprinted by SHA-256
+    and its timing exceptions are counted before any measurement is trusted. It is the one
+    check in this project that formal methods cannot supply.</p>
+  </div>
+</section>
+
+<footer>
+  Generated by <code>demo/build.py</code> from the committed logs. Source, report and
+  reproduction instructions:
+  <code>github.com/nilaymastaadmi/nebula-slacksmith</code>. Nilay Toshniwal and
+  Shivani Chaudhary, BITS Pilani K. K. Birla Goa Campus.
+</footer>
+</div>
+
+<script>
+const DATA = {"runs":[{"id":"run_v2","title":"v2: the loop closes","blurb":"The physical lever alone clears every group in 2 iterations. The RTL lever never fires because nothing is left for it.","records":[{"iter":1,"step":"measure","engine":"sta","slacks":{"clk_a":1.333,"clk_b":-4.957,"clk_e":-4.957},"physical_applied":false,"rtl_applied":[],"t":20.9},{"iter":1,"step":"classify","clock":"clk_b","verdict":"FANOUT_DOMINATED","fanout_delay_share":0.9139,"path_delay_ns":30.602,"cells_on_path":9,"top_cells":[{"inst":"u_aes_b/u_core/keymem/_07883_","cell":"sky130_fd_sc_hd__nor4_1","incr_ns":21.029,"fanout":300,"module":"aes_key_mem"},{"inst":"u_aes_b/u_core/keymem/_08792_","cell":"sky130_fd_sc_hd__nor2_1","incr_ns":6.016,"fanout":153,"module":"aes_key_mem"},{"inst":"u_aes_b/u_core/keymem/_07893_","cell":"sky130_fd_sc_hd__nor2_1","incr_ns":1.525,"fanout":6,"module":"aes_key_mem"}],"lever":"physical","t":22.7},{"iter":1,"step":"apply","lever":"physical","how":"abc buffer -N 16; upsize; dnsize","t":22.7},{"iter":2,"step":"measure","engine":"sta","slacks":{"clk_a":12.784,"clk_b":12.6,"clk_e":20.394},"physical_applied":true,"rtl_applied":[],"t":46.7},{"iter":2,"step":"stop","reason":"all_met","slacks":{"clk_a":12.784,"clk_b":12.6,"clk_e":20.394},"t":46.7}]},{"id":"run_v3_final","title":"v3: both levers, everything reverted","blurb":"A target the flow cannot already clear. Three transforms are formally PROVEN correct and the loop reverts all three, because proof and profit are independent questions.","records":[{"iter":1,"step":"measure","engine":"sta","slacks":{"clk_a":-13.167,"clk_b":-18.957,"clk_e":-25.957},"physical_applied":false,"rtl_applied":[],"t":22.4},{"iter":1,"step":"classify","clock":"clk_e","verdict":"FANOUT_DOMINATED","fanout_delay_share":0.9139,"path_delay_ns":30.602,"cells_on_path":9,"top_cells":[{"inst":"u_aes_e/u_core/keymem/_07883_","cell":"sky130_fd_sc_hd__nor4_1","incr_ns":21.029,"fanout":300,"module":"aes_key_mem"},{"inst":"u_aes_e/u_core/keymem/_08792_","cell":"sky130_fd_sc_hd__nor2_1","incr_ns":6.016,"fanout":153,"module":"aes_key_mem"},{"inst":"u_aes_e/u_core/keymem/_07893_","cell":"sky130_fd_sc_hd__nor2_1","incr_ns":1.525,"fanout":6,"module":"aes_key_mem"}],"lever":"physical","t":24.4},{"iter":1,"step":"apply","lever":"physical","how":"abc buffer -N 16; upsize; dnsize","t":24.4},{"iter":2,"step":"measure","engine":"sta","slacks":{"clk_a":-1.716,"clk_b":5.6,"clk_e":-0.606},"physical_applied":true,"rtl_applied":[],"t":51.0},{"iter":2,"step":"classify","clock":"clk_a","verdict":"DEPTH_DOMINATED","fanout_delay_share":0.0,"path_delay_ns":17.13,"cells_on_path":33,"top_cells":[{"inst":"u_rv32_a/_1309_","cell":"sky130_fd_sc_hd__and2_1","incr_ns":6.762,"fanout":1,"module":"rv32_load"},{"inst":"u_rv32_a/u_core/_06948_","cell":"sky130_fd_sc_hd__nor2_1","incr_ns":1.757,"fanout":16,"module":"rv32i_core"},{"inst":"u_rv32_a/u_core/_07727_","cell":"sky130_fd_sc_hd__xor2_1","incr_ns":0.991,"fanout":0,"module":"rv32i_core"}],"lever":"rtl","t":53.2},{"iter":2,"step":"gate","proposal":"P1","def_id":"operator_sharing_addsub","declared_k":0,"G1":"PASS","G2":"PASS","G3":"PASS","G4":"PROVEN","t":92.1},{"iter":2,"step":"apply","lever":"rtl","proposal":"P1","clock":"clk_a","prev_slack":-1.716,"status":"provisional","t":92.1},{"iter":3,"step":"measure","engine":"sta","slacks":{"clk_a":-2.026,"clk_b":5.6,"clk_e":-0.606},"physical_applied":true,"rtl_applied":["../../../../../../../home/toshn/slacksmith_v3b/variants/P1_rv32i_core.v"],"t":120.3},{"iter":3,"step":"revert","proposal":"P1","clock":"clk_a","before":-1.716,"after":-2.026,"reason":"G5_no_improvement","t":120.3},{"iter":4,"step":"measure","engine":"sta","slacks":{"clk_a":-1.716,"clk_b":5.6,"clk_e":-0.606},"physical_applied":true,"rtl_applied":[],"t":146.5},{"iter":4,"step":"classify","clock":"clk_a","verdict":"DEPTH_DOMINATED","fanout_delay_share":0.0,"path_delay_ns":17.13,"cells_on_path":33,"top_cells":[{"inst":"u_rv32_a/_1309_","cell":"sky130_fd_sc_hd__and2_1","incr_ns":6.762,"fanout":1,"module":"rv32_load"},{"inst":"u_rv32_a/u_core/_06948_","cell":"sky130_fd_sc_hd__nor2_1","incr_ns":1.757,"fanout":16,"module":"rv32i_core"},{"inst":"u_rv32_a/u_core/_07727_","cell":"sky130_fd_sc_hd__xor2_1","incr_ns":0.991,"fanout":0,"module":"rv32i_core"}],"lever":"rtl","t":148.7},{"iter":4,"step":"gate","proposal":"P2","def_id":"operator_sharing_shifter","declared_k":0,"G1":"PASS","G2":"PASS","G3":"PASS","G4":"PROVEN","t":196.2},{"iter":4,"step":"apply","lever":"rtl","proposal":"P2","clock":"clk_a","prev_slack":-1.716,"status":"provisional","t":196.2},{"iter":5,"step":"measure","engine":"sta","slacks":{"clk_a":-2.201,"clk_b":5.6,"clk_e":-0.606},"physical_applied":true,"rtl_applied":["../../../../../../../home/toshn/slacksmith_v3b/variants/P2_rv32i_core.v"],"t":223.0},{"iter":5,"step":"revert","proposal":"P2","clock":"clk_a","before":-1.716,"after":-2.201,"reason":"G5_no_improvement","t":223.0},{"iter":6,"step":"measure","engine":"sta","slacks":{"clk_a":-1.716,"clk_b":5.6,"clk_e":-0.606},"physical_applied":true,"rtl_applied":[],"t":250.6},{"iter":6,"step":"classify","clock":"clk_a","verdict":"DEPTH_DOMINATED","fanout_delay_share":0.0,"path_delay_ns":17.13,"cells_on_path":33,"top_cells":[{"inst":"u_rv32_a/_1309_","cell":"sky130_fd_sc_hd__and2_1","incr_ns":6.762,"fanout":1,"module":"rv32_load"},{"inst":"u_rv32_a/u_core/_06948_","cell":"sky130_fd_sc_hd__nor2_1","incr_ns":1.757,"fanout":16,"module":"rv32i_core"},{"inst":"u_rv32_a/u_core/_07727_","cell":"sky130_fd_sc_hd__xor2_1","incr_ns":0.991,"fanout":0,"module":"rv32i_core"}],"lever":"rtl","t":252.8},{"iter":6,"step":"gate","proposal":"P3","def_id":"operator_sharing_comparator","declared_k":0,"G1":"PASS","G2":"PASS","G3":"PASS","G4":"PROVEN","t":292.4},{"iter":6,"step":"apply","lever":"rtl","proposal":"P3","clock":"clk_a","prev_slack":-1.716,"status":"provisional","t":292.4},{"iter":7,"step":"measure","engine":"sta","slacks":{"clk_a":-2.02,"clk_b":5.6,"clk_e":-0.606},"physical_applied":true,"rtl_applied":["../../../../../../../home/toshn/slacksmith_v3b/variants/P3_rv32i_core.v"],"t":319.3},{"iter":7,"step":"revert","proposal":"P3","clock":"clk_a","before":-1.716,"after":-2.02,"reason":"G5_no_improvement","t":319.3},{"iter":8,"step":"measure","engine":"sta","slacks":{"clk_a":-1.716,"clk_b":5.6,"clk_e":-0.606},"physical_applied":true,"rtl_applied":[],"t":347.2},{"iter":8,"step":"classify","clock":"clk_a","verdict":"DEPTH_DOMINATED","fanout_delay_share":0.0,"path_delay_ns":17.13,"cells_on_path":33,"top_cells":[{"inst":"u_rv32_a/_1309_","cell":"sky130_fd_sc_hd__and2_1","incr_ns":6.762,"fanout":1,"module":"rv32_load"},{"inst":"u_rv32_a/u_core/_06948_","cell":"sky130_fd_sc_hd__nor2_1","incr_ns":1.757,"fanout":16,"module":"rv32i_core"},{"inst":"u_rv32_a/u_core/_07727_","cell":"sky130_fd_sc_hd__xor2_1","incr_ns":0.991,"fanout":0,"module":"rv32i_core"}],"lever":"rtl","t":349.5},{"iter":8,"step":"gate","proposal":"P4","def_id":"mux_priority_to_parallel","declared_k":0,"G1":"PASS","G2":"PASS","G3":"PASS","G4":"UNRESOLVED (1 partition(s) hit the strategy bound, no counterexample found)","t":391.3},{"iter":8,"step":"gate","proposal":"P5","def_id":"pipeline_cut_rigid","declared_k":1,"G1":"PASS","G2":"PASS","G3":"PASS","G4":"REFUTED","t":400.3},{"iter":8,"step":"gate","proposal":"P6","def_id":"operator_sharing_branch_comparator","declared_k":0,"G1":"PASS","G2":"PASS","G3":"PASS","G4":"PROVEN","t":449.3},{"iter":8,"step":"apply","lever":"rtl","proposal":"P6","clock":"clk_a","prev_slack":-1.716,"status":"provisional","t":449.3}]},{"id":"run_v3_flat","title":"v3: flat synthesis","blurb":"Flattened before mapping. The largest lever measured anywhere in this project was the synthesis flow, not the RTL.","records":[{"iter":1,"step":"measure","engine":"sta","slacks":{"clk_a":9.279,"clk_b":-4.065,"clk_e":-15.762},"physical":{"buffer":false,"size":false},"lever_policy":"verdict","g5":"total","flatten":true,"buffer_pi":false,"total_violation":-19.827,"rtl_applied":[],"t":18.7},{"iter":1,"step":"classify","clock":"clk_e","verdict":"FANOUT_DOMINATED","fanout_delay_share":0.9547,"path_delay_ns":20.473,"cells_on_path":6,"top_cells":[{"inst":"_33563_","cell":"sky130_fd_sc_hd__nor4_1","incr_ns":17.567,"fanout":256,"module":"bench_top","netlist_fanout":256},{"inst":"_45590_","cell":"sky130_fd_sc_hd__dfrtp_1","incr_ns":1.978,"fanout":150,"module":"bench_top","netlist_fanout":150},{"inst":"_33817_","cell":"sky130_fd_sc_hd__a21oi_1","incr_ns":0.625,"fanout":1,"module":"bench_top","netlist_fanout":1}],"lever":"physical","t":40.1},{"iter":1,"step":"apply","lever":"physical","component":"buffer","how":"+strash;&get,-n;&fraig,-x;&put;scorr;dc2;dretime;strash;&get,-n;&dch,-f;&nf;&put;buffer,-N,16","provisional":true,"clock":"clk_e","prev_slack":-15.762,"t":40.1},{"iter":2,"step":"measure","engine":"sta","slacks":{"clk_a":10.362,"clk_b":5.665,"clk_e":-0.613},"physical":{"buffer":true,"size":false},"lever_policy":"verdict","g5":"total","flatten":true,"buffer_pi":false,"total_violation":-0.613,"rtl_applied":[],"t":57.7},{"iter":2,"step":"g5_total","total_before":-19.827,"total_after":-0.613,"improved":true,"t":57.7},{"iter":2,"step":"confirm","lever":"physical","component":"buffer","clock":"clk_e","before":-15.762,"after":-0.613,"gain":15.149,"t":57.7},{"iter":2,"step":"classify","clock":"clk_e","verdict":"MIXED","fanout_delay_share":0.3221,"path_delay_ns":5.889,"cells_on_path":19,"top_cells":[{"inst":"_44958_","cell":"sky130_fd_sc_hd__dfrtp_1","incr_ns":1.897,"fanout":136,"module":"bench_top","netlist_fanout":136},{"inst":"_32594_","cell":"sky130_fd_sc_hd__or4_2","incr_ns":0.682,"fanout":2,"module":"bench_top","netlist_fanout":2},{"inst":"_32893_","cell":"sky130_fd_sc_hd__or4_2","incr_ns":0.664,"fanout":2,"module":"bench_top","netlist_fanout":2}],"lever":"physical","t":81.2},{"iter":2,"step":"apply","lever":"physical","component":"size","how":"+strash;&get,-n;&fraig,-x;&put;scorr;dc2;dretime;strash;&get,-n;&dch,-f;&nf;&put;buffer,-N,16;upsize;dnsize","provisional":true,"clock":"clk_e","prev_slack":-0.613,"t":81.2},{"iter":3,"step":"measure","engine":"sta","slacks":{"clk_a":11.158,"clk_b":5.665,"clk_e":-0.319},"physical":{"buffer":true,"size":true},"lever_policy":"verdict","g5":"total","flatten":true,"buffer_pi":false,"total_violation":-0.319,"rtl_applied":[],"t":101.2},{"iter":3,"step":"g5_total","total_before":-0.613,"total_after":-0.319,"improved":true,"t":101.2},{"iter":3,"step":"confirm","lever":"physical","component":"size","clock":"clk_e","before":-0.613,"after":-0.319,"gain":0.294,"t":101.2},{"iter":3,"step":"classify","clock":"clk_e","verdict":"MIXED","fanout_delay_share":0.3374,"path_delay_ns":5.595,"cells_on_path":19,"top_cells":[{"inst":"_44958_","cell":"sky130_fd_sc_hd__dfrtp_1","incr_ns":1.888,"fanout":136,"module":"bench_top","netlist_fanout":136},{"inst":"_32084_","cell":"sky130_fd_sc_hd__or4_1","incr_ns":0.5,"fanout":1,"module":"bench_top","netlist_fanout":1},{"inst":"_32150_","cell":"sky130_fd_sc_hd__or3_4","incr_ns":0.415,"fanout":2,"module":"bench_top","netlist_fanout":2}],"lever":"physical","t":125.0},{"iter":3,"step":"stop","reason":"physical_exhausted","clock":"clk_e","physical":{"buffer":true,"size":true},"tried_physical":[],"t":125.0}]},{"id":"run_v3_verdict","title":"v3: verdict-routed levers","blurb":"The classifier picks buffer-only or size-only instead of applying both, and every physical step becomes provisional.","records":[{"iter":1,"step":"measure","engine":"sta","slacks":{"clk_a":-13.167,"clk_b":-18.957,"clk_e":-25.957},"physical":{"buffer":false,"size":false},"lever_policy":"verdict","rtl_applied":[],"t":21.7},{"iter":1,"step":"classify","clock":"clk_e","verdict":"FANOUT_DOMINATED","fanout_delay_share":0.9139,"path_delay_ns":30.602,"cells_on_path":9,"top_cells":[{"inst":"u_aes_e/u_core/keymem/_07883_","cell":"sky130_fd_sc_hd__nor4_1","incr_ns":21.029,"fanout":300,"module":"aes_key_mem"},{"inst":"u_aes_e/u_core/keymem/_08792_","cell":"sky130_fd_sc_hd__nor2_1","incr_ns":6.016,"fanout":153,"module":"aes_key_mem"},{"inst":"u_aes_e/u_core/keymem/_07893_","cell":"sky130_fd_sc_hd__nor2_1","incr_ns":1.525,"fanout":6,"module":"aes_key_mem"}],"lever":"physical","t":26.4},{"iter":1,"step":"apply","lever":"physical","component":"buffer","how":"+strash;&get,-n;&fraig,-x;&put;scorr;dc2;dretime;strash;&get,-n;&dch,-f;&nf;&put;buffer,-N,16","provisional":true,"clock":"clk_e","prev_slack":-25.957,"t":26.4},{"iter":2,"step":"measure","engine":"sta","slacks":{"clk_a":1.75,"clk_b":5.556,"clk_e":-1.444},"physical":{"buffer":true,"size":false},"lever_policy":"verdict","rtl_applied":[],"t":46.8},{"iter":2,"step":"confirm","lever":"physical","component":"buffer","clock":"clk_e","before":-25.957,"after":-1.444,"gain":24.513,"t":46.8},{"iter":2,"step":"classify","clock":"clk_e","verdict":"DEPTH_DOMINATED","fanout_delay_share":0.0,"path_delay_ns":6.816,"cells_on_path":15,"top_cells":[{"inst":"u_aes_e/u_core/dec_block/_2115_","cell":"sky130_fd_sc_hd__a21oi_1","incr_ns":1.952,"fanout":0,"module":"aes_decipher_block"},{"inst":"u_aes_e/u_core/dec_block/inv_sbox_inst/_2630_","cell":"sky130_fd_sc_hd__or4_2","incr_ns":0.663,"fanout":2,"module":"aes_inv_sbox"},{"inst":"u_aes_e/u_core/dec_block/inv_sbox_inst/_2786_","cell":"sky130_fd_sc_hd__or4b_2","incr_ns":0.663,"fanout":0,"module":"aes_inv_sbox"}],"lever":"rtl","t":52.1},{"iter":2,"step":"apply","lever":"physical","component":"size","how":"+strash;&get,-n;&fraig,-x;&put;scorr;dc2;dretime;strash;&get,-n;&dch,-f;&nf;&put;buffer,-N,16;upsize;dnsize","provisional":true,"clock":"clk_e","prev_slack":-1.444,"t":52.1},{"iter":3,"step":"measure","engine":"sta","slacks":{"clk_a":-1.716,"clk_b":5.6,"clk_e":-0.606},"physical":{"buffer":true,"size":true},"lever_policy":"verdict","rtl_applied":[],"t":75.7},{"iter":3,"step":"confirm","lever":"physical","component":"size","clock":"clk_e","before":-1.444,"after":-0.606,"gain":0.838,"t":75.7},{"iter":3,"step":"classify","clock":"clk_a","verdict":"DEPTH_DOMINATED","fanout_delay_share":0.0,"path_delay_ns":17.13,"cells_on_path":33,"top_cells":[{"inst":"u_rv32_a/_1309_","cell":"sky130_fd_sc_hd__and2_1","incr_ns":6.762,"fanout":1,"module":"rv32_load"},{"inst":"u_rv32_a/u_core/_06948_","cell":"sky130_fd_sc_hd__nor2_1","incr_ns":1.757,"fanout":16,"module":"rv32i_core"},{"inst":"u_rv32_a/u_core/_07727_","cell":"sky130_fd_sc_hd__xor2_1","incr_ns":0.991,"fanout":0,"module":"rv32i_core"}],"lever":"rtl","t":81.2},{"iter":3,"step":"gate","proposal":"P1","def_id":"operator_sharing_addsub","declared_k":0,"G1":"PASS","G2":"PASS","G3":"PASS","G4":"PROVEN","t":113.4},{"iter":3,"step":"apply","lever":"rtl","proposal":"P1","clock":"clk_a","prev_slack":-1.716,"status":"provisional","t":113.4},{"iter":4,"step":"measure","engine":"sta","slacks":{"clk_a":-2.026,"clk_b":5.6,"clk_e":-0.606},"physical":{"buffer":true,"size":true},"lever_policy":"verdict","rtl_applied":["../../../../../../../home/toshn/slacksmith_v3_verdict/variants/P1_rv32i_core.v"],"t":139.4},{"iter":4,"step":"revert","proposal":"P1","clock":"clk_a","before":-1.716,"after":-2.026,"reason":"G5_no_improvement","t":139.4},{"iter":5,"step":"measure","engine":"sta","slacks":{"clk_a":-1.716,"clk_b":5.6,"clk_e":-0.606},"physical":{"buffer":true,"size":true},"lever_policy":"verdict","rtl_applied":[],"t":164.5},{"iter":5,"step":"classify","clock":"clk_a","verdict":"DEPTH_DOMINATED","fanout_delay_share":0.0,"path_delay_ns":17.13,"cells_on_path":33,"top_cells":[{"inst":"u_rv32_a/_1309_","cell":"sky130_fd_sc_hd__and2_1","incr_ns":6.762,"fanout":1,"module":"rv32_load"},{"inst":"u_rv32_a/u_core/_06948_","cell":"sky130_fd_sc_hd__nor2_1","incr_ns":1.757,"fanout":16,"module":"rv32i_core"},{"inst":"u_rv32_a/u_core/_07727_","cell":"sky130_fd_sc_hd__xor2_1","incr_ns":0.991,"fanout":0,"module":"rv32i_core"}],"lever":"rtl","t":170.2},{"iter":5,"step":"gate","proposal":"P2","def_id":"operator_sharing_shifter","declared_k":0,"G1":"PASS","G2":"PASS","G3":"PASS","G4":"PROVEN","t":201.6},{"iter":5,"step":"apply","lever":"rtl","proposal":"P2","clock":"clk_a","prev_slack":-1.716,"status":"provisional","t":201.6},{"iter":6,"step":"measure","engine":"sta","slacks":{"clk_a":-2.201,"clk_b":5.6,"clk_e":-0.606},"physical":{"buffer":true,"size":true},"lever_policy":"verdict","rtl_applied":["../../../../../../../home/toshn/slacksmith_v3_verdict/variants/P2_rv32i_core.v"],"t":227.2},{"iter":6,"step":"revert","proposal":"P2","clock":"clk_a","before":-1.716,"after":-2.201,"reason":"G5_no_improvement","t":227.2},{"iter":7,"step":"measure","engine":"sta","slacks":{"clk_a":-1.716,"clk_b":5.6,"clk_e":-0.606},"physical":{"buffer":true,"size":true},"lever_policy":"verdict","rtl_applied":[],"t":255.5},{"iter":7,"step":"classify","clock":"clk_a","verdict":"DEPTH_DOMINATED","fanout_delay_share":0.0,"path_delay_ns":17.13,"cells_on_path":33,"top_cells":[{"inst":"u_rv32_a/_1309_","cell":"sky130_fd_sc_hd__and2_1","incr_ns":6.762,"fanout":1,"module":"rv32_load"},{"inst":"u_rv32_a/u_core/_06948_","cell":"sky130_fd_sc_hd__nor2_1","incr_ns":1.757,"fanout":16,"module":"rv32i_core"},{"inst":"u_rv32_a/u_core/_07727_","cell":"sky130_fd_sc_hd__xor2_1","incr_ns":0.991,"fanout":0,"module":"rv32i_core"}],"lever":"rtl","t":261.2},{"iter":7,"step":"gate","proposal":"P3","def_id":"operator_sharing_comparator","declared_k":0,"G1":"PASS","G2":"PASS","G3":"PASS","G4":"PROVEN","t":296.7},{"iter":7,"step":"apply","lever":"rtl","proposal":"P3","clock":"clk_a","prev_slack":-1.716,"status":"provisional","t":296.7},{"iter":8,"step":"measure","engine":"sta","slacks":{"clk_a":-2.02,"clk_b":5.6,"clk_e":-0.606},"physical":{"buffer":true,"size":true},"lever_policy":"verdict","rtl_applied":["../../../../../../../home/toshn/slacksmith_v3_verdict/variants/P3_rv32i_core.v"],"t":321.8},{"iter":8,"step":"revert","proposal":"P3","clock":"clk_a","before":-1.716,"after":-2.02,"reason":"G5_no_improvement","t":321.8}]},{"id":"run_v3_before_fixes","title":"v3: before the fixes","blurb":"Kept deliberately. This run gated proposals against a module that was not on the binding path, and had no G5 bar, so it kept a transform that made things worse.","records":[{"iter":1,"step":"measure","engine":"sta","slacks":{"clk_a":-13.167,"clk_b":-18.957,"clk_e":-25.957},"physical_applied":false,"rtl_applied":[],"t":20.9},{"iter":1,"step":"classify","clock":"clk_e","verdict":"FANOUT_DOMINATED","fanout_delay_share":0.9139,"path_delay_ns":30.602,"cells_on_path":9,"top_cells":[{"inst":"u_aes_e/u_core/keymem/_07883_","cell":"sky130_fd_sc_hd__nor4_1","incr_ns":21.029,"fanout":300,"module":"aes_key_mem"},{"inst":"u_aes_e/u_core/keymem/_08792_","cell":"sky130_fd_sc_hd__nor2_1","incr_ns":6.016,"fanout":153,"module":"aes_key_mem"},{"inst":"u_aes_e/u_core/keymem/_07893_","cell":"sky130_fd_sc_hd__nor2_1","incr_ns":1.525,"fanout":6,"module":"aes_key_mem"}],"lever":"physical","t":22.9},{"iter":1,"step":"apply","lever":"physical","how":"abc buffer -N 16; upsize; dnsize","t":22.9},{"iter":2,"step":"measure","engine":"sta","slacks":{"clk_a":-1.716,"clk_b":5.6,"clk_e":-0.606},"physical_applied":true,"rtl_applied":[],"t":48.7},{"iter":2,"step":"classify","clock":"clk_a","verdict":"DEPTH_DOMINATED","fanout_delay_share":0.0,"path_delay_ns":17.13,"cells_on_path":33,"top_cells":[{"inst":"u_rv32_a/_1309_","cell":"sky130_fd_sc_hd__and2_1","incr_ns":6.762,"fanout":1,"module":"rv32_load"},{"inst":"u_rv32_a/u_core/_06948_","cell":"sky130_fd_sc_hd__nor2_1","incr_ns":1.757,"fanout":16,"module":"rv32i_core"},{"inst":"u_rv32_a/u_core/_07727_","cell":"sky130_fd_sc_hd__xor2_1","incr_ns":0.991,"fanout":0,"module":"rv32i_core"}],"lever":"rtl","t":50.7},{"iter":2,"step":"gate","proposal":"A1","def_id":"mux_bank_split","declared_k":0,"G1":"PASS","G2":"PASS","G3":"PASS","G4":"PROVEN","t":109.4},{"iter":2,"step":"apply","lever":"rtl","proposal":"A1","t":109.4},{"iter":3,"step":"measure","engine":"sta","slacks":{"clk_a":-2.203,"clk_b":5.6,"clk_e":-0.606},"physical_applied":true,"rtl_applied":["../experiments/llm_proposer_aes/proposals/aes_key_mem_A1.v"],"t":136.1},{"iter":3,"step":"classify","clock":"clk_a","verdict":"DEPTH_DOMINATED","fanout_delay_share":0.0,"path_delay_ns":17.618,"cells_on_path":34,"top_cells":[{"inst":"u_rv32_a/_1309_","cell":"sky130_fd_sc_hd__and2_1","incr_ns":6.58,"fanout":1,"module":"rv32_load"},{"inst":"u_rv32_a/u_core/_06021_","cell":"sky130_fd_sc_hd__nand2_1","incr_ns":1.926,"fanout":9,"module":"rv32i_core"},{"inst":"u_rv32_a/u_core/_07705_","cell":"sky130_fd_sc_hd__xnor2_1","incr_ns":1.101,"fanout":0,"module":"rv32i_core"}],"lever":"rtl","t":138.2}]}],"proposals":[{"id":"P1","def_id":"operator_sharing_addsub","k":0,"branch":"1 (combinational equivalence, EQY)","module":"rv32i_core","region":"alu_out always block","rationale":"The critical path runs through the ALU. funct3==000 currently infers TWO 32-bit carry chains, (a - alu_b) and (a + alu_b), selected by a mux, so the adder area and the mux delay are both on the path. Standard fix: one adder with a conditionally inverted B input and carry-in, a - b == a + ~b + 1.","verdict":"PROVEN","delta":"-1.555","refutation":null},{"id":"P2","def_id":"operator_sharing_shifter","k":0,"branch":"1 (combinational equivalence, EQY)","module":"rv32i_core","region":"alu_out always block","rationale":"Three independent 32-bit barrel shifters are inferred (SLL, SRL, SRA). Classic sharing: implement SLL as reverse(reverse(a) >> shamt), and SRL/SRA as one arithmetic shift over a 33-bit value whose top bit is the sign for SRA and 0 for SRL. Collapses three shifters to one.","verdict":"PROVEN","delta":"+0.485","refutation":null},{"id":"P3","def_id":"operator_sharing_comparator","k":0,"branch":"1 (combinational equivalence, EQY)","module":"rv32i_core","region":"alu_out always block","rationale":"SLT and SLTU each infer a separate 32-bit comparator, and funct3==000 already infers a subtractor. Derive both comparisons from one subtraction: the borrow out gives unsigned less-than, and for signed, if the sign bits differ then a<b iff a is negative, else the unsigned borrow is correct.","verdict":"PROVEN","delta":"-2.102","refutation":null},{"id":"P4","def_id":"mux_priority_to_parallel","k":0,"branch":"1 (combinational equivalence, EQY)","module":"rv32i_core","region":"alu_out always block","rationale":"The case statement synthesizes to a mux tree whose select path (funct3) is late-arriving because funct3 comes straight off imem_data. One-hot decode of funct3 and an OR of masked results makes every arm independent, so the select decode happens in parallel with the datapath instead of after it. Legal here because a case on a 3-bit value is exhaustive and mutually exclusive by construction.","verdict":"REFUTED","delta":null,"refutation":{"headline":"SRA is wrong for every negative operand.","mechanism":"A conditional operator's result signedness comes from BOTH branches. Pairing a signed branch with an unsigned one makes the whole expression unsigned, that context propagates back into the operands, and >>> silently degrades to a logical shift.","witness":[["a","ae19f605"],["shamt","7"],["retire_insn","40005073  (SRAI)"]],"gold":"ff5c33ec","gate":"015c33ec","found_in":"46 s, EQY, partition alu_out","missed_by":[["the design's own shipped firmware, 400 cycles","MISSED"],["20,000 random instruction words","MISSED"],["a directed SRAI on a negative operand","caught"]],"sting":"rtl/rv32i_core.v carries a six-line comment warning about exactly this, ten lines above the code P4 changed. The proposer had that file as input and made the documented mistake anyway."}},{"id":"P5","def_id":"pipeline_cut_rigid","k":1,"branch":"2 (k-padded miter, k=1)","module":"rv32i_core","region":"alu_out always block","rationale":"The ALU cone is the longest combinational stretch on the critical path. Registering alu_out cuts it, trading one cycle of latency for a shorter path. Declared as latency-changing (k=1) so the k-padded obligation is generated rather than a plain equivalence check.","verdict":"REFUTED","delta":null,"refutation":{"headline":"A feedback path cannot be given a fixed-offset obligation.","mechanism":"Registering alu_out one cycle later does not shift the output stream by one cycle, it changes the machine: alu_out feeds the register file and the PC.","witness":[],"gold":null,"gate":null,"found_in":"1 s, failing on eq_dmem_addr","missed_by":[],"sting":"Declared k=1 rigid. The declaration is a claim about the whole interface, and the interface is not rigid here."}},{"id":"P6","def_id":"operator_sharing_branch_comparator","k":0,"branch":"1 (combinational equivalence, EQY)","module":"rv32i_core","region":"branch_taken always block","rationale":"The branch unit infers four more comparators (BLT, BGE, BLTU, BGEU) plus two equality checks, all on the same (a,b) pair. Derive all six from one subtraction: equality from a zero-detect on the difference, unsigned order from the borrow, signed order from the sign-difference rule.","verdict":"PROVEN","delta":"-1.615","refutation":null}],"bench":[{"case":"CDC-1","class":"CDC","truth":"EQUIVALENT","k":"-1","checker":"cec","verdict":"CANNOT","circular":"False","detail":"cannot build a miter: gold 3 latches / 5 inputs, gate 2 / 4"},{"case":"CDC-1","class":"CDC","truth":"EQUIVALENT","k":"-1","checker":"dsec","verdict":"CANNOT","circular":"False","detail":"cannot build a miter: gold 3 latches / 5 inputs, gate 2 / 4"},{"case":"CDC-1","class":"CDC","truth":"EQUIVALENT","k":"-1","checker":"eqy","verdict":"ACCEPT","circular":"False","detail":"all partitions proved"},{"case":"CDC-1","class":"CDC","truth":"EQUIVALENT","k":"-1","checker":"sim_lazy","verdict":"ACCEPT","circular":"False","detail":"19997 cycles, no difference"},{"case":"CDC-1","class":"CDC","truth":"EQUIVALENT","k":"-1","checker":"sim_aggr","verdict":"ACCEPT","circular":"False","detail":"19997 cycles, no difference"},{"case":"CDC-1","class":"CDC","truth":"EQUIVALENT","k":"-1","checker":"miter_k","verdict":"ACCEPT","circular":"False","detail":"sat proof succeeded"},{"case":"CDC-1","class":"CDC","truth":"EQUIVALENT","k":"-1","checker":"miter_pdr","verdict":"ACCEPT","circular":"False","detail":"PDR proved, unbounded"},{"case":"CDC-2","class":"CDC","truth":"EQUIVALENT","k":"0","checker":"cec","verdict":"REJECT","circular":"False","detail":"Input pattern:  lo01=0 lo12=0 pi04=0 pi01=1 lo00=0 pi03=1"},{"case":"CDC-2","class":"CDC","truth":"EQUIVALENT","k":"0","checker":"dsec","verdict":"REJECT","circular":"False","detail":"Networks are NOT EQUIVALENT after simulation.   Time =     0.01 sec"},{"case":"CDC-2","class":"CDC","truth":"EQUIVALENT","k":"0","checker":"eqy","verdict":"CANNOT","circular":"False","detail":"failed to prove, no counterexample reported"},{"case":"CDC-2","class":"CDC","truth":"EQUIVALENT","k":"0","checker":"sim_lazy","verdict":"ACCEPT","circular":"False","detail":"19998 cycles, no difference"},{"case":"CDC-2","class":"CDC","truth":"EQUIVALENT","k":"0","checker":"sim_aggr","verdict":"ACCEPT","circular":"False","detail":"19998 cycles, no difference"},{"case":"CDC-2","class":"CDC","truth":"EQUIVALENT","k":"0","checker":"miter_k","verdict":"REJECT","circular":"False","detail":"counterexample found by the padded miter"},{"case":"CDC-2","class":"CDC","truth":"EQUIVALENT","k":"0","checker":"miter_pdr","verdict":"ACCEPT","circular":"False","detail":"PDR proved, unbounded"},{"case":"CONTROL-1","class":"CONTROL","truth":"EQUIVALENT","k":"0","checker":"cec","verdict":"ACCEPT","circular":"False","detail":"Networks are equivalent after structural hashing.  Time =     0.00 sec"},{"case":"CONTROL-1","class":"CONTROL","truth":"EQUIVALENT","k":"0","checker":"dsec","verdict":"ACCEPT","circular":"False","detail":"Networks are equivalent.  Time =     0.00 sec"},{"case":"CONTROL-1","class":"CONTROL","truth":"EQUIVALENT","k":"0","checker":"eqy","verdict":"ACCEPT","circular":"False","detail":"all partitions proved"},{"case":"CONTROL-1","class":"CONTROL","truth":"EQUIVALENT","k":"0","checker":"sim_lazy","verdict":"ACCEPT","circular":"False","detail":"19998 cycles, no difference"},{"case":"CONTROL-1","class":"CONTROL","truth":"EQUIVALENT","k":"0","checker":"sim_aggr","verdict":"ACCEPT","circular":"False","detail":"19998 cycles, no difference"},{"case":"CONTROL-1","class":"CONTROL","truth":"EQUIVALENT","k":"0","checker":"miter_k","verdict":"ACCEPT","circular":"False","detail":"sat proof succeeded"},{"case":"CONTROL-1","class":"CONTROL","truth":"EQUIVALENT","k":"0","checker":"miter_pdr","verdict":"ACCEPT","circular":"False","detail":"PDR proved, unbounded"},{"case":"CONTROL-2","class":"CONTROL","truth":"EQUIVALENT","k":"0","checker":"cec","verdict":"CANNOT","circular":"False","detail":"cannot build a miter: gold 3 latches / 5 inputs, gate 4 / 6"},{"case":"CONTROL-2","class":"CONTROL","truth":"EQUIVALENT","k":"0","checker":"dsec","verdict":"CANNOT","circular":"False","detail":"cannot build a miter: gold 3 latches / 5 inputs, gate 4 / 6"},{"case":"CONTROL-2","class":"CONTROL","truth":"EQUIVALENT","k":"0","checker":"eqy","verdict":"ACCEPT","circular":"False","detail":"all partitions proved"},{"case":"CONTROL-2","class":"CONTROL","truth":"EQUIVALENT","k":"0","checker":"sim_lazy","verdict":"ACCEPT","circular":"False","detail":"19998 cycles, no difference"},{"case":"CONTROL-2","class":"CONTROL","truth":"EQUIVALENT","k":"0","checker":"sim_aggr","verdict":"ACCEPT","circular":"False","detail":"19998 cycles, no difference"},{"case":"CONTROL-2","class":"CONTROL","truth":"EQUIVALENT","k":"0","checker":"miter_k","verdict":"REJECT","circular":"True","detail":"counterexample found by the padded miter"},{"case":"CONTROL-2","class":"CONTROL","truth":"EQUIVALENT","k":"0","checker":"miter_pdr","verdict":"ACCEPT","circular":"False","detail":"PDR proved, unbounded"},{"case":"LATENCY-1","class":"LATENCY","truth":"EQUIVALENT","k":"1","checker":"cec","verdict":"CANNOT","circular":"False","detail":"cannot build a miter: gold 17 latches / 50 inputs, gate 49 / 82"},{"case":"LATENCY-1","class":"LATENCY","truth":"EQUIVALENT","k":"1","checker":"dsec","verdict":"CANNOT","circular":"False","detail":"cannot build a miter: gold 17 latches / 50 inputs, gate 49 / 82"},{"case":"LATENCY-1","class":"LATENCY","truth":"EQUIVALENT","k":"1","checker":"eqy","verdict":"CANNOT","circular":"False","detail":"failed to prove, no counterexample reported"},{"case":"LATENCY-1","class":"LATENCY","truth":"EQUIVALENT","k":"1","checker":"sim_lazy","verdict":"ACCEPT","circular":"False","detail":"19997 cycles, no difference"},{"case":"LATENCY-1","class":"LATENCY","truth":"EQUIVALENT","k":"1","checker":"sim_aggr","verdict":"ACCEPT","circular":"False","detail":"19997 cycles, no difference"},{"case":"LATENCY-1","class":"LATENCY","truth":"EQUIVALENT","k":"1","checker":"miter_k","verdict":"ACCEPT","circular":"True","detail":"sat proof succeeded"},{"case":"LATENCY-1","class":"LATENCY","truth":"EQUIVALENT","k":"1","checker":"miter_pdr","verdict":"CANNOT","circular":"False","detail":"timeout"},{"case":"LATENCY-2","class":"LATENCY","truth":"NOT_EQUIVALENT","k":"1","checker":"cec","verdict":"CANNOT","circular":"False","detail":"cannot build a miter: gold 17 latches / 50 inputs, gate 33 / 66"},{"case":"LATENCY-2","class":"LATENCY","truth":"NOT_EQUIVALENT","k":"1","checker":"dsec","verdict":"CANNOT","circular":"False","detail":"cannot build a miter: gold 17 latches / 50 inputs, gate 33 / 66"},{"case":"LATENCY-2","class":"LATENCY","truth":"NOT_EQUIVALENT","k":"1","checker":"eqy","verdict":"CANNOT","circular":"False","detail":"failed to prove, no counterexample reported"},{"case":"LATENCY-2","class":"LATENCY","truth":"NOT_EQUIVALENT","k":"1","checker":"sim_lazy","verdict":"ACCEPT","circular":"False","detail":"19997 cycles, no difference"},{"case":"LATENCY-2","class":"LATENCY","truth":"NOT_EQUIVALENT","k":"1","checker":"sim_aggr","verdict":"REJECT","circular":"False","detail":"differs at cycle 3: ['50412'] vs ['58886']"},{"case":"LATENCY-2","class":"LATENCY","truth":"NOT_EQUIVALENT","k":"1","checker":"miter_k","verdict":"REJECT","circular":"False","detail":"counterexample found by the padded miter"},{"case":"LATENCY-2","class":"LATENCY","truth":"NOT_EQUIVALENT","k":"1","checker":"miter_pdr","verdict":"REJECT","circular":"False","detail":"PDR found a counterexample"},{"case":"STIMULUS-1","class":"STIMULUS","truth":"NOT_EQUIVALENT","k":"0","checker":"cec","verdict":"REJECT","circular":"False","detail":"Input pattern:  pi29=1 pi02=1 pi15=0 pi01=0 pi14=0 pi03=0 pi13=1 pi04=0 pi07=1 pi10=1 pi05"},{"case":"STIMULUS-1","class":"STIMULUS","truth":"NOT_EQUIVALENT","k":"0","checker":"dsec","verdict":"REJECT","circular":"False","detail":"Networks are NOT EQUIVALENT after simulation.   Time =     0.12 sec"},{"case":"STIMULUS-1","class":"STIMULUS","truth":"NOT_EQUIVALENT","k":"0","checker":"eqy","verdict":"CANNOT","circular":"False","detail":"failed to prove, no counterexample reported"},{"case":"STIMULUS-1","class":"STIMULUS","truth":"NOT_EQUIVALENT","k":"0","checker":"sim_lazy","verdict":"ACCEPT","circular":"False","detail":"19998 cycles, no difference"},{"case":"STIMULUS-1","class":"STIMULUS","truth":"NOT_EQUIVALENT","k":"0","checker":"sim_aggr","verdict":"ACCEPT","circular":"False","detail":"19998 cycles, no difference"},{"case":"STIMULUS-1","class":"STIMULUS","truth":"NOT_EQUIVALENT","k":"0","checker":"miter_k","verdict":"REJECT","circular":"False","detail":"counterexample found by the padded miter"},{"case":"STIMULUS-1","class":"STIMULUS","truth":"NOT_EQUIVALENT","k":"0","checker":"miter_pdr","verdict":"REJECT","circular":"False","detail":"PDR found a counterexample"},{"case":"STIMULUS-2","class":"STIMULUS","truth":"NOT_EQUIVALENT","k":"0","checker":"cec","verdict":"CANNOT","circular":"False","detail":"cannot build a miter: gold 17 latches / 27 inputs, gate 18 / 28"},{"case":"STIMULUS-2","class":"STIMULUS","truth":"NOT_EQUIVALENT","k":"0","checker":"dsec","verdict":"CANNOT","circular":"False","detail":"cannot build a miter: gold 17 latches / 27 inputs, gate 18 / 28"},{"case":"STIMULUS-2","class":"STIMULUS","truth":"NOT_EQUIVALENT","k":"0","checker":"eqy","verdict":"CANNOT","circular":"False","detail":"failed to prove, no counterexample reported"},{"case":"STIMULUS-2","class":"STIMULUS","truth":"NOT_EQUIVALENT","k":"0","checker":"sim_lazy","verdict":"REJECT","circular":"False","detail":"differs at cycle 2: ['14'] vs ['7']"},{"case":"STIMULUS-2","class":"STIMULUS","truth":"NOT_EQUIVALENT","k":"0","checker":"sim_aggr","verdict":"REJECT","circular":"False","detail":"differs at cycle 2: ['61'] vs ['3']"},{"case":"STIMULUS-2","class":"STIMULUS","truth":"NOT_EQUIVALENT","k":"0","checker":"miter_k","verdict":"REJECT","circular":"False","detail":"counterexample found by the padded miter"},{"case":"STIMULUS-2","class":"STIMULUS","truth":"NOT_EQUIVALENT","k":"0","checker":"miter_pdr","verdict":"REJECT","circular":"False","detail":"PDR found a counterexample"}],"gateHelp":{"G1":"parses","G2":"elaborates","G3":"preconditions hold","G4":"formal equivalence","G5":"timing actually improved"}};
+const $ = (s, r) => (r || document).querySelector(s);
+const el = (t, c, x) => { const n = document.createElement(t);
+  if (c) n.className = c; if (x !== undefined) n.textContent = x; return n; };
+const ns = v => (v > 0 ? "+" : "") + v.toFixed(3);
+
+/* ---- tabs ---- */
+document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
+  document.querySelectorAll(".tab").forEach(o => {
+    const on = o === t;
+    o.setAttribute("aria-selected", on ? "true" : "false");
+    $("#" + o.getAttribute("aria-controls")).hidden = !on;
+  });
+}));
+
+/* ---- 01 the loop ---- */
+let current = 0;
+function runSummary(r) {
+  const m = r.records.filter(d => d.step === "measure");
+  const last = m.length ? m[m.length - 1].slacks : {};
+  const bad = Object.values(last).filter(v => v < 0).length;
+  const iters = Math.max(...r.records.map(d => d.iter || 0));
+  return iters + " iterations · " + (bad ? bad + " group" + (bad > 1 ? "s" : "") + " short" : "all groups met");
+}
+function drawRail() {
+  const rail = $("#runrail"); rail.textContent = "";
+  DATA.runs.forEach((r, i) => {
+    const b = el("button", "runbtn");
+    b.setAttribute("aria-pressed", i === current ? "true" : "false");
+    b.appendChild(el("span", "t", r.title));
+    b.appendChild(el("span", "m", runSummary(r)));
+    b.addEventListener("click", () => { current = i; drawRail(); drawRun(); });
+    rail.appendChild(b);
+  });
+}
+function slackStrip(slacks, prev) {
+  const box = el("div", "slacks");
+  Object.keys(slacks).forEach(k => {
+    const v = slacks[k], s = el("div", "sl");
+    s.appendChild(el("div", "k", k));
+    s.appendChild(el("div", "v " + (v >= 0 ? "met" : "bad"), ns(v)));
+    if (prev && typeof prev[k] === "number") {
+      const d = v - prev[k];
+      s.appendChild(el("div", "d", (d === 0 ? "no change" : ns(d) + " ns")));
+    } else {
+      s.appendChild(el("div", "d", v >= 0 ? "MET" : "VIOLATED"));
+    }
+    box.appendChild(s);
+  });
+  return box;
+}
+function evidenceTable(cells) {
+  const w = el("div", "tblwrap"), t = el("table");
+  t.innerHTML = "<thead><tr><th>instance</th><th>cell</th>" +
+    "<th style='text-align:right'>incr ns</th><th style='text-align:right'>fanout</th>" +
+    "<th>module</th></tr></thead>";
+  const tb = el("tbody");
+  cells.forEach(c => {
+    const tr = el("tr");
+    tr.appendChild(el("td", "path", c.inst));
+    tr.appendChild(el("td", "path", c.cell));
+    tr.appendChild(el("td", "num", c.incr_ns.toFixed(3)));
+    const f = el("td", "num", String(c.fanout));
+    if (c.fanout >= 32) f.style.color = "var(--bad)";
+    tr.appendChild(f);
+    tr.appendChild(el("td", "path", c.module || "—"));
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb); w.appendChild(t); return w;
+}
+function stepNode(d) {
+  const s = el("div", "step"), body = el("div", "body");
+  s.appendChild(el("div", "tag", d.step));
+  if (d.step === "classify") {
+    s.classList.add("cls");
+    const h = el("div");
+    h.appendChild(el("span", "pill acc", d.verdict));
+    h.appendChild(document.createTextNode(" " + d.clock + ", routed to the " + d.lever + " lever"));
+    body.appendChild(h);
+    body.appendChild(el("div", "kv",
+      "fanout share " + d.fanout_delay_share + " · path " + d.path_delay_ns +
+      " ns · " + d.cells_on_path + " cells"));
+    if (d.top_cells && d.top_cells.length) {
+      const det = el("details", "ev");
+      det.appendChild(el("summary", null, "what the classifier looked at"));
+      det.appendChild(evidenceTable(d.top_cells));
+      body.appendChild(det);
+    }
+  } else if (d.step === "apply") {
+    body.appendChild(el("div", null,
+      d.lever === "physical" ? "physical lever" : "RTL transform " + d.proposal));
+    if (d.how) body.appendChild(el("div", "kv", d.how));
+    if (d.status) {
+      const p = el("span", "pill hm", d.status);
+      const w = el("div"); w.style.marginTop = "6px"; w.appendChild(p);
+      if (typeof d.prev_slack === "number")
+        w.appendChild(document.createTextNode(" " + d.clock + " at " + ns(d.prev_slack)));
+      body.appendChild(w);
+    }
+  } else if (d.step === "gate") {
+    s.classList.add("gat");
+    body.appendChild(el("div", null, d.proposal + ", " + (d.def_id || "") +
+      ", declared k=" + d.declared_k));
+    const g = el("div", "gates");
+    ["G1", "G2", "G3", "G4"].forEach(k => {
+      if (!(k in d)) return;
+      const v = String(d[k]), good = v === "PASS" || v === "PROVEN";
+      const uns = /UNRESOLVED/.test(v);
+      const p = el("span", "pill " + (good ? "ok" : uns ? "hm" : "no"),
+        k + " " + (uns ? "UNRESOLVED" : v));
+      p.title = (DATA.gateHelp[k] || "") + (uns ? ": " + v : "");
+      g.appendChild(p);
+    });
+    body.appendChild(g);
+    if (/UNRESOLVED/.test(String(d.G4 || ""))) {
+      const n = el("div", "kv");
+      n.style.marginTop = "6px";
+      n.textContent = String(d.G4);
+      body.appendChild(n);
+    }
+  } else if (d.step === "revert") {
+    s.classList.add("rev");
+    body.appendChild(el("div", null, "reverted " + (d.proposal || d.lever)));
+    body.appendChild(el("div", "kv", d.clock + " " + ns(d.before) + " → " +
+      ns(d.after) + "   (" + d.reason + ")"));
+  } else if (d.step === "confirm") {
+    s.classList.add("cfm");
+    body.appendChild(el("div", null, "kept " + (d.proposal || d.lever)));
+    if (typeof d.before === "number")
+      body.appendChild(el("div", "kv", d.clock + " " + ns(d.before) + " → " + ns(d.after)));
+  } else {
+    body.appendChild(el("div", "kv", JSON.stringify(d)));
+  }
+  s.appendChild(body);
+  return s;
+}
+function drawRun() {
+  const r = DATA.runs[current];
+  $("#runblurb").textContent = r.blurb;
+  const host = $("#iters"); host.textContent = "";
+  const iters = [...new Set(r.records.map(d => d.iter))].sort((a, b) => a - b);
+  let prev = null;
+  iters.forEach(i => {
+    const recs = r.records.filter(d => d.iter === i);
+    const box = el("section", "iter");
+    const h = el("div", "ihead");
+    h.appendChild(el("span", "ino", "ITERATION " + i));
+    const t = recs.map(d => d.t).filter(x => typeof x === "number");
+    if (t.length) h.appendChild(el("span", "itime", t[t.length - 1].toFixed(1) + " s"));
+    box.appendChild(h);
+    const meas = recs.find(d => d.step === "measure");
+    if (meas) { box.appendChild(slackStrip(meas.slacks, prev)); prev = meas.slacks; }
+    const chain = el("div", "chain");
+    recs.filter(d => d.step !== "measure").forEach(d => chain.appendChild(stepNode(d)));
+    if (chain.children.length) box.appendChild(chain);
+    host.appendChild(box);
+  });
+}
+
+/* ---- 02 the gate ---- */
+function drawGate() {
+  const g = $("#pgrid");
+  DATA.proposals.forEach(p => {
+    const refuted = p.verdict === "REFUTED";
+    const c = el("div", "pcard" + (refuted ? " refuted" : ""));
+    const h = el("h3");
+    h.appendChild(el("span", "id", p.id));
+    h.appendChild(el("span", null, p.def_id));
+    h.appendChild(el("span", "pill " + (refuted ? "no" : "ok"), p.verdict));
+    c.appendChild(h);
+    const m = el("div", "pmeta");
+    m.innerHTML = "<b>declared</b> k=" + p.k + " &nbsp; <b>obligation</b> " + p.branch +
+      "<br><b>target</b> " + p.module + " · " + p.region +
+      (p.delta ? "<br><b>measured</b> " + p.delta + " ns on its own group" : "");
+    c.appendChild(m);
+    c.appendChild(el("div", "why", p.rationale));
+    if (p.refutation) {
+      const f = p.refutation, b = el("div", "cex");
+      b.appendChild(el("div", "hl", f.headline));
+      b.appendChild(el("div", null, f.mechanism));
+      if (f.witness.length) {
+        const w = el("div", "wit");
+        f.witness.forEach(([n, v]) => { w.appendChild(el("span", "n", n));
+          w.appendChild(el("span", null, v)); });
+        b.appendChild(w);
+      }
+      if (f.gold) {
+        const d = el("div", "diff");
+        d.appendChild(el("span", "g", "gold " + f.gold));
+        d.appendChild(el("span", "b", "gate " + f.gate));
+        b.appendChild(d);
+      }
+      b.appendChild(el("div", "kv", "caught in " + f.found_in));
+      if (f.missed_by.length) {
+        const mm = el("div", "missed");
+        f.missed_by.forEach(([what, res]) => {
+          const row = el("div");
+          row.appendChild(el("span", null, what));
+          row.appendChild(el("span", "r", res));
+          row.lastChild.style.color = res === "MISSED" ? "var(--bad)" : "var(--met)";
+          mm.appendChild(row);
+        });
+        b.appendChild(mm);
+      }
+      b.appendChild(el("div", "sting", f.sting));
+      c.appendChild(b);
+    }
+    g.appendChild(c);
+  });
+}
+
+/* ---- 03 the exam ---- */
+function drawExam() {
+  const rows = DATA.bench;
+  const cases = [...new Set(rows.map(r => r.case))];
+  const checkers = [...new Set(rows.map(r => r.checker))];
+  const t = el("table");
+  // miter_k and miter_pdr are this project's own checker. A benchmark whose
+  // author aces it tells you about the benchmark, so say which column is ours.
+  const OURS = { miter_k: "ours, induction", miter_pdr: "ours, PDR" };
+  let head = "<thead><tr><th>case</th>";
+  checkers.forEach(c => head += "<th style='text-align:center'>" + c +
+    (OURS[c] ? "<small style='display:block;font-weight:400;text-transform:none;" +
+      "letter-spacing:0;color:var(--accent)'>" + OURS[c] + "</small>" : "") + "</th>");
+  t.innerHTML = head + "</tr></thead>";
+  const tb = el("tbody");
+  cases.forEach(cs => {
+    const tr = el("tr");
+    const truth = (rows.find(r => r.case === cs) || {}).truth || "";
+    const th = el("td", "rowh");
+    th.appendChild(el("span", null, cs));
+    th.appendChild(el("small", null, truth));
+    tr.appendChild(th);
+    checkers.forEach(ck => {
+      const r = rows.find(x => x.case === cs && x.checker === ck);
+      const td = el("td");
+      if (!r) { td.appendChild(el("span", "cell ex", "—")); tr.appendChild(td); return; }
+      const circ = String(r.circular).toLowerCase() === "true";
+      const v = r.verdict;
+      let cls = "ex";
+      if (circ) cls = "ex";
+      else if (v === "CANNOT") cls = "hm";
+      else if (v === "ERROR" || v === "TIMEOUT") cls = "hm";
+      else cls = ((v === "ACCEPT") === (r.truth === "EQUIVALENT")) ? "ok" : "no";
+      const span = el("span", "cell " + cls, circ ? "excl" : v);
+      span.title = (r.detail || "") + (circ ? " (excluded: circular)" : "");
+      td.appendChild(span);
+      tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb);
+  $("#matrix").appendChild(t);
+}
+
+drawRail(); drawRun(); drawGate(); drawExam();
+</script>

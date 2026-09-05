@@ -124,6 +124,17 @@ claims you can re-derive in minutes and which would cost you an afternoon of
 synthesis. Clone rather than downloading a zip: one demo assertion checks that
 the pre-registration commit precedes the results commit, which needs history.
 
+## The interactive demo
+
+    python3 demo/build.py && open demo/explorer.html
+
+One self-contained page, no server and no network. Step through any of five
+committed runs and see the evidence the classifier decided on, the solver's
+counterexample for each refuted transform, the SlackBench matrix with our own
+checker labelled and its two wrong cells visible, and the SDC line worth
++5.179 ns on a byte-identical netlist. It is **generated from the logs**, so it
+cannot drift from them. See [demo/README.md](demo/README.md).
+
 ## The benchmark
 
 `bench_top`, **55,413 standard cells**. Five asynchronous domains, each with

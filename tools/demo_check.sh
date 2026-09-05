@@ -141,6 +141,24 @@ PY
 cat $D/b8cmp.txt
 chk "beat 8 claims still true" $D/b8cmp.txt "BEAT8 OK"
 
+echo "=== the interactive demo is built from the logs, and is not stale"
+python3 demo/build.py > $D/b9.txt 2>&1
+cat $D/b9.txt
+chk "demo builds from the logs" $D/b9.txt "5 runs, 6 proposals, 56 benchmark rows"
+# A generated page committed alongside its generator can silently go stale: edit
+# a log, forget to rebuild, and the demo shows numbers the repo no longer holds.
+# Rebuilding must produce no diff against what is committed.
+if git diff --quiet -- demo/explorer.html 2>/dev/null; then
+  echo "EXPLORER FRESH" > $D/b9d.txt
+else
+  echo "EXPLORER STALE: demo/explorer.html differs from a rebuild, run demo/build.py" > $D/b9d.txt
+fi
+cat $D/b9d.txt
+chk "committed demo matches a rebuild" $D/b9d.txt "EXPLORER FRESH"
+# and the page really carries the counterexample it claims to show
+grep -c "ae19f605" demo/explorer.html > $D/b9c.txt 2>&1
+chk "demo carries P4's counterexample" $D/b9c.txt "1"
+
 echo "=== classifier regression (not a beat, but the demo cites it)"
 python3 tools/classify_regression.py > $D/b7.txt 2>&1
 tail -2 $D/b7.txt
