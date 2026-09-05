@@ -1,0 +1,85 @@
+G7 run 2, 2026-09-05. Crossings declared per amendment 2. Depth AND Hamming.
+Hamming discharged by injecting the property into the module that owns the
+crossing net, then running SymbiYosys BMC to depth 14.
+
+================= CDC-1 / gold   crossing=flag_src =================
+VERDICT        SRC         DST         WIDTH DEPTH  SOURCE
+SAFE           (declared)  clk_dst         1     2  flag_src
+crossings: 1   SAFE=1                                            exit 0
+
+================= CDC-1 / gate   crossing=flag_src =================
+VERDICT        SRC         DST         WIDTH DEPTH  SOURCE
+DEPTH_1        (declared)  clk_dst         1     1  flag_src
+crossings: 1   DEPTH_1=1                                         exit 1
+
+================= CDC-2 / gold   crossing=gray =================
+VERDICT        SRC         DST         WIDTH DEPTH  SOURCE
+MULTIBIT       (declared)  clk             4     2  gray
+hamming gray   PROVEN     no counterexample to depth 14
+crossings: 1   SAFE=1                                            exit 0
+
+================= CDC-2 / gate   crossing=bin =================
+VERDICT        SRC         DST         WIDTH DEPTH  SOURCE
+MULTIBIT       (declared)  clk             4     2  bin
+hamming bin    REFUTED    counterexample
+crossings: 1   MULTIBIT_UNSAFE=1                                 exit 1
+
+
+THE COUNTEREXAMPLE, parsed from ham_bin/ham/engine_0/trace.vcd
+--------------------------------------------------------------
+step  bin   prev  diff  popcount  rst_n  boot
+   0  0000  0000  0000      0     ?     0000
+   1  0000  0000  0000      0     0     0000
+   2  0000  0000  0000      0     0     0001
+   3  0000  0000  0000      0     1     0010
+   4  0001  0000  0001      1     1     0011
+   5  0010  0001  0011      2     1     0100   <-- ASSERT FAILS HERE
+
+The crossing bus goes 0001 to 0010 and TWO bits change in one cycle. A
+receiver in another clock domain sampling mid-transition can latch 0000 or
+0011, neither of which is the old value or the new one. That is the entire
+reason gray coding exists, and CDC-2's gate.v moved the encoder to the far
+side of the synchronizer so the bus that physically crosses is raw binary.
+
+The boot counter behaves as intended and is visible in the trace: rst_n is
+held low at steps 1 and 2, released from step 3 onward, and the assertion
+arms at boot >= 4, which is step 5.
+
+
+SCORING
+-------
+C1  CONFIRMED.  Depth check flags CDC-1/gate.v as DEPTH_1 and passes gold.v.
+C2  CONFIRMED.  Hamming refutes CDC-2/gate.v with a counterexample in which
+    two consecutive values differ in more than one bit, and proves gold.v.
+
+Both cases are ones REPORT section 7.4 records every functional checker
+getting wrong or being unable to express. cec and dsec cannot build a miter
+for CDC-1 at all; every checker correctly calls CDC-2 equivalent, because it
+is. The defect survives all of them and G7 names it in both directions.
+
+
+THREE TOOL BUGS FOUND ON THE WAY, ALL MINE
+------------------------------------------
+1. A wrapper module reaching into the DUT as dut.<net> does not work: Yosys
+   treats the hierarchical reference as an implicitly declared wire, and a
+   `.*` port connection needs every port redeclared in the wrapper. Replaced
+   by instrumenting the source, which is what commercial CDC tools do anyway.
+   The instrumented file is written into the work directory so the property
+   that was actually checked can be read rather than trusted.
+
+2. The module-name regex ended in a literal backspace byte, 0x08, instead of
+   the two characters backslash-b, so it matched nothing and every Hamming
+   check returned "could not find module to instrument". Written by a shell
+   heredoc that interpreted the escape.
+
+3. THE ONE WORTH RECORDING. The first working Hamming run refuted BOTH gold
+   and gate at step 0. A BMC engine starts from an ARBITRARY state, so
+   cdc_prev_r began as garbage and the first comparison refuted every design
+   including correct ones. This is the same trap experiments/fsm_reencode hit
+   with PDR a month earlier, and it took the same fix: an initialised boot
+   counter that holds reset asserted for two cycles, releases it for the rest
+   of the trace, and arms the assertion only after the design settles. A
+   checker that refutes everything looks exactly like a checker that works,
+   until you run it on something you know is correct. Running gold and gate
+   through every check, rather than only the case expected to fail, is what
+   caught it.

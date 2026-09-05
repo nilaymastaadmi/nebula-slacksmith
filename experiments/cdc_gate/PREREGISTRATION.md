@@ -114,3 +114,36 @@ presented to the gate, and adds no capability the definition did not already
 require. Recorded here rather than applied silently, and dated before results
 exist, because a definition edited after seeing output is the failure mode this
 file exists to prevent.
+
+---
+
+## Amendment 2, 2026-09-05, after run 1, which is kept
+
+`results/run1_2026-09-05.log` is committed and stays committed.
+
+**What run 1 showed.** C1 is confirmed: CDC-1's gold is SAFE at depth 2 and its
+gate is `DEPTH_1`. CDC-2 came back wrong in both directions, and the cause is
+amendment 1's declaration mechanism, not the checker and not the design.
+
+Amendment 1 lets a **primary input port** be declared asynchronous. CDC-2's
+crossing is not a port. Its module is single-clock by construction, as every
+SlackBench case must be for the functional checkers, and the bus that actually
+crosses the boundary is an **internal net**: `gray` in gold, `bin` in gate.
+Declaring `inc`, the only input available, made the gate measure the depth of
+the counter itself. It returned 1 for gold and 3 for gate. Both are real
+measurements of the wrong question, which is worse than an error, because a
+wrong question answered correctly still prints a verdict.
+
+**Resolution:** the gate accepts `--crossing <net>`, naming any net, port or
+internal, that is driven by another clock domain. Flops sampling that net are
+the first synchronizer stage, depth is measured from there, and Hamming safety
+is asserted **on the crossing net itself** rather than on a source register.
+Asserting on the net is the more faithful formulation anyway: the question is
+whether the value that physically crosses the boundary changes one bit at a
+time, and in gold that value is a combinational wire, not a register.
+
+**Predictions C1 to C6 are unchanged, and none of them is made easier.** C2
+still requires the gate to refute CDC-2's gate.v with a counterexample and
+prove its gold.v. This amendment changes how a crossing is pointed at, not what
+counts as safe. Had it changed the safety criterion after seeing a result, this
+run would be void and reported as void.
