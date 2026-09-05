@@ -92,3 +92,25 @@ visible.
 - **Protocol correctness is out of scope.** Handshakes, request/acknowledge and
   FIFO full/empty logic are not verified, which is what C6 registers.
 - **One design.** bench_top plus two purpose-built cases is not a rate.
+
+---
+
+## Amendment 1, 2026-09-05, before any checker code and before any result
+
+The crossing definition above says "a net driven by logic clocked in domain S".
+That covers `bench_top`, where every real crossing is flop to flop. It does
+**not** cover `slackbench/cases/CDC-1` and `CDC-2`, which are standalone
+modules whose asynchronous source is a **primary input** with no clock at all,
+so under the definition as written they contain zero crossings and C1 and C2
+would be unscoreable rather than wrong.
+
+**Resolution:** the gate accepts an explicit `--async-input <port>` declaration
+naming a primary input as an asynchronous source. This is what commercial CDC
+tools require too; a CDC checker cannot infer which primary inputs are
+asynchronous, and inferring it would make every input a crossing.
+
+Predictions C1 to C6 are unchanged. This names how the two standalone cases are
+presented to the gate, and adds no capability the definition did not already
+require. Recorded here rather than applied silently, and dated before results
+exist, because a definition edited after seeing output is the failure mode this
+file exists to prevent.
