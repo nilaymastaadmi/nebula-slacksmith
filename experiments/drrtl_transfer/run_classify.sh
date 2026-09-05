@@ -4,11 +4,10 @@ set -u
 # threshold is tuned; both are void conditions in the registration.
 #
 #   usage: bash experiments/drrtl_transfer/run_classify.sh [DRRTL_REPO_DIR]
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-export PATH=$HOME/tools/oss-cad-suite/bin:$PATH
-Y=$HOME/tools/oss-cad-suite/bin/yosys
-STA=$HOME/tools/OpenSTA/build/sta
-LIB=$HOME/sta_work/sky130hd_tt.lib
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
+Y=$OSS_CAD_BIN/yosys
+STA=$STA_BIN
+LIB=$LIBERTY
 DR=${1:-/mnt/c/Users/toshn/Projects/Dr_RTL}
 RES=experiments/drrtl_transfer/results
 W=$HOME/drrtl_run; mkdir -p $W $RES

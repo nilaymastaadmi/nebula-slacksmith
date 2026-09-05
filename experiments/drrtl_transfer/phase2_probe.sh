@@ -2,7 +2,7 @@ set -u
 # Phase 2 groundwork: for each FANOUT_DOMINATED design, which net does the
 # worst path's top cell drive, how many loads, and which RTL signal is it?
 # Dr. RTL skill #7 says "duplicate the register driving it"; this finds it.
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
 W=$HOME/drrtl_run
 DR=/mnt/c/Users/toshn/Projects/Dr_RTL/rtl_dataset
 python3 - "$W" "$DR" <<'PY'

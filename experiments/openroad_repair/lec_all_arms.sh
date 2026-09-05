@@ -4,8 +4,7 @@ set -u
 # repaired.v exist in one name domain, then proved with tools/lec_check.py.
 #
 #   usage: bash experiments/openroad_repair/lec_all_arms.sh
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-export PATH=$HOME/tools/oss-cad-suite/bin:$PATH
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
 RES=experiments/openroad_repair/lec_arms; mkdir -p $RES
 OUT=$RES/summary.tsv
 printf "arm\tnetlist\tsdc\tverdict\tcompare_points\tproven\tunproven\tseconds\n" > $OUT
@@ -20,7 +19,7 @@ arm () {  # $1 label  $2 netlist  $3 sdc
   t0=$(date +%s)
   python3 tools/lec_check.py --gold $HOME/or_repair/prerepair.v \
       --gate $HOME/or_repair/repaired.v \
-      --liberty $HOME/sta_work/sky130hd_tt.lib \
+      --liberty $LIBERTY \
       --workdir $HOME/lec_$1 > $RES/$1.lec.json 2>&1
   t1=$(date +%s)
   python3 - "$1" "$2" "$3" $RES/$1.lec.json $((t1-t0)) >> $OUT <<'PY'

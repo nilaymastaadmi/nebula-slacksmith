@@ -1,5 +1,5 @@
 set -u
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
 W=$HOME/bufexp
 C=$HOME/classify
 

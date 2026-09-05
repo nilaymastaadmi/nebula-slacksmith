@@ -8,10 +8,9 @@ set -u
 # the classified report (tools/classify_path.py --json) plus the full path,
 # so the experiment can ask whether the router's output is actionable for a
 # model and not only for a person.
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-export PATH=$HOME/tools/oss-cad-suite/bin:$PATH
-STA=$HOME/tools/OpenSTA/build/sta
-LIB=$HOME/sta_work/sky130hd_tt.lib
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
+STA=$STA_BIN
+LIB=$LIBERTY
 OUT=experiments/llm_proposer_v3/inputs
 mkdir -p $OUT
 

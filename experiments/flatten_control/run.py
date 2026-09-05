@@ -66,9 +66,9 @@ def time_arm(sta, liberty, net, sdc, outdir, tag):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--workdir", required=True)
-    ap.add_argument("--yosys-bin", default=os.path.expanduser("~/tools/oss-cad-suite/bin/yosys"))
-    ap.add_argument("--sta-bin", default=os.path.expanduser("~/tools/OpenSTA/build/sta"))
-    ap.add_argument("--liberty", default=os.path.expanduser("~/sta_work/sky130hd_tt.lib"))
+    ap.add_argument("--yosys-bin", default=os.environ.get("OSS_CAD_BIN", os.path.expanduser("~/tools/oss-cad-suite/bin")) + "/yosys")
+    ap.add_argument("--sta-bin", default=os.environ.get("STA_BIN", os.path.expanduser("~/tools/OpenSTA/build/sta")))
+    ap.add_argument("--liberty", default=os.environ.get("LIBERTY", os.path.expanduser("~/sta_work/sky130hd_tt.lib")))
     ap.add_argument("--sdc", default=os.path.join(REPO, "sdc", "bench_top_v3.sdc"))
     ap.add_argument("--arms", default="ABCDE")
     a = ap.parse_args()

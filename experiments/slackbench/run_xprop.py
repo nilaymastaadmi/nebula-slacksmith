@@ -77,8 +77,8 @@ def run(a, cmp_expr, tag):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--workdir", required=True)
-    ap.add_argument("--iverilog", default=os.path.expanduser("~/tools/oss-cad-suite/bin/iverilog"))
-    ap.add_argument("--vvp", default=os.path.expanduser("~/tools/oss-cad-suite/bin/vvp"))
+    ap.add_argument("--iverilog", default=os.environ.get("OSS_CAD_BIN", os.path.expanduser("~/tools/oss-cad-suite/bin")) + "/iverilog")
+    ap.add_argument("--vvp", default=os.environ.get("OSS_CAD_BIN", os.path.expanduser("~/tools/oss-cad-suite/bin")) + "/vvp")
     a = ap.parse_args()
     a.workdir = os.path.expanduser(a.workdir)
 

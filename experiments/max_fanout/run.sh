@@ -4,10 +4,10 @@ set -u
 # vary. Nothing here edits sdc/bench_top_v3.sdc.
 #
 #   usage: bash experiments/max_fanout/run.sh
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
 RES=experiments/max_fanout/results; mkdir -p $RES
-STA=$HOME/tools/OpenSTA/build/sta
-LIB=$HOME/sta_work/sky130hd_tt.lib
+STA=$STA_BIN
+LIB=$LIBERTY
 
 # Prove the generated SDCs differ from v3 only by the appended block.
 for n in 8 16 32; do

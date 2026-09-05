@@ -6,9 +6,9 @@ set -u
 # re-synthesized. Writes results_reclassified/<design>/ and a comparison TSV.
 #
 #   usage: bash experiments/drrtl_transfer/reclassify.sh
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-STA=$HOME/tools/OpenSTA/build/sta
-LIB=$HOME/sta_work/sky130hd_tt.lib
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
+STA=$STA_BIN
+LIB=$LIBERTY
 W=$HOME/drrtl_run
 RES=experiments/drrtl_transfer/results_reclassified
 OLD=experiments/drrtl_transfer/results

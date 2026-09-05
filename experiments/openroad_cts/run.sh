@@ -22,10 +22,10 @@ set -u
 # are deliberately excluded, which matches both this project's own dont_use
 # policy (docs/measurement-methodology.md finding 1) and the sky130hd
 # platform's own DONT_USE_CELLS.
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-OR=$HOME/or_env/bin/openroad
-P=$HOME/orfs/flow/platforms/sky130hd
-LIB=$HOME/sta_work/sky130hd_tt.lib
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
+OR=$OPENROAD_BIN
+P=$ORFS_PLATFORM
+LIB=$LIBERTY
 NET=${1:-$HOME/bufexp/A.v}
 SDC=${2:-sdc/bench_top_v2.sdc}
 W=$HOME/or_cts; mkdir -p $W

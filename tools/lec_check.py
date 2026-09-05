@@ -68,7 +68,7 @@ def main():
     ap.add_argument("--liberty", required=True)
     ap.add_argument("--top", default="bench_top")
     ap.add_argument("--workdir", required=True)
-    ap.add_argument("--yosys-bin", default=os.path.expanduser("~/tools/oss-cad-suite/bin/yosys"))
+    ap.add_argument("--yosys-bin", default=os.environ.get("OSS_CAD_BIN", os.path.expanduser("~/tools/oss-cad-suite/bin")) + "/yosys")
     ap.add_argument("--seq", type=int, default=10)
     ap.add_argument("--induct", type=int, default=4)
     ap.add_argument("--min-points", type=int, default=100,

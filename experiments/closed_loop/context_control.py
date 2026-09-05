@@ -30,7 +30,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--liberty", required=True)
 ap.add_argument("--sta-bin", required=True)
 ap.add_argument("--yosys-bin",
-                default=os.path.expanduser("~/tools/oss-cad-suite/bin/yosys"))
+                default=os.environ.get("OSS_CAD_BIN", os.path.expanduser("~/tools/oss-cad-suite/bin")) + "/yosys")
 ap.add_argument("--variant", required=True,
                 help="the spliced P2 rv32i_core.v")
 ap.add_argument("--sdc", default=os.path.join(REPO, "sdc", "bench_top_v2.sdc"))

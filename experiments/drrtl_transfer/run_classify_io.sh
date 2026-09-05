@@ -8,9 +8,9 @@ set -u
 # worst path. Same netlists, same 0.9x rule, same unchanged thresholds.
 #
 # It is reported as secondary and unregistered. It does not replace phase 1.
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-STA=$HOME/tools/OpenSTA/build/sta
-LIB=$HOME/sta_work/sky130hd_tt.lib
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
+STA=$STA_BIN
+LIB=$LIBERTY
 DR=${1:-/mnt/c/Users/toshn/Projects/Dr_RTL}
 W=$HOME/drrtl_run
 RES=experiments/drrtl_transfer/results_allpaths; mkdir -p $RES

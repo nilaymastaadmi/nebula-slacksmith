@@ -1,0 +1,29 @@
+# core.autocrlf is true on the author's machine and there was no .gitattributes
+# until 2026-09-05, which means a clone on any Windows box would have checked
+# out every shell script with CRLF line endings. bash then fails on the shebang
+# or, worse, silently carries a trailing \r into a path variable. The author
+# never saw it because his working tree was written directly rather than
+# checked out. Anyone else cloning would have.
+#
+# Force LF for everything the toolchain executes or parses.
+* text=auto eol=lf
+
+*.sh    text eol=lf
+*.py    text eol=lf
+*.tcl   text eol=lf
+*.v     text eol=lf
+*.sv    text eol=lf
+*.sdc   text eol=lf
+*.ys    text eol=lf
+*.sby   text eol=lf
+*.eqy   text eol=lf
+*.json  text eol=lf
+*.jsonl text eol=lf
+*.tsv   text eol=lf
+*.md    text eol=lf
+
+# Binary, never touch.
+*.gz    binary
+*.zip   binary
+*.png   binary
+*.pdf   binary

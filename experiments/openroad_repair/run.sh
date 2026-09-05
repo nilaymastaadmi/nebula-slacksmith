@@ -10,10 +10,10 @@ set -u
 # The liberty is deliberately OUR sky130hd_tt.lib, not the one shipped with the
 # OpenROAD platform (their md5 differ), so these numbers stay comparable with
 # every other measurement in this project.
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-OR=$HOME/or_env/bin/openroad
-P=$HOME/orfs/flow/platforms/sky130hd
-LIB=$HOME/sta_work/sky130hd_tt.lib
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
+OR=$OPENROAD_BIN
+P=$ORFS_PLATFORM
+LIB=$LIBERTY
 NET=${1:-$HOME/bufexp/A.v}          # default: the unbuffered mapped netlist
 SDC=${2:-sdc/bench_top_v2.sdc}
 W=$HOME/or_repair; mkdir -p $W

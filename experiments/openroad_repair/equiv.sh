@@ -6,9 +6,9 @@ set -u
 # repaired netlist against the ORIGINAL hierarchical Yosys netlist does not
 # work: equiv_make found only 86 equivalence points in a 55K-cell design and
 # proved none, which is a failure of the matching, not a result.
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-Y=$HOME/tools/oss-cad-suite/bin/yosys
-LIB=$HOME/sta_work/sky130hd_tt.lib
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
+Y=$OSS_CAD_BIN/yosys
+LIB=$LIBERTY
 W=$HOME/or_repair
 A=$W/prerepair.v
 B=$W/repaired.v

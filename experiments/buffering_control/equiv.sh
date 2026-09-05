@@ -1,7 +1,7 @@
 set -u
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-B=$HOME/tools/oss-cad-suite/bin
-LIB=$HOME/sta_work/sky130hd_tt.lib
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
+B=$OSS_CAD_BIN
+LIB=$LIBERTY
 W=$HOME/bufexp
 echo "===== yosys stat, both netlists ====="
 for t in A B; do

@@ -4,11 +4,10 @@ set -u
 # aes, communication and datapath: gold, plain, (* keep *). Each synthesized
 # as A (no lever) and B (buffer-only, the isolated fanout lever from phase 3),
 # timed at the scored run's own period, re-classified, and gated against gold.
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-export PATH=$HOME/tools/oss-cad-suite/bin:$PATH
-Y=$HOME/tools/oss-cad-suite/bin/yosys
-STA=$HOME/tools/OpenSTA/build/sta
-LIB=$HOME/sta_work/sky130hd_tt.lib
+. "$(dirname "${BASH_SOURCE[0]}")/../../../tools/env.sh"
+Y=$OSS_CAD_BIN/yosys
+STA=$STA_BIN
+LIB=$LIBERTY
 P4=experiments/drrtl_transfer/phase4
 W=$HOME/drrtl_p4; rm -rf $W; mkdir -p $W $P4/results
 DU=$(python3 -c "import sys; sys.path.insert(0,'tools'); import remeasure; print(remeasure.dont_use_flags('$LIB'))")

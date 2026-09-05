@@ -3,9 +3,9 @@ set -u
 # repair_design is documented as buffer insertion plus gate resizing, which is
 # a claim, not evidence. The ABC buffering control in
 # experiments/buffering_control/ got the same treatment.
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-Y=$HOME/tools/oss-cad-suite/bin/yosys
-LIB=$HOME/sta_work/sky130hd_tt.lib
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
+Y=$OSS_CAD_BIN/yosys
+LIB=$LIBERTY
 W=$HOME/or_repair
 A=$HOME/bufexp/A.v
 R=$W/repaired.v

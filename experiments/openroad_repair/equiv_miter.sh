@@ -21,9 +21,8 @@ set -u
 #
 # async2sync is in the script because this design's flops are all
 # asynchronously reset, and it is what the upstream EQY example does too.
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-export PATH=$HOME/tools/oss-cad-suite/bin:$PATH
-EX=$HOME/tools/oss-cad-suite/examples/eqy/spm
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
+EX=$OSS_CAD_BIN/../examples/eqy/spm
 W=$HOME/or_miter; rm -rf $W; mkdir -p $W
 
 DEPTH=${1:-4}

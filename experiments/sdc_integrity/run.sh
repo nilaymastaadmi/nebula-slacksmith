@@ -3,11 +3,17 @@
 # how much slack can SDC statements alone manufacture with zero design change?
 # Netlist is frozen (flat arm E). Only the constraints vary.
 set -u
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-STA=$HOME/tools/OpenSTA/build/sta
-LIB=$HOME/sta_work/sky130hd_tt.lib
-NET=$HOME/flatexp/E/mapped.v
-W=$HOME/sdc_trap; mkdir -p $W
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
+STA=$STA_BIN
+LIB=$LIBERTY
+W=$SLACKSMITH_WORK/sdc_trap; mkdir -p $W
+
+# The frozen netlist (flat arm E) is committed gzipped rather than left in the
+# author's home directory, because the claim this script makes is about a
+# BYTE-IDENTICAL netlist and nobody can check that against a file they do not
+# have. 387 KB compressed, sha256 8068609219...
+NET=$W/flat_E_mapped.v
+[ -f "$NET" ] || zcat experiments/sdc_integrity/flat_E_mapped.v.gz > "$NET"
 
 # The endpoint of the residual clk_e path, from the committed report.
 EP=$(grep -m1 "^Endpoint:" experiments/flatten_control/results/E_clk_e.rpt | awk '{print $2}')

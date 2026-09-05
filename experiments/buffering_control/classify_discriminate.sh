@@ -1,7 +1,7 @@
 set -u
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-STA=$HOME/tools/OpenSTA/build/sta
-LIB=$HOME/sta_work/sky130hd_tt.lib
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
+STA=$STA_BIN
+LIB=$LIBERTY
 W=$HOME/bufexp
 C=$HOME/classify; mkdir -p $C
 

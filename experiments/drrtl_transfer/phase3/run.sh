@@ -2,11 +2,10 @@ set -u
 # Phase 3 of experiments/drrtl_transfer/PREREGISTRATION.md: split the
 # physical lever into buffer-only and sizing-only. Same 15 in-scope designs,
 # same netlist A, same per-design period the scored run derived, three levers.
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-export PATH=$HOME/tools/oss-cad-suite/bin:$PATH
-Y=$HOME/tools/oss-cad-suite/bin/yosys
-STA=$HOME/tools/OpenSTA/build/sta
-LIB=$HOME/sta_work/sky130hd_tt.lib
+. "$(dirname "${BASH_SOURCE[0]}")/../../../tools/env.sh"
+Y=$OSS_CAD_BIN/yosys
+STA=$STA_BIN
+LIB=$LIBERTY
 DR=${1:-/mnt/c/Users/toshn/Projects/Dr_RTL}
 W=$HOME/drrtl_run
 P3=experiments/drrtl_transfer/phase3; mkdir -p $P3/results

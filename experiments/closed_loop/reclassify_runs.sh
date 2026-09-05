@@ -4,9 +4,9 @@ set -u
 # SDC, report_checks asked for its fanout column. Writes reclassified.tsv.
 #
 #   usage: bash experiments/closed_loop/reclassify_runs.sh
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-STA=$HOME/tools/OpenSTA/build/sta
-LIB=$HOME/sta_work/sky130hd_tt.lib
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
+STA=$STA_BIN
+LIB=$LIBERTY
 SDC=/mnt/c/Users/toshn/Projects/slacksmith-benchmark/sdc/bench_top_v3.sdc
 OUT=experiments/closed_loop/reclassified.tsv
 printf "run\titer\tclock\told_verdict\told_share\tnew_verdict\tnew_share\ttop_cell\ttop_incr\told_top_fanout\tnew_top_fanout\n" > $OUT

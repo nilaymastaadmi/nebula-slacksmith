@@ -5,7 +5,7 @@ set -u
 # OR-E (flat, buffer+size).
 #
 #   usage: bash experiments/openroad_flat/run.sh
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
 RES=experiments/openroad_flat/results; mkdir -p $RES
 
 for arm in C E; do

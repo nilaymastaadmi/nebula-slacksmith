@@ -83,7 +83,7 @@ def main():
     ap.add_argument("--proposal", required=True)
     ap.add_argument("--rtl", required=True)
     ap.add_argument("--workdir", required=True)
-    ap.add_argument("--yosys", default=os.path.expanduser("~/tools/oss-cad-suite/bin/yosys"))
+    ap.add_argument("--yosys", default=os.environ.get("OSS_CAD_BIN", os.path.expanduser("~/tools/oss-cad-suite/bin")) + "/yosys")
     ap.add_argument("--depth", type=int, default=20)
     ap.add_argument("--timeout", type=int, default=300)
     ap.add_argument("--repo", default=".")
@@ -170,7 +170,7 @@ def main():
             "[gate]\nread_verilog" + svf + " gate.v\nrename " + mod + "_gate " + mod + "_gold\n"
             "prep -top " + mod + "_gold\n\n"
             "[strategy sat]\nuse sat\ndepth 5\n")
-        eqy = os.path.expanduser("~/tools/oss-cad-suite/bin/eqy")
+        eqy = os.environ.get("OSS_CAD_BIN", os.path.expanduser("~/tools/oss-cad-suite/bin")) + "/eqy"
         r = sh([eqy, "-f", "prop.eqy"], cwd=wd, timeout=a.timeout)
         out = r.stdout + r.stderr
         open(os.path.join(wd, "g4.log"), "w", encoding="utf-8").write(out)

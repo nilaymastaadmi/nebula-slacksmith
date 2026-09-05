@@ -11,11 +11,10 @@ set -u
 #   - max fanout on any net inside mini_cpu, and on the PC / PC_dup nets
 #   - the formal gate (EQY, k=0) on gold vs each variant, because a transform
 #     that is not proven equivalent has no timing result to report.
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-export PATH=$HOME/tools/oss-cad-suite/bin:$PATH
-Y=$HOME/tools/oss-cad-suite/bin/yosys
-STA=$HOME/tools/OpenSTA/build/sta
-LIB=$HOME/sta_work/sky130hd_tt.lib
+. "$(dirname "${BASH_SOURCE[0]}")/../../../tools/env.sh"
+Y=$OSS_CAD_BIN/yosys
+STA=$STA_BIN
+LIB=$LIBERTY
 P2=experiments/drrtl_transfer/phase2
 W=$HOME/drrtl_p2; rm -rf $W; mkdir -p $W $P2/results
 PERIOD=51.849

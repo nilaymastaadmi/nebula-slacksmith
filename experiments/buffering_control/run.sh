@@ -1,8 +1,8 @@
 set -u
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-B=$HOME/tools/oss-cad-suite/bin
-STA=$(which sta || echo $HOME/tools/OpenSTA/build/sta)
-LIB=$HOME/sta_work/sky130hd_tt.lib
+. "$(dirname "${BASH_SOURCE[0]}")/../../tools/env.sh"
+B=$OSS_CAD_BIN
+STA=$(which sta || echo $STA_BIN)
+LIB=$LIBERTY
 [ -s "$LIB" ] || { echo "FATAL: liberty missing at $LIB"; exit 2; }
 echo "LIB=$LIB"; echo "STA=$STA"
 DU=$(python3 -c "import sys; sys.path.insert(0,'tools'); import remeasure; print(remeasure.dont_use_flags('$LIB'))")

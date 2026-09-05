@@ -1,6 +1,5 @@
 set -u
-cd /mnt/c/Users/toshn/Projects/slacksmith-benchmark
-export PATH=$HOME/tools/oss-cad-suite/bin:$PATH
+. "$(dirname "${BASH_SOURCE[0]}")/env.sh"
 
 echo "############ REGRESSION on both known verdicts ############"
 echo "# P4 has a real counterexample and MUST read REFUTED."
@@ -11,7 +10,7 @@ echo "--- P4 (expect REFUTED) ---"
 python3 tools/gate_proposal.py \
   --proposal experiments/llm_proposer/proposals/P4.json \
   --rtl rtl/rv32i_core.v \
-  --workdir $HOME/verdict_check/P4 --timeout 300 2>&1 \
+  --workdir $SLACKSMITH_WORK/verdict_check/P4 --timeout 300 2>&1 \
   | grep -E '"id"|"G3"|"G4"|counterexample|depth_exhausted'
 
 echo
@@ -22,14 +21,14 @@ python3 tools/gate_proposal.py \
   --clk clk --rst reset_n \
   --outputs "round_key:128,ready:1,sboxw:32" \
   --inputs "key:256,keylen:1,init:1,round:4,new_sboxw:32" \
-  --workdir $HOME/verdict_check/A2 --timeout 300 2>&1 \
+  --workdir $SLACKSMITH_WORK/verdict_check/A2 --timeout 300 2>&1 \
   | grep -E '"id"|"G3"|"G4"|counterexample|depth_exhausted'
 
 echo
 echo "--- what the two partition logs actually say ---"
 for p in P4 A2; do
   echo "[$p]"
-  find $HOME/verdict_check/$p/prop/strategies -name run.log 2>/dev/null \
+  find $SLACKSMITH_WORK/verdict_check/$p/prop/strategies -name run.log 2>/dev/null \
     | xargs grep -lE "Reached maximum|model found" 2>/dev/null \
     | head -1 | xargs -r grep -oE "model found[^!]*!|Reached maximum number of time steps" \
     | head -2
