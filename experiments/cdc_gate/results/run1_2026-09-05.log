@@ -1,0 +1,45 @@
+G7 run 1, 2026-09-05. Depth check only, no Hamming yet.
+Declaration used: --async-input flag_src (CDC-1), --async-input inc (CDC-2).
+
+================= CDC-1 / gold =================
+top sb_cdc: 2 flops, 1 clock domain(s)
+   clk_dst                  2 flops
+   declared async inputs: flag_src
+VERDICT        SRC         DST         WIDTH DEPTH  SOURCE
+SAFE           (async inpu clk_dst         1     2  flag_src
+crossings: 1   SAFE=1
+
+================= CDC-1 / gate =================
+top sb_cdc: 1 flops, 1 clock domain(s)
+   clk_dst                  1 flops
+   declared async inputs: flag_src
+VERDICT        SRC         DST         WIDTH DEPTH  SOURCE
+DEPTH_1        (async inpu clk_dst         1     1  flag_src
+crossings: 1   DEPTH_1=1
+
+================= CDC-2 / gold =================
+top sb_ptr: 3 flops, 1 clock domain(s)
+   clk                      3 flops
+   declared async inputs: inc
+VERDICT        SRC         DST         WIDTH DEPTH  SOURCE
+DEPTH_1        (async inpu clk             4     1  inc
+crossings: 1   DEPTH_1=1
+
+================= CDC-2 / gate =================
+top sb_ptr: 3 flops, 1 clock domain(s)
+   clk                      3 flops
+   declared async inputs: inc
+VERDICT        SRC         DST         WIDTH DEPTH  SOURCE
+MULTIBIT       (async inpu clk             4     3  inc
+crossings: 1   MULTIBIT=1
+
+READING OF THIS RUN
+  CDC-1 is correct in both directions and scores C1.
+  CDC-2 is WRONG in both directions, and the cause is the declaration, not the
+  design. `inc` is a control input in the same domain; it is not the thing that
+  crosses. The bus that crosses is the one feeding s1, which is `gray` in gold
+  and `bin` in gate. Declaring `inc` made the gate measure the depth of the
+  counter itself, which is 1 in gold (bin has no second stage) and 3 in gate
+  (bin -> s1 -> s2 is a direct chain once the encoder moves away). Both numbers
+  are real measurements of the wrong question.
+  Prompted amendment 2. This run is kept.
