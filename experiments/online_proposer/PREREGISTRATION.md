@@ -125,3 +125,45 @@ and it will be reported that way.
 - **`handoff` is not automation.** It proves the loop can consume a
   freshly-generated transform. It does not prove the loop can run unattended.
   The `cli` backend is the automation and it is untested here.
+
+---
+
+## Amendment 1, 2026-09-05, before the run and before any proposal exists
+
+**The classifier does not route to the RTL lever on this benchmark, so the
+protocol above would never call the proposer at all.**
+
+Checked across all nine committed closed-loop logs before writing any of the
+run script. Every run using the corrected classifier ends `physical_exhausted`,
+and the only verdicts those runs ever produce are `FANOUT_DOMINATED` and
+`MIXED`. `DEPTH_DOMINATED` appears only in runs made with the pre-correction
+classifier, the one whose fanout undercount is reported in §9.
+
+| run | gates run | ending | verdicts seen |
+|---|---|---|---|
+| `run_v3_fixed` | 0 | `physical_exhausted` | FANOUT, MIXED |
+| `run_v3_flat` | 0 | `physical_exhausted` | FANOUT, MIXED |
+| `run_v3_srcmap` | 0 | `physical_exhausted` | FANOUT, MIXED |
+| `run_v3_final` | 6 | (pre-correction) | FANOUT, **DEPTH** |
+
+This is not a new discovery. §7.3 already reports it: *"Under SDC v3 with a
+correct classifier the RTL lever never fires."* It does mean the registered
+protocol, as written, measures nothing.
+
+**Resolution:** the run adds `--force-lever rtl`, which overrides the router for
+one iteration so the generative path is exercised. The question this experiment
+can then answer is narrowed, and the narrowing is stated rather than hidden:
+
+> **Answered:** given a path routed to the RTL lever, can the loop generate a
+> transform against live state, gate it mechanically, and measure it?
+>
+> **Not answered, and not claimed:** whether the router would choose RTL. It
+> would not. Forcing it is disclosed in the results, in the log as
+> `lever_forced`, and anywhere the run is quoted.
+
+**Predictions O1, O2, O3, O5 and O6 are unchanged.** O4 is unchanged in wording
+but its interpretation narrows with the protocol: it now compares online against
+frozen proposals **on a forced-RTL path**, not across a free-running loop.
+
+Presenting a forced-lever run as the router choosing RTL would be the
+misreporting this file exists to prevent.

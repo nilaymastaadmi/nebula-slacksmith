@@ -54,6 +54,7 @@ Usage:
       --workdir ~/slacksmith_run --engine sta
 """
 import argparse, hashlib, json, os, re, shutil, subprocess, sys, time
+import proposer
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -310,6 +311,23 @@ def main():
                     help="directory of frozen proposals; repeatable")
     ap.add_argument("--workdir", required=True)
     ap.add_argument("--engine", choices=["sta", "openroad"], default="sta")
+    ap.add_argument("--proposer", choices=["frozen", "handoff", "cli"],
+                    default="frozen",
+                    help="where RTL transforms come from. frozen selects from "
+                         "committed JSON; handoff and cli GENERATE one against "
+                         "the state the design is in at that iteration. See "
+                         "experiments/online_proposer/PREREGISTRATION.md")
+    ap.add_argument("--claude-bin", default="claude",
+                    help="claude CLI for --proposer cli (untested, see NOTES)")
+    ap.add_argument("--force-lever", choices=["rtl", "physical"], default=None,
+                    help="override the router for one iteration. The corrected "
+                         "classifier never routes to rtl on this benchmark "
+                         "(REPORT 7.3), so exercising the generative path needs "
+                         "this. Logged as lever_forced; see the online_proposer "
+                         "registration, amendment 1.")
+    ap.add_argument("--max-online", type=int, default=6,
+                    help="cap on generated proposals, so a run cannot become "
+                         "keep asking until something passes")
     ap.add_argument("--max-iters", type=int, default=6)
     ap.add_argument("--gate-timeout", type=int, default=420)
     ap.add_argument("--lever-policy", choices=["blunt", "verdict"], default="blunt",
@@ -383,6 +401,10 @@ def main():
            lines=sdc_lines, timing_exceptions=sdc_exc)
 
     rtl_files = list(remeasure.BENCH_TOP_FILES)
+    # Mutable so the RTL-lever block can increment it; the cap it enforces is
+    # what stops an online run becoming "keep asking until something passes".
+    online_count = [0]
+    history = []
     file_subs = {}          # original rtl file -> accepted variant path
     physical_applied = False
     tried = set()
@@ -427,6 +449,7 @@ def main():
 
         shown = "  ".join(f"{c}={slacks[c]}" for c in a.clocks)
         print(f"measure: {shown}")
+        history.append((it, slacks[min(slacks, key=lambda k: slacks[k])]))
         record(iter=it, step="measure", engine=a.engine, slacks=slacks,
                physical=dict(phys), lever_policy=a.lever_policy, g5=a.g5,
                flatten=a.flatten, buffer_pi=a.buffer_pi,
@@ -509,14 +532,25 @@ def main():
             smap = classify_path.src_module_map(
                 attr_net, [os.path.join(a.rtl_dir, f) for f in rtl_files])
         cls = classify(reports[worst], net, top=a.top, src_map=smap)
-        lever = route(cls["verdict"])
+        routed = route(cls["verdict"])
+        # The corrected classifier never routes to rtl on this benchmark
+        # (REPORT 7.3), so exercising the generative path needs an override.
+        # It is recorded as lever_forced and printed in capitals, because a
+        # forced run reported as the router's own choice is the misreport the
+        # online_proposer registration exists to prevent.
+        lever = a.force_lever or routed
+        forced = bool(a.force_lever and a.force_lever != routed)
         print(f"classify {worst}: {cls['verdict']} "
-              f"(fanout share {cls.get('fanout_delay_share')}) -> {lever}")
+              f"(fanout share {cls.get('fanout_delay_share')}) -> {routed}")
+        if forced:
+            print(f"  LEVER FORCED to {lever}: the router chose {routed}. "
+                  f"Disclosed per online_proposer amendment 1.")
         record(iter=it, step="classify", clock=worst, verdict=cls["verdict"],
                fanout_delay_share=cls.get("fanout_delay_share"),
                path_delay_ns=cls.get("path_delay_ns"),
                cells_on_path=cls.get("cells_on_path"),
-               top_cells=cls.get("top_cells"), lever=lever)
+               top_cells=cls.get("top_cells"), lever=lever,
+               routed_lever=routed, lever_forced=forced)
 
         if a.lever_policy == "verdict":
             # The classifier picks the component (registered 2026-09-03,
@@ -570,15 +604,64 @@ def main():
             # already names the owning module of every cell on the path.
             on_path = {c.get("module") for c in (cls.get("top_cells") or [])
                        if c.get("module")}
-            props = [p for p in load_proposals(a.proposals)
-                     if p["id"] not in tried
-                     and p.get("target_module") in on_path]
-            if not props:
-                print(f"no untried proposal targets the binding modules "
-                      f"{sorted(on_path)}.")
-                record(iter=it, step="stop", reason="no_proposal_on_path",
-                       binding_modules=sorted(on_path))
-                break
+
+            if a.proposer == "frozen":
+                props = [p for p in load_proposals(a.proposals)
+                         if p["id"] not in tried
+                         and p.get("target_module") in on_path]
+                if not props:
+                    print(f"no untried proposal targets the binding modules "
+                          f"{sorted(on_path)}.")
+                    record(iter=it, step="stop", reason="no_proposal_on_path",
+                           binding_modules=sorted(on_path))
+                    break
+            else:
+                # ONLINE. Generate against the state the design is in right
+                # now, then gate it with exactly the same machinery a frozen
+                # proposal gets. The proposer is given no counterexample and no
+                # G4 verdict; that exclusion is the batch-3 boundary and it is
+                # enforced by what build_ctx puts in the context, not by
+                # convention.
+                if online_count[0] >= a.max_online:
+                    print(f"online proposal cap reached "
+                          f"({a.max_online}); stopping.")
+                    record(iter=it, step="stop", reason="online_cap_reached",
+                           cap=a.max_online)
+                    break
+                if not on_path:
+                    record(iter=it, step="stop", reason="no_binding_module")
+                    break
+                module = sorted(on_path)[0]
+                src_path = os.path.join(a.rtl_dir, file_subs.get(
+                    f"{module}.v", f"{module}.v"))
+                if not os.path.exists(src_path):
+                    record(iter=it, step="stop", reason="no_source_for_module",
+                           module=module)
+                    break
+                pid = f"O{online_count[0] + 1}"
+                ctx = {
+                    "iteration": it, "clock": worst, "slack": slacks[worst],
+                    "history": history, "verdict": cls.get("verdict"),
+                    "fanout_delay_share": cls.get("fanout_delay_share"),
+                    "path_delay_ns": cls.get("path_delay_ns"),
+                    "cells_on_path": cls.get("cells_on_path"),
+                    "top_cells": cls.get("top_cells"),
+                    "module": module,
+                    "module_source": open(src_path, encoding="utf-8").read(),
+                    "timing_report": (reports.get(worst) or "")[:6000],
+                    "proposal_id": pid,
+                }
+                online_count[0] += 1
+                record(iter=it, step="propose", proposal=pid, module=module,
+                       backend=a.proposer, clock=worst, slack=slacks[worst])
+                props, perr = proposer.propose(ctx, a, a.workdir)
+                if perr or not props:
+                    print(f"  online proposer returned nothing usable: {perr}")
+                    record(iter=it, step="propose_failed", proposal=pid,
+                           reason=perr or "empty")
+                    break
+                print(f"  online proposal {pid}: {props[0].get('def_id')} "
+                      f"(declared k={props[0].get('latency_delta_k')})")
             accepted = False
             for p in props:
                 tried.add(p["id"])
