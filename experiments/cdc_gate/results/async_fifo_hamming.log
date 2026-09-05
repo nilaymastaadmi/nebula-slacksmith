@@ -1,0 +1,17 @@
+=== async_fifo, both gray pointers, clocks derived from the design ===
+top async_fifo: 11 register cells (34 bits), 3 clock domain(s)
+   wclk                     5 cells, 17 bits
+   rclk                     5 cells, 17 bits
+   (none)                   1 cells, 0 bits
+
+VERDICT        SRC         DST         WIDTH DEPTH  SOURCE
+MULTIBIT       (declared c rclk            4     2  wgray_r
+MULTIBIT       (declared c wclk            4     2  rgray_r
+
+   wgray_r            clock=wclk       reset=wrst_n
+hamming wgray_r                PROVEN     no counterexample to depth 16
+   rgray_r            clock=rclk       reset=rrst_n
+hamming rgray_r                PROVEN     no counterexample to depth 16
+
+crossings: 2   SAFE=2
+exit: 0

@@ -54,9 +54,17 @@ def is_seq(t):
 # --------------------------------------------------------------------------
 def elaborate(files, top, workdir):
     out = os.path.join(workdir, "design.json")
+    # flatten is not optional. `prep -top X` keeps the hierarchy, so on a
+    # design of any size every flop sits inside a submodule, the top module
+    # holds almost none, and a model that reads only the top sees zero flops
+    # and reports a clean sheet. That happened on bench_top: 8,274 flops
+    # reported as 0. Flattened RTL is still elaborated RTL and not mapped, so
+    # the registered definition is unchanged.
     script = "; ".join(
         ["read_verilog %s" % " ".join(files),
          "prep -top %s" % top,
+         "flatten",
+         "opt_clean",
          "write_json %s" % out])
     r = subprocess.run([YOSYS, "-p", script], capture_output=True, text=True)
     log = os.path.join(workdir, "yosys.log")
@@ -82,12 +90,20 @@ class Design:
         for pname, p in mod.get("ports", {}).items():
             self.portdir[pname] = p["direction"]
 
+        # One net has many names after flatten: the port at this level plus
+        # every submodule port it was tied to. Keep the one a human wrote here.
+        def rank(name):
+            return (0 if name in self.portdir else 1, name.count("."), len(name))
+
         for nname, n in mod.get("netnames", {}).items():
             if nname.startswith("$"):
                 continue
             for i, b in enumerate(n["bits"]):
-                if isinstance(b, int):
-                    self.bitname.setdefault(b, (nname, i))
+                if not isinstance(b, int):
+                    continue
+                cur = self.bitname.get(b)
+                if cur is None or rank(nname) < rank(cur[0]):
+                    self.bitname[b] = (nname, i)
 
         for cname, c in mod.get("cells", {}).items():
             conn = c["connections"]
@@ -95,10 +111,17 @@ class Design:
             if is_seq(c["type"]):
                 q = conn.get("Q", [])
                 clk = conn.get("CLK", conn.get("C", []))
+                arst = conn.get("ARST", conn.get("SRST", []))
+                pol = c.get("parameters", {}).get(
+                    "ARST_POLARITY", c.get("parameters", {}).get("SRST_POLARITY"))
                 self.flops[cname] = {
                     "clk": clk[0] if clk else None,
                     "d": conn.get("D", []),
                     "q": q, "width": len(q), "type": c["type"],
+                    "arst": arst[0] if arst else None,
+                    # a Yosys polarity parameter is a bit string; "0" or a
+                    # string of zeros means the reset is active low
+                    "arst_active_high": bool(pol and set(str(pol)) != {"0"}),
                 }
                 outs = [("Q", q)]
             else:
@@ -161,6 +184,20 @@ class Design:
                     continue
                 stack.extend([x for x in cbits if isinstance(x, int)])
         return flops, inputs, (steps >= limit)
+
+
+def source_domain(dsn, bits):
+    """Clock and reset of the flop that drives these bits, walking back through
+    combinational logic. Returns (clock_name, reset_name, active_high) or
+    (None, None, None) when it cannot be determined, which is reported rather
+    than guessed."""
+    flops, _, _ = dsn.sources(bits)
+    if not flops:
+        return None, None, None
+    f = dsn.flops[sorted(flops)[0]]
+    clk = dsn.clock_name(f["clk"]) if f["clk"] is not None else None
+    rst = dsn.base_name(f["arst"]) if f["arst"] is not None else None
+    return clk, rst, f["arst_active_high"]
 
 
 # --------------------------------------------------------------------------
@@ -244,7 +281,8 @@ HAM_PROP = """
 """
 
 
-def instrument(src_files, module, signal, width, clk, rst, outdir):
+def instrument(src_files, module, signal, width, clk, rst, outdir,
+               active_high=False):
     """Write a copy of the sources with the Hamming property injected into
     `module`, before its endmodule. Returns the new file list, or None if the
     module could not be located."""
@@ -253,8 +291,15 @@ def instrument(src_files, module, signal, width, clk, rst, outdir):
     # reset can assert mid-trace and slam the source register to zero from
     # an arbitrary value, which is a real counterexample to the wrong
     # question.
-    assume_rst = ("  always @(*) assume (%s == (cdc_boot_r >= 4'd2));\n" % rst
-                  if rst else "")
+    # Reset is driven by the boot counter rather than left free: a free reset
+    # can assert mid-trace and slam the source register to zero from an
+    # arbitrary value, which is a real counterexample to the wrong question.
+    # Polarity comes from the design, not from a convention about the name.
+    if rst:
+        rel = "(cdc_boot_r >= 4'd2)" if active_high is False else "(cdc_boot_r < 4'd2)"
+        assume_rst = "  always @(*) assume (%s == %s);\n" % (rst, rel)
+    else:
+        assume_rst = ""
     prop = HAM_PROP.format(hi=width - 1, sig=signal, clk=clk,
                            assume_rst=assume_rst)
     out, done = [], False
@@ -272,12 +317,21 @@ def instrument(src_files, module, signal, width, clk, rst, outdir):
     return out if done else None
 
 
-def hamming_check(files, module, signal, width, clk, rst, workdir, depth, timeout):
+def hamming_check(files, module, signal, width, clk, rst, workdir, depth,
+                  timeout, active_high=False):
     """Prove that `signal` inside `module` changes at most one bit per cycle."""
     wd = os.path.join(workdir, "ham_" + re.sub(r"\W+", "_", signal))
     os.makedirs(wd, exist_ok=True)
+    # A dotted name is a flattened alias, not something that can be written
+    # inside the module source. Emitting it produces an implicitly declared
+    # wire and a property that quietly means nothing.
+    for label, val in (("clock", clk), ("reset", rst)):
+        if val and "." in val:
+            return "ERROR", ("derived %s %r is a flattened alias, not an "
+                             "identifier in %s" % (label, val, module))
     srcdir = os.path.join(wd, "src_instrumented")
-    inst = instrument(files, module, signal, width, clk, rst, srcdir)
+    inst = instrument(files, module, signal, width, clk, rst, srcdir,
+                      active_high)
     if inst is None:
         return "ERROR", "could not find module %s to instrument" % module
 
@@ -328,7 +382,9 @@ def main():
                     help="clock the crossing net is generated in "
                          "(default: the destination clock)")
     ap.add_argument("--ham-timeout", type=int, default=300)
-    ap.add_argument("--rst", default="rst_n")
+    ap.add_argument("--rst", default=None,
+                    help="override the reset derived from the design; "
+                         "normally leave unset")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
 
@@ -345,9 +401,20 @@ def main():
     for cname, f in dsn.flops.items():
         domains.setdefault(f["clk"], []).append(cname)
 
-    print("top %s: %d flops, %d clock domain(s)" % (a.top, len(dsn.flops), len(domains)))
+    print("top %s: %d register cells (%d bits), %d clock domain(s)" % (a.top, len(dsn.flops),
+         sum(f["width"] for f in dsn.flops.values()), len(domains)))
+    # A checker that found nothing to look at must never report a clean sheet.
+    # Reporting "crossings: 0" for a design whose flops the model failed to
+    # find is indistinguishable from reporting a correct design, and is how
+    # this gate first "passed" bench_top.
+    if not dsn.flops:
+        sys.stderr.write(
+            "REFUSING TO REPORT: no flops found in %s. The gate cannot say "
+            "anything about a design it cannot see.\n" % a.top)
+        sys.exit(3)
     for clk, fl in sorted(domains.items(), key=lambda kv: -len(kv[1])):
-        print("   %-24s %d flops" % (dsn.clock_name(clk), len(fl)))
+        print("   %-24s %d cells, %d bits" % (dsn.clock_name(clk), len(fl),
+          sum(dsn.flops[x]["width"] for x in fl)))
     if a.async_input:
         print("   declared async inputs: %s" % ", ".join(a.async_input))
     print()
@@ -433,10 +500,16 @@ def main():
             if c["verdict"] != "MULTIBIT":
                 continue
             for sig in c["sources"]:
+                # Per crossing, from the design. A single global --ham-clock
+                # checked async_fifo's rgray_r against wclk and returned a
+                # confident REFUTED on a correct design.
+                sclk, srst, ahigh = source_domain(dsn, declared.get(sig, set()))
+                sclk = a.ham_clock or sclk or c["dest_clock"]
+                srst = a.rst if a.rst else srst
                 verdict, detail = hamming_check(
                     a.files, a.ham_module or a.top, sig, c["width"],
-                    a.ham_clock or c["dest_clock"], a.rst,
-                    wd, a.ham_depth, a.ham_timeout)
+                    sclk, srst, wd, a.ham_depth, a.ham_timeout, ahigh)
+                print("   %-18s clock=%-10s reset=%s" % (sig, sclk, srst))
                 c["hamming"] = verdict
                 c["hamming_detail"] = detail
                 c["verdict"] = ("SAFE" if verdict == "PROVEN"

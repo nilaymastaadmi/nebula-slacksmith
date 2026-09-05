@@ -1,0 +1,43 @@
+
+real	0m16.081s
+user	0m14.821s
+sys	0m0.739s
+ILES
+
+=== structural pass: every crossing, depth only ===
+top bench_top: 255 flops, 11 clock domain(s)
+   clk_a                    64 flops
+   clk_e                    51 flops
+   clk_b                    50 flops
+   clk_e_div2               28 flops
+   clk_c_div4               17 flops
+   clk_a_div2               12 flops
+   clk_b_div3               11 flops
+   clk_d_div5               11 flops
+   clk_d                    5 flops
+   clk_c                    3 flops
+   (none)                   3 flops
+
+VERDICT        SRC         DST         WIDTH DEPTH  SOURCE
+MULTIBIT       clk_e_div2  clk_a           3     2  u_fifo_e2a.u_sync_w2r.d
+DEPTH_1        clk_a       clk_a_div2     16     1  u_domain_a.scaled_r
+DEPTH_1        clk_a       clk_a_div2      1     1  u_domain_a.prod_valid_r
+UNCLASSIFIED   clk_a       clk_a_div2     73     1  u_domain_a.ctrl_r
+MULTIBIT       clk_b_div3  clk_a_div2      4     2  u_fifo_a2b.rgray_r
+DEPTH_1        clk_b_div3  clk_b           8     1  a2b_empty, b2c_ctrl, u_domain_b.acc_r, u_dom
+MULTIBIT       clk_a_div2  clk_b_div3      4     2  u_fifo_a2b.u_sync_w2r.d
+DEPTH_1        clk_c_div4  clk_c           1     1  u_domain_c.tx_r
+MULTIBIT       clk_d_div5  clk_c_div4      4     2  u_fifo_c2d.rgray_r
+DEPTH_1        clk_d_div5  clk_d           1     1  u_domain_d.m0_r, u_domain_d.m1_r
+MULTIBIT       clk_c_div4  clk_d_div5      4     2  u_fifo_c2d.u_sync_w2r.d
+DEPTH_1        clk_e_div2  clk_e           8     1  u_domain_e.evtcnt_r, u_domain_e.rptr_r
+UNCLASSIFIED   clk_e       clk_e_div2    512     1  u_domain_e.addr_r, u_domain_e.wdata_r, u_dom
+MULTIBIT       clk_a       clk_e_div2      3     2  u_fifo_e2a.rgray_r
+SAFE           clk_b_div3  clk_c_div4      1     3  b2c_ctrl
+SAFE           clk_d_div5  clk_e_div2      1     3  d2e_ctrl
+
+crossings: 16   DEPTH_1=6   MULTIBIT=6   SAFE=2   UNCLASSIFIED=2
+wrote /home/toshn/slacksmith_work/cdc_bench/bench_top_crossings.json
+exit: 1
+
+[exited with code 0]
