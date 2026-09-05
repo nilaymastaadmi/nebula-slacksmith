@@ -1,0 +1,125 @@
+cloned to: /home/toshn/repro/some-other-name
+HEAD: c8dbe7a The interactive demo, which was organizer deliverable 7 and did not exist.
+line endings: Python script, ASCII text executable
+
+=== preflight ===
+repo:  /home/toshn/repro/some-other-name
+work:  /home/toshn/slacksmith_work
+
+external tools
+  ok      yosys            /home/toshn/tools/oss-cad-suite/bin/yosys
+  ok      yosys-abc        /home/toshn/tools/oss-cad-suite/bin/yosys-abc
+  ok      eqy              /home/toshn/tools/oss-cad-suite/bin/eqy
+  ok      sby              /home/toshn/tools/oss-cad-suite/bin/sby
+  ok      iverilog         /home/toshn/tools/oss-cad-suite/bin/iverilog
+  ok      vvp              /home/toshn/tools/oss-cad-suite/bin/vvp
+  ok      OpenSTA          /home/toshn/tools/OpenSTA/build/sta
+  ok      liberty          /home/toshn/sta_work/sky130hd_tt.lib
+
+optional (only the OpenROAD engine and G6 need these)
+  ok      openroad         /home/toshn/or_env/bin/openroad
+  ok      orfs_platform    /home/toshn/orfs/flow/platforms/sky130hd
+
+repo fixtures
+  ok      experiments/classifier_regression/v3_bufsize_it3.v.gz
+  ok      experiments/sdc_integrity/flat_E_mapped.v.gz
+  ok      experiments/slackbench/results/raw.tsv
+  ok      experiments/closed_loop/run_v3_final.jsonl
+
+git history (beat 4 checks that registration precedes results)
+  ok      history present
+
+preflight: all present. run: bash tools/demo_check.sh
+preflight exit: 0
+
+=== the demo, from the clone ===
+=== beat 1: the benchmark
+ 48,616 standard cells instantiated under bench_top
+  8,274 flip-flops
+ 30,264 cells written in the netlist text across 25 modules (each module body once; AES is instantiated twice)
+      5 clock domains, 5 in-RTL generated clocks, including odd /3 and /5
+  6,639 lines of RTL across 32 files
+  PASS  beat 1 bench_size.py
+yosys flatten: 48616 cells, 8274 flops   bench_size.py: 48616 cells, 8274 flops
+CROSSCHECK OK
+  PASS  beat 1 count agrees with yosys flatten
+=== beat 2: the closed loop, live (this is the 60 s of compute)
+=== iteration 1 ===
+measure: clk_a=1.333  clk_b=-4.957  clk_e=-4.957
+classify clk_b: FANOUT_DOMINATED (fanout share 0.9139) -> physical
+apply: physical lever (abc buffer/upsize/dnsize)
+
+=== iteration 2 ===
+measure: clk_a=12.784  clk_b=12.6  clk_e=20.394
+ALL REPORTED GROUPS MEET. stopping.
+
+wrote /home/toshn/slacksmith_work/demo_run/SUMMARY.md
+wrote /home/toshn/slacksmith_work/demo_run/decisions.jsonl
+123.72 s
+  PASS  beat 2 loop closes v2 in 2 iterations
+=== beat 3: replay three committed logs
+  PASS  beat 3 run_v3_final
+  PASS  beat 3 run_v3_fixed
+  PASS  beat 3 run_v3_flat
+=== beat 4: registration precedes proposals precedes results
+2026-08-31 7e3ab9b proposals: 6 LLM-proposed transforms, committed BEFORE any gate runs
+2026-08-31 4ee45c2 pre-registration: LLM-proposed transforms through the SlackSmith gate
+  PASS  beat 4 registration ordering
+=== beat 6: the standing verdict regression
+
+--- what the two partition logs actually say ---
+[P4]
+model found for base case: FAIL!
+[A2]
+Reached maximum number of time steps
+  PASS  beat 6 verdict regression
+=== beat 7: the cheat no equivalence checker can catch
+constraint variant         clk_a     clk_b     clk_e
+baseline_honest           11.158     5.665    -0.319 
+mcp_whole_clk_e           11.158     5.665     4.860 
+cell count is identical in every row: 26958 cells, one netlist, zero RTL change
+  PASS  beat 7 one SDC line closes the group
+honest [11.158, 5.665, -0.319]  tampered [11.158, 5.665, 4.86]  gain 5.179
+BEAT7 OK
+  PASS  beat 7 claim still true
+=== beat 8: the exam
+case        class     truth           k   checker    verdict  circular  detail
+CDC-1       CDC       EQUIVALENT      -1  cec        CANNOT   False     cannot build a miter: gold 3 latches / 5 inputs, gate 2 / 4
+CDC-1       CDC       EQUIVALENT      -1  dsec       CANNOT   False     cannot build a miter: gold 3 latches / 5 inputs, gate 2 / 4
+escaped both sims: True   cec CANNOT count: 5   cec+dsec false alarm on CDC-2: True   induction wrong: 2
+BEAT8 OK
+  PASS  beat 8 claims still true
+=== the interactive demo is built from the logs, and is not stale
+wrote /home/toshn/repro/some-other-name/demo/explorer.html (61252 bytes) from 5 runs, 6 proposals, 56 benchmark rows
+  PASS  demo builds from the logs
+EXPLORER FRESH
+  PASS  committed demo matches a rebuild
+  PASS  demo carries P4's counterexample
+=== classifier regression (not a beat, but the demo cites it)
+
+5 of 5 fixtures pass
+  PASS  classifier regression
+
+=== demo check: 15 pass, 0 fail ===
+DEMO EXIT: 0
+
+=== liberty substitution ===
+A (LIBERTY)      /home/toshn/sta_work/sky130hd_tt.lib  12800126 bytes
+B (ORFS)         /home/toshn/orfs/flow/platforms/sky130hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib  12800135 bytes
+byte difference: 9
+differing lines: 6
+23c23
+<     default_fanout_load : 1.0;
+---
+>     default_fanout_load : 1.0000000000;
+37,38d36
+<     default_operating_conditions : "tt_025C_1v80";
+
+liberty             clk_a          clk_b          clk_e
+A               11.157918       5.665101      -0.318779 
+B               11.157918       5.665101      -0.318779 
+
+IDENTICAL at 6 decimal places: the ORFS copy is a safe substitute
+LIBEQ EXIT: 0
+
+[exited with code 0]

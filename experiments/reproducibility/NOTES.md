@@ -95,9 +95,12 @@ their **runs** would need the chain re-run from the start. `SETUP.md` says
 which is which, because a reviewer should know that up front rather than
 discover it.
 
-**Two clones, twice.** Run once on `ab453d5` and again on `9d1e780`, both
-12 of 12 (`results/clean_clone_2026-09-05.log` and `..._rerun.log`). That is
-still two observations, not a CI job. It will rot the next time someone adds a
+**Three clones.** `ab453d5` and `9d1e780` at 12 of 12, then `c8dbe7a` at
+**15 of 15** once the interactive demo added three assertions of its own
+(`results/clean_clone_2026-09-05*.log`). The third run also confirms
+`EXPLORER FRESH`: the committed `demo/explorer.html` is byte-identical to one
+rebuilt from the logs on a clone at a different path, so the generated demo
+cannot quietly go stale. That is still three observations, not a CI job. It will rot the next time someone adds a
 script with a path in it, and nothing here prevents that.
 
 **One failure worth recording, and it was the harness rather than the repo.**
