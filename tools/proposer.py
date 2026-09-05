@@ -118,7 +118,18 @@ def _materialise(p, ctx, workdir):
     path = os.path.join(vd, "%s_%s.v" % (p["id"], ctx["module"]))
     open(path, "w", encoding="utf-8", newline="\n").write(p["variant_source"])
     p["variant_file"] = os.path.relpath(path, REPO)
-    p.setdefault("target_file", "rtl/%s.v" % ctx["module"])
+    # ctx carries the real path; rtl/<module>.v is wrong for anything vendored
+    # in a subdirectory, which is every AES source.
+    p["target_file"] = ctx.get("target_file") or ("rtl/%s.v" % ctx["module"])
+
+    # gate() shells out to gate_proposal.py with --proposal <path>, and frozen
+    # proposals carry _path from the file they were read out of. An online
+    # proposal needs the same, and having it on disk is what makes the
+    # registration's "every response committed verbatim" checkable.
+    pj = os.path.join(vd, "%s.json" % p["id"])
+    json.dump({k: v for k, v in p.items() if not k.startswith("_")},
+              open(pj, "w", encoding="utf-8"), indent=1)
+    p["_path"] = pj
     return p
 
 

@@ -27,12 +27,31 @@ WHY THERE ARE TWO ROUTERS, AND WHY THAT IS THE POINT
      whose obligation is not discharged is never accepted, and a transform
      whose obligation is UNRESOLVED is never counted as PROVEN.
 
-HONEST LIMIT ON "CLOSED LOOP". The proposer is offline. This loop does not
-call a model; it draws from a directory of proposals that were frozen before
-any gate ran (see the two PREREGISTRATION.md files). That is deliberate: the
-anti-tuning rule in those registrations forbids generating a proposal after
-seeing a gate result, and a loop that invented proposals mid-run would break
-it. So the RTL lever here selects, gates and measures. It does not generate.
+WHERE RTL TRANSFORMS COME FROM: --proposer.
+
+  frozen   (default) Draw from a directory of proposals frozen before any gate
+           ran. Every run committed before 2026-09-05 used this, and it stays
+           the default so those runs still replay.
+
+  handoff  GENERATE one against the state the design is in at that iteration.
+           The loop halts, writes a request, and resumes when a response file
+           appears.
+
+  cli      The same, automated through `claude -p`. COMMITTED UNEXERCISED: the
+           OAuth session on the development machine is expired, and reporting
+           it as working is a void condition in the registration.
+
+The earlier claim here was that generating mid-run would break the anti-tuning
+rule. It does not. Pre-registration forbids the EXPERIMENTER changing the
+hypothesis, the prompt or the scoring after seeing results; it does not forbid
+the SYSTEM producing a proposal in response to a measurement. That distinction
+is argued in experiments/online_proposer/PREREGISTRATION.md.
+
+What the online proposer is NOT given: any counterexample, and any G4 verdict.
+Feeding refutations back is batch 3, registered and then deferred on
+2026-09-02 because that idea is already published for RTL generation and
+repair. This changes WHEN the proposer sees the design state, not whether it
+is told about its own failures.
 
 Engines:
   --engine sta        zero-parasitic OpenSTA. Physical lever is ABC
@@ -404,7 +423,7 @@ def main():
     # Mutable so the RTL-lever block can increment it; the cap it enforces is
     # what stops an online run becoming "keep asking until something passes".
     online_count = [0]
-    history = []
+    slack_history = []
     file_subs = {}          # original rtl file -> accepted variant path
     physical_applied = False
     tried = set()
@@ -449,7 +468,7 @@ def main():
 
         shown = "  ".join(f"{c}={slacks[c]}" for c in a.clocks)
         print(f"measure: {shown}")
-        history.append((it, slacks[min(slacks, key=lambda k: slacks[k])]))
+        slack_history.append((it, slacks[min(slacks, key=lambda k: slacks[k])]))
         record(iter=it, step="measure", engine=a.engine, slacks=slacks,
                physical=dict(phys), lever_policy=a.lever_policy, g5=a.g5,
                flatten=a.flatten, buffer_pi=a.buffer_pi,
@@ -632,21 +651,31 @@ def main():
                     record(iter=it, step="stop", reason="no_binding_module")
                     break
                 module = sorted(on_path)[0]
-                src_path = os.path.join(a.rtl_dir, file_subs.get(
-                    f"{module}.v", f"{module}.v"))
+                # BENCH_TOP_FILES carries real relative paths, and the AES
+                # sources are vendored under rtl/aes/. Looking for
+                # rtl/<module>.v misses every one of them.
+                key = next((f for f in rtl_files
+                            if os.path.basename(f) == f"{module}.v"), None)
+                if key is None:
+                    record(iter=it, step="stop",
+                           reason="module_not_in_file_list", module=module,
+                           looked_for=f"{module}.v")
+                    break
+                src_path = os.path.join(a.rtl_dir, file_subs.get(key, key))
                 if not os.path.exists(src_path):
                     record(iter=it, step="stop", reason="no_source_for_module",
-                           module=module)
+                           module=module, path=src_path)
                     break
                 pid = f"O{online_count[0] + 1}"
                 ctx = {
                     "iteration": it, "clock": worst, "slack": slacks[worst],
-                    "history": history, "verdict": cls.get("verdict"),
+                    "history": slack_history, "verdict": cls.get("verdict"),
                     "fanout_delay_share": cls.get("fanout_delay_share"),
                     "path_delay_ns": cls.get("path_delay_ns"),
                     "cells_on_path": cls.get("cells_on_path"),
                     "top_cells": cls.get("top_cells"),
                     "module": module,
+                    "target_file": f"rtl/{key}",
                     "module_source": open(src_path, encoding="utf-8").read(),
                     "timing_report": (reports.get(worst) or "")[:6000],
                     "proposal_id": pid,
