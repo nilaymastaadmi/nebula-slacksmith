@@ -2,7 +2,9 @@
 # Clone the committed repo to a different name, a different depth, and a
 # different filesystem, then run preflight and the full demo from there.
 set -u
-SRC=${SRC:-$(git rev-parse --show-toplevel)}
+# Derive the source repo from this script's own location, not from cwd:
+# the point of this file is that nothing here depends on where you run it.
+SRC=${SRC:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}
 DST=$HOME/repro/some-other-name
 
 rm -rf "$HOME/repro"; mkdir -p "$HOME/repro"
