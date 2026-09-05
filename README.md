@@ -103,15 +103,26 @@ because a suite its author aces is evidence the suite was rigged.
 
 ## Run it
 
+    git clone <repo> && cd slacksmith-benchmark
+    bash tools/preflight.sh      # names any missing dependency and where to get it
+    bash tools/demo_check.sh     # all 8 demo beats, 12 assertions
+
+Or the tool on its own:
+
     python3 tools/slacksmith.py \
       --sdc sdc/bench_top_v2.sdc \
-      --liberty ~/sta_work/sky130hd_tt.lib \
-      --sta-bin ~/tools/OpenSTA/build/sta \
       --clock clk_a --clock clk_b --clock clk_e \
       --workdir ~/run --engine sta
 
 Closes the benchmark in **2 iterations, 46.7 seconds**, and writes every
 routing decision with its evidence to `decisions.jsonl`.
+
+Tool paths come from environment variables with defaults (`OSS_CAD_BIN`,
+`STA_BIN`, `LIBERTY`, `OPENROAD_BIN`). **[SETUP.md](SETUP.md)** lists them, the
+versions the committed results were measured with, and specifically which
+claims you can re-derive in minutes and which would cost you an afternoon of
+synthesis. Clone rather than downloading a zip: one demo assertion checks that
+the pre-registration commit precedes the results commit, which needs history.
 
 ## The benchmark
 

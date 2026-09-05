@@ -55,14 +55,16 @@ of, but that is an expectation, not a measurement.
 It is **not committed**: 12.8 MB, 2.2 MB compressed, against a 6.6 MB repo.
 The copy used here came from an OpenLane/SkyWater distribution and differs from
 the one OpenROAD-flow-scripts ships at
-`$ORFS_PLATFORM/lib/sky130_fd_sc_hd__tt_025C_1v80.lib` by **9 bytes**: one
-`default_fanout_load : 1.0;` against `1.0000000000;`. Same library name, same
-428 cells, no structural difference in the cell list.
+`$ORFS_PLATFORM/lib/sky130_fd_sc_hd__tt_025C_1v80.lib` by **9 bytes across two
+hunks**: `default_fanout_load : 1.0;` against `1.0000000000;`, and
+`default_operating_conditions : "tt_025C_1v80";` declared at line 37 in one and
+line 173,158 in the other. Same library name, same 428 cells, no difference in
+the cell list.
 
-So the ORFS copy is the right thing to point `LIBERTY` at if you have ORFS.
-Whether the two produce bit-identical slack numbers is checked by
-`tools/liberty_equivalence.sh`; see its output in
-`experiments/reproducibility/`.
+**Use the ORFS copy if you have it, and that is measured rather than assumed.**
+`tools/liberty_equivalence.sh` runs both against the same frozen netlist and
+SDC: `clk_a 11.157918`, `clk_b 5.665101`, `clk_e -0.318779`, identical to six
+decimal places on both. Output in `experiments/reproducibility/NOTES.md`.
 
 ## What is reproducible from a clean clone, and what is not
 

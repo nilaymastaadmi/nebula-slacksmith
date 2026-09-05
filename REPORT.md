@@ -7,8 +7,6 @@
 
 Repository: `github.com/nilaymastaadmi/nebula-slacksmith` (branch `sandbox`). Every number in this report was produced by running the flow; the command that produced each one is in the cited experiment directory.
 
----
-
 ## 1. Summary
 
 An LLM proposes RTL transforms. A formal gate decides whether they are correct. We built both halves, then measured the half everyone assumes works. An LLM pointed at a timing report fails in two ways, and we measured both: it proposes transforms that are **wrong**, and transforms that are **correct and aimed at the wrong variable**.
@@ -20,8 +18,6 @@ That count started at 4 refuted. It is 3 because batch 2 caught **our own gate m
 **Failure two, relevance.** Then we asked whether the transforms that *are* correct actually help. Mostly they did not, for a measurable reason: the binding paths were **59% to 91% fanout-attributable delay**, and no RTL rewrite shortens a net's load delay. Our best proven RTL transform bought **+4.925 ns**. **OpenROAD `repair_design`, changing zero lines of RTL, bought +55.805 ns on the same group and closed all three**, at 20.2% area.
 
 So SlackSmith routes twice: the **proof obligation** by declared transform type, and the **fix** by measured path pathology, which the measurement forced on us. The two levers are sequential rather than alternative, and where they run out we say so. Under our tightest target the RTL lever never fires at all, the flow itself proves a larger lever than anything we proposed, and `repair_design`'s output is now formally proven equivalent to its input in 38 seconds after four attempts that failed for reasons we can name.
-
----
 
 ## 2. The problem, and what is actually new here
 
@@ -46,8 +42,6 @@ The reason latency is off-limits is real. Insert a pipeline stage and the design
 
 All four branches are proven on real RTL, not toys (§6).
 
----
-
 ## 3. Deliverable coverage
 
 | # | Organizer deliverable | Where it is evidenced |
@@ -60,8 +54,6 @@ All four branches are proven on real RTL, not toys (§6).
 | 6 | Formal equivalence verification report | §6, `experiments/*/NOTES.md` + logs |
 | 7 | Interactive demo | demo video, §10 |
 | n/a | Benchmark: 5 async domains, generated clocks, CDC, dividers, ~50K cells | §4, `rtl/bench_top.v` |
-
----
 
 ## 4. The benchmark
 
@@ -82,8 +74,6 @@ Four of the five crossings both launch *and* capture on generated clocks, which 
 **The /3 and /5 dividers are the deliberate difficulty.** An odd ratio cannot be split evenly by posedge logic alone, so `clkdiv.v` runs two counters, one per edge, and ANDs their phase flags. Simulated over 2,000 ns with an off-grid reset release, every segment measures **exactly 15.000 ns (/3) and 25.000 ns (/5)**, no glitch. The SDC must then describe generated clocks whose edges derive from *both* source edges, which is the constraint case this benchmark exists to exercise.
 
 Third-party content: the AES-128 core is `secworks/aes`, BSD-2-Clause, vendored unmodified under `rtl/aes/` with its license and a `THIRD_PARTY.md`. The RV32I core is ours, from `rv32-dsp-soc`, verified against a golden C++ instruction-set simulator over a 400-seed, 132,400-instruction differential regression.
-
----
 
 ## 5. Timing analysis framework, and three findings about measurement
 
@@ -112,8 +102,6 @@ Under v2, and after the correction below, the baseline **meets** `clk_a` at +1.3
 Finding 1 above is correct in substance and **was not in effect**. The exclusion list is built by scanning the liberty for cell names; the liberty writes `cell ("name")` with quotes and the regex expected it without, so it matched nothing and silently returned an empty flag string. Every netlist built between that "fix" and its discovery carries 203 `lpflow` cells and the 12.8 ns artifact the exclusion exists to remove. It was found by reading a critical-path report and seeing the banned cell at 12.824 ns on a path where it was supposedly forbidden. There was no test, which is why nothing caught it, and every measurement since asserts the list is non-empty.
 
 All affected numbers were re-measured: the `clk_a` baseline carried **4.62 ns** of artifact and the proven transforms' deltas moved 40 to 50%, but **no qualitative conclusion changed**. The exclusion is also **not** uniformly beneficial, since `clk_a` gains 4.62 ns while `clk_b` and `clk_e` each lose 1.97 ns: constraining the mapper removes options from paths that used those cells benignly.
-
----
 
 ## 6. Formal equivalence: four branches, all on real RTL
 
@@ -159,8 +147,6 @@ Two limits: pass 3 is bounded (depth 16), and exotic flow control that misses th
 ### 6.2 Why simulation is not a substitute, measured on four mutants
 
 Before the LLM experiment we measured the same question on four hand-built mutants of a known-correct transform, with a correct control that every method passes. **Two of the three invalid mutants escaped a realistic simulation gate.** One is the classic pipelining bug, stage 2 adding the current operand to a product one cycle old, invisible to any testbench holding that operand constant; the other is wrong on roughly one input in a million and survived 20,000 random vectors in both regimes, where formal refuted it instantly. §7 reproduces this on a real LLM proposal, and §7.4 turns it into a suite.
-
----
 
 ## 7. The GenAI engine, and the experiment we pre-registered
 
@@ -281,19 +267,19 @@ We then applied Dr. RTL's two high-confidence fanout skills as written. Skill #7
 
 Against SDC v2 it closes in **2 iterations and 46.7 seconds**: −4.957 on `clk_b`, FANOUT_DOMINATED at 0.914 with a 21.029 ns cell driving **300 loads**, physical lever, +12.600 MET. It reproduces the standalone numbers exactly; the RTL lever never fires because nothing is left for it.
 
-To exercise both branches the target has to be one the flow cannot already clear. `sdc/bench_top_v3.sdc` applies v2's methodology to the corrected flow (~10% tighter than the measured **post-buffering** requirement, generated by `sdc/make_v3.py`), because the buffered netlist clears v2's targets by 12 to 20 ns. Under v3 the loop routes to the physical lever first. The classifier of the day then called the residual `clk_a` violation DEPTH_DOMINATED at fanout share 0.000 and routed it to RTL; that verdict was wrong (the path is **MIXED at 0.428**, a 387-load net carrying 6.762 of its 17.131 ns) and the correction is in §9. The runs below are reported as they happened.
+To exercise both branches the target must be one the flow cannot already clear. `sdc/bench_top_v3.sdc` applies v2's methodology to the corrected flow (~10% tighter than the measured **post-buffering** requirement, `sdc/make_v3.py`), because the buffered netlist clears v2's targets by 12 to 20 ns. Under v3 the loop routes to the physical lever first. The classifier of the day then called the residual `clk_a` violation DEPTH_DOMINATED at fanout share 0.000 and routed it to RTL; that verdict was wrong (§9), and the runs below are reported as they happened.
 
 The v3 run: 8 iterations, 449.3 s. The physical lever alone **closes `clk_b` outright** (−18.957 to +5.6); the RTL lever gates P1, P2 and P3, EQY proves all three correct, and **the loop reverts all three on G5**.
 
-**The ranking changes once the physical lever has been applied.** P2, the one proposal batch 1 found to improve `clk_a` (+0.485 ns), was reverted by the loop. We isolated it, one SDC and one transform, differing only in whether the buffering pass runs: unbuffered, `clk_a` goes 1.333 to 1.818, **+0.485**, reproducing batch 1 exactly; buffered, it goes 12.784 to 12.299, **−0.485**, the same magnitude with the sign flipped. **Batch 1's single winner is a loser in the context the design would actually ship in.** One transform, one design, one buffering setting; the equal magnitude is reported, not claimed as a law.
+**The ranking changes once the physical lever has been applied.** P2, batch 1's only `clk_a` improvement (+0.485 ns), was reverted by the loop. Isolated on one SDC and one transform differing only in whether buffering runs: unbuffered **+0.485**, reproducing batch 1 exactly; buffered **−0.485**, same magnitude, sign flipped. **Batch 1's single winner is a loser in the context the design would actually ship in.** One transform, one design, one buffering setting; the equal magnitude is reported, not claimed as a law.
 
 **Three more registered runs, 14 predictions, after the lever split in §7.2.** Under `--lever-policy verdict` the classifier picks the component and every physical step is provisional. Buffer-only alone puts `clk_a` at **+1.75** and `clk_b` at +5.556, where the combined lever left `clk_a` at −1.716. Sizing, applied for `clk_e`, then gains 0.838 ns there and moves `clk_a` back to −1.716; the per-group G5 bar looked only at `clk_e` and **confirmed it**. So a second registration, written at iteration 5 of that run, measures G5 across all groups: keep a step only if the sum of negative worst slacks improves. That run reverts the sizing step and ends in **4 iterations instead of 8 with 1 group violating instead of 2**. A third, after the classifier correction, ends in the same state for a now-true reason: `clk_e` is MIXED, both components have been tried, and the loop stops with `physical_exhausted`. **Under SDC v3 with a correct classifier the RTL lever never fires**, so runs 2 and 3 measured three proven transforms on a path the router should not have sent them to.
 
-**Then the flow itself.** Both residual violations sat on nets crossing a module port (387 and 59 loads), and this flow synthesizes hierarchically, so ABC's buffer pass never saw them. A registered control (`experiments/flatten_control/`, 7 arms, 5 of 10 predictions right) found more than the mechanism it registered: **flattening alone moves `clk_a` by +22.446 ns**, because across the boundary ABC collapses the decode logic our RV32I wrapper's tied instruction bits make redundant, and the 387-load net stops existing. Flat with buffering and sizing puts `clk_a` at +11.158 and `clk_b` at +5.665; `clk_e` ends at −0.319 with a 136-load flop output ABC does not reach even with `buffer -p` (measured no-op). Then `repair_design` on the flat netlist, registered separately: on the unbuffered one it is worth **+34.344 on `clk_b` and +39.700 on `clk_e`** at +18.7% area, and after ABC's work it still gains +4.513 on `clk_e`, so **the two physical levers compose rather than substitute**. It does not close `clk_e` (−0.952 with parasitics): an `a21o_4` at **65 loads** sits on all three worst paths, and no part of this flow, liberty or platform included, ever declared a fanout limit for it to repair against. So we added one, in a new SDC copying frozen v3 verbatim plus a single line, and **we were wrong about what it would do**. At the registered limit of 16 the rule is enforced, no cell above 16 loads surviving, and `clk_e` gets **worse**: −1.075 against −0.952 with no limit, and −2.238 at a limit of 8. **Satisfying the fanout rule is not the same as fixing the path**, because the buffers that split those nets sit on it. The best configuration measured anywhere here is flat synthesis, ABC buffer and size, then `repair_design` at a limit of 32: **+10.192, +5.453, −0.684**, two groups met and one 0.684 ns short.
+**Then the flow itself.** Both residual violations sat on nets crossing a module port (387 and 59 loads), and this flow synthesizes hierarchically, so ABC's buffer pass never saw them. A registered control (`experiments/flatten_control/`, 7 arms, 5 of 10 predictions right) found more than the mechanism it registered: **flattening alone moves `clk_a` by +22.446 ns**, because across the boundary ABC collapses the decode logic our RV32I wrapper's tied instruction bits make redundant, and the 387-load net stops existing. Flat with buffering and sizing puts `clk_a` at +11.158 and `clk_b` at +5.665; `clk_e` ends at −0.319 with a 136-load flop output ABC does not reach even with `buffer -p` (measured no-op). Then `repair_design` on the flat netlist, registered separately: on the unbuffered one it is worth **+34.344 on `clk_b` and +39.700 on `clk_e`** at +18.7% area, and after ABC's work it still gains +4.513 on `clk_e`, so **the two physical levers compose rather than substitute**. It does not close `clk_e` (−0.952 with parasitics): an `a21o_4` at **65 loads** sits on all three worst paths, and no part of this flow, liberty or platform included, ever declared a fanout limit for it to repair against. So we added one, in a new SDC copying frozen v3 verbatim plus a single line, and **we were wrong**: at the registered limit of 16 the rule is enforced and `clk_e` gets **worse**, −1.075 against −0.952, and −2.238 at a limit of 8. **Satisfying the fanout rule is not fixing the path**, because the buffers splitting those nets sit on it. The best configuration measured anywhere here is flat synthesis, ABC buffer and size, then `repair_design` at a limit of 32: **+10.192, +5.453, −0.684**, two groups met and one 0.684 ns short.
 
-**And `repair_design`'s output is now formally proven equivalent to its input**: 5,832 compare points, all proven, **38 seconds**, on the pair where it added 1,658 cells. Four earlier attempts failed and we had published this as an open limitation. Each had a mundane cause: `equiv_make` matches wire *names*, so a hierarchical netlist against a flat one gave 86 compare points instead of 5,800; a k-padded miter asked a *sequential* question of a combinational change; and hand-built cell models were unnecessary, since `read_liberty` without `-lib` builds them from the liberty itself. **A buffer is never a compare point**, so inserting ten thousand adds none. This is translation validation per run, not a proof of the algorithm, and says nothing about whether the timing gain is real. **Every v3 number before this paragraph is a hierarchical-flow number**, and here the flow, not the RTL, was the largest lever we had.
+**And `repair_design`'s output is now formally proven equivalent to its input**: 5,832 compare points, all proven, **38 seconds**, on the pair where it added 1,658 cells. Four earlier attempts failed, published at the time as an open limitation, each with a mundane cause: `equiv_make` matches wire *names*, so a hierarchical netlist against a flat one gave 86 compare points instead of 5,800; a k-padded miter asked a *sequential* question of a combinational change; and `read_liberty` without `-lib` builds the cell models, so hand-built ones were unnecessary. **A buffer is never a compare point**, so inserting ten thousand adds none. This is translation validation per run, not a proof of the algorithm, and says nothing about whether the timing gain is real. **Every v3 number before this paragraph is a hierarchical-flow number**, and here the flow, not the RTL, was the largest lever we had.
 
-**Running the loop found two defects in it.** It gated proposals against a module not on the binding path (the violation was in the RV32I domain, the proposals targeted `aes_key_mem`), EQY proved one correct, the loop applied it, and `clk_a` went **−1.716 to −2.203**; and it had no G5 bar, so it kept that transform. Both are fixed; the pre-fix log is kept.
+**Running the loop found two defects in it.** It gated proposals against a module not on the binding path (violation in the RV32I domain, proposals targeting `aes_key_mem`), EQY proved one correct, the loop applied it and `clk_a` went **−1.716 to −2.203**; and with no G5 bar it kept that transform. Both fixed; the pre-fix log is kept.
 
 A third defect surfaced in the gate: a string-match fix read P4's concrete counterexample as **UNRESOLVED**. Caught by re-running proposals with known verdicts, now the standing regression: **P4 must read REFUTED and A2 must read UNRESOLVED**.
 
@@ -314,8 +300,6 @@ Four findings. **A wrong transform survived 40,000 simulated cycles**, wrong on 
 
 **One of six registered predictions is wrong**: EQY declines both STIMULUS cases rather than refuting one. Prediction 6 registered that our own gate should not sweep its own exam, and it did not. A separately registered X-propagation addendum adds one more: on identical stimulus, a testbench comparing with `==` accepts a dropped reset while `!==` catches it in 50 cycles, so **the verdict is a property of the comparison operator, not the design.** A quarantined archival column adds eight more cases, carrying no prediction and never added to a sealed count. `experiments/slackbench/`.
 
----
-
 ## 8. Optimized RTL and PPA
 
 Core level (`rv32i_core` alone, transform is 100% of the design; reset false-pathed, otherwise the recovery check masks the data path):
@@ -334,8 +318,6 @@ As frequency, which is what deliverable 5 asks for: at core level a 10 ns constr
 
 Power is vector-free at default switching activity and flat at 223 to 224 mW across all variants (a 351-cell change is 0.6% of a 55K design), reported as a null. The resolvable area cost is `repair_design`'s **+20.2%** (§7.2).
 
----
-
 ## 9. What we got wrong
 
 Judged work should show its corrections, so here are ours, all committed with the evidence.
@@ -352,12 +334,12 @@ Judged work should show its corrections, so here are ours, all committed with th
 
 **The path classifier undercounted fanout across module boundaries, and we had written down the tell and shipped it anyway.** Its docstring named "a 6.762 ns delay on a cell at fanout 1" as the signature of this bug, and that number sat in every v3 log under a DEPTH_DOMINATED verdict. The cell drives **387** loads: whole-bus and concatenated port connections were charged nothing. Every DEPTH verdict in runs 2 to 4 is MIXED, 1 of 15 external verdicts changed, and the fix is regression-checked on 5 fixtures against OpenSTA's own fanout column. The wrong logs are kept. This is the largest correction in the project, and the tool's own output carried it.
 
-**A claim that was false, caught by simulation.** We described `pipeline_cut_rigid(domain_a)` as boundary-proven *and therefore* module-equivalent. It is not: the consuming domain samples at half rate, so a one-cycle delay selects a different subsequence and `mac_result` diverges (`002a` vs `0031`). The sufficiency claim was withdrawn and the refuting testbench committed.
+**"Everything reproduces from the repository" was itself unchecked.** §10 claimed cold-clone reproduction had been verified per directory; it never had, because every script began `cd /mnt/c/Users/toshn/...`. Fixed and verified 5 Sept, **12 of 12 from a clone** (`experiments/reproducibility/`). A project arguing that claims must be checkable had shipped an unchecked claim about its own checkability.
 
----
+**A claim that was false, caught by simulation.** We described `pipeline_cut_rigid(domain_a)` as boundary-proven *and therefore* module-equivalent. It is not: the consuming domain samples at half rate, so a one-cycle delay selects a different subsequence and `mac_result` diverges (`002a` vs `0031`). The sufficiency claim was withdrawn and the refuting testbench committed.
 
 ## 10. Demo, reproduction, limits
 
-The demo walks the pipeline end to end: a timing report, a typed transform, its generated obligation, the prover portfolio, and a refutation with its counterexample, the case every simulation-gated tool would have passed. `DEMO.md` is the shot list and `tools/demo_check.sh` runs every command in it and re-checks the claims the narrator makes, failing if any breaks. **12 of 12 pass**, and it caught two stale claims the first time it ran. Everything reproduces from the repository: each experiment directory holds its sources, its `.sby` or `.eqy` configuration and its raw logs, proofs re-run with `sby -f <config> pdr`, and cold-clone reproduction was verified per directory.
+The demo walks the pipeline end to end: a timing report, a typed transform, its generated obligation, the prover portfolio, and a refutation with its counterexample, the case every simulation-gated tool would have passed. `DEMO.md` is the shot list; `tools/demo_check.sh` runs every command in it and re-checks the narrator's claims, failing if any breaks. **12 of 12 pass**, and it caught two stale claims on its first run. **Reproduction, checked rather than asserted.** Clone to any path, run `tools/preflight.sh` then `tools/demo_check.sh`: **12 of 12 pass from a clean clone** at a different name on a different filesystem (`experiments/reproducibility/`). Tool paths are environment variables, not constants. Each experiment directory holds its sources, `.sby`/`.eqy` configuration and raw logs; proofs re-run with `sby -f <config> pdr`. Archival directories still read intermediates not in the repo, and `SETUP.md` says which claims cost minutes and which cost an afternoon of synthesis.
 
 **Limits we would rather state than be asked.** N = 12 proposals, two target modules, one proposer model: outcomes, not rates. The physical flow reaches CTS and global routing, not signoff. The classifier's thresholds were chosen on our benchmark and one external verdict is flow-sensitive. The proposer in the closed loop is offline by design, and the best run leaves `clk_e` short with no ABC lever left. Equivalence is proven for `repair_design`'s netlist pairs but **not** for the ABC buffering lever, where the method times out. Of the seven transforms proven correct, three made their own path group worse: **proof and profit are independent questions, and we measured both.**
