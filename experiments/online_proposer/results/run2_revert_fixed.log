@@ -1,0 +1,54 @@
+same proposals: O1 825dec1084a985b9  O2 ab0613b322871935
+
+G0 sdc: bench_top_v3.sdc sha256 fd4f05f00c18ef55 191 lines, timing exceptions {'set_false_path': 1}
+dont_use flags: 72
+engine: sta   clocks: clk_a, clk_b, clk_e
+
+=== iteration 1 ===
+measure: clk_a=-13.167  clk_b=-18.957  clk_e=-25.957
+classify clk_e: FANOUT_DOMINATED (fanout share 0.9139) -> physical
+  LEVER FORCED to rtl: the router chose physical. Disclosed per online_proposer amendment 1.
+
+========================================================================
+ONLINE PROPOSER, handoff backend. The loop is waiting.
+  request : /home/toshn/slacksmith_work/online_fixed/handoff/REQUEST_O1.md
+  response: /home/toshn/slacksmith_work/online_fixed/handoff/RESPONSE_O1.json   <- write this file
+========================================================================
+
+  online proposal O1: array_write_decode_split (declared k=0)
+  gate O1 (array_write_decode_split): G3=PASS G4=PROVEN
+  APPLY O1 provisionally -> re-measure, confirm or revert on clk_e
+
+=== iteration 2 ===
+measure: clk_a=-12.805  clk_b=-17.079  clk_e=-24.079
+  G5 total: -58.081 -> -53.963 (improved)
+  CONFIRM O1: clk_e -25.957 -> -24.079 (+1.878)
+classify clk_e: FANOUT_DOMINATED (fanout share 0.9895) -> physical
+  LEVER FORCED to rtl: the router chose physical. Disclosed per online_proposer amendment 1.
+
+========================================================================
+ONLINE PROPOSER, handoff backend. The loop is waiting.
+  request : /home/toshn/slacksmith_work/online_fixed/handoff/REQUEST_O2.md
+  response: /home/toshn/slacksmith_work/online_fixed/handoff/RESPONSE_O2.json   <- write this file
+========================================================================
+
+  online proposal O2: array_read_mux_two_level (declared k=0)
+  gate O2 (array_read_mux_two_level): G3=PASS G4=PROVEN
+  APPLY O2 provisionally -> re-measure, confirm or revert on clk_e
+
+=== iteration 3 ===
+measure: clk_a=-13.761  clk_b=-28.513  clk_e=-35.513
+  G5 total: -53.963 -> -77.787 (not improved)
+  REVERT O2: clk_e -24.079 -> -35.513, total violation not improved. G4 passed, G5 did not. Restored the confirmed variant of aes/aes_key_mem.v.
+
+=== iteration 4 ===
+measure: clk_a=-12.805  clk_b=-17.079  clk_e=-24.079
+classify clk_e: FANOUT_DOMINATED (fanout share 0.9895) -> physical
+  LEVER FORCED to rtl: the router chose physical. Disclosed per online_proposer amendment 1.
+online proposal cap reached (2); stopping.
+
+wrote /home/toshn/slacksmith_work/online_fixed/SUMMARY.md
+wrote /home/toshn/slacksmith_work/online_fixed/decisions.jsonl
+exit: 0
+
+[exited with code 0]

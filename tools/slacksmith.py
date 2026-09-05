@@ -423,6 +423,12 @@ def main():
     # Mutable so the RTL-lever block can increment it; the cap it enforces is
     # what stops an online run becoming "keep asking until something passes".
     online_count = [0]
+    # The variant currently CONFIRMED for each source file. Revert restores
+    # from here rather than dropping the substitution, because dropping it
+    # throws away every earlier accepted transform on the same file. The
+    # online run lost a confirmed +1.878 ns exactly that way; see
+    # experiments/online_proposer/NOTES.md.
+    confirmed_subs = {}
     slack_history = []
     file_subs = {}          # original rtl file -> accepted variant path
     physical_applied = False
@@ -518,17 +524,29 @@ def main():
                 pending = None
             else:
                 if not improved:
-                    file_subs.pop(pending["key"], None)
+                    key = pending["key"]
+                    restored = confirmed_subs.get(key)
+                    if restored is None:
+                        file_subs.pop(key, None)
+                    else:
+                        # An earlier transform on this same file was already
+                        # confirmed. Go back to THAT, not to pristine source.
+                        file_subs[key] = restored
                     why = ("total violation not improved" if a.g5 == "total"
                            else "no improvement")
                     print(f"  REVERT {pending['id']}: {pending['clock']} "
-                          f"{before} -> {now}, {why}. G4 passed, G5 did not.")
+                          f"{before} -> {now}, {why}. G4 passed, G5 did not."
+                          + (f" Restored the confirmed variant of {key}."
+                             if restored else ""))
                     record(iter=it, step="revert", proposal=pending["id"],
                            clock=pending["clock"], before=before, after=now,
+                           restored_confirmed=bool(restored),
                            reason=("G5_total_no_improvement" if a.g5 == "total"
                                    else "G5_no_improvement"))
                     pending = None
                     continue
+                if pending["key"] in file_subs:
+                    confirmed_subs[pending["key"]] = file_subs[pending["key"]]
                 print(f"  CONFIRM {pending['id']}: {pending['clock']} "
                       f"{before} -> {now} ({now - before:+.3f})")
                 record(iter=it, step="confirm", proposal=pending["id"],

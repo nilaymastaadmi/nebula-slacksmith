@@ -81,6 +81,20 @@ against the state that actually preceded them. What the defect corrupted is
 everything after the revert, which is why iteration 4 restarts from baseline
 and why this run's N stops at 2.
 
+### Fixed, and verified by running rather than by reading
+
+`revert` now restores the last CONFIRMED variant for that file instead of
+dropping the substitution, and `confirm` records one. Re-run with the same two
+proposals, byte-identical, in `results/run2_revert_fixed.log`:
+
+| iteration 4 | `clk_a` | `clk_b` | `clk_e` |
+|---|---|---|---|
+| before the fix | −13.167 | −18.957 | **−25.957** (baseline; O1 lost) |
+| after the fix | −12.805 | −17.079 | **−24.079** (O1 preserved) |
+
+The log now says so out loud: *"Restored the confirmed variant of
+aes/aes_key_mem.v."* Reproduce with `verify_revert_fix.sh`.
+
 ## What this run does not show
 
 - **The `cli` backend was not exercised.** The OAuth session on this machine is
