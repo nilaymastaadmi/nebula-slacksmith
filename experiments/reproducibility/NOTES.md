@@ -95,6 +95,15 @@ their **runs** would need the chain re-run from the start. `SETUP.md` says
 which is which, because a reviewer should know that up front rather than
 discover it.
 
-**One clone, once.** This is a single observation, not a CI job. It will rot
-the next time someone adds a script with a path in it, and nothing here
-prevents that.
+**Two clones, twice.** Run once on `ab453d5` and again on `9d1e780`, both
+12 of 12 (`results/clean_clone_2026-09-05.log` and `..._rerun.log`). That is
+still two observations, not a CI job. It will rot the next time someone adds a
+script with a path in it, and nothing here prevents that.
+
+**One failure worth recording, and it was the harness rather than the repo.**
+The first attempt at the second run died with a syntax error at line 10,
+because `clone_and_check.sh` was edited while bash was part-way through
+reading it, and bash parses scripts incrementally rather than up front. The
+script was valid before and after. A run that fails for a reason that has
+nothing to do with what it is testing still gets written down, because the
+alternative is a directory of results that only ever went well.
