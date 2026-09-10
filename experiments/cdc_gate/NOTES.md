@@ -145,14 +145,82 @@ advance: *"A CDC checker that reports a clean sheet on a 55K-cell design with
 five domains is far more likely to be broken than to be right."* Writing that
 down before the run is what made a zero legible as a bug instead of a result.
 
+## Clock groups, added 2026-09-11, after scoring
+
+**C4 stays WRONG.** It was scored against the run that produced it and a tool
+fixed afterwards does not turn a missed prediction into a hit. This section is
+dated separately for that reason.
+
+The information G7 was missing was never missing from the project. The SDC
+already declares every derivation, in the same file **G0 fingerprints**:
+
+    create_generated_clock -name clk_a_div2 -source [get_ports clk_a] ...
+
+So `--sdc` reads clock groups from constraints G0 has already vouched for,
+rather than adding a constraint format of its own. A clock and everything
+`create_generated_clock` derives from it are one group; a crossing inside a
+group gets the new first-class verdict **SYNCHRONOUS**, is excluded from the
+findings, and the run prints how many there were.
+
+### Measured, same design and same gate, with and without the SDC
+
+| verdict | without `--sdc` | with `--sdc` |
+|---|---|---|
+| `DEPTH_1`, all false | **6** | **0** |
+| `UNCLASSIFIED` | 2 | 0 |
+| `SYNCHRONOUS` | n/a | **8** |
+| `MULTIBIT`, the real FIFO gray pointers | 6 | 6 |
+| `SAFE`, the real async control crossings | 2 | 2 |
+
+`results/bench_top_clock_groups.log` runs both in one script.
+
+**A correction to this file.** The scorecard above says *"6 of G7's 16 findings
+on a correct design are noise"*. It was **8**. Both `UNCLASSIFIED` entries,
+`u_domain_a.ctrl_r` at 73 bits and `u_domain_e.addr_r`/`wdata_r` at 512, were
+also synchronous, so the traversal bound that produced them never mattered for
+those two crossings. The earlier number counted only the false *violations* and
+missed the two spurious non-verdicts.
+
+### The exit code was lying, which is the fourth time in this gate
+
+With clock groups the run exited **0** on `bench_top` while six multi-bit
+crossings sat unverified. `MULTIBIT` does not mean safe. It means the crossing
+is multi-bit and its Hamming safety **has not been discharged**, which is the
+state of every multi-bit crossing in a run without `--hamming`.
+
+That is the same failure this gate has now produced four different ways: a
+confident clean verdict where the honest answer is "not checked". `MULTIBIT`
+and `UNCLASSIFIED` now both exit non-zero with a line naming what was skipped
+and how to discharge it. `bench_top` exits **1** in both configurations, which
+is correct: the tool has not checked those six and should not imply it has.
+
+### What `bench_top` actually looks like now
+
+Eight crossings are synchronous and not CDC at all. Two are genuine single-bit
+asynchronous control crossings and are **SAFE at depth 3**. Six are the
+`async_fifo` gray pointers, and their Hamming safety is discharged **modularly
+on `async_fifo` itself**, both pointers PROVEN to depth 16, which covers all six
+instantiated crossings and any future one; the flattened instance names cannot
+be instrumented directly, as recorded above.
+
+So the design is clean and every one of those three groups was established by a
+different mechanism, none of them by the gate declining to look.
+
 ## Limits, restated with what is now known
 
-- **No clock-group input**, which is the direct cause of six false positives.
+- ~~**No clock-group input**, which is the direct cause of six false positives.
   This is the first thing to fix and it is not a small fix: it needs a
-  constraint format and a way to state that one clock is derived from another.
-- **The traversal bound is a real ceiling.** Two crossings on wide buses were
-  not classified, and `UNCLASSIFIED` is reported separately rather than folded
-  into either answer.
+  constraint format and a way to state that one clock is derived from
+  another.~~ **CLOSED 2026-09-11**, and the "not a small fix" was wrong: it
+  needed no new format at all, because the SDC already declares every
+  derivation and G0 already fingerprints that file. See the clock-groups
+  section above. C4 remains scored WRONG.
+- **The traversal bound is a limit in principle with no demonstrated case.**
+  It was written up as a real ceiling on the strength of two `UNCLASSIFIED`
+  crossings on wide buses. With clock groups **both turned out to be
+  synchronous**, so the bound produced two spurious entries rather than two
+  ceilings, and nothing here now measures it mattering. `UNCLASSIFIED` is
+  still first-class, reported separately and exiting non-zero.
 - **Bounded, not unbounded.** Hamming safety is discharged by BMC to depth 16.
   Nothing here proves the property holds forever, only that no counterexample
   exists within 16 cycles.

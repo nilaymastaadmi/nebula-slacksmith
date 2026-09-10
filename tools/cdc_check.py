@@ -29,10 +29,18 @@ after it.
     python3 tools/cdc_check.py --top sb_cdc --async-input flag_src \
         experiments/slackbench/cases/CDC-1/gate.v
 
-Verdicts: SAFE, DEPTH_n (n < 2), MULTIBIT_UNSAFE, UNCLASSIFIED.
-UNCLASSIFIED is first-class and is reported apart from a violation, on the
-same principle as CANNOT in SlackBench: a crossing the gate cannot reason
-about must never be silently called safe.
+Verdicts: SAFE, SYNCHRONOUS, DEPTH_n (n < 2), MULTIBIT, MULTIBIT_UNSAFE,
+UNCLASSIFIED.
+
+SYNCHRONOUS means the two clocks are one group per the SDC (a clock and what
+create_generated_clock derives from it), so the crossing needs no synchronizer
+and is not a CDC finding. Pass --sdc to get it; without it every distinct clock
+net is its own domain, which made 8 of 16 findings on a correct design spurious.
+
+MULTIBIT and UNCLASSIFIED are NOT passes and exit non-zero: the first means
+Hamming safety has not been discharged, the second that the gate could not
+reason about the crossing. Neither is ever silently called safe, on the same
+principle as CANNOT in SlackBench.
 """
 import argparse, json, os, re, subprocess, sys, tempfile
 
@@ -198,6 +206,55 @@ def source_domain(dsn, bits):
     clk = dsn.clock_name(f["clk"]) if f["clk"] is not None else None
     rst = dsn.base_name(f["arst"]) if f["arst"] is not None else None
     return clk, rst, f["arst_active_high"]
+
+
+# --------------------------------------------------------------------------
+# clock groups, read from the SDC that G0 already fingerprints
+# --------------------------------------------------------------------------
+CREATE_CLK = re.compile(r"^\s*create_clock\b[^\n]*?-name\s+(\S+)", re.M)
+GEN_CLK = re.compile(
+    r"^\s*create_generated_clock\b(.*?)(?=^\s*create_|\Z)", re.M | re.S)
+GEN_NAME = re.compile(r"-name\s+(\S+)")
+GEN_SRC = re.compile(r"-source\s+\[\s*get_(?:ports|nets|pins)\s+([^\]\s]+)")
+
+
+def sdc_clock_groups(path):
+    """Map every clock to the root of its synchronous group.
+
+    A clock and everything generated from it are SYNCHRONOUS: a crossing
+    between them needs no synchronizer, and flagging it is the noise that made
+    six of G7's sixteen findings on a correct design meaningless. The SDC is
+    the authority for this and already declares it, so nothing new is asked of
+    the user.
+
+    Returns ({clock: group_root}, note) where note explains an empty result.
+    """
+    if not path or not os.path.exists(path):
+        return {}, "no SDC given, so every distinct clock net is its own group"
+    text = open(path, encoding="utf-8", errors="replace").read()
+    # join backslash continuations: the generated-clock statements wrap
+    text = re.sub(r"\\\s*\n\s*", " ", text)
+
+    parent = {}
+    for m in CREATE_CLK.finditer(text):
+        parent.setdefault(m.group(1), None)
+    for blk in GEN_CLK.finditer(text):
+        body = blk.group(1)
+        nm, src = GEN_NAME.search(body), GEN_SRC.search(body)
+        if nm and src:
+            parent[nm.group(1)] = src.group(1)
+
+    def root(c, guard=0):
+        while parent.get(c) and guard < 16:
+            c, guard = parent[c], guard + 1
+        return c
+
+    groups = {c: root(c) for c in parent}
+    if not groups:
+        return {}, "SDC declared no clocks this parser recognised"
+    derived = sum(1 for c, r in groups.items() if c != r)
+    return groups, "%d clocks in %d synchronous group(s), %d derived" % (
+        len(groups), len(set(groups.values())), derived)
 
 
 # --------------------------------------------------------------------------
@@ -372,6 +429,13 @@ def main():
     ap.add_argument("--crossing", action="append", default=[],
                     help="any net, port or internal, driven by another clock "
                          "domain (see PREREGISTRATION amendment 2)")
+    ap.add_argument("--sdc", default=None,
+                    help="SDC to read clock groups from. A clock and anything "
+                         "create_generated_clock derives from it are "
+                         "SYNCHRONOUS, so a crossing between them is not a CDC "
+                         "crossing. Without this every distinct clock net is "
+                         "treated as its own domain, which is what made 6 of "
+                         "16 findings on a correct design noise.")
     ap.add_argument("--workdir", default="~/cdc_gate")
     ap.add_argument("--hamming", action="store_true",
                     help="also discharge Hamming safety on multi-bit crossings")
@@ -417,6 +481,17 @@ def main():
           sum(dsn.flops[x]["width"] for x in fl)))
     if a.async_input:
         print("   declared async inputs: %s" % ", ".join(a.async_input))
+
+    groups, gnote = sdc_clock_groups(a.sdc)
+    print("clock groups: %s" % gnote)
+    if groups:
+        by_root = {}
+        for c, r in sorted(groups.items()):
+            by_root.setdefault(r, []).append(c)
+        for r, members in sorted(by_root.items()):
+            others = [m for m in members if m != r]
+            print("   %-12s synchronous with: %s" %
+                  (r, ", ".join(others) if others else "(nothing)"))
     print()
 
     # Amendment 2: an explicitly declared crossing net. Flops sampling it are
@@ -472,8 +547,24 @@ def main():
         m["dest_flops"].append(c["dest_flop"])
         m["truncated"] = m["truncated"] or c["truncated"]
 
+    def same_group(x, y):
+        """True when two clocks are synchronously related per the SDC."""
+        if not groups:
+            return False
+        gx, gy = groups.get(x), groups.get(y)
+        return gx is not None and gx == gy
+
     results = []
     for k, c in merged.items():
+        if same_group(c["src_clock"], c["dest_clock"]):
+            # Not a CDC crossing at all. A clock and its own divided version
+            # share a source; the launch and capture edges are related, so no
+            # synchronizer is required and none should be demanded.
+            c["verdict"] = "SYNCHRONOUS"
+            c["why"] = "%s and %s are one clock group per the SDC" % (
+                c["src_clock"], c["dest_clock"])
+            results.append(c)
+            continue
         if c["truncated"]:
             v, why = "UNCLASSIFIED", "backward walk hit the traversal bound"
         elif c["depth"] < 2:
@@ -529,7 +620,28 @@ def main():
                   open(a.json, "w", encoding="utf-8"), indent=1)
         print("wrote", a.json)
 
-    bad = sum(v for k, v in n.items() if k.startswith("DEPTH") or k.endswith("UNSAFE"))
+    if groups:
+        syn = n.get("SYNCHRONOUS", 0)
+        if syn:
+            print("%d crossing(s) are synchronous and are NOT CDC findings. "
+                  "Without --sdc they would have been reported as violations."
+                  % syn)
+
+    violations = sum(v for k, v in n.items()
+                     if k.startswith("DEPTH") or k.endswith("UNSAFE"))
+    # MULTIBIT is not a pass. It means the crossing is multi-bit and its
+    # Hamming safety has NOT been discharged, which happens whenever the run
+    # omits --hamming. Exiting 0 on it would be the same confident-clean
+    # verdict this gate has produced three times already from other causes.
+    unchecked = n.get("MULTIBIT", 0) + n.get("UNCLASSIFIED", 0)
+    if unchecked:
+        print("%d crossing(s) are NOT CHECKED, not clean: %d multi-bit "
+              "awaiting Hamming safety%s, %d unclassifiable. Re-run with "
+              "--hamming to discharge them."
+              % (unchecked, n.get("MULTIBIT", 0),
+                 " (--hamming was not given)" if not a.hamming else "",
+                 n.get("UNCLASSIFIED", 0)))
+    bad = violations + unchecked
     return 1 if bad else 0
 
 
