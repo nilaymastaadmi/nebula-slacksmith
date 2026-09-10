@@ -88,8 +88,12 @@ test nothing, and they are never added to a Tier B count.
 - **One of the eight ground truths was wrong on first publication** and the
   first run caught it. The correction is disclosed in `NOTES.md` amendment 2
   rather than quietly applied.
-- **Neither CDC case is detected as a CDC defect by anything here**, our own
-  checker included. Functional equivalence has no notion of a protocol.
+- **Neither CDC case is detected as a CDC defect by any checker scored in this
+  suite**, our own included, because functional equivalence has no notion of a
+  protocol. **Superseded 2026-09-05 for the suite's purpose only:** G7
+  (`experiments/cdc_gate/`) detects both, structurally and temporally rather
+  than functionally. The table above is unchanged, because G7 answers a
+  different question than the one these checkers were scored on.
 - **The formal stack is two-valued**, so X-optimism cannot be expressed, only
   worked around. See `NOTES_xprop.md`.
 - The authors' own checker is scored here too, and gets two wrong under one

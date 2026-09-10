@@ -17,3 +17,4 @@ __pycache__/
 # guildly agent workspace (linked project) — not part of the repo
 .guildly/
 PROMPT.md
+graphify-out/
