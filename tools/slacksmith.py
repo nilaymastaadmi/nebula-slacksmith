@@ -313,6 +313,67 @@ def gate(a, prop, workdir, tag):
         return {"G4": "HARNESS_ERROR", "stderr": r.stderr[-800:]}
 
 
+def g7_check(a, prop, rtl_files, file_subs, workdir, tag):
+    """G7 as a differential CDC gate: did this transform make a crossing worse?
+
+    Returns {"G7": verdict, ...}. Verdicts:
+      PASS       no violation the original did not already have
+      REJECT     the variant introduces a CDC violation
+      SKIPPED    the target module has no clock crossings to break
+      ERROR      the gate could not run, which is never a pass
+    """
+    mod = prop.get("target_module")
+    key = next((f for f in rtl_files
+                if os.path.basename(f) == "%s.v" % mod), None)
+    if key is None:
+        return {"G7": "SKIPPED", "why": "module not in the file list"}
+
+    def run(subs, label):
+        files = [os.path.join(a.rtl_dir, subs.get(f, f)) for f in rtl_files]
+        wd = os.path.join(workdir, "g7", tag, label)
+        os.makedirs(wd, exist_ok=True)
+        cmd = [sys.executable, os.path.join(HERE, "cdc_check.py"),
+               "--top", mod, "--workdir", wd,
+               "--json", os.path.join(wd, "crossings.json"),
+               "--hamming", "--ham-module", mod,
+               "--ham-timeout", str(min(a.gate_timeout, 300))]
+        if a.sdc:
+            cmd += ["--sdc", a.sdc]
+        cmd += files
+        r = sh(cmd)
+        open(os.path.join(wd, "cdc.log"), "w", encoding="utf-8").write(
+            r.stdout + r.stderr)
+        jp = os.path.join(wd, "crossings.json")
+        if not os.path.exists(jp):
+            return None, (r.stdout + r.stderr)[-400:]
+        return json.load(open(jp, encoding="utf-8")).get("crossings", []), None
+
+    gold, err = run({}, "gold")
+    if gold is None:
+        return {"G7": "ERROR", "why": "gate could not run on the original: %s" % err}
+    if not gold:
+        return {"G7": "SKIPPED", "why": "%s has no clock crossings" % mod}
+
+    var, err = run(file_subs, "variant")
+    if var is None:
+        return {"G7": "ERROR", "why": "gate could not run on the variant: %s" % err}
+
+    def bad(rows):
+        return sorted("%s:%s" % (c["verdict"], ",".join(c.get("sources", [])))
+                      for c in rows
+                      if c["verdict"].startswith("DEPTH")
+                      or c["verdict"].endswith("UNSAFE"))
+
+    gb, vb = bad(gold), bad(var)
+    introduced = [x for x in vb if x not in gb]
+    if introduced:
+        return {"G7": "REJECT", "introduced": introduced,
+                "why": "the transform introduces %d CDC violation(s) the "
+                       "original does not have" % len(introduced)}
+    return {"G7": "PASS", "crossings": len(gold),
+            "why": "no CDC violation introduced across %d crossing(s)" % len(gold)}
+
+
 # -------------------------------------------------------------------- main
 
 def main():
@@ -716,11 +777,37 @@ def main():
                 v = str(g.get("G4", "?"))
                 print(f"  gate {p['id']} ({g.get('def_id')}): "
                       f"G3={g.get('G3')} G4={v}")
-                record(iter=it, step="gate", proposal=p["id"],
-                       def_id=g.get("def_id"), declared_k=g.get("declared_k"),
-                       G1=g.get("G1"), G2=g.get("G2"), G3=g.get("G3"), G4=v)
                 # Only PROVEN is accepted. UNRESOLVED is NOT a pass.
                 if not v.startswith("PROVEN"):
+                    record(iter=it, step="gate", proposal=p["id"],
+                           def_id=g.get("def_id"),
+                           declared_k=g.get("declared_k"), G1=g.get("G1"),
+                           G2=g.get("G2"), G3=g.get("G3"), G4=v)
+                    continue
+
+                # G7. A transform can pass G4 and still break a clock crossing:
+                # SlackBench CDC-1 is functionally a latency change and CDC-2
+                # is functionally identical, and both are defects. Equivalence
+                # cannot state the question, so it gets its own gate.
+                tf_g7 = p.get("target_file") or ""
+                key_g7 = (tf_g7[len("rtl/"):] if tf_g7.startswith("rtl/")
+                          else tf_g7)
+                vf_g7 = p.get("variant_file")
+                subs7 = dict(file_subs)
+                if vf_g7 and key_g7:
+                    subs7[key_g7] = os.path.relpath(
+                        os.path.join(REPO, vf_g7), a.rtl_dir)
+                g7 = g7_check(a, p, rtl_files, subs7, a.workdir, p["id"])
+                print(f"  G7 {p['id']}: {g7['G7']} ({g7.get('why')})")
+                record(iter=it, step="gate", proposal=p["id"],
+                       def_id=g.get("def_id"), declared_k=g.get("declared_k"),
+                       G1=g.get("G1"), G2=g.get("G2"), G3=g.get("G3"), G4=v,
+                       G7=g7["G7"], G7_why=g7.get("why"),
+                       G7_introduced=g7.get("introduced"))
+                if g7["G7"] in ("REJECT", "ERROR"):
+                    # ERROR is not a pass, on the same principle UNRESOLVED is
+                    # not a pass at G4.
+                    print(f"  REJECT {p['id']} at G7.")
                     continue
                 # Batch 2 ships a whole rewritten module (variant_file).
                 # Batch 1 ships an anchor splice, which is materialised here
