@@ -1,0 +1,47 @@
+############ L1: is the variant functionally equivalent? ############
+eqy exit: 1
+ERROR: unknown option 'depth' in eq.eqy line 2: depth 12
+
+############ L2 and L3: G7 on the original and the variant ############
+--- gold (rtl/async_fifo.v) ---
+top async_fifo: 11 register cells (34 bits), 3 clock domain(s)
+   wclk                     5 cells, 17 bits
+   rclk                     5 cells, 17 bits
+   (none)                   1 cells, 0 bits
+clock groups: no SDC given, so every distinct clock net is its own group
+
+VERDICT        SRC         DST         WIDTH DEPTH  SOURCE
+MULTIBIT       wclk        rclk            4     2  wgray_r
+MULTIBIT       rclk        wclk            4     2  rgray_r
+
+   wgray_r            clock=rclk       reset=None
+hamming wgray_r                REFUTED    counterexample, first at step 0, trace in /home/toshn/slacksmith_work/g7_loop/gold/ham_wgray_r/ham/engine_0/
+   rgray_r            clock=wclk       reset=None
+hamming rgray_r                REFUTED    counterexample, first at step 0, trace in /home/toshn/slacksmith_work/g7_loop/gold/ham_rgray_r/ham/engine_0/
+
+crossings: 2   MULTIBIT_UNSAFE=2
+wrote /home/toshn/slacksmith_work/g7_loop/gold.json
+exit: 1
+
+--- gate (experiments/g7_in_loop/async_fifo_cdcbreak.v) ---
+top async_fifo: 11 register cells (34 bits), 3 clock domain(s)
+   wclk                     5 cells, 17 bits
+   rclk                     5 cells, 17 bits
+   (none)                   1 cells, 0 bits
+clock groups: no SDC given, so every distinct clock net is its own group
+
+VERDICT        SRC         DST         WIDTH DEPTH  SOURCE
+MULTIBIT       wclk        rclk            4     2  wcross_r
+MULTIBIT       rclk        wclk            4     2  rcross_r
+
+   wcross_r           clock=rclk       reset=None
+hamming wcross_r               REFUTED    counterexample, first at step 0, trace in /home/toshn/slacksmith_work/g7_loop/gate/ham_wcross_r/ham/engine_0/
+   rcross_r           clock=wclk       reset=None
+hamming rcross_r               REFUTED    counterexample, first at step 0, trace in /home/toshn/slacksmith_work/g7_loop/gate/ham_rcross_r/ham/engine_0/
+
+crossings: 2   MULTIBIT_UNSAFE=2
+wrote /home/toshn/slacksmith_work/g7_loop/gate.json
+exit: 1
+
+
+[exited with code 0]

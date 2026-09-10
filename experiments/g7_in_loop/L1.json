@@ -1,0 +1,10 @@
+{
+ "id": "L1",
+ "def_id": "pointer_encode_after_sync",
+ "target_module": "async_fifo",
+ "target_file": "rtl/async_fifo.v",
+ "variant_file": "experiments/g7_in_loop/async_fifo_cdcbreak.v",
+ "latency_delta_k": 0,
+ "obligation_branch": "1 (combinational equivalence, EQY)",
+ "rationale": "Register the raw binary pointer at the domain boundary and move the gray encode to the consumer side. A gray encoder is combinational and commutes with the synchronizer's delay, so gray(delay2(x)) equals delay2(gray(x)) and the function is unchanged. Same registers, same widths, k = 0."
+}

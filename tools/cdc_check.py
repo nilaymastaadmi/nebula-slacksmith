@@ -526,12 +526,22 @@ def main():
         if not foreign and not async_in:
             continue
         depth = sync_depth(dsn, cname, dclk)
-        src_desc = ([dsn.base_name(dsn.flops[s]["q"][0]) for s in foreign] or async_in)
+        src_desc = ([dsn.base_name(dsn.flops[s]["q"][0]) for s in foreign]
+                    or async_in)
+        # Record the SOURCE flop's clock and reset here, where they are known.
+        # Re-deriving them later from the declared-crossing table returns
+        # nothing when nothing was declared, and the caller then falls back to
+        # the destination clock: that asks whether a wclk register is stable in
+        # rclk, which refutes correct designs.
+        sf = dsn.flops[foreign[0]] if foreign else None
         crossings.append({
             "dest_flop": cname,
             "dest_clock": dsn.clock_name(dclk),
-            "src_clock": (dsn.clock_name(dsn.flops[foreign[0]]["clk"]) if foreign
+            "src_clock": (dsn.clock_name(sf["clk"]) if sf
                           else "(async input)"),
+            "src_rst": (dsn.base_name(sf["arst"])
+                        if sf and sf["arst"] is not None else None),
+            "src_rst_active_high": sf["arst_active_high"] if sf else False,
             "sources": sorted(set(src_desc)),
             "width": f["width"],
             "depth": depth,
@@ -594,9 +604,20 @@ def main():
                 # Per crossing, from the design. A single global --ham-clock
                 # checked async_fifo's rgray_r against wclk and returned a
                 # confident REFUTED on a correct design.
+                # Prefer what was recorded at detection time; fall back to
+                # walking the declared net. Never fall back to the destination
+                # clock, which is a different question with a confident answer.
                 sclk, srst, ahigh = source_domain(dsn, declared.get(sig, set()))
-                sclk = a.ham_clock or sclk or c["dest_clock"]
-                srst = a.rst if a.rst else srst
+                sclk = a.ham_clock or c.get("src_clock") or sclk
+                srst = a.rst or c.get("src_rst") or srst
+                if c.get("src_rst") is not None:
+                    ahigh = c.get("src_rst_active_high", False)
+                if not sclk or sclk.startswith("("):
+                    print("   %-18s SKIPPED: no source clock could be "
+                          "determined" % sig)
+                    c["verdict"] = "UNCLASSIFIED"
+                    c["hamming"] = "SKIPPED"
+                    continue
                 verdict, detail = hamming_check(
                     a.files, a.ham_module or a.top, sig, c["width"],
                     sclk, srst, wd, a.ham_depth, a.ham_timeout, ahigh)

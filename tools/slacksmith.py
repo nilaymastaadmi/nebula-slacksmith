@@ -359,7 +359,11 @@ def g7_check(a, prop, rtl_files, file_subs, workdir, tag):
         return {"G7": "ERROR", "why": "gate could not run on the variant: %s" % err}
 
     def bad(rows):
-        return sorted("%s:%s" % (c["verdict"], ",".join(c.get("sources", [])))
+        # Keyed on the CROSSING, not on signal names. A transform that renames
+        # a register would otherwise read as a new violation, and G7 would
+        # reject a rename while reporting it as a CDC catch.
+        return sorted("%s:%s->%s:%db" % (c["verdict"], c.get("src_clock"),
+                                         c.get("dest_clock"), c.get("width", 0))
                       for c in rows
                       if c["verdict"].startswith("DEPTH")
                       or c["verdict"].endswith("UNSAFE"))
