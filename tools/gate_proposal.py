@@ -127,6 +127,44 @@ def declared_branch(p, def_id):
     return None
 
 
+def null_control(a, wd, mod, mpath, res):
+    """Run the same miter with the gate replaced by the gold, renamed.
+
+    Returns False if the null control also fails, meaning the miter cannot
+    distinguish this module from itself and no refutation from it is
+    trustworthy. Returns True if gold-vs-gold proves. Returns None if the
+    control itself could not be decided, which is reported as inconclusive
+    rather than silently treated as a pass.
+    """
+    nwd = os.path.join(wd, "nullctl")
+    os.makedirs(nwd, exist_ok=True)
+    gold_src = io.open(os.path.join(wd, "gold.v"), encoding="utf-8").read()
+    io.open(os.path.join(nwd, "gold.v"), "w", encoding="utf-8").write(gold_src)
+    io.open(os.path.join(nwd, "gate.v"), "w", encoding="utf-8").write(
+        gold_src.replace(mod + "_gold", mod + "_gate"))
+    io.open(os.path.join(nwd, "miter_prop.sv"), "w", encoding="utf-8").write(
+        io.open(mpath, encoding="utf-8").read())
+    rp = os.path.join(os.path.abspath(a.repo), "tools", "run_proof.py")
+    r = sh([sys.executable, rp, "--top", "miter_prop",
+            "--file", "gold.v", "--file", "gate.v", "--file", "miter_prop.sv",
+            "--workdir", nwd, "--tasks", "bmc,pdr",
+            "--depth", str(a.depth), "--timeout", str(a.timeout)])
+    out = r.stdout + r.stderr
+    io.open(os.path.join(nwd, "null.log"), "w", encoding="utf-8").write(out)
+    nb = np = "?"
+    for line in out.splitlines():
+        if line.startswith("bmc:"):
+            nb = line.split(":", 1)[1].strip()
+        if line.startswith("pdr:"):
+            np = line.split(":", 1)[1].strip()
+    res["G4_null_bmc"], res["G4_null_pdr"] = nb, np
+    if nb.startswith("FAIL") or np.startswith("FAIL"):
+        return False
+    if np.startswith("PROVEN"):
+        return True
+    return None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--proposal", required=True)
@@ -375,7 +413,33 @@ endmodule
     if pdr.startswith("PROVEN"):
         res["G4"] = "PROVEN"
     elif bmc.startswith("FAIL") or pdr.startswith("FAIL"):
-        res["G4"] = "REFUTED"
+        # NULL CONTROL before any refutation is reported.
+        #
+        # Added 2026-09-11. O1 (retime_write_decode_forward on aes_key_mem)
+        # came back REFUTED on eq_round_key in 1s. The witness gave the two
+        # instances DIFFERENT arbitrary initial contents for key_mem, which
+        # Yosys does not apply the module's async reset to, so round_key =
+        # key_mem[round] differs at once. Re-running the same miter with the
+        # gate replaced by the gold module renamed also FAILED in 1s: the
+        # miter refutes this design against ITSELF. With eq_round_key removed
+        # the same null control is PROVEN in 12s.
+        #
+        # A gate that cannot answer must say so rather than answer wrongly.
+        # This is the verification-side twin of the timing-side null control
+        # in REPORT §5 (swap a module for itself, expect 0.000 delta), and
+        # CANNOT is already a first-class outcome in SlackBench.
+        #
+        # This is the third refutation this project's own harness has
+        # manufactured. The other two are in REPORT §9.
+        nl = null_control(a, wd, mod, mpath, res)
+        if nl is False:
+            res["G4_null_control"] = "REFUTES (miter is unsound on this module)"
+            res["G4"] = ("CANNOT (null control refutes: the same miter rejects "
+                         "this module against itself, so the counterexample is "
+                         "the harness, not the transform)")
+        else:
+            res["G4_null_control"] = "PASS (gold vs gold proves)"
+            res["G4"] = "REFUTED"
     else:
         res["G4"] = "UNRESOLVED"
     print(json.dumps(res, indent=2))

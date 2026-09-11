@@ -76,8 +76,12 @@ process.
   7,833 µm² (+1.45%), 1,547 clock buffers.
 
 ### D6. Formal equivalence verification report
-- Four obligation branches, all exercised on real RTL: combinational (EQY),
-  k-padded miter (SymbiYosys BMC+PDR), stream equivalence, mapped-state.
+- **Five** obligation branches, all exercised on benchmark RTL: combinational
+  (EQY), k-padded miter (SymbiYosys BMC+PDR), stream equivalence, mapped-state,
+  and **retiming** (sequential miter, no flop correspondence). Branches 4 and 5
+  were added 2026-09-11 after `experiments/missing_classes/` measured that the
+  router could not express either, which is why the engine had never proposed an
+  FSM re-encoding or a retiming.
 - **G6**, physical equivalence: `repair_design`'s output proven equivalent to
   its input, 5,832 compare points, 38 s, on all six arms.
 - **G7**, CDC: synchronizer depth (structural) and Hamming safety (temporal,

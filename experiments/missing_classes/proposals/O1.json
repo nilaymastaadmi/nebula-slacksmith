@@ -1,0 +1,11 @@
+{
+  "id": "O1",
+  "def_id": "retime_write_decode_forward",
+  "target_module": "aes_key_mem",
+  "target_file": "rtl/aes/aes_key_mem.v",
+  "latency_delta_k": 0,
+  "obligation_branch": "5 (retiming, sequential miter)",
+  "rationale": "The binding path is round_ctr_reg/Q (52 loads) through a nor4 at 300 loads into the key_mem write enables: 27.0 of 30.6 ns is the key_mem write decoder and its fanout, sitting between the counter flop and the key_mem flops. The decoder is a function of round_ctr_reg alone, and round_ctr_reg changes only under round_ctr_we, so the decode can be moved back across that flop: register (1 << round_ctr_new) under the same enable and drive the row write enables from the registered one-hot. This is a forward retiming of the counter across the decoder, replicated rather than moved because round_ctr_reg is still read by the control FSM. Latency is unchanged, the flop count rises by 15, and the decoder leaves the launch-to-capture path entirely.",
+  "variant_file": "experiments/missing_classes/aes_key_mem_O1.v",
+  "note": "Exactly the proposal the loop received at iteration 1, with variant_source written to disk so it is committed and re-gateable. The handoff REQUEST and RESPONSE are in results/handoff/."
+}
