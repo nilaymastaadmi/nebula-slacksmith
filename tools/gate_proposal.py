@@ -155,7 +155,8 @@ def null_control(a, wd, mod, nc, res, outs=None, tag="nullctl"):
     r = sh([sys.executable, rp, "--top", "miter_prop",
             "--file", "gold.v", "--file", "gate.v", "--file", "miter_prop.sv",
             "--workdir", nwd, "--tasks", "bmc,pdr",
-            "--depth", str(a.depth), "--timeout", str(a.timeout)])
+            "--depth", str(a.depth),
+            "--timeout", str(a.null_timeout or a.timeout)])
     out = r.stdout + r.stderr
     io.open(os.path.join(nwd, "null.log"), "w", encoding="utf-8").write(out)
     nb = np = "?"
@@ -248,6 +249,15 @@ def main():
     ap.add_argument("--yosys", default=os.environ.get("OSS_CAD_BIN", os.path.expanduser("~/tools/oss-cad-suite/bin")) + "/yosys")
     ap.add_argument("--depth", type=int, default=20)
     ap.add_argument("--timeout", type=int, default=300)
+    # The null control is a separate budget from the proposal's own
+    # proof. gold-vs-gold on rv32i_core (2,048 flops) does not close in
+    # 300s, and an unclosed control is reported as INCONCLUSIVE, which
+    # correctly downgrades the refutation it was meant to corroborate.
+    # Raising it must not silently change any proposal verdict, so it is
+    # its own flag rather than a bump to --timeout.
+    ap.add_argument("--null-timeout", type=int, default=None,
+                    help="seconds for the gold-vs-gold control "
+                         "(default: same as --timeout)")
     ap.add_argument("--repo", default=".")
     # Batch 2 (experiments/llm_proposer_aes) targets a different module with
     # a different port list. Every default below is the batch-1 rv32i_core
