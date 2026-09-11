@@ -598,3 +598,40 @@ harness and toward the design, which is the direction that flatters the tool.
 **Void condition.** If the assumption makes a **known-bad** transform prove,
 it is too strong and the result is thrown out, not patched. The existing
 refuted variants are the test: A3 must stay REFUTED.
+
+## R20 and R21, recorded as they landed, 2026-09-11
+
+`setundef -init -zero` after `prep`, which gives every undefined initial value a
+defined one, **the same one in both instances**, without touching either design
+or using a hierarchical reference (Yosys rejects those here with
+`AST_AUTOWIRE`).
+
+| miter | before | with the assumption |
+|---|---|---|
+| null control, gold vs gold, all 3 outputs | **FAIL `eq_round_key`, step 3, 1 s** | **PASS to depth 8** |
+| O2, all 3 outputs including `round_key` | not attempted; control refused | **PASS to depth 8** |
+
+**R20 CONFIRMED. R21 CONFIRMED.**
+
+**The partial proof was a harness gap and this registration twice said it was
+not.** Amendment 5 called `round_key` "undecidable, driven by state the reset
+does not reach". The R15 note went further and called it "not a harness
+weakness [...] a gate reporting it PROVEN here would be reporting something
+false". Both are **withdrawn**. The gate can report it PROVEN, under a stated
+assumption, and the assumption is the one sequential equivalence has always
+made: the two designs are the same chip and their unreset storage starts in the
+same state.
+
+**What the assumption is, stated exactly.** Not "the same arbitrary value",
+which Yosys cannot express here, but **zero**, which is strictly weaker and is
+what `reg_update`'s own reset loop intends for `key_mem` and which Yosys cannot
+apply because the target is an array. Every verdict obtained this way carries
+that assumption in its text. A transform that is equivalent from a zeroed
+memory but not from an arbitrary one would pass this and should not; no such
+transform is known to be in this project, and that gap is disclosed rather than
+closed.
+
+**How this was found.** Not by us. An external reviewer read the argument in
+amendment 5 and rejected it, correctly, in one paragraph. Two of the three
+wrong explanations this file has recorded for this verdict pointed away from the
+harness and toward the design, which is the direction that flatters the tool.
