@@ -1,0 +1,21 @@
+{
+  "id": "P5",
+  "def_id": "pipeline_cut_rigid",
+  "declared_k": 1,
+  "declared_branch": 2,
+  "G1": "PASS",
+  "G2": "PASS",
+  "gold_cells": 8269,
+  "gate_cells": 8358,
+  "gold_dff": 2048,
+  "gate_dff": 2112,
+  "G3": "PASS",
+  "dff_delta": 64,
+  "G4_bmc": "FAIL -- miter_prop.eq_dmem_addr, 2s",
+  "G4_pdr": "FAIL -- miter_prop.eq_dmem_addr, 3s",
+  "G4_null_bmc": "TIMEOUT -- stopped by wrapper timeout, not a tool verdict -- inspect raw log",
+  "G4_null_pdr": "TIMEOUT -- stopped by wrapper timeout, not a tool verdict -- inspect raw log",
+  "_null_fail_output": null,
+  "G4_null_control": "INCONCLUSIVE (gold vs gold neither proved nor failed)",
+  "G4": "REFUTED (null control inconclusive: the control did not close, so this refutation is not corroborated)"
+}
