@@ -457,3 +457,53 @@ the flop delta unconstrained by design, which is the whole point of it.
 `FAIL(declared k=0 but flop count changed by -2)`, on a transform that is
 correct. That is the hypothesis of this experiment landing a second time,
 on a transform nobody wrote to demonstrate it.
+
+---
+
+## R5, R18 and C3 scored across all groups, 2026-09-11
+
+One baseline, `sdc/bench_top_v3.sdc`, all three reported groups, zero-parasitic.
+`aes_key_mem` is instantiated in both AES cores, so `clk_b` and `clk_e` are both
+target groups and `clk_a` is the non-local column REPORT §5 requires separately.
+
+| variant | author | proof | clk_b | clk_e | clk_a (non-local) |
+|---|---|---|---|---|---|
+| `fanout_replication_round_key_update` | **model, unattended** | PROVEN (EQY, all outputs) | **+1.414** | +1.414 | +1.967 |
+| `fsm_output_coded_state_assignment` | this session | PROVEN, 2 of 3 outputs | **+3.185** | +3.185 | +0.528 |
+| `retime_write_decode_forward` | this session | PROVEN, 2 of 3 outputs | **−4.616** | −4.616 | +0.274 |
+
+| # | registered | outcome |
+|---|---|---|
+| **R5** | the retiming does not improve its own group | **CONFIRMED in direction, understated in magnitude.** It does not merely fail to help, it costs **4.616 ns** |
+| **R18** | the FSM transform does not materially improve `clk_b` | **WRONG. +3.185 ns**, the largest RTL gain on this group in the project |
+| **C3** | the unattended proposal does not materially improve `clk_b` | **WRONG. +1.414 ns**, and no group paid for it |
+
+### Correction to a statement already made to the project owner
+
+After the single-group measurement I wrote: *"the unattended model proposed a
+better transform for this path than the session driving this project did."*
+**That is wrong on the full data.** The model's fanout split beat this session's
+**retiming** by 6.03 ns, and lost to this session's **FSM re-encoding** by
+1.77 ns on the same group.
+
+The defensible version: **the model's proposal was the only one of the three
+that improved every group, and it carries the strongest proof** (EQY over all
+outputs, against two partial proofs). The session's retiming was the worst
+transform of the three and its stated rationale was aimed at the wrong thing.
+
+### What this does to REPORT §1
+
+The claim *"no RTL rewrite shortens a net's load delay"* is **falsified**, and
+by more than one transform: two of three RTL transforms improved a group the
+classifier scored 91.4% fanout-attributable, one of them by 3.185 ns.
+
+What survives the measurement:
+
+- Best RTL gain here: **+3.185 ns** on a **−18.957 ns** violation, **16.8%**.
+- `repair_design` on the same class of path: **+55.805 ns**.
+- So the true claim is **"RTL work on a fanout-dominated path buys a sixth of
+  what physical buffering buys on this benchmark, so the router prefers
+  physical"** — a ratio, not an impossibility.
+
+The two-lever design survives and is better supported by a ratio than by an
+absolute that a single counterexample breaks.
