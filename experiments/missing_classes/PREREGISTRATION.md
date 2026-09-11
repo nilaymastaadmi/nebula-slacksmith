@@ -834,3 +834,26 @@ misses, a published refutation in `experiments/llm_proposer/` is an artifact of
 our harness and the report's headline count changes from "3 of 12 formally
 refuted" to 2. That would be the largest single correction in this project and
 it would have been found by a reviewer's paragraph about a different module.
+
+## R30, recorded as it landed, 2026-09-11
+
+    bmc: FAIL -- miter_prop.eq_dmem_addr, 1s
+    pdr: FAIL -- miter_prop.eq_dmem_addr, 3s
+
+**R30 CONFIRMED.** With both instances of `rv32i_core` starting from the same
+zeroed state, P5 **still refutes**, on the same output, in the same time.
+
+**Its published REFUTED is sound in mechanism.** The concern raised in amendment
+9, that the counterexample might depend on two copies of one CPU powering up
+with different register files, is **ruled out**: remove that freedom entirely
+and the refutation survives unchanged. A3 behaved the same way for the same
+reason, and both match their stated mechanisms, which are about latency padding
+and have nothing to do with initial state.
+
+This is the second time the void-style check has earned its place. An
+assumption that flipped a refutation would have been an assumption that proves
+what you point it at; one that leaves two independent refutations standing,
+while turning two correct transforms from partial proofs into unbounded ones,
+is doing the job it was built for.
+
+R31, whether the control now closes, is still running.
