@@ -55,6 +55,10 @@ process.
   with no human in the loop** (`experiments/cli_backend/`). **17 total, of which 15 are model-written**: the remaining 2, the retiming and the FSM re-encoding in `experiments/missing_classes/`, were written through the `handoff` backend by the session driving this project and are marked as such in REPORT §3. A blind proposer has never produced a retiming or an FSM re-encoding, because until 2026-09-11 the gate rejected both by construction.
 - Handoff result: O1 PROVEN and kept (`clk_e` −25.957 → −24.079), O2 **PROVEN
   and 11.434 ns worse**, reverted at G5.
+- **Unforced routing:** on `i2c_master_top` (Dr. RTL set, 560 cells,
+  depth-dominated) the classifier selects the **RTL lever with no override**,
+  and the `cli` backend returns usable proposals on a design it has never seen.
+  Run twice it returned *different* transforms; the second is **PROVEN by EQY**.
 - **Unattended result (N = 1):** `fanout_replication_round_key_update`, PROVEN
   by EQY over all outputs, **+1.414 ns `clk_b`, +1.414 `clk_e`, +1.967 `clk_a`**,
   no group paying for it. 456 s end to end. It is the only batch-3 transform
@@ -223,9 +227,15 @@ Each with its nearest prior art, conceded where it narrows the claim.
 3. **The unattended backend is N = 1.** One run, one design, one sample
    (`experiments/cli_backend/`). Everything else in this project that says
    "closed loop" means a model in the loop with a human-mediated handoff.
-4. **The router never selects the RTL lever on this benchmark.** Under a
-   correct classifier every run ends `physical_exhausted`; the online-proposer
-   run used `--force-lever rtl`, logged as `lever_forced`.
+4. **The router never selects the RTL lever on THIS benchmark**, because its
+   binding paths are 59 to 91 percent fanout-attributable and the physical
+   lever is the correct answer to them. Every in-loop RTL result here used
+   `--force-lever rtl`, logged as `lever_forced`. **It does select RTL unforced
+   on a depth-dominated external design** (`experiments/unforced/`, `i2c` from
+   the Dr. RTL set). That run also exposed **six defects in this project's own
+   tooling**, none affecting a published result and none of which this
+   benchmark could structurally have shown; two of them were reporting a
+   proposal EQY proves as a harness error. Both readings are in REPORT §7.2.
 5. **Equivalence is proven for `repair_design`'s pairs but not for the ABC
    buffering lever**, where the method times out.
 6. **G7 fires only on modules with clock crossings**, and skips every module
