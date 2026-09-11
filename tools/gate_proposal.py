@@ -199,6 +199,15 @@ def null_control(a, wd, mod, nc, res, outs=None, tag="nullctl", depth=None):
         return False
     if np.startswith("PROVEN"):
         return True
+    # A control deliberately bounded at the counterexample's depth must be
+    # judged by a bounded criterion. PDR is unbounded, so requiring it here
+    # discarded a BMC PASS at exactly the depth the claim covers, which defeats
+    # the point of bounding: the claim is "no spurious failure at or below the
+    # depth where this refutation was found", and a BMC PASS to that depth IS
+    # that claim. Requiring PDR left P5 uncorroborated for a reason unrelated
+    # to P5.
+    if depth is not None and nb.startswith("PASS"):
+        return True
     return None
 
 def build_miter(p, def_id, mod, clk, rst, outs, ins, k):
