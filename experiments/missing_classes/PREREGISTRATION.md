@@ -671,3 +671,51 @@ refutation and nothing more.
 
 If R24 misses, the downgrade in R19 stands on its own merits and the extra
 machinery bought nothing, which is also a reportable outcome.
+
+## R21, R22 and the void check, recorded as they landed, 2026-09-11
+
+All three at `--depth 8 --zero-init`, against `aes_key_mem`, all three outputs
+including `round_key`:
+
+| proposal | before | with the assumption |
+|---|---|---|
+| **O2** `fsm_output_coded_state_assignment` | PROVEN, 2 of 3 | **PROVEN.** `bmc PASS 19s`, `pdr PROVEN 124s` |
+| **O1** `retime_write_decode_forward` | PROVEN, 2 of 3 | **PROVEN.** `bmc PASS 58s`, `pdr PROVEN 222s` |
+| **A3** known-bad, the void check | REFUTED | **REFUTED.** Fails `eq_ready` at 1 s |
+
+**R21 CONFIRMED. R22 CONFIRMED. The void condition does NOT fire.**
+
+Both are **PDR**, which is unbounded, not the depth-8 bound: these are full
+sequential equivalence proofs over the whole interface, conditional on the
+stated initial-state assumption and nothing else.
+
+**The void check is the one that makes the other two mean anything.** An
+assumption that made a known-bad transform prove would be an assumption that
+proves whatever you point it at. A3 declares k = 1 and delays one of three
+outputs while the k-padded obligation delays all of them; that defect has
+nothing to do with memory initialisation, and the assumption correctly leaves
+it visible.
+
+### The bounded control, first measurement
+
+A3's result also carries amendment 7's change, and it behaves as registered:
+
+    "G4_counterexample_step": 3,
+    "G4_null_depth": 5,
+    "G4_null_bmc": "PASS -- 1s",
+    "G4_null_control": "PASS (gold vs gold proves)"
+
+The refutation sits at step 3, so the control ran to depth 5 and closed in
+**1 second**. At full depth the same control cost 10 to 12 s here and did not
+close at all on `rv32i_core`.
+
+### What this retracts, for the third time on one verdict
+
+Amendment 5 and the R15 note both argued `round_key` was undecidable as a
+property of the design. Amendment 6 withdrew that. This measurement closes it:
+the output is decidable, the proof is unbounded, and the only thing that ever
+stood in the way was the harness giving two copies of one chip independent
+power-up state.
+
+**A reader should count three wrong explanations before the right one**, all
+three of them pointing at the design rather than at the tool.
