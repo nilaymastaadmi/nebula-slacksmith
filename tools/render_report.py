@@ -45,14 +45,14 @@ OUT = os.path.join(HERE, "REPORT.html")
 CSS = """
   @page { size: A4; margin: 18mm; }
   html { background:#888; }
-  body { font-family: Georgia, 'Times New Roman', serif; font-size: 10.5pt;
-         line-height: 1.38; margin:0; }
+  body { font-family: Georgia, 'Times New Roman', serif; font-size: 10pt;
+         line-height: 1.32; margin:0; }
   #sheet { width: 658px; margin: 0 auto; background:#fff; padding: 0; }
   h1 { font-size: 19pt; margin: 0 0 2px 0; }
   h2 { font-size: 13pt; margin: 15px 0 5px 0; border-bottom:1px solid #bbb; }
   h3 { font-size: 11.3pt; margin: 11px 0 4px 0; }
   p  { margin: 6px 0; text-align: justify; }
-  table { border-collapse: collapse; font-size: 8.8pt; margin: 7px 0; width:100%; }
+  table { border-collapse: collapse; font-size: 8.4pt; margin: 7px 0; width:100%; }
   th, td { border: 1px solid #999; padding: 2px 5px; text-align: left; }
   th { background:#eee; }
   pre { background:#f4f4f4; font-size:8pt; padding:5px; overflow-x:auto;
