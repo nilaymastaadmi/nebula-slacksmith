@@ -31,7 +31,7 @@ deferred on 2026-09-02 because counterexample-feedback-to-LLM for RTL is
 already published. This changes WHEN the proposer sees the design state, not
 whether it is told about its own failures.
 """
-import json, os, re, subprocess, sys, time
+import json, os, re, shutil, subprocess, sys, time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
