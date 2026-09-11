@@ -334,11 +334,20 @@ outputs, and the excluded one is the one that carries the key material"*, not
 not established, and it is a long way from full equivalence. Any report text
 that drops the parenthetical is wrong.
 
-**Why `round_key` is undecidable here and what would fix it.** `round_key =
-key_mem[round]` and `key_mem` is never reset, so the two instances start from
-independent arbitrary contents and no proof over all initial states can
-succeed. A comparison armed only after the design has completed an `init`
-sequence, when both memories hold key material derived from the same `key`
-input, would be sound and would decide it. That is a proposal-supplied
-reachability guard and is **not built**. Registered here as known-open rather
-than claimed.
+**Why `round_key` is undecidable here, corrected.** The first version of this
+note said an assertion armed after an `init` sequence would decide it. **That
+is wrong and is corrected here rather than left standing.**
+
+`round_key = key_mem[round]`, `key_mem` holds 15 rows, `round` is a free 4-bit
+input, and an AES-128 key schedule writes rows 0 to 10. Rows 11 to 14 are never
+written and are never reset, so `key_mem[12]` is arbitrary and independent in
+the two instances **no matter how long the designs run**. Arming after init
+does not help; the address has to be constrained too.
+
+So this is **not a harness weakness**. Equivalence of `round_key` is not a
+property of this module at all without an assumption about which `round` values
+are reachable, which belongs to the enclosing `aes_core` and not to
+`aes_key_mem`. A gate that reported `round_key` PROVEN here would be reporting
+something false. Reporting it undecidable and naming why is the correct answer,
+and the fix is an assumption the *proposal* would have to declare, not
+machinery the gate can supply.
