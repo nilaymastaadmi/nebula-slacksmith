@@ -507,3 +507,54 @@ What survives the measurement:
 
 The two-lever design survives and is better supported by a ratio than by an
 absolute that a single counterexample breaks.
+
+---
+
+## R19, recorded as it landed, 2026-09-11
+
+    "G4_null_control": "INCONCLUSIVE (gold vs gold neither proved nor failed)",
+    "G4": "REFUTED (null control inconclusive: the control did not close,
+            so this refutation is not corroborated)"
+
+**R19 IS WRONG.** Given 1800 s instead of 300, P5's gold-vs-gold control still
+does not close on `rv32i_core`.
+
+**The registered alternative is therefore the finding:** *"if it still does not
+close, this harness cannot corroborate any refutation on a 2,048-flop design."*
+That is now the stated limit.
+
+### Exactly which verdicts inherit the caveat, and which do not
+
+| refutation | discharged by | corroborated? |
+|---|---|---|
+| **P5** (`rv32i_core`, k=1) | sequential miter | **NO.** Control does not close at 1800 s |
+| **P4** (`rv32i_core`, k=0) | **EQY**, partition-level | **YES, independently.** Concrete counterexample `a=ae19f605, shamt=7`, confirmed by directed simulation |
+| **A3** (`aes_key_mem`, k=1) | sequential miter | **YES.** Fails on `eq_ready`, an output the per-output control proves |
+
+So the caveat is narrow and specific: **refutations from the sequential miter on
+designs around 2,000 flops**. P5 is the only such verdict in this project. EQY
+refutations are unaffected, because they are partition-level and P4's carries
+concrete values independently reproduced in simulation.
+
+### What P5 still has, and what it does not
+
+P5's refutation is **not** unsupported. Its own miter fails in 2 to 5 s on
+`eq_dmem_addr`, the failure has a stated mechanism (a k-padded obligation
+against a feedback machine, §7.3), and the trace is committed. What it lacks is
+the one thing the null control exists to supply: **proof that the harness can
+tell this design from itself**. Without that, the possibility that the miter
+refutes `rv32i_core` against itself for some reason nobody has found is open,
+and the honest word for an open possibility is *uncorroborated*.
+
+**Corroborating it independently is possible and is not done**: extract the BMC
+trace and replay it in directed simulation, as was done for P4. Registered here
+as known-open rather than claimed.
+
+### Why the control cannot close, stated as a limit rather than an excuse
+
+The control is an unbounded sequential equivalence question over 2,048 flops
+with free inputs. BMC exhausts its depth budget and PDR does not converge. This
+is a property of the method at that size, not a bug: the same control closes in
+**10 to 12 s** on `aes_key_mem` and in **64 s** on `domain_b`. The gate is
+honest about it, which is the whole point of a verdict string that says
+`not corroborated` instead of `REFUTED`.
