@@ -63,6 +63,27 @@ else
 fi
 
 echo
+echo "secret scan (this repository is public)"
+# Added 2026-09-11. The cli proposer backend needs CLAUDE_CODE_OAUTH_TOKEN, and
+# the obvious wrong way to supply it is to paste it into a script here. One of
+# this author's earlier repositories carries a leaked API key in its git
+# history, which is unremovable without a force-push, so the guard is cheap
+# insurance against repeating it. The token goes in ~/.slacksmith_token,
+# outside the repository, and tools/env.sh sources it if present.
+SECRET_HITS=0
+if git -C "$REPO" rev-parse --git-dir >/dev/null 2>&1; then
+  HITS=$(git -C "$REPO" grep -lE 'sk-ant-(oat|api)[0-9]{2}-|ghp_[A-Za-z0-9]{36}'          -- . 2>/dev/null || true)
+  if [ -n "$HITS" ]; then
+    echo "  FAIL    credential-shaped string in tracked files:"
+    echo "$HITS" | sed 's/^/            /'
+    echo "          Do NOT commit. Rotate the credential, then remove it."
+    SECRET_HITS=1
+    MISS=$((MISS+1))
+  fi
+fi
+[ $SECRET_HITS -eq 0 ] && echo "  ok      no credential-shaped strings tracked"
+
+echo
 if [ $MISS -eq 0 ]; then
   echo "preflight: all present. run: bash tools/demo_check.sh"
 else

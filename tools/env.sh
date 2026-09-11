@@ -37,5 +37,12 @@ export ORFS_PLATFORM="${ORFS_PLATFORM:-$HOME/orfs/flow/platforms/sky130hd}"
 # directory does not collect twelve stray .txt files.
 export SLACKSMITH_WORK="${SLACKSMITH_WORK:-$HOME/slacksmith_work}"
 
+# Secrets live OUTSIDE the repository. The cli proposer backend needs
+# CLAUDE_CODE_OAUTH_TOKEN; put it in ~/.slacksmith_token as a single
+# `export CLAUDE_CODE_OAUTH_TOKEN=...` line, chmod 600. Nothing secret is ever
+# committed, and tools/preflight.sh fails if a credential-shaped string ever
+# reaches a tracked file.
+[ -r "$HOME/.slacksmith_token" ] && . "$HOME/.slacksmith_token"
+
 export PATH="$OSS_CAD_BIN:$PATH"
 cd "$REPO" || { echo "env.sh: cannot cd to REPO=$REPO" >&2; exit 1; }
