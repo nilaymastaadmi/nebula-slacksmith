@@ -24,7 +24,7 @@ process.
 | Demo video | **does not exist.** `DEMO.md` is a 9-beat, 5-minute shot list; `tools/demo_check.sh` holds **15 assertions**. REPORT §10 says 12, which is stale by three; the 2026-09-05 clone logs show 12 in two runs and 15 in the `with_demo` run. **Neither number is a current measurement** and both are marked pending a re-run |
 | Repository | runs from a clean clone at any path, verified three times (`experiments/reproducibility/`) |
 | Interactive demo | `demo/explorer.html`, generated from committed logs, published |
-| `claude` CLI auth | **expired** (`expiresAt: 0`). This is what keeps the `cli` proposer backend unexercised; one `claude login` inside WSL unblocks it |
+| `claude` CLI auth | **working.** Token minted 2026-09-11 and held outside the repository in `~/.slacksmith_token`; `tools/preflight.sh` fails if a credential-shaped string ever reaches a tracked file |
 | Last push | branch `sandbox`, working tree clean |
 
 ---
@@ -45,7 +45,7 @@ process.
 ### D2. GenAI-based RTL optimization engine
 - `tools/proposer.py`, three backends: `frozen` (committed proposals),
   `handoff` (generates against live state, loop halts for the model),
-  `cli` (automated via `claude -p`, **committed unexercised**, expired auth).
+  `cli` (automated via `claude -p`, **exercised 2026-09-11, N = 1**, run preserved at `experiments/cli_backend/results/run1/`).
 - `tools/gate_proposal.py` routes the proof obligation from the declared
   transform type.
 - Proposals: 12 frozen across two pre-registered batches
@@ -195,11 +195,11 @@ Each with its nearest prior art, conceded where it narrows the claim.
 
 ## 5. Known-open items
 
-1. **`REPORT.md` is 12.34 pages against a 10 to 12 cap.** Over. Not resolved.
+1. **`REPORT.md` is over the 10 to 12 page cap.** Measured, not estimated; the current figure is in section 0 above. Not resolved.
 2. **The demo video does not exist.** Shot list and verification script do.
-3. **The `cli` proposer backend is committed unexercised**, so "closed loop"
-   means a model in the loop with a human-mediated handoff, not unattended
-   automation.
+3. **The unattended backend is N = 1.** One run, one design, one sample
+   (`experiments/cli_backend/`). Everything else in this project that says
+   "closed loop" means a model in the loop with a human-mediated handoff.
 4. **The router never selects the RTL lever on this benchmark.** Under a
    correct classifier every run ends `physical_exhausted`; the online-proposer
    run used `--force-lever rtl`, logged as `lever_forced`.
