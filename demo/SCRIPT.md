@@ -65,7 +65,7 @@ does not have to guess. Tool names it will get wrong unless told:
 **COVERS:** deliverables 1, 2 and 3
 **SCREEN:** the loop command, then `tools/show_run.py` on the same run
 
-> One command. Two iterations. Under fifty seconds.
+> One command. Two iterations. Under fifty seconds, and no human in it.
 >
 > It did not guess which lever to pull. Ninety-one percent of that path's
 > delay sits in cells driving thirty-two or more loads, and the worst single
@@ -92,6 +92,12 @@ does not have to guess. Tool names it will get wrong unless told:
 > the other two. That was wrong. Our own gate required a transform to preserve
 > the flop count, which excludes every retiming and every state re-encoding by
 > construction. Both now route through their own proof obligation.
+>
+> And on the path our classifier scored ninety-one percent fanout, the model
+> running unattended proposed a fanout split, our gate proved it, and it bought
+> one point four one four nanoseconds on every clock group. We had written in
+> our own summary that no R T L rewrite shortens a net's load delay. That
+> sentence is now gone.
 
 ---
 
@@ -138,7 +144,16 @@ does not have to guess. Tool names it will get wrong unless told:
 > point two percent area, and closure survives clock tree synthesis and global
 > routing at seven thousand eight hundred square microns.
 
-**CALLOUT:** `+55.805 ns — zero lines of RTL` and `+20.2% area`
+**CALLOUT:** `+55.805 ns — zero lines of RTL` and `3.32x achievable frequency`
+
+Optional twelve seconds if the cut has room, and the strongest single number for
+a silicon audience:
+
+> Five asynchronous domains have no single maximum frequency, so we report the
+> factor every period has to scale by for all of them to meet. Before the
+> physical flow that factor is two point eight. After it, zero point eight
+> four. **The design goes from thirty-six percent of its target frequency to a
+> hundred and eighteen percent**, with placement parasitics in the model.
 
 ---
 
@@ -212,6 +227,10 @@ No narration.
   becomes unreadable.
 - **Beat 2 is the only live compute.** If it is slow on the day, pre-run it to
   a file and play that back, and say so on camera.
+- **Beat 2's narration says "no human in it" and that is now literally true**
+  (`experiments/cli_backend/`, N = 1). It was not true before 11 September, when
+  this beat ran the handoff backend and a person pasted the prompt to a model.
+  If you demo the handoff backend instead, cut that clause.
 - **Never read a table aloud.** Point at one number. The callouts carry the
   rest.
 - Beat 4 is the strongest sixty seconds in the video. If the cut runs long,
