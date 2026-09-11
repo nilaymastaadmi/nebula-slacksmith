@@ -388,6 +388,20 @@ Branches 4 and 5 are now implemented, both `k = 0` with the flop delta unconstra
 
 **The confound reached a published number and was cleared by measurement.** A3 (§7.1) is published REFUTED on this same module through this same miter. Under the per-output control its refutation fails on `eq_ready`, an output the control **proves**, so it was never the artifact and the published verdict stands unchanged. **P5 did not clear**: its control does not close in 300 s against 2,048 flops, so P5 is REFUTED **uncorroborated**, which is weaker than this report previously implied and is the true statement until the control closes.
 
+### 7.7 The unattended run, N = 1
+
+Until 2026-09-11 the `cli` backend was committed and never executed, and this report said so. The blocker was authentication, not code: `~/.claude/.credentials.json` carried `expiresAt: 0`. A token was minted, held outside the repository, and `tools/preflight.sh` now fails if a credential-shaped string reaches a tracked file.
+
+**The first attempt died before the model was reached**, `PermissionError: [Errno 13] Permission denied: ''`. `run.sh` resolved the binary with `command -v claude` in a non-login shell where `~/.local/bin` is absent from `PATH`, and the empty string went into `subprocess.run`. The existing handler caught `FileNotFoundError`, which is the wrong exception for an empty program name. Registered as an environmental failure, logged, retried.
+
+**The second attempt ran the whole loop with no human in it**, 456 s: measure `clk_b = −18.957`, classify `FANOUT_DOMINATED` at 0.9139, propose, gate `G4=PROVEN`, G7 skip, apply. Request, raw response, variant and decision log are at `experiments/cli_backend/results/run1/`.
+
+Four predictions were registered before the run. **Three held and the fourth was the interesting one.** C1, valid JSON first attempt, held despite two warnings and a failing hook message mixed into the captured text. C2, a G4 verdict with no human, held. C4, logic restructuring rather than retiming or FSM, held.
+
+**C3 said the proposal would not materially improve `clk_b`, and gave a mechanism in advance: the duplicated control nets are aliases and `opt_clean` merges equivalent nets. Both were wrong.** The model's own rationale identified that `round_key_update` gates roughly 384 bit-positions and matched it to the 300-fanout `nor4` the classifier had just reported, then split the cone so the two wide select networks are driven separately. The cone duplication is not an alias and the mapper keeps it: **+1.414 ns on `clk_b`, +1.414 on `clk_e`, +1.967 on `clk_a`, no group paying for it**, under a proof EQY discharges over all outputs.
+
+That is the only batch-3 transform that improved every group, and it has the strongest proof of the three (§7.6). It is also **N = 1**: one design, one sample of a nondeterministic generator, one run. The claim is that the automation path works, not that it works reliably.
+
 ## 8. Optimized RTL and PPA
 
 Core level (`rv32i_core` alone, transform is 100% of the design; reset false-pathed, otherwise the recovery check masks the data path):
