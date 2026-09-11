@@ -168,3 +168,61 @@ decoder off the launch-to-capture path while the 300-load net remains. So the
 registered prediction is **no material improvement**, and any improvement at
 all would be evidence against the project's own fanout thesis and would be
 reported as such.
+
+---
+
+## Amendment 3, 2026-09-11: O1's refutation is void, and it is the gate's fault
+
+**What happened.** O1 came back `G4=REFUTED`, `eq_round_key`, BMC 1 s. Per this
+project's standing rule that a refutation is read before it is reported, the
+counterexample was inspected. The witness assigns **different arbitrary initial
+values to the two instances' `key_mem` arrays**.
+
+**Null control, the one this project's own methodology requires.** The miter
+was re-run with the gate replaced by the gold module renamed:
+
+| miter | result |
+|---|---|
+| gold vs **gold**, all three outputs | **FAIL `eq_round_key`, 1 s** |
+| gold vs gold, `eq_round_key` removed | **PDR PROVEN, 12 s** |
+
+**The miter refutes a design against itself.** `round_key = key_mem[round]`,
+`key_mem` is a memory Yosys does not apply the async reset to, so each instance
+starts from its own arbitrary contents and the read ports differ immediately.
+
+**Consequences, stated before the fix is written.**
+
+1. **O1's REFUTED is void, not a verdict.** It is scored `CANNOT`, and O1 is
+   re-gated once the miter is sound. R4 is **not** satisfied by it: R4 asks for
+   a counterexample on a transform that is actually wrong, and this
+   counterexample was produced against a correct one.
+2. **A3 in `experiments/llm_proposer_aes/` is confounded.** A3 targets the same
+   module through the same sequential miter and is published as **REFUTED**.
+   Its stated mechanism, that it delayed one of three outputs while the
+   k-padded miter delays all of them, is plausible and may be the true cause.
+   The point is that **the evidence does not distinguish it from the artifact**,
+   because this miter refutes `aes_key_mem` against itself. The published
+   verdict stands as recorded and is now annotated as confounded. It is not
+   quietly re-scored.
+3. This is the **second** time this project has published a refutation its own
+   miter manufactured, after the EQY depth-versus-counterexample confusion in
+   §7.1 and the uninitialised-memory miter in `experiments/g7_in_loop/`. Three
+   occurrences of one failure mode is a process defect, not three accidents.
+
+**The fix, and why this one.** Reaching into `u_g.key_mem` from the wrapper does
+not work in Yosys, and after synthesis the gate's array may not be a memory at
+all, so there is no general way to assume the two states equal. What is general
+is the control itself: **before any REFUTED is reported, run the same miter with
+the gate replaced by the gold, and if that also fails, report `CANNOT` with the
+reason instead of `REFUTED`.** A gate that cannot answer should say so; `CANNOT`
+is already a first-class outcome in SlackBench, and §5 already establishes the
+zero-noise-floor null control for the timing side. The verification side did not
+have one. Now it does.
+
+**New predictions, registered before the change is written.**
+
+| # | prediction |
+|---|---|
+| **R8** | With the null control in place, O1 returns `CANNOT(null control refutes)` rather than `REFUTED`. |
+| **R9** | Re-running A3 unchanged under the null control also returns `CANNOT`, which would mean its published REFUTED was never decidable by this harness. If instead A3's null control **passes** while A3 itself fails, the published verdict was right for the stated reason and only O1 was contaminated. **I do not know which**, and both outcomes are reportable. |
+| **R10** | The null control changes no verdict for any proposal whose module has no unreset memory, so batch 1 (`rv32i_core`) is unaffected. |
