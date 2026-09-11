@@ -414,6 +414,10 @@ def main():
                          "(REPORT 7.3), so exercising the generative path needs "
                          "this. Logged as lever_forced; see the online_proposer "
                          "registration, amendment 1.")
+    ap.add_argument("--cli-timeout", type=int, default=1800,
+                    help="seconds to wait for the cli proposer backend. The
+                         prompt carries the whole module source, so a large
+                         module needs more than the old 600 s default.")
     ap.add_argument("--max-online", type=int, default=6,
                     help="cap on generated proposals, so a run cannot become "
                          "keep asking until something passes")

@@ -185,10 +185,16 @@ def propose_handoff(ctx, a, workdir, timeout=1800, poll=3):
     return [_materialise(p, ctx, workdir)], None
 
 
-def propose_cli(ctx, a, workdir, timeout=600):
+def propose_cli(ctx, a, workdir, timeout=None):
     """Shell out to `claude -p`. UNTESTED: see the module docstring and the
     registration's void conditions. It is committed so the automation path is
     reviewable, not so it can be claimed as exercised."""
+    # 600 s was not enough. The prompt carries the whole module source, and on
+    # i2c (25 KB, 3 modules) the CLI exceeded it and the loop recorded
+    # "returned nothing usable" for what was a wall-clock limit, not a model
+    # failure. Overridable so a slow design does not read as a bad proposer.
+    if timeout is None:
+        timeout = getattr(a, "cli_timeout", None) or 1800
     prompt = render(ctx)
     d = os.path.join(workdir, "cli")
     os.makedirs(d, exist_ok=True)
