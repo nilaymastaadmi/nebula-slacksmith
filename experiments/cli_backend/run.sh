@@ -9,6 +9,17 @@ set -u
 export SLACKSMITH_PROMPT="$REPO/tools/proposer_prompt_v2.md"
 [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ] || {
   echo "FATAL: no CLAUDE_CODE_OAUTH_TOKEN. Put it in ~/.slacksmith_token."; exit 2; }
+
+# Resolve the CLI explicitly. This script runs non-interactively
+# (wsl -e bash run.sh), which is NOT a login shell, so ~/.profile never runs
+# and ~/.local/bin is absent from PATH. Attempt 1 passed the empty string from
+# `command -v claude` into subprocess.run and died with PermissionError: ''.
+# Fail loudly rather than hand a subprocess an empty program name.
+CLAUDE_BIN="${CLAUDE_BIN:-$(command -v claude || true)}"
+[ -x "$CLAUDE_BIN" ] || CLAUDE_BIN="$HOME/.local/bin/claude"
+[ -x "$CLAUDE_BIN" ] || {
+  echo "FATAL: no claude CLI. Looked on PATH and at $HOME/.local/bin/claude."; exit 2; }
+echo "claude: $CLAUDE_BIN"
 W=${1:-$SLACKSMITH_WORK/cli_backend}
 rm -rf "$W"; mkdir -p "$W"
 
@@ -19,7 +30,7 @@ python3 -u tools/slacksmith.py \
   --clock clk_b \
   --engine sta \
   --proposer cli \
-  --claude-bin "$(command -v claude)" \
+  --claude-bin "$CLAUDE_BIN" \
   --force-lever rtl \
   --max-online 1 \
   --max-iters 1 \

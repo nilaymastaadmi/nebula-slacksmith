@@ -194,11 +194,18 @@ def propose_cli(ctx, a, workdir, timeout=600):
     os.makedirs(d, exist_ok=True)
     open(os.path.join(d, "REQUEST_%s.md" % ctx["proposal_id"]),
          "w", encoding="utf-8", newline="\n").write(prompt)
+    # An EMPTY claude_bin raises PermissionError, not FileNotFoundError, so the
+    # handler below never sees it. That is how the first cli run died: run.sh
+    # resolved the binary with `command -v claude` in a non-login shell where
+    # ~/.local/bin is not on PATH, and passed "" straight through.
+    if not a.claude_bin or not os.path.isfile(a.claude_bin)        and not shutil.which(a.claude_bin):
+        return [], ("claude CLI path is empty or not a file: %r. Pass "
+                    "--claude-bin with a real path." % a.claude_bin)
     try:
         r = subprocess.run([a.claude_bin, "-p", prompt],
                            capture_output=True, text=True, timeout=timeout)
-    except FileNotFoundError:
-        return [], "claude CLI not found at %s" % a.claude_bin
+    except (FileNotFoundError, PermissionError) as e:
+        return [], "claude CLI not runnable at %r: %s" % (a.claude_bin, e)
     except subprocess.TimeoutExpired:
         return [], "claude CLI timed out after %ds" % timeout
     out = r.stdout + r.stderr
