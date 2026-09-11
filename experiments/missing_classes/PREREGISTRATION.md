@@ -558,3 +558,43 @@ is a property of the method at that size, not a bug: the same control closes in
 **10 to 12 s** on `aes_key_mem` and in **64 s** on `domain_b`. The gate is
 honest about it, which is the whole point of a verdict string that says
 `not corroborated` instead of `REFUTED`.
+
+---
+
+## Amendment 6, 2026-09-11: the second review says the partial proof is a harness gap, and it is probably right
+
+A second organiser review (`REVIEW_RESULT_2026-09-11_r2.md`) rejects this
+registration's argument that `round_key` is undecidable *by nature*:
+
+> Right: `round_key = key_mem[round]` with a free 4-bit `round` and 11 written
+> rows is not a property of `aes_key_mem` in isolation. **Wrong: "this is not a
+> harness limit".** The null control fails gold against gold on `round_key`
+> precisely because the miter gives the two instances *independent* arbitrary
+> initial memory contents [...] the independence is the harness's choice, not
+> the design's. Standard sequential equivalence on unreset storage assumes the
+> two copies start from the same initial state, because they are the same chip.
+
+**I think that is correct and my earlier note was wrong.** The question a miter
+asks is whether two designs behave identically *from the same starting
+conditions*. Yosys's `anyinit` seeds each instance separately, which asks a
+different and stricter question: whether they agree from **any pair** of
+starting states. For unreset storage that is not equivalence, it is something
+no correct transform could satisfy.
+
+This is the second time this file has recorded a wrong explanation for the same
+verdict. The first claimed an init-armed guard would fix it; it would not,
+because unwritten rows stay arbitrary. Both errors pointed away from the
+harness and toward the design, which is the direction that flatters the tool.
+
+### Predictions, registered before the assumption is written
+
+| # | prediction |
+|---|---|
+| **R20** | With the two instances' `key_mem` assumed equal at time 0, the **null control proves all three outputs** on `aes_key_mem`, where today it fails `round_key` in 1 s |
+| **R21** | Under that control, **O2 proves 3 of 3**. O2 re-encodes `key_mem_ctrl_reg` and never touches `key_mem`, so if anything can prove outright it is this one |
+| **R22** | **O1 also proves 3 of 3.** Less certain: it adds a registered one-hot shadow of `round_ctr_reg`, and while that register *is* reset, the proof now has to carry the invariant `round_ctr_oh_reg == 1 << round_ctr_reg` across the memory write port |
+| **R23** | The assumption changes **no verdict on `rv32i_core` or `domain_b`**, neither of which has unreset storage. If it does, the assumption is doing more than it claims |
+
+**Void condition.** If the assumption makes a **known-bad** transform prove,
+it is too strong and the result is thrown out, not patched. The existing
+refuted variants are the test: A3 must stay REFUTED.
