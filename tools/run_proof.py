@@ -82,19 +82,41 @@ cover: smtbmc z3
 [script]
 {script_lines}
 prep -top {top}
+{init_line}
 
 [files]
 {files_lines}
 """
 
 
-def build_sby(top: str, files: list, depth: int) -> str:
+def build_sby(top: str, files: list, depth: int, zero_init: bool = False) -> str:
+    """Assemble the SBY config.
+
+    zero_init adds `setundef -init -zero`, which gives every undefined initial
+    value a defined one, THE SAME ONE IN BOTH INSTANCES of a miter.
+
+    Why that matters. Yosys cannot apply a module's async reset to an array, so
+    an unreset memory starts arbitrary and, critically, INDEPENDENT per
+    instance. A miter over two such instances then asks whether the designs
+    agree from any PAIR of starting states, which is not equivalence and which
+    no correct transform satisfies. Measured on aes_key_mem: gold against
+    ITSELF fails eq_round_key at step 3 in 1 s without this, and passes to
+    depth 8 with it.
+
+    The assumption is ZERO, not "the same arbitrary value", which Yosys cannot
+    express here (a hierarchical assume into an instance is rejected with
+    AST_AUTOWIRE). Zero is strictly weaker and is what the design's own reset
+    loop intends. A transform equivalent from a zeroed memory but not from an
+    arbitrary one would pass this and should not, so callers must carry the
+    assumption into any verdict they report.
+    """
     script_lines = "\n".join(
         f"read_verilog -formal -sv {f}" for f in files if not f.endswith(".vh")
     )
     files_lines = "\n".join(files)
     return SBY_TEMPLATE.format(
-        depth=depth, top=top, script_lines=script_lines, files_lines=files_lines
+        depth=depth, top=top, script_lines=script_lines, files_lines=files_lines,
+        init_line="setundef -init -zero" if zero_init else "",
     )
 
 
@@ -221,6 +243,11 @@ def main():
     ap.add_argument("--top", required=True, help="top-level miter module name")
     ap.add_argument("--file", action="append", required=True, dest="files",
                      help="source file, relative to --workdir; repeatable, order matters for read_verilog")
+    ap.add_argument("--zero-init", action="store_true",
+                    help="setundef -init -zero after prep, so both instances of a "
+                         "miter start unreset storage in the SAME state. Required "
+                         "whenever the design has an array the async reset cannot "
+                         "reach; see build_sby.")
     ap.add_argument("--workdir", required=True, help="directory containing the source files (matches this project's experiments/<name>/ convention)")
     ap.add_argument("--depth", type=int, default=40, help="bmc/prove depth (default 40, matching every proof in this project so far)")
     ap.add_argument("--tasks", default="bmc,prove,pdr", help="comma-separated subset of bmc,prove,pdr,cover to run -- add cover whenever the miter has a cover() statement (every branch-3/stream-equivalence proof should)")
@@ -231,7 +258,7 @@ def main():
 
     sby_name = args.sby_name or f"{args.top}.sby"
     sby_path = os.path.join(args.workdir, sby_name)
-    sby_text = build_sby(args.top, args.files, args.depth)
+    sby_text = build_sby(args.top, args.files, args.depth, args.zero_init)
     with open(sby_path, "w", encoding="utf-8") as f:
         f.write(sby_text)
     print(f"wrote {sby_path}")

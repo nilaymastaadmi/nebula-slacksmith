@@ -156,7 +156,8 @@ def null_control(a, wd, mod, nc, res, outs=None, tag="nullctl"):
             "--file", "gold.v", "--file", "gate.v", "--file", "miter_prop.sv",
             "--workdir", nwd, "--tasks", "bmc,pdr",
             "--depth", str(a.depth),
-            "--timeout", str(a.null_timeout or a.timeout)])
+            "--timeout", str(a.null_timeout or a.timeout)]
+           + (["--zero-init"] if a.zero_init else []))
     out = r.stdout + r.stderr
     io.open(os.path.join(nwd, "null.log"), "w", encoding="utf-8").write(out)
     nb = np = "?"
@@ -255,6 +256,11 @@ def main():
     # correctly downgrades the refutation it was meant to corroborate.
     # Raising it must not silently change any proposal verdict, so it is
     # its own flag rather than a bump to --timeout.
+    ap.add_argument("--zero-init", action="store_true",
+                    help="pass --zero-init to run_proof.py: both instances of the "
+                         "miter start unreset storage in the same state. REQUIRED for "
+                         "any module with an array the async reset cannot reach, and "
+                         "the resulting verdict carries that assumption.")
     ap.add_argument("--null-timeout", type=int, default=None,
                     help="seconds for the gold-vs-gold control "
                          "(default: same as --timeout)")
@@ -283,6 +289,10 @@ def main():
     branch = declared_branch(p, def_id)
     res = {"id": p["id"], "def_id": def_id, "declared_k": k,
            "declared_branch": branch}
+    if a.zero_init:
+        res["assumption"] = ("unreset storage starts ZEROED and identical in "
+                             "both instances (setundef -init -zero); every "
+                             "verdict below is conditional on it")
 
     mod = a.module
     gold = os.path.join(wd, "gold.v")
@@ -434,7 +444,8 @@ def main():
     r = sh([sys.executable, rp, "--top", "miter_prop",
             "--file", "gold.v", "--file", "gate.v", "--file", "miter_prop.sv",
             "--workdir", wd, "--tasks", "bmc,pdr",
-            "--depth", str(a.depth), "--timeout", str(a.timeout)])
+            "--depth", str(a.depth), "--timeout", str(a.timeout)]
+           + (["--zero-init"] if a.zero_init else []))
     out = r.stdout + r.stderr
     open(os.path.join(wd, "g4.log"), "w", encoding="utf-8").write(out)
     for line in out.splitlines():
@@ -511,7 +522,8 @@ def main():
                          "--file", "gold.v", "--file", "gate.v",
                          "--file", "miter_prop.sv", "--workdir", wd,
                          "--tasks", "bmc,pdr", "--depth", str(a.depth),
-                         "--timeout", str(a.timeout)])
+                         "--timeout", str(a.timeout)]
+                        + (["--zero-init"] if a.zero_init else []))
                 o2 = r2.stdout + r2.stderr
                 io.open(os.path.join(wd, "g4_partial.log"), "w",
                         encoding="utf-8").write(o2)
