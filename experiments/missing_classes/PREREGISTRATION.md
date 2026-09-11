@@ -313,3 +313,32 @@ in a footnote.
 | **R16** | P5 is **unchanged**, REFUTED with nothing dropped, because its control already passes |
 | **R17** | O2, the FSM output-coded state assignment, reaches a **partial verdict** rather than `CANNOT` |
 | **R18** | O2 does **not** materially improve `clk_b`. Same reasoning as R5: 91.4% of that path is fanout and this removes a decode, not a load |
+
+---
+
+## R15, recorded as it landed, 2026-09-11
+
+    "G4_null_control": "REFUTES on round_key; PASSES on ready,sboxw",
+    "G4": "PROVEN (partial: 2 of 3 outputs; round_key undecidable,
+            driven by state the reset does not reach)"
+
+**R15 CONFIRMED.** The engine's retiming is formally equivalent on `ready` and
+`sboxw`, and the per-output control did what it was registered to do: it
+localised the undecidable output instead of abandoning the module.
+
+**The caveat, stated before anyone else has to point it out.** `round_key` is
+this module's **primary data output**. The two outputs that were proven are a
+control flag and an sbox request. So the honest sentence is *"proven on 2 of 3
+outputs, and the excluded one is the one that carries the key material"*, not
+*"proven"*. This is better than `CANNOT` because it says exactly what is and is
+not established, and it is a long way from full equivalence. Any report text
+that drops the parenthetical is wrong.
+
+**Why `round_key` is undecidable here and what would fix it.** `round_key =
+key_mem[round]` and `key_mem` is never reset, so the two instances start from
+independent arbitrary contents and no proof over all initial states can
+succeed. A comparison armed only after the design has completed an `init`
+sequence, when both memories hold key material derived from the same `key`
+input, would be sound and would decide it. That is a proposal-supplied
+reachability guard and is **not built**. Registered here as known-open rather
+than claimed.
