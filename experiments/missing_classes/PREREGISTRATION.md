@@ -763,3 +763,42 @@ If R27 also misses, the honest conclusion is the one R19 reached: this harness
 cannot corroborate a sequential-miter refutation at this design size, and the
 remaining route is the reviewer's other suggestion, replaying the witness trace
 in simulation, which is not built.
+
+## R26 and R27, recorded as they landed, 2026-09-11
+
+| # | registered | outcome |
+|---|---|---|
+| **R26** | the BMC-at-bounded-depth fix is correct and insufficient; P5 stays uncorroborated | **CONFIRMED** |
+| **R27** | given 1800 s at depth 5 the control closes and P5 recovers plain REFUTED | **WRONG.** `G4_null_bmc: TIMEOUT` at 1800 s |
+
+**The limit, stated as measured rather than as an excuse.** On `rv32i_core`,
+two copies of 2,048 flops, this harness **finds** a counterexample at step 3 in
+**3 seconds** and cannot **prove the absence** of one to step 5 in **1800
+seconds**. SAT is cheap, UNSAT is not, and the gap is three orders of magnitude
+on one design at one depth.
+
+Four budgets have now been tried: depth 20 at 300 s, depth 20 at 1800 s, depth 5
+at 300 s, depth 5 at 1800 s. None closes. **This is not a tuning problem** and
+further budget is not a plan.
+
+## Amendment 8: the last route the review named, and it is not built
+
+> Alternatively, replay the witness trace on both designs in simulation.
+
+That is a **different kind of evidence** and it does not need the miter to be
+sound. SBY already writes `engine_0/trace_tb.v`, a self-contained testbench
+that drives the counterexample. Running it on the two designs and observing
+them diverge on the output the miter named demonstrates directly that
+gold != gate, with no dependence on whether the harness can distinguish a
+design from itself.
+
+It is the same evidence P4 has and P5 lacks, which is why P4's refutation was
+never in question.
+
+| # | prediction |
+|---|---|
+| **R28** | The committed BMC trace replays in Icarus and **`dmem_addr` diverges** between gold and gate on the cycle the miter named, corroborating P5 independently of the null control |
+| **R29** | Replaying the same trace against **gold vs gold** shows **no divergence**, which is the control this method needs and which costs seconds rather than 1800 |
+
+If R28 misses, P5's published REFUTED is in real doubt rather than merely
+uncorroborated, and that is a much larger finding than anything above.
