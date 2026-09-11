@@ -134,3 +134,53 @@ than an observation.
 
 If instead `clk_b` improves materially, the claim in §1 is too strong and the
 report changes.
+
+---
+
+## C3, recorded as it landed, 2026-09-11
+
+    clock     baseline    variant     delta
+    clk_b     -18.957     -17.543     +1.414
+
+**C3 IS WRONG, and the registered mechanism for it was wrong too.**
+
+I predicted no material improvement, and gave the reason in advance: the two
+duplicated control nets are pure aliases and `opt_clean` merges equivalent
+nets, so nothing would survive synthesis. **It survived.** The cone
+duplication the model wrote is not an alias; the two gated `if` blocks are
+genuinely separate logic, and the mapper keeps them.
+
+**+1.414 ns, formally proven correct, proposed with no human in the loop.**
+
+### What this does to the report's own claim
+
+`REPORT.md` §1 says *"no RTL rewrite shortens a net's load delay"*. This is an
+RTL rewrite that shortens a net's load delay. **The claim as written is too
+strong and §1 changes.**
+
+What survives, and what the number actually supports:
+
+- The transform buys **+1.414 ns** on a **−18.957 ns** violation, which is
+  **7.5%**.
+- `repair_design` bought **+55.805 ns** on the same class of path.
+- So the honest claim is not "RTL cannot touch fanout delay" but **"RTL fanout
+  work on this benchmark buys single-digit percentages of what physical
+  buffering buys, and the router is right to prefer physical"**. That is a
+  weaker and truer statement, and it still supports the two-lever design.
+
+### The uncomfortable part, stated plainly
+
+The unattended model proposed a **better transform for this path than the
+session driving this project did.** Given the same timing report and the same
+module, this session hand-wrote a retiming of the write decoder; the model went
+at the 300-load net directly. Both are proven; only one of them is aimed at
+what the classifier actually measured.
+
+### This measurement is incomplete and is being redone
+
+It asked for `clk_b` alone. REPORT §5's own rule is that a transform's effect
+is the delta in the group it touches and **movement elsewhere is reported
+separately, never folded in**. Measuring one group is the folding that rule
+exists to prevent. Re-running across `clk_a`, `clk_b` and `clk_e`, together
+with the two hand-written variants, so all three are compared under one model.
+**+1.414 stands only if the other groups did not pay for it.**
