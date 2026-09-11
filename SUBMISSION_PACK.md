@@ -20,7 +20,7 @@ process.
 
 | item | state |
 |---|---|
-| `REPORT.md` | **A4, 18 mm margins, 9.5 pt body, 8 pt tables. Measured in a browser, never estimated.** Re-measure after every edit and quote no number from any document, this one included: the figure moved 12.34 -> 15.60 -> under-cap across one day. Compression did 15.6 -> 14.0 with no measured result dropped; type size did the rest, disclosed in a footer on the report|
+| `REPORT.md` | **A4, 15 mm margins, 9.5 pt body at 1.22 leading, 8 pt tables. Measured in a browser, never estimated.** Re-measure after every edit and quote no number from any document, this one included: the figure moved 12.34 -> 15.60 -> under-cap across one day. Compression did 15.6 -> ~12.7 with **no measured result dropped**, removing duplication rather than evidence; margins and leading did the rest, and every setting is disclosed in a footer on the report itself|
 | Demo video | **does not exist.** `DEMO.md` is the 9-beat shot list and `demo/SCRIPT.md` the verbatim narration; `tools/demo_check.sh` runs every command in both and reports **15 pass, 0 fail**, measured 2026-09-11 |
 | Repository | runs from a clean clone at any path, verified three times (`experiments/reproducibility/`) |
 | Interactive demo | `demo/explorer.html`, generated from committed logs, published |

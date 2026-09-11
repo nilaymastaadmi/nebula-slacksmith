@@ -36,7 +36,7 @@ To get the page count, open the HTML in a browser and run in the console:
 1009 px is the A4 text-block height at 96 dpi with 15 mm margins
 (1123 px page - 2 x 57 px). The divisor changes if you change the margins.
 
-To produce the PDF: open the HTML and print to PDF with **A4, 18 mm margins,
+To produce the PDF: open the HTML and print to PDF with **A4, 15 mm margins,
 background graphics on, scale 100%**. Those are the settings the 10.39 figure
 was measured at. Larger type or 1 inch margins push it to roughly 12.6 pages,
 so if the submission portal insists on a specific typography, re-measure
