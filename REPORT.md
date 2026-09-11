@@ -230,8 +230,7 @@ Batch 1's registration required any second batch to be registered separately wit
 **A4 takes `clk_b` from −4.957 to −0.032**, a 99.4% reduction adding no storage. **Both numbers are zero-parasitic**; the same group with parasitics is −43.438 (§7.2), against which +4.925 ns is about **11% of the real violation**. **The precondition gate fired for the first time**: A6 declared k = 0 while splitting a 15-entry array into two 8-entry ones, the flop count moved by +256, and G3 rejected it before any solver ran. And **A5 is why we registered a control**: it unrolls a reset loop, touches nothing on the read path, and still moves `clk_b` by +0.436, so A4's honest figure is **+4.489 above a change that does nothing**.
 
 **A2 is the batch's real finding, and it is a bug in our gate.** A2 is equivalent by inspection; the gate said REFUTED on one partition of 573 and it looked like a second P4. Three things did not fit: simulation agreed on all 16 values of `round`; EQY had proved **128 of 128** partitions feeding the output it failed; and that partition's log ends `Reached maximum number of time steps`, a **bound**, not a counterexample. EQY prints the same summary line for both and we matched on the string. The gate now separates `model found` from depth exhaustion, and P4's log carries concrete values confirmed by directed simulation, so **P4 stands**. One trap worth passing on: clamping `round` to its reachable range *outside* the designs changed nothing, because **EQY proves each partition with its inputs as free variables**, so an external constraint never reaches the cone.
-
-A3's REFUTED was re-checked on 11 Sept under the null control of §9, because the miter it used is the one later found refuting this module against itself. It fails on `eq_ready`, an output the control **proves**, so the verdict stands for the reason published (§7.6).
+ A3's REFUTED was re-checked under §9's null control and holds, failing on `eq_ready`, an output the control proves (§7.6).
 
 ### 7.2 The second router: which lever, before which transform
 
@@ -328,9 +327,7 @@ can latch `0000` or `0011`, neither the old value nor the new one.
 
 **All eight spurious findings go away and no real one does.**
 
-**Then the exit code was lying, which is the fourth wrong-verdict class in this one gate.** With clock groups the run exited **0** while six multi-bit crossings sat undischarged. `MULTIBIT` does not mean safe; it means Hamming safety **has not been checked**. Both `MULTIBIT` and `UNCLASSIFIED` now exit non-zero naming what was skipped, and `bench_top` exits **1**, which is correct. Its six gray pointers are discharged modularly on `async_fifo` itself, **both pointers PROVEN to depth 16**, which covers every instantiated crossing.
-
-**Three of the six bugs found in G7 produced a confident wrong verdict rather than an error**, twice refuting a correct design: the failure SlackBench exists to measure, found in our own new checker, caught only because gold was run through every check alongside gate. **A checker exercised only on the case expected to fail is indistinguishable from one that always fails.**
+**Then the exit code was lying, the fourth wrong-verdict class in this one gate.** With clock groups the run exited **0** while six multi-bit crossings sat undischarged; `MULTIBIT` means "not checked", not "safe". Both it and `UNCLASSIFIED` now exit non-zero naming what was skipped, and `bench_top` exits **1**. Its six gray pointers are discharged modularly on `async_fifo` itself, **both pointers PROVEN to depth 16**. **Three of the six bugs found in G7 produced a confident wrong verdict rather than an error**, twice refuting a correct design, caught only because gold was run through every check alongside gate. **A checker exercised only on the case expected to fail is indistinguishable from one that always fails.**
 
 ### 7.6 Two of the four named classes were unreachable, and a reviewer found it
 
