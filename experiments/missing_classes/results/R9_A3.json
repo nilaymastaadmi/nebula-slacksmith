@@ -1,0 +1,30 @@
+{
+  "id": "A3",
+  "def_id": "read_port_register",
+  "declared_k": 1,
+  "declared_branch": 2,
+  "G1": "PASS",
+  "G2": "PASS",
+  "gold_cells": 7975,
+  "gate_cells": 8079,
+  "gold_dff": 4386,
+  "gate_dff": 4642,
+  "G3": "PASS",
+  "dff_delta": 256,
+  "G4_bmc": "FAIL -- miter_prop.eq_ready, 2s",
+  "G4_pdr": "FAIL -- miter_prop.eq_ready, 7s",
+  "G4_null_bmc": "TIMEOUT -- stopped by wrapper timeout, not a tool verdict -- inspect raw log",
+  "G4_null_pdr": "PROVEN -- 9s",
+  "_null_fail_output": null,
+  "G4_undecidable_outputs": [
+    "round_key"
+  ],
+  "G4_decidable_outputs": [
+    "ready",
+    "sboxw"
+  ],
+  "G4_partial_bmc": "FAIL -- miter_prop.eq_ready, 1s",
+  "G4_partial_pdr": "FAIL -- miter_prop.eq_ready, 2s",
+  "G4_null_control": "REFUTES on round_key; PASSES on ready,sboxw",
+  "G4": "REFUTED (partial: 2 of 3 outputs; round_key undecidable, driven by state the reset does not reach)"
+}

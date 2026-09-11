@@ -351,3 +351,30 @@ are reachable, which belongs to the enclosing `aes_core` and not to
 something false. Reporting it undecidable and naming why is the correct answer,
 and the fix is an assumption the *proposal* would have to declare, not
 machinery the gate can supply.
+
+## R14, recorded as it landed, 2026-09-11
+
+    "G4_null_control": "REFUTES on round_key; PASSES on ready,sboxw",
+    "G4": "REFUTED (partial: 2 of 3 outputs; round_key undecidable,
+            driven by state the reset does not reach)"
+
+**R14 CONFIRMED, and amendment 3's warning is now resolved rather than
+standing.** A3's own miter fails on `eq_ready`. The null control **proves**
+`ready` and `sboxw`. So the output A3 fails on is one the harness can decide,
+and its refutation is not the `key_mem` artifact.
+
+**`experiments/llm_proposer_aes/`'s published "1 of 6 formally REFUTED" stands,
+for exactly the reason it published**: A3 declared k=1 and delayed one of three
+outputs while the k-padded obligation delays all of them.
+
+Amendment 3 said the evidence "does not distinguish it from the artifact". That
+was true of the harness as it stood. It is no longer true, and the distinction
+was made by measurement rather than by argument. The amendment stays on the
+record as written; this is its resolution, not its deletion.
+
+**What this cost to establish.** The confound was real, the first fix for it was
+wrong in the same shape as the bug, and the second fix was too coarse to answer
+the question. Three iterations, two of them caught by registered predictions
+(R10, R13), to arrive at a verdict that turned out to match the published one.
+That is the expensive-looking outcome that matters: a number nobody had reason
+to doubt was checked, and it held.
