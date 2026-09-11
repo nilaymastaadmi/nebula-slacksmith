@@ -124,3 +124,55 @@ checked below rather than assumed.
 
 The run is repeated after the fix. Per this registration, a crash or a defect
 is repaired and re-run; it is the *design* that may not be swapped.
+
+---
+
+## Run 3, observed mid-run: the router fired, and the path it fired at is a recovery check
+
+The prompt the loop handed the model carries this path:
+
+    Startpoint: arst_i (input port clocked by wb_clk_i)
+    Endpoint:   _257_ (recovery check against rising-edge clock wb_clk_i)
+    Path Group: asynchronous
+    Path Type:  max
+
+**That is an asynchronous-reset recovery check, not a logic path.** Its −0.396
+ns is the margin on reset deassertion. No RTL transform is the right answer to
+it; a reset synchronizer or a declared false path is.
+
+### Two separate problems, and they belong to different parties
+
+**1. A setup error of mine.** `experiments/unforced/i2c.sdc` does not false-path
+the async reset. This project knows to do that: REPORT §8's core-level
+measurement says "reset false-pathed, otherwise the recovery check masks the
+data path". I did not apply the same care to a design I set up in twenty
+minutes, and the result is that the loop optimised the wrong thing.
+
+**2. A defect in the classifier, which is the more interesting one.**
+`classify_path.py` has **no notion of path kind**. It read a path whose report
+says `Path Group: asynchronous` and `recovery check`, scored its fanout share,
+returned `DEPTH_DOMINATED` and routed it to an LLM. A router that cannot tell a
+data path from a recovery check will confidently spend a proposal on something
+no RTL rewrite can fix. On `bench_top` that never arose, because
+`sdc/bench_top_v3.sdc` declares `set_clock_groups -asynchronous` and the resets
+never produced the worst path.
+
+### How this is being handled, stated before the run finishes
+
+- **Run 3 stands as recorded.** Whatever the model returns is reported. It is
+  evidence about the router and about the classifier, and it is not evidence
+  about whether GenAI can improve `i2c`'s data path.
+- **U1 is scored CONFIRMED with a qualifier**: the router selected RTL with no
+  override, and the path it selected was one it should have excluded. Both
+  halves are true and reporting only the first would be the misreport this
+  registration exists to prevent.
+- **Adding a false path and re-running is a SEPARATE experiment** with its own
+  registration. Editing this SDC after seeing where the path landed is exactly
+  the void condition written above, and the fact that the edit is defensible
+  does not make it exempt.
+- The classifier defect is fixed on its own merits, not to rescue this run.
+
+| # | prediction, registered now |
+|---|---|
+| **U8** | `classify_path.py` gains a path-kind check and returns a distinct verdict for non-data paths; re-running run 3 unchanged then yields that verdict rather than `DEPTH_DOMINATED` |
+| **U9** | No `bench_top` classification changes, because no report there has ever carried a `recovery check` or an `asynchronous` path group |
