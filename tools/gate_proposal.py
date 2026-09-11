@@ -336,13 +336,28 @@ def main():
     else:
         gate_src = splice(src, p)
     def rename(text, suffix):
-        # SystemVerilog allows `endmodule : name`; renaming only the header
-        # leaves a mismatched end label and Yosys refuses to elaborate. Found
-        # 2026-09-02 on the aes design of the Dr. RTL benchmark, where both
-        # phase-4 variants failed G1 for this reason and not for any defect.
-        text = text.replace("module " + mod, "module " + mod + suffix, 1)
-        return re.sub(r"(endmodule\s*:\s*)" + re.escape(mod) + r"\b",
-                      r"\g<1>" + mod + suffix, text)
+        """Suffix EVERY module the file declares, and every instantiation.
+
+        Renaming only the target works when the file declares only the target,
+        which is a property of this project's benchmark and not of Verilog.
+        The first external design tried (i2c, three modules in one i2c.v) put
+        both copies in one Yosys namespace and G4 died with
+        `Re-definition of module i2c_master_byte_ctrl`.
+
+        SystemVerilog also allows `endmodule : name`; renaming the header alone
+        leaves a mismatched end label and Yosys refuses to elaborate, found
+        2026-09-02 on the aes design of the Dr. RTL benchmark.
+        """
+        names = re.findall(r"^\s*module\s+(\w+)", text, re.M)
+        for n in names:
+            text = re.sub(r"^(\s*module\s+)" + re.escape(n) + r"\b",
+                          r"\g<1>" + n + suffix, text, flags=re.M)
+            text = re.sub(r"(endmodule\s*:\s*)" + re.escape(n) + r"\b",
+                          r"\g<1>" + n + suffix, text)
+            text = re.sub(r"^(\s*)" + re.escape(n)
+                          + r"(\s+(?:#\s*\(|\w+\s*\())",
+                          r"\g<1>" + n + suffix + r"\g<2>", text, flags=re.M)
+        return text
     open(gold, "w", encoding="utf-8").write(rename(src, "_gold"))
     open(gate, "w", encoding="utf-8").write(rename(gate_src, "_gate"))
 
