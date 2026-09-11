@@ -84,3 +84,49 @@ of this registration's predictions.
 
 The variant RTL, the gate change and this registration are written by the same
 session, as in every registration in this repository.
+
+---
+
+## Amendment 1, 2026-09-11, after R2 and before any gate change
+
+Two facts found while running R2 that this registration did not anticipate.
+Recorded here rather than folded silently into the hypothesis.
+
+**1. R2's mechanism is confirmed, its magnitude was wrong.** Predicted
+`dff_delta = +6` from `state_r` widening `[3:0]` to `[9:0]`. Measured **+12**
+(gold 84 flops, gate 96) after `synth`, so the re-encoding costs more flops
+than the state register alone. The prediction is scored a **hit on the
+mechanism and a miss on the number**; only the sign mattered to H, but the
+number was stated and was wrong.
+
+**2. The frozen proposer prompt offers a branch the gate does not implement.**
+`tools/proposer_prompt.md` presents the proposer with four obligation branches
+and tells it to declare the one its transform needs. Branch **4
+(mapped-state equivalence)**, described in the template as "you re-encoded
+state, e.g. binary to one-hot", is `latency_delta_k = 0`. Every `k = 0`
+proposal in `gate_proposal.py` is routed to EQY, and any proposal that
+re-encoded state has `dff_delta != 0` and is killed by G3 before its declared
+branch is ever consulted.
+
+So the two missing classes have **two different causes, not one**:
+
+| class | cause |
+|---|---|
+| FSM optimization | **offered and unimplemented.** A proposer that followed the template and declared branch 4 was guaranteed a G3 rejection |
+| retiming | **never offered.** The template has no retiming row, so it was not in the proposer's vocabulary at all |
+
+This is a sharper result than H as registered, which supposed one rule. H is
+**revised**: one G3 rule makes both classes unreachable, and a second defect,
+an unimplemented branch advertised as available, makes the FSM case worse than
+unreachable because it was invited.
+
+**3. Consequence for the prompt.** `tools/proposer_prompt.md` is frozen to
+`experiments/online_proposer/`, whose registration lists editing it as a void
+condition. It is **not edited**. This experiment adds
+`tools/proposer_prompt_v2.md` and the O1/O2 results stay attached to v1.
+
+**4. New prediction, registered now, before the gate is changed.**
+
+| # | prediction |
+|---|---|
+| **R7** | Implementing branch 4 lets the project's existing one-hot `domain_b` (the PROBE above, unchanged RTL) reach a verdict through `gate_proposal.py` for the first time, and that verdict is **PROVEN**, agreeing with the hand-built `miter_mapped.sv` result already in `experiments/fsm_reencode/`. If the two disagree, one of the two miters is wrong and that is the result. |

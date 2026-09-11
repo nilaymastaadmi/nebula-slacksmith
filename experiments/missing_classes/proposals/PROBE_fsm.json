@@ -1,0 +1,10 @@
+{
+  "id": "PROBE_fsm",
+  "def_id": "fsm_reencode_onehot",
+  "tier": 4,
+  "latency_delta_k": 0,
+  "obligation_branch": "4 (mapped-state equivalence)",
+  "target_module": "domain_b",
+  "variant_file": "experiments/missing_classes/probe_domain_b_onehot.v",
+  "rationale": "PROBE, not a proposal. Re-declares the project's EXISTING hand-built one-hot domain_b (experiments/fsm_reencode/) as a gate proposal, to test prediction R2: that gate_proposal.py rejects it at G3 for changing the flop count at k=0, and therefore that no FSM re-encoding could ever have been submitted through the gate. The variant RTL is unchanged and already committed."
+}
