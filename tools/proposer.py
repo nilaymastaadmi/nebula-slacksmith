@@ -35,7 +35,12 @@ import json, os, re, subprocess, sys, time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
-PROMPT = os.path.join(HERE, "proposer_prompt.md")
+# The frozen v1 template is the default, so experiments/online_proposer
+# reproduces byte-identically. SLACKSMITH_PROMPT points a later
+# experiment at its own template rather than editing a frozen one,
+# which that registration lists as a void condition.
+PROMPT = os.environ.get("SLACKSMITH_PROMPT",
+                        os.path.join(HERE, "proposer_prompt.md"))
 
 # Everything above the horizontal rule in the template is documentation about
 # the template. The prompt itself is what follows it.

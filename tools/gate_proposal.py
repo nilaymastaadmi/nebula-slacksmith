@@ -78,6 +78,55 @@ def stats(yosys, path, top, workdir, tag):
     return {"cells": int(cells[-1]) if cells else None, "dff": dff, "latch_lines": latch}, log
 
 
+# A transform can leave latency unchanged and still change the flop count.
+# Retiming moves a register across combinational logic; re-encoding a state
+# register widens it. Both are k=0 with dff_delta != 0.
+#
+# Until 2026-09-11 G3's rule was k==0 => dff_delta==0 with no exception, so
+# both were rejected before the branch they declared was ever consulted. That
+# is why no proposal in this repository has ever been a retiming or an FSM
+# re-encoding: tools/proposer_prompt.md advertised branch 4 (mapped-state,
+# "you re-encoded state, e.g. binary to one-hot") as available, and a proposer
+# that followed the template and declared it was guaranteed a G3 rejection.
+# The project's own one-hot result (experiments/fsm_reencode/) is hand-built
+# with its own miter for exactly this reason, and measuring it through the
+# unmodified gate returns FAIL(declared k=0 but flop count changed by +12).
+#
+# Both classes are discharged by the SEQUENTIAL miter rather than by EQY.
+# EQY pairs internal nets by name and proves each partition, which needs a
+# flop correspondence; neither class has one. That is not a theoretical
+# objection: experiments/g7_in_loop measured EQY rejecting 15 of 43 partitions
+# on a variant its own I/O miter proves equivalent to depth 20, because the
+# nets had changed meaning. The miter compares interfaces, which is the
+# question these two classes actually pose.
+STATE_REMAP_BRANCHES = {4, 5}   # 4 mapped-state, 5 retiming
+
+
+def declared_branch(p, def_id):
+    """Branch number the proposal declares, or None.
+
+    Read from obligation_branch's leading digit where there is one, because
+    the template asks for '4 (mapped-state equivalence)'. Batch 2 spells the
+    field as a name instead of a number, so those are mapped explicitly; an
+    unrecognised spelling returns None and routes on k alone, which is what
+    every proposal written before this change did.
+    """
+    raw = str(p.get("obligation_branch", ""))
+    m = re.match(r"\s*(\d+)", raw)
+    if m:
+        return int(m.group(1))
+    name = (raw + " " + str(def_id or "")).lower()
+    if "mapped" in name or "reencode" in name or "re_encode" in name:
+        return 4
+    if "retime" in name or "retiming" in name:
+        return 5
+    if "k_padded" in name:
+        return 2
+    if "eqy" in name or "combinational" in name:
+        return 1
+    return None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--proposal", required=True)
@@ -108,7 +157,9 @@ def main():
     k = p.get("latency_delta_k", p.get("declared_latency_delta_k"))
     if k is None:
         raise SystemExit("proposal declares no latency delta")
-    res = {"id": p["id"], "def_id": def_id, "declared_k": k}
+    branch = declared_branch(p, def_id)
+    res = {"id": p["id"], "def_id": def_id, "declared_k": k,
+           "declared_branch": branch}
 
     mod = a.module
     gold = os.path.join(wd, "gold.v")
@@ -144,7 +195,11 @@ def main():
 
     # ---- G3 declared-latency consistency
     d = ts["dff"] - gs["dff"]
-    if k == 0 and d != 0:
+    if k == 0 and branch in STATE_REMAP_BRANCHES:
+        # Declared state remap or retiming: latency is unchanged, the flop
+        # count is free, and the obligation moves to the sequential miter.
+        res["G3"] = "PASS(state-remap: k=0, flop delta unconstrained)"
+    elif k == 0 and d != 0:
         res["G3"] = f"FAIL(declared k=0 but flop count changed by {d:+d})"
     elif k > 0 and d <= 0:
         res["G3"] = f"FAIL(declared k={k} but flop count changed by {d:+d})"
@@ -162,7 +217,7 @@ def main():
     # harness built a full sequential miter for every proposal and timed out
     # at 240s on both engines against 2,048 flops, which measured the harness
     # rather than the transform.
-    if k == 0:
+    if k == 0 and branch not in STATE_REMAP_BRANCHES:
         eqy_cfg = os.path.join(wd, "prop.eqy")
         svf = sv_flag(gold)
         open(eqy_cfg, "w", encoding="utf-8").write(
