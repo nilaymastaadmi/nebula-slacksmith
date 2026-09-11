@@ -20,10 +20,11 @@ process.
 
 | item | state |
 |---|---|
-| `REPORT.md` | written, **measured at 12.34 pages against a 10 to 12 cap: OVER, unresolved** |
-| Demo video | **does not exist.** `DEMO.md` is a 9-beat, 5-minute shot list; `tools/demo_check.sh` verifies every command in it, 15 of 15 |
+| `REPORT.md` | **13.197 pages against a 10 to 12 cap: OVER, unresolved.** Measured in a browser at A4 / 18 mm / 10.5 pt, not estimated. 12.34 on 2026-09-11 morning, 13.197 after the day's additions. `tools/render_report.py`'s docstring carried a stale **10.39** from a 6,244-word revision; an external reviewer read it as current and reported the repository as contradicting itself. Docstring fixed; re-measure after every edit |
+| Demo video | **does not exist.** `DEMO.md` is a 9-beat, 5-minute shot list; `tools/demo_check.sh` holds **15 assertions**. REPORT §10 says 12, which is stale by three; the 2026-09-05 clone logs show 12 in two runs and 15 in the `with_demo` run. **Neither number is a current measurement** and both are marked pending a re-run |
 | Repository | runs from a clean clone at any path, verified three times (`experiments/reproducibility/`) |
 | Interactive demo | `demo/explorer.html`, generated from committed logs, published |
+| `claude` CLI auth | **expired** (`expiresAt: 0`). This is what keeps the `cli` proposer backend unexercised; one `claude login` inside WSL unblocks it |
 | Last push | branch `sandbox`, working tree clean |
 
 ---
