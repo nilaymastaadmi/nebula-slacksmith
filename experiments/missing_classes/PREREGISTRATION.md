@@ -719,3 +719,47 @@ power-up state.
 
 **A reader should count three wrong explanations before the right one**, all
 three of them pointing at the design rather than at the tool.
+
+## R24 and R25, recorded as they landed, 2026-09-11
+
+| # | registered | outcome |
+|---|---|---|
+| **R24** | P5's control closes at the bounded depth and P5 returns plain REFUTED | **WRONG.** `G4_null_depth: 5`, `G4_null_bmc: TIMEOUT`, still uncorroborated |
+| **R25** | the bound changes no verdict already obtained on `aes_key_mem` | **CONFIRMED.** A3 unchanged, control now closes in **1 s** instead of 10 to 12 |
+
+### Why R24 missed, measured
+
+The review's estimate was *"a BMC to depth 2, seconds"*. That underestimates an
+asymmetry: the real miter **found** P5's counterexample at step 3 in 3 s, which
+is a SAT question; the control has to **prove no counterexample exists** to
+depth 5, which is UNSAT over two copies of 2,048 flops and did not finish in
+300 s. Presence is cheap, absence is not.
+
+### And the bound exposed a logic error of ours, which is the more useful finding
+
+`null_control()` returns `True` only when **PDR** reports PROVEN. PDR is
+unbounded. So a control deliberately bounded at the counterexample's depth is
+still judged by an unbounded criterion, and **a BMC PASS at the bounded depth
+is discarded**. That defeats the entire point of amendment 7: the bound makes
+the question cheaper and the acceptance test never got the message.
+
+Corrected: when the control is bounded (a counterexample depth was found), a
+**BMC PASS at that depth is sufficient corroboration**, because it is exactly
+the claim being made, that the harness produces no spurious failure at or below
+the depth where this refutation was found. PDR PROVEN remains sufficient and is
+still preferred when it closes.
+
+**This is the fourth iteration on one control**: built at the wrong k (R10),
+too coarse at module granularity (R13), reporting a timeout as a pass, and now
+judging a bounded run by an unbounded criterion. Three of the four were caught
+by registered predictions that missed.
+
+| # | prediction |
+|---|---|
+| **R26** | With BMC-at-bounded-depth accepted, P5's control **still does not close**, because the BMC itself timed out rather than passing. The fix is correct and insufficient, and P5 stays uncorroborated by this route |
+| **R27** | Given 1800 s at depth 5, the control **does** close and P5 returns plain REFUTED |
+
+If R27 also misses, the honest conclusion is the one R19 reached: this harness
+cannot corroborate a sequential-miter refutation at this design size, and the
+remaining route is the reviewer's other suggestion, replaying the witness trace
+in simulation, which is not built.

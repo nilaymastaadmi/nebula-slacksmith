@@ -12,9 +12,11 @@
   "G3": "PASS",
   "dff_delta": 256,
   "G4_bmc": "FAIL -- miter_prop.eq_ready, 2s",
-  "G4_pdr": "FAIL -- miter_prop.eq_ready, 7s",
-  "G4_null_bmc": "TIMEOUT -- stopped by wrapper timeout, not a tool verdict -- inspect raw log",
-  "G4_null_pdr": "PROVEN -- 9s",
+  "G4_pdr": "FAIL -- miter_prop.eq_ready, 9s",
+  "G4_counterexample_step": 3,
+  "G4_null_depth": 5,
+  "G4_null_bmc": "PASS -- 1s",
+  "G4_null_pdr": "PROVEN -- 11s",
   "_null_fail_output": null,
   "G4_undecidable_outputs": [
     "round_key"
