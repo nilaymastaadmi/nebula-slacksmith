@@ -801,7 +801,15 @@ def main():
                     "cells_on_path": cls.get("cells_on_path"),
                     "top_cells": cls.get("top_cells"),
                     "module": module,
-                    "target_file": f"rtl/{key}",
+                    # Relative to REPO, derived from --rtl-dir rather than
+                    # a hardcoded "rtl/". With an external design the literal
+                    # prefix named a file that does not exist, the gate could
+                    # not open it, and the loop reported HARNESS_ERROR for a
+                    # proposal that EQY PROVES when the gate is run by hand.
+                    # For the default --rtl-dir this yields "rtl/<key>" exactly
+                    # as before.
+                    "target_file": os.path.relpath(
+                        os.path.join(a.rtl_dir, key), REPO).replace(os.sep, "/"),
                     "module_source": open(src_path, encoding="utf-8").read(),
                     # The BINDING path, not the first block in the report.
                     # `report_checks -group_path_count 1` returns one path per
@@ -864,9 +872,12 @@ def main():
                 # SlackBench CDC-1 is functionally a latency change and CDC-2
                 # is functionally identical, and both are defects. Equivalence
                 # cannot state the question, so it gets its own gate.
+                # file_subs is keyed relative to --rtl-dir, so strip that
+                # prefix rather than a hardcoded "rtl/".
                 tf_g7 = p.get("target_file") or ""
-                key_g7 = (tf_g7[len("rtl/"):] if tf_g7.startswith("rtl/")
-                          else tf_g7)
+                rel_dir = os.path.relpath(a.rtl_dir, REPO).replace(os.sep, "/")
+                pfx = rel_dir + "/"
+                key_g7 = tf_g7[len(pfx):] if tf_g7.startswith(pfx) else tf_g7
                 vf_g7 = p.get("variant_file")
                 subs7 = dict(file_subs)
                 if vf_g7 and key_g7:
