@@ -378,3 +378,54 @@ the question. Three iterations, two of them caught by registered predictions
 (R10, R13), to arrive at a verdict that turned out to match the published one.
 That is the expensive-looking outcome that matters: a number nobody had reason
 to doubt was checked, and it held.
+
+---
+
+## Correction, 2026-09-11: R11 was scored on a label the code got wrong
+
+**What was reported.** R11 was scored CONFIRMED and stated to the project owner
+as "P5 is REFUTED again with the null control passing", quoting
+`"G4_null_control": "PASS (gold vs gold proves)"`.
+
+**What the run actually contained.**
+
+    "G4_null_bmc": "TIMEOUT -- stopped by wrapper timeout, not a tool verdict"
+    "G4_null_pdr": "TIMEOUT -- stopped by wrapper timeout, not a tool verdict"
+    "G4_null_control": "PASS (gold vs gold proves)"
+
+**Both engines timed out and the gate printed PASS.** `null_control()` returns
+`True` on a proof, `False` on a failure and `None` when neither closes, and the
+call site tested `if nl is not False`, which treats `None` as a pass. The
+docstring directly above it said `None` "is reported as inconclusive rather
+than silently treated as a pass". The docstring was right and the code did the
+opposite.
+
+Re-run with the corrected branch, same inputs:
+
+    "G4_null_control": "INCONCLUSIVE (gold vs gold neither proved nor failed)"
+    "G4": "REFUTED (null control inconclusive: the control did not close,
+            so this refutation is not corroborated)"
+
+**Re-scoring R11.** The registered prediction was "P5 returns REFUTED again",
+and it does, in both runs. The prediction is **CONFIRMED**. The *reason* given
+for it, that `rv32i_core` has no unreset state to poison the control, is
+**NOT demonstrated**: the control never closed, so nothing was shown either
+way. A confirmed prediction with an unverified justification is not the same as
+a confirmed mechanism, and the difference is recorded rather than blurred.
+
+**P5's standing.** Its own miter refutes in 2 to 5 s on `eq_dmem_addr`. Its
+control does not close in 300 s against 2,048 flops. So P5 is **REFUTED,
+uncorroborated**. That is weaker than what `experiments/llm_proposer/` publishes
+and the weaker statement is the true one until the control closes.
+
+**This is the fifth verification defect of my own found today**, and the first
+that reached the project owner as a stated fact before being caught. Caught by
+reading the call site while writing an unrelated change, not by any test. The
+tally belongs in REPORT §9 as a statement about the process rather than as five
+separate confessions.
+
+**R19, registered now.** With the null-control timeout raised to 1800 s, P5's
+control **closes**, either PROVEN (corroborating the refutation) or FAIL
+(voiding it). If it still does not close, the honest conclusion is that this
+harness cannot corroborate any refutation on a 2,048-flop design and every
+`rv32i_core` refutation in the project inherits "uncorroborated".
