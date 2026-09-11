@@ -58,6 +58,18 @@ Branches 1 to 4 are discharged on blocks of the benchmark itself, not on toy des
 | 7 | Interactive demo | **`demo/explorer.html`**, §10 |
 | n/a | Benchmark: 5 async domains, generated clocks, CDC, dividers, ~50K cells | §4, `rtl/bench_top.v` |
 
+**The four optimization classes the objectives name, each scored separately.** A class is covered when the engine *proposes* it and the gate *routes* it, not when the report mentions it.
+
+| class | proposed by the engine | obligation branch | honest status |
+|---|---|---|---|
+| logic restructuring | 10 proposals: P1, P2, P3, P6, P4, A1, A4, A5, and `online_proposer`'s O1 and O2 | 1, combinational (EQY) | the only class with proven, timing-positive proposals |
+| pipelining | P5, A3 | 2, k-padded miter | **proposed twice, proven never.** Both refuted. The proven `pipeline_cut_rigid` in §6 is hand-built, and this table says so rather than letting §6 imply otherwise |
+| **retiming** | `missing_classes`'s O1 | **5, sequential miter** | **the engine could not propose one until 11 Sept**, see §7.6 |
+| **FSM optimization** | `missing_classes`'s O2 | **4, mapped-state** | same cause; the one-hot re-encoding in §6 is hand-built |
+
+Two of the four were unreachable by construction and we found out why only after an external review said so (§7.6). `dretime` also appears inside the ABC physical-lever script, which is a mapping-level pass and **not** the engine proposing a retiming; it is not counted here. **Two experiments each number their proposals O1 and O2**, `experiments/online_proposer/` and `experiments/missing_classes/`; they are always named with their directory here, and the collision is flagged rather than fixed by renumbering a registered artifact after its results existed.
+
+
 ## 4. The benchmark
 
 `bench_top` is **55,413 standard cells**, five independent asynchronous clock domains, each with its own active-low async reset and each driving at least one in-RTL generated clock.

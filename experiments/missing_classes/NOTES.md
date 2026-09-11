@@ -84,3 +84,19 @@ latency.
 ## Scorecard
 
 See `PREREGISTRATION.md` for the registered text of every prediction.
+
+## A naming collision, flagged not fixed
+
+This directory numbers its proposals **O1** and **O2**, and so does
+`experiments/online_proposer/`. They are different proposals:
+
+| id | experiment | transform |
+|---|---|---|
+| O1 | `online_proposer` | `array_write_decode_split` |
+| O2 | `online_proposer` | `array_read_mux_two_level` |
+| O1 | `missing_classes` | `retime_write_decode_forward` |
+| O2 | `missing_classes` | `fsm_output_coded_state_assignment` |
+
+The collision was noticed after both were registered and gated. Renumbering a
+pre-registered artifact once its results exist is worse than living with the
+collision, so every reference names the directory.
