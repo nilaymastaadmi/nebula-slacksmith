@@ -300,19 +300,9 @@ Four findings. **A wrong transform survived 40,000 simulated cycles**, wrong on 
 
 ### 7.5 G7: the gate for the defect equivalence checking cannot express
 
-§7.4 leaves both CDC cases unsolved and said so: every checker there is either unable
-to express the question or **correct and useless**. CDC-2's pair really is functionally
-equivalent, because moving a combinational encoder across a register does not change
-the function, and the bug is still there. So we built a seventh gate for the question
-the other six cannot state (`experiments/cdc_gate/`, registered before the code).
+§7.4 leaves both CDC cases unsolved and said so: every checker there is either unable to express the question or **correct and useless**. CDC-2's pair really is functionally equivalent, because moving a combinational encoder across a register does not change the function, and the bug is still there. So we built a seventh gate (`experiments/cdc_gate/`, registered before the code).
 
-G7 checks two things on Yosys-elaborated RTL. **Synchronizer depth**, structurally:
-under two back-to-back flops in the destination domain is a missing metastability
-guard. **Hamming safety**, temporally, via SymbiYosys: the value crossing a domain
-boundary must change at most one bit per cycle. The second checks the **property**,
-not the encoding, which is what makes it work: CDC-2's gold crossing net is a
-combinational wire and passes because its value changes one bit at a time, not
-because anything pattern-matched a gray encoder.
+G7 checks two things on Yosys-elaborated RTL. **Synchronizer depth**, structurally: fewer than two back-to-back flops in the destination domain is a missing metastability guard. **Hamming safety**, temporally, via SymbiYosys: the value crossing a domain boundary must change at most one bit per cycle. The second checks the **property**, not the encoding, which is what makes it work: CDC-2's gold crossing net is a combinational wire and passes because its value changes one bit at a time, not because anything pattern-matched a gray encoder.
 
 | case | every checker in §7.4 | G7 |
 |---|---|---|
@@ -320,22 +310,27 @@ because anything pattern-matched a gray encoder.
 | CDC-1 gate | reads as a latency change, not a defect | **DEPTH_1** |
 | CDC-2 gold | correctly ACCEPT | SAFE, proven to depth 16 |
 | CDC-2 gate | correctly ACCEPT, **and the bug is still there** | **REFUTED** |
-
 The counterexample is not about function: the crossing bus goes `0001` to `0010`,
 **two bits in one cycle**, so a receiver in another domain sampling mid-transition
 can latch `0000` or `0011`, neither the old value nor the new one.
 
-**Six registered predictions, three confirmed and one plainly wrong.** We predicted
-zero depth violations on `bench_top` and got **six**, every one a clock crossing to its
-own in-RTL divided version. Those are synchronously related and the design is correct,
-so **6 of G7's 16 findings on a correct design are noise**: it keys on clock *nets* and
-has no notion of clock *relationships*, which commercial tools take as a constraint
-input and G7 does not. Two more predictions landed on the right answer for the wrong
-reason and are scored as such. And **three of the six bugs we found in G7 produced a
-confident wrong verdict rather than an error**, twice refuting a correct design: the
-failure SlackBench exists to measure, found in our own new checker, and caught only
-because gold was run through every check alongside gate. **A checker exercised only on
-the case expected to fail is indistinguishable from one that always fails.**
+**Six registered predictions, three confirmed and one plainly wrong.** We predicted zero depth violations on `bench_top` and got **six**, every one a clock crossing to its own in-RTL divided version. Those are synchronously related and the design is correct. The scorecard first recorded **"6 of 16 findings are noise" and the true figure is 8**: both `UNCLASSIFIED` entries were also synchronous, so the earlier number counted false *violations* and missed two spurious non-verdicts.
+
+**The cause was that G7 keyed on clock *nets* with no notion of clock *relationships*, and the fix was already in the constraints.** `create_generated_clock -source` declares every derivation in the same file **G0 fingerprints**, so `--sdc` reads clock groups from constraints G0 has already vouched for rather than inventing a format. A crossing inside a group gets a first-class `SYNCHRONOUS` verdict and is excluded:
+
+| verdict | without `--sdc` | with `--sdc` |
+|---|---|---|
+| `DEPTH_1`, all false | **6** | **0** |
+| `UNCLASSIFIED` | 2 | **0** |
+| `SYNCHRONOUS` | n/a | **8** |
+| `MULTIBIT`, the real FIFO gray pointers | 6 | 6 |
+| `SAFE`, the real async control crossings | 2 | 2 |
+
+**All eight spurious findings go away and no real one does.**
+
+**Then the exit code was lying, which is the fourth wrong-verdict class in this one gate.** With clock groups the run exited **0** while six multi-bit crossings sat undischarged. `MULTIBIT` does not mean safe; it means Hamming safety **has not been checked**. Both `MULTIBIT` and `UNCLASSIFIED` now exit non-zero naming what was skipped, and `bench_top` exits **1**, which is correct. Its six gray pointers are discharged modularly on `async_fifo` itself, **both pointers PROVEN to depth 16**, which covers every instantiated crossing.
+
+**Three of the six bugs found in G7 produced a confident wrong verdict rather than an error**, twice refuting a correct design: the failure SlackBench exists to measure, found in our own new checker, caught only because gold was run through every check alongside gate. **A checker exercised only on the case expected to fail is indistinguishable from one that always fails.**
 
 ### 7.6 Two of the four named classes were unreachable, and a reviewer found it
 
@@ -408,9 +403,7 @@ Three occurrences of one failure mode is a process defect, so the fix is structu
 
 **The path classifier undercounted fanout across module boundaries, and we had written down the tell and shipped it anyway.** Its docstring named "a 6.762 ns delay on a cell at fanout 1" as the signature, and that number sat in every v3 log under a DEPTH_DOMINATED verdict. The cell drives **387** loads: whole-bus and concatenated port connections were charged nothing. Every DEPTH verdict in runs 2 to 4 is MIXED, 1 of 15 external verdicts changed, and the fix is regression-checked on 5 fixtures against OpenSTA's own fanout column. The wrong logs are kept. This is the largest correction in the project, and the tool's own output carried it.
 
-**Two harness bugs surfaced as UNRESOLVED**, which a report that left them there would have hidden behind something that looks like a result: `sby` off PATH, then a generalization patch writing `{max(k,1)}` into the miter as literal Verilog. **The loop's acceptance bar** separately confirmed a step that traded a met group for 0.838 ns on another; the run that exposed it is kept and the fix was registered mid-run and dated.
-
-**"Everything reproduces from the repository" was itself unchecked.** §10 claimed cold-clone reproduction had been verified per directory; it never had, because every script began `cd /mnt/c/Users/toshn/...`. Fixed and verified 5 Sept, **12 of 12 from a clone**, and 15 of 15 on the clone taken after the demo assertions were added. A project arguing that claims must be checkable had shipped an unchecked claim about its own checkability.
+**Three smaller ones, all surfaced by running rather than reading.** Two harness bugs appeared as UNRESOLVED, which a report that left them there would have hidden behind something resembling a result: `sby` off PATH, then a generalization patch writing `{max(k,1)}` into the miter as literal Verilog. The loop's acceptance bar confirmed a step that traded a met group for 0.838 ns on another; the run is kept and the fix was registered mid-run and dated. And **"everything reproduces from the repository" was itself unchecked**: §10 claimed cold-clone reproduction had been verified per directory when it never had, because every script began `cd /mnt/c/Users/toshn/...`. A project arguing that claims must be checkable had shipped an unchecked claim about its own checkability.
 
 **A claim that was false, caught by simulation.** We described `pipeline_cut_rigid(domain_a)` as boundary-proven *and therefore* module-equivalent. It is not: the consuming domain samples at half rate, so a one-cycle delay selects a different subsequence and `mac_result` diverges (`002a` vs `0031`). The sufficiency claim was withdrawn and the refuting testbench committed.
 

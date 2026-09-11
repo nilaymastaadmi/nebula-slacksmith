@@ -677,18 +677,8 @@
 <p>Four findings. <strong>A wrong transform survived 40,000 simulated cycles</strong>, wrong on one input pair in 65,536, with that pair published in advance. <strong>Combinational and sequential EC could not express 5 of 8 questions</strong>, each refusal evidenced by latch counts. <strong><code>cec</code> and <code>dsec</code> both confidently rejected an equivalent pair</strong>, because they match latches positionally: a checker answering a different question than the one asked can be wrong without signalling it changed the question. And <strong>a k-padded miter is wrong twice under temporal induction and zero times under PDR</strong>, because induction quantifies over states no execution reaches. The shipped gate discharges with BMC plus PDR and accepts only on PDR, scoring <strong>7 of 8 with one decline</strong>; the induction row is kept published rather than dropped once it looked worse. <strong>The engine that never lies is the one that sometimes refuses.</strong></p>
 <p><strong>One of six registered predictions is wrong</strong>: EQY declines both STIMULUS cases rather than refuting one. Prediction 6 registered that our own gate should not sweep its own exam, and it did not. A separately registered X-propagation addendum adds one more: on identical stimulus, a testbench comparing with <code>==</code> accepts a dropped reset while <code>!==</code> catches it in 50 cycles, so <strong>the verdict is a property of the comparison operator, not the design.</strong> A quarantined archival column adds eight more cases, carrying no prediction and never added to a sealed count. <code>experiments/slackbench/</code>.</p>
 <h3>7.5 G7: the gate for the defect equivalence checking cannot express</h3>
-<p>§7.4 leaves both CDC cases unsolved and said so: every checker there is either unable
-to express the question or <strong>correct and useless</strong>. CDC-2's pair really is functionally
-equivalent, because moving a combinational encoder across a register does not change
-the function, and the bug is still there. So we built a seventh gate for the question
-the other six cannot state (<code>experiments/cdc_gate/</code>, registered before the code).</p>
-<p>G7 checks two things on Yosys-elaborated RTL. <strong>Synchronizer depth</strong>, structurally:
-under two back-to-back flops in the destination domain is a missing metastability
-guard. <strong>Hamming safety</strong>, temporally, via SymbiYosys: the value crossing a domain
-boundary must change at most one bit per cycle. The second checks the <strong>property</strong>,
-not the encoding, which is what makes it work: CDC-2's gold crossing net is a
-combinational wire and passes because its value changes one bit at a time, not
-because anything pattern-matched a gray encoder.</p>
+<p>§7.4 leaves both CDC cases unsolved and said so: every checker there is either unable to express the question or <strong>correct and useless</strong>. CDC-2's pair really is functionally equivalent, because moving a combinational encoder across a register does not change the function, and the bug is still there. So we built a seventh gate (<code>experiments/cdc_gate/</code>, registered before the code).</p>
+<p>G7 checks two things on Yosys-elaborated RTL. <strong>Synchronizer depth</strong>, structurally: fewer than two back-to-back flops in the destination domain is a missing metastability guard. <strong>Hamming safety</strong>, temporally, via SymbiYosys: the value crossing a domain boundary must change at most one bit per cycle. The second checks the <strong>property</strong>, not the encoding, which is what makes it work: CDC-2's gold crossing net is a combinational wire and passes because its value changes one bit at a time, not because anything pattern-matched a gray encoder.</p>
 <table>
 <thead>
 <tr>
@@ -718,22 +708,64 @@ because anything pattern-matched a gray encoder.</p>
 <td>correctly ACCEPT, <strong>and the bug is still there</strong></td>
 <td><strong>REFUTED</strong></td>
 </tr>
+<tr>
+<td>The counterexample is not about function: the crossing bus goes <code>0001</code> to <code>0010</code>,</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>two bits in one cycle</strong>, so a receiver in another domain sampling mid-transition</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>can latch <code>0000</code> or <code>0011</code>, neither the old value nor the new one.</td>
+<td></td>
+<td></td>
+</tr>
 </tbody>
 </table>
-<p>The counterexample is not about function: the crossing bus goes <code>0001</code> to <code>0010</code>,
-<strong>two bits in one cycle</strong>, so a receiver in another domain sampling mid-transition
-can latch <code>0000</code> or <code>0011</code>, neither the old value nor the new one.</p>
-<p><strong>Six registered predictions, three confirmed and one plainly wrong.</strong> We predicted
-zero depth violations on <code>bench_top</code> and got <strong>six</strong>, every one a clock crossing to its
-own in-RTL divided version. Those are synchronously related and the design is correct,
-so <strong>6 of G7's 16 findings on a correct design are noise</strong>: it keys on clock <em>nets</em> and
-has no notion of clock <em>relationships</em>, which commercial tools take as a constraint
-input and G7 does not. Two more predictions landed on the right answer for the wrong
-reason and are scored as such. And <strong>three of the six bugs we found in G7 produced a
-confident wrong verdict rather than an error</strong>, twice refuting a correct design: the
-failure SlackBench exists to measure, found in our own new checker, and caught only
-because gold was run through every check alongside gate. <strong>A checker exercised only on
-the case expected to fail is indistinguishable from one that always fails.</strong></p>
+<p><strong>Six registered predictions, three confirmed and one plainly wrong.</strong> We predicted zero depth violations on <code>bench_top</code> and got <strong>six</strong>, every one a clock crossing to its own in-RTL divided version. Those are synchronously related and the design is correct. The scorecard first recorded <strong>"6 of 16 findings are noise" and the true figure is 8</strong>: both <code>UNCLASSIFIED</code> entries were also synchronous, so the earlier number counted false <em>violations</em> and missed two spurious non-verdicts.</p>
+<p><strong>The cause was that G7 keyed on clock <em>nets</em> with no notion of clock <em>relationships</em>, and the fix was already in the constraints.</strong> <code>create_generated_clock -source</code> declares every derivation in the same file <strong>G0 fingerprints</strong>, so <code>--sdc</code> reads clock groups from constraints G0 has already vouched for rather than inventing a format. A crossing inside a group gets a first-class <code>SYNCHRONOUS</code> verdict and is excluded:</p>
+<table>
+<thead>
+<tr>
+<th>verdict</th>
+<th>without <code>--sdc</code></th>
+<th>with <code>--sdc</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEPTH_1</code>, all false</td>
+<td><strong>6</strong></td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td><code>UNCLASSIFIED</code></td>
+<td>2</td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td><code>SYNCHRONOUS</code></td>
+<td>n/a</td>
+<td><strong>8</strong></td>
+</tr>
+<tr>
+<td><code>MULTIBIT</code>, the real FIFO gray pointers</td>
+<td>6</td>
+<td>6</td>
+</tr>
+<tr>
+<td><code>SAFE</code>, the real async control crossings</td>
+<td>2</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p><strong>All eight spurious findings go away and no real one does.</strong></p>
+<p><strong>Then the exit code was lying, which is the fourth wrong-verdict class in this one gate.</strong> With clock groups the run exited <strong>0</strong> while six multi-bit crossings sat undischarged. <code>MULTIBIT</code> does not mean safe; it means Hamming safety <strong>has not been checked</strong>. Both <code>MULTIBIT</code> and <code>UNCLASSIFIED</code> now exit non-zero naming what was skipped, and <code>bench_top</code> exits <strong>1</strong>, which is correct. Its six gray pointers are discharged modularly on <code>async_fifo</code> itself, <strong>both pointers PROVEN to depth 16</strong>, which covers every instantiated crossing.</p>
+<p><strong>Three of the six bugs found in G7 produced a confident wrong verdict rather than an error</strong>, twice refuting a correct design: the failure SlackBench exists to measure, found in our own new checker, caught only because gold was run through every check alongside gate. <strong>A checker exercised only on the case expected to fail is indistinguishable from one that always fails.</strong></p>
 <h3>7.6 Two of the four named classes were unreachable, and a reviewer found it</h3>
 <p>The objectives name pipelining, logic restructuring, <strong>retiming</strong> and <strong>FSM optimization</strong>. For most of this project the engine proposed the first two, and the explanation on the record was that nobody had written the others. <strong>That explanation was never tested and it was wrong.</strong></p>
 <p>G3 required <code>k = 0 ⇒ flop delta = 0</code>, with no exception. A retiming moves a register across combinational logic: k = 0, flop count changes. A state re-encoding widens a register: k = 0, flop count changes. <strong>Neither could pass whatever its content.</strong> Worse, <code>proposer_prompt.md</code> <em>advertised</em> branch 4 to the model while every k = 0 proposal was routed to EQY before its declared branch was read, so a proposer that followed the template was guaranteed a rejection. Measured on our own published one-hot <code>domain_b</code>, RTL unchanged: <code>FAIL(declared k=0 but flop count changed by +12)</code> through the old gate, <code>PROVEN</code> in 64 s through the fixed one. That is why <code>experiments/fsm_reencode/</code> carries a hand-written miter and never invokes the gate.</p>
@@ -832,8 +864,7 @@ the case expected to fail is indistinguishable from one that always fails.</stro
 <p><strong>Registered predictions we got wrong: 3 of 11 across the two batches, 9 of 18 in the transfer study, 10 of 25 across the flow experiments, and 4 of 13 in the missing-classes work</strong>, including "adding a max-fanout constraint will close the last group", published as the next step before measuring it and false. Every miss is on the record with its registered confidence.</p>
 <p><strong>We spent most of the project optimizing a design whose violations a stock pass closes, and reporting numbers with no wires in them.</strong> Yosys ships <code>buffer; upsize</code> in its <code>-liberty -constr</code> ABC script, not the plain <code>-liberty</code> one we used; it is worth 17.557 ns. And every timing number before §7.2 was <strong>zero-parasitic</strong>: with parasitics the <code>clk_a</code> baseline reported as "+1.333 MET" is <strong>−36.723</strong>. Baseline-versus-variant comparisons survive, since both sides used one model; the absolute closure claims did not.</p>
 <p><strong>The path classifier undercounted fanout across module boundaries, and we had written down the tell and shipped it anyway.</strong> Its docstring named "a 6.762 ns delay on a cell at fanout 1" as the signature, and that number sat in every v3 log under a DEPTH_DOMINATED verdict. The cell drives <strong>387</strong> loads: whole-bus and concatenated port connections were charged nothing. Every DEPTH verdict in runs 2 to 4 is MIXED, 1 of 15 external verdicts changed, and the fix is regression-checked on 5 fixtures against OpenSTA's own fanout column. The wrong logs are kept. This is the largest correction in the project, and the tool's own output carried it.</p>
-<p><strong>Two harness bugs surfaced as UNRESOLVED</strong>, which a report that left them there would have hidden behind something that looks like a result: <code>sby</code> off PATH, then a generalization patch writing <code>{max(k,1)}</code> into the miter as literal Verilog. <strong>The loop's acceptance bar</strong> separately confirmed a step that traded a met group for 0.838 ns on another; the run that exposed it is kept and the fix was registered mid-run and dated.</p>
-<p><strong>"Everything reproduces from the repository" was itself unchecked.</strong> §10 claimed cold-clone reproduction had been verified per directory; it never had, because every script began <code>cd /mnt/c/Users/toshn/...</code>. Fixed and verified 5 Sept, <strong>12 of 12 from a clone</strong>, and 15 of 15 on the clone taken after the demo assertions were added. A project arguing that claims must be checkable had shipped an unchecked claim about its own checkability.</p>
+<p><strong>Three smaller ones, all surfaced by running rather than reading.</strong> Two harness bugs appeared as UNRESOLVED, which a report that left them there would have hidden behind something resembling a result: <code>sby</code> off PATH, then a generalization patch writing <code>{max(k,1)}</code> into the miter as literal Verilog. The loop's acceptance bar confirmed a step that traded a met group for 0.838 ns on another; the run is kept and the fix was registered mid-run and dated. And <strong>"everything reproduces from the repository" was itself unchecked</strong>: §10 claimed cold-clone reproduction had been verified per directory when it never had, because every script began <code>cd /mnt/c/Users/toshn/...</code>. A project arguing that claims must be checkable had shipped an unchecked claim about its own checkability.</p>
 <p><strong>A claim that was false, caught by simulation.</strong> We described <code>pipeline_cut_rigid(domain_a)</code> as boundary-proven <em>and therefore</em> module-equivalent. It is not: the consuming domain samples at half rate, so a one-cycle delay selects a different subsequence and <code>mac_result</code> diverges (<code>002a</code> vs <code>0031</code>). The sufficiency claim was withdrawn and the refuting testbench committed.</p>
 <h2>10. Demo, reproduction, limits</h2>
 <p>The demo walks the pipeline end to end and lands on a refutation with its counterexample, the case every simulation-gated tool would have passed. <code>DEMO.md</code> is the shot list and <code>tools/demo_check.sh</code> runs every command in it, failing if any breaks; it holds <strong>15 assertions</strong> and caught two stale claims on its first run. <strong><code>demo/explorer.html</code></strong> is the interactive deliverable: five runs steppable, each decision with the evidence it used, generated from the logs so it cannot drift from them. <strong>Reproduction, checked rather than asserted.</strong> Three clean clones at different names on a different filesystem passed <strong>12 of 12, 12 of 12 and 15 of 15</strong>, the last once the demo assertions existed (<code>experiments/reproducibility/</code>). Tool paths are environment variables, not constants. Each experiment directory holds its sources, <code>.sby</code>/<code>.eqy</code> configuration and raw logs; proofs re-run with <code>sby -f &lt;config&gt; pdr</code>. <code>SETUP.md</code> says which claims cost minutes and which cost an afternoon of synthesis.</p>
