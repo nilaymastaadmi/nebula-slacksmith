@@ -54,3 +54,25 @@ complete answer to this experiment.
 Same model family as every other proposer batch in this project, and the same
 standing conflict: the harness, the prompt and this registration are written by
 the same session that the proposer runs in.
+
+---
+
+## Attempt 1, 2026-09-11: environmental failure, recorded and retried
+
+    PermissionError: [Errno 13] Permission denied: ''
+
+`run.sh` resolved the binary with `$(command -v claude)`. The script is invoked
+non-interactively (`wsl -e bash run.sh`), which is **not** a login shell, so
+`~/.profile` never runs and `~/.local/bin` is absent from `PATH`. The empty
+string went straight into `subprocess.run`.
+
+**The model was never reached.** Under this registration's void conditions that
+is an environmental failure, so it is recorded and retried rather than counted
+as the result. Log kept at `results/attempt1_environmental_failure.log`.
+
+Fixed by resolving the binary explicitly and **failing loudly** if it is not
+found, rather than handing an empty program name to a subprocess. `propose_cli`
+already returns a clean error for `FileNotFoundError`; an empty string raises
+`PermissionError` instead and slipped past it.
+
+Predictions C1 to C4 are unchanged and unseen.

@@ -1,0 +1,31 @@
+G0 sdc: bench_top_v3.sdc sha256 fd4f05f00c18ef55 191 lines, timing exceptions {'set_false_path': 1}
+dont_use flags: 72
+engine: sta   clocks: clk_b
+
+=== iteration 1 ===
+measure: clk_b=-18.957
+classify clk_b: FANOUT_DOMINATED (fanout share 0.9139) -> physical
+  LEVER FORCED to rtl: the router chose physical. Disclosed per online_proposer amendment 1.
+Traceback (most recent call last):
+  File "/mnt/c/Users/toshn/Projects/slacksmith-benchmark/tools/slacksmith.py", line 900, in <module>
+    main()
+  File "/mnt/c/Users/toshn/Projects/slacksmith-benchmark/tools/slacksmith.py", line 769, in main
+    props, perr = proposer.propose(ctx, a, a.workdir)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/toshn/Projects/slacksmith-benchmark/tools/proposer.py", line 227, in propose
+    return propose_cli(ctx, a, workdir)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/toshn/Projects/slacksmith-benchmark/tools/proposer.py", line 198, in propose_cli
+    r = subprocess.run([a.claude_bin, "-p", prompt],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.12/subprocess.py", line 1955, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+PermissionError: [Errno 13] Permission denied: ''
+exit: 1
+
+[exited with code 0]
