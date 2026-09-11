@@ -89,3 +89,53 @@ Its own rationale:
 **Those are the cells the classifier reported.** It reached for obligation
 branch 4, which did not exist in this project twelve hours earlier, and it is
 an **FSM optimization**, one of the four classes the problem statement names.
+
+## Run 6: the complete loop, and what it returned
+
+    measure:  wb_clk_i = -0.396
+    classify: DEPTH_DOMINATED (fanout share 0.0) -> rtl
+    binding module i2c_master_bit_ctrl found in i2c.v
+    online proposal O1: fsm_explicit_idle_one_hot_bit (declared k=0)
+    gate O1: G1=PASS G2=PASS G3=PASS(state-remap) G4=UNRESOLVED
+    no proposal passed the gate.
+
+**Measure, classify, route, propose, gate, refuse. No human at any step, and no
+`--force-lever`.** The obligation did not close inside the gate's budget, so the
+loop declined the transform. `UNRESOLVED` is never a pass, which is the rule
+this project has had since batch 1.
+
+Run 5 is recorded separately: the CLI exceeded a hardcoded 600 s timeout on a
+25 KB module, which is an environmental failure, and the budget is now a flag.
+
+## Scorecard
+
+| # | registered | outcome |
+|---|---|---|
+| **U1** | the router selects RTL unforced | **CONFIRMED**, on a real register-to-register violation |
+| **U2** | the CLI returns a usable proposal on an unseen design | **CONFIRMED**, three times, three different transforms |
+| **U3** | the proposal reaches a G4 verdict, not UNRESOLVED or CANNOT | **WRONG.** `UNRESOLVED` |
+| **U4** | the proposal does not improve the binding path | **VOID.** Nothing passed the gate, so nothing was timed |
+| **U5** | the loop terminates cleanly on a design that is not `bench_top` | **CONFIRMED**, after six repairs |
+| U6, U7, U10, U11 | the fixes change no `bench_top` result | **CONFIRMED**, `classify_regression.py` 5 of 5 and the verdict regression unchanged |
+| U8, U9 | registered against a misdiagnosis | **VOID** |
+
+## What this does and does not establish
+
+**Establishes.** The two-router design is a measurement rather than an
+architecture: given a depth-dominated path the classifier selects the RTL lever
+with no override, and the generative half produces a typed, gateable proposal
+on third-party IP it has never seen. Three runs produced `onehot_idle_bit_recode`,
+`parallel_case_onehot_decode` and `fsm_explicit_idle_one_hot_bit`, all attacking
+the same thing the classifier reported: `c_state` encodes 18 states in 17 bits
+as one-hot-except-idle, so every `case` arm is a wide equality compare.
+
+**Does not establish.** That the engine improves `i2c`. One complete run, one
+proposal, `UNRESOLVED`. A second proposal, `parallel_case_onehot_decode` from
+run 4, **is PROVEN by EQY** when the gate is run by hand, but that was a
+by-hand gate run during a repair, not a loop result, and it is reported as
+such rather than promoted.
+
+**And the variance is the point.** Same model, same prompt, same design, three
+different transforms and at least two different gate outcomes. The report's
+"one sample per proposal, no best-of-n" is no longer a disclaimer; it is an
+observation.
