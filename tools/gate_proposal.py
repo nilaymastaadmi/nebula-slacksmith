@@ -127,7 +127,31 @@ def declared_branch(p, def_id):
     return None
 
 
-def null_control(a, wd, mod, nc, res, outs=None, tag="nullctl"):
+def failing_depth(wd, tag="miter_prop"):
+    """Step at which BMC found the counterexample, or None.
+
+    A refutation found at step 3 is only as trustworthy as the harness is at
+    step 3, so that is the depth the null control has to cover. Running the
+    control to the proposal's full depth and then PDR to convergence answers a
+    harder question than the one asked, and on rv32i_core (2,048 flops) it
+    answers nothing at all: both engines time out and a real refutation is
+    downgraded to uncorroborated for no reason (R19).
+    """
+    for name in ("%s_bmc.raw.log" % tag, "%s_prove.raw.log" % tag):
+        path = os.path.join(wd, name)
+        if not os.path.isfile(path):
+            continue
+        try:
+            txt = io.open(path, encoding="utf-8", errors="replace").read()
+        except OSError:
+            continue
+        m = re.findall(r"failed assertion \S+ at \S+ step (\d+)", txt)
+        if m:
+            return min(int(x) for x in m)
+    return None
+
+
+def null_control(a, wd, mod, nc, res, outs=None, tag="nullctl", depth=None):
     """Run the miter with the gate replaced by the gold, renamed.
 
     Returns False if the null control also fails, meaning the miter cannot
@@ -155,7 +179,7 @@ def null_control(a, wd, mod, nc, res, outs=None, tag="nullctl"):
     r = sh([sys.executable, rp, "--top", "miter_prop",
             "--file", "gold.v", "--file", "gate.v", "--file", "miter_prop.sv",
             "--workdir", nwd, "--tasks", "bmc,pdr",
-            "--depth", str(a.depth),
+            "--depth", str(depth if depth is not None else a.depth),
             "--timeout", str(a.null_timeout or a.timeout)]
            + (["--zero-init"] if a.zero_init else []))
     out = r.stdout + r.stderr
@@ -477,7 +501,12 @@ def main():
         # manufactured. The other two are in REPORT §9.
         nc = {"p": p, "def_id": def_id, "clk": clk, "rst": rst,
               "outs": outs, "ins": ins}
-        nl = null_control(a, wd, mod, nc, res)
+        # Cover the counterexample's own depth, not the proposal's budget.
+        cx = failing_depth(wd)
+        ndepth = min(a.depth, cx + 2) if cx is not None else a.depth
+        res["G4_counterexample_step"] = cx
+        res["G4_null_depth"] = ndepth
+        nl = null_control(a, wd, mod, nc, res, depth=ndepth)
         if nl is True:
             res["G4_null_control"] = "PASS (gold vs gold proves)"
             res["G4"] = "REFUTED"
@@ -501,7 +530,8 @@ def main():
                 if not keep:
                     break
                 sub = null_control(a, wd, mod, nc, res, outs=keep,
-                                   tag="nullctl_%d" % len(dropped))
+                                   tag="nullctl_%d" % len(dropped),
+                                   depth=ndepth)
                 if sub is True:
                     break
                 if sub is None:
