@@ -737,11 +737,10 @@ confident wrong verdict rather than an error</strong>, twice refuting a correct 
 failure SlackBench exists to measure, found in our own new checker, and caught only
 because gold was run through every check alongside gate. <strong>A checker exercised only on
 the case expected to fail is indistinguishable from one that always fails.</strong></p>
-<h3>7.6 Two of the four named classes were unreachable, and we found out from a reviewer</h3>
-<p>The objectives name pipelining, logic restructuring, <strong>retiming</strong> and <strong>FSM optimization</strong>. For most of this project the engine proposed the first two. The explanation on the record was that nobody had written the others. <strong>That explanation was never tested and it was wrong.</strong></p>
-<p><code>gate_proposal.py</code>'s G3 check required <code>k = 0 ⇒ flop delta = 0</code>, with no exception. A retiming moves a register across combinational logic: k = 0, flop count changes. A state re-encoding widens a register: k = 0, flop count changes. <strong>Neither could pass G3 whatever its content</strong>, so the proposer could not express one. Worse, <code>proposer_prompt.md</code> <em>advertised</em> branch 4 to the model, described as "you re-encoded state, e.g. binary to one-hot", while every k = 0 proposal was routed to EQY before its declared branch was read. A proposer that followed the template was guaranteed a rejection.</p>
-<p>Measured on our own published one-hot <code>domain_b</code>, RTL unchanged: <code>FAIL(declared k=0 but flop count changed by +12)</code> through the old gate, <code>PROVEN</code> in 64 s through the fixed one. That is why <code>experiments/fsm_reencode/</code> carries a hand-written miter and never invokes the gate.</p>
-<p>Branches 4 and 5 are now implemented, both <code>k = 0</code> with the flop delta unconstrained, both discharged by the <strong>sequential miter</strong> rather than EQY, because neither leaves a flop correspondence for EQY to pair internal nets across. Against <code>aes_key_mem</code>, the module the loop actually binds on <code>clk_b</code>:</p>
+<h3>7.6 Two of the four named classes were unreachable, and a reviewer found it</h3>
+<p>The objectives name pipelining, logic restructuring, <strong>retiming</strong> and <strong>FSM optimization</strong>. For most of this project the engine proposed the first two, and the explanation on the record was that nobody had written the others. <strong>That explanation was never tested and it was wrong.</strong></p>
+<p>G3 required <code>k = 0 ⇒ flop delta = 0</code>, with no exception. A retiming moves a register across combinational logic: k = 0, flop count changes. A state re-encoding widens a register: k = 0, flop count changes. <strong>Neither could pass whatever its content.</strong> Worse, <code>proposer_prompt.md</code> <em>advertised</em> branch 4 to the model while every k = 0 proposal was routed to EQY before its declared branch was read, so a proposer that followed the template was guaranteed a rejection. Measured on our own published one-hot <code>domain_b</code>, RTL unchanged: <code>FAIL(declared k=0 but flop count changed by +12)</code> through the old gate, <code>PROVEN</code> in 64 s through the fixed one. That is why <code>experiments/fsm_reencode/</code> carries a hand-written miter and never invokes the gate.</p>
+<p>Branches 4 and 5 are now implemented, both <code>k = 0</code> with the flop delta unconstrained, both discharged by the <strong>sequential miter</strong> rather than EQY, because neither leaves a flop correspondence for EQY to pair internal nets across. Against <code>aes_key_mem</code>, the module the loop binds on <code>clk_b</code>:</p>
 <table>
 <thead>
 <tr>
@@ -749,26 +748,29 @@ the case expected to fail is indistinguishable from one that always fails.</stro
 <th>class</th>
 <th>branch</th>
 <th>verdict</th>
+<th>clk_b</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>O1 <code>retime_write_decode_forward</code></td>
+<td><code>retime_write_decode_forward</code></td>
 <td>retiming</td>
 <td>5</td>
 <td><strong>PROVEN</strong>, 2 of 3 outputs</td>
+<td><strong>−4.616</strong></td>
 </tr>
 <tr>
-<td>O2 <code>fsm_output_coded_state_assignment</code></td>
+<td><code>fsm_output_coded_state_assignment</code></td>
 <td>FSM optimization</td>
 <td>4</td>
 <td><strong>PROVEN</strong>, 2 of 3 outputs</td>
+<td><strong>+3.185</strong></td>
 </tr>
 </tbody>
 </table>
-<p><strong>"2 of 3 outputs" is not a hedge and the excluded one is the payload.</strong> <code>round_key = key_mem[round]</code>; <code>key_mem</code> holds 15 rows, an AES-128 schedule writes 11, <code>round</code> is a free 4-bit input, and Yosys does not apply an async reset to a memory. So <code>key_mem[12]</code> is arbitrary and independent in the two instances forever. This is <strong>not</strong> a harness limit: <code>round_key</code> equivalence is not a property of <code>aes_key_mem</code> at all without an assumption about reachable <code>round</code> values, which belongs to the enclosing core. A gate reporting it PROVEN would be reporting something false.</p>
-<p><strong>Getting to those two verdicts took three tries and cost us a published claim's certainty for an afternoon.</strong> O1 first came back REFUTED. The counterexample showed the two instances starting from different arbitrary <code>key_mem</code> contents: <strong>the miter refutes this module against itself</strong>, <code>FAIL eq_round_key</code> in 1 s, and <code>PROVEN</code> in 12 s with that one output removed. So a null control now runs before any refutation is reported (§9). The first version of that control was built at the proposal's own k and compared gold-delayed against gold-undelayed, failing for every k &gt; 0 proposal; registered prediction R10 caught it. The second reported <code>CANNOT</code> for a whole module when one output was poisoned, which would have discarded a decidable question; R13 caught that. Both misses are in <code>experiments/missing_classes/PREREGISTRATION.md</code> with the predictions that produced them.</p>
-<p><strong>The confound reached a published number and was cleared by measurement.</strong> A3 (§7.1) is published REFUTED on this same module through this same miter. Under the per-output control its refutation fails on <code>eq_ready</code>, an output the control <strong>proves</strong>, so it was never the artifact and the published verdict stands unchanged. <strong>P5 did not clear</strong>: its control does not close in 300 s against 2,048 flops, so P5 is REFUTED <strong>uncorroborated</strong>, which is weaker than this report previously implied and is the true statement until the control closes.</p>
+<p><strong>"2 of 3 outputs" is not a hedge, and the excluded one is the payload.</strong> <code>round_key = key_mem[round]</code>; <code>key_mem</code> holds 15 rows, an AES-128 schedule writes 11, <code>round</code> is a free 4-bit input, and Yosys does not apply an async reset to a memory, so <code>key_mem[12]</code> is arbitrary and independent in the two instances forever. This is <strong>not</strong> a harness limit: <code>round_key</code> equivalence is not a property of <code>aes_key_mem</code> without an assumption about reachable <code>round</code> values, which belongs to the enclosing core. A gate reporting it PROVEN would be reporting something false.</p>
+<p><strong>The retiming is the worst RTL transform in the project and the FSM re-encoding is the best.</strong> R5 registered that the retiming would not improve its group; it does not merely fail, it costs 4.616 ns. R18 registered that the FSM transform would not materially improve <code>clk_b</code>; it bought <strong>+3.185 ns</strong>, the largest RTL gain on this group anywhere here, and it is the measurement that falsified §1's absolute.</p>
+<p><strong>Getting to those two verdicts took three tries</strong> and is why the null control in §9 exists. It also cleared a confound on a published number: A3 (§7.1) is published REFUTED on this module through this miter, and under the per-output control it fails on <code>eq_ready</code>, an output the control <strong>proves</strong>, so it was never the artifact. <strong>P5 did not clear</strong>: its control does not close in 300 s against 2,048 flops, so P5 is REFUTED <strong>uncorroborated</strong>, weaker than this report previously implied and the true statement until the control closes.</p>
 <h3>7.7 The unattended run, N = 1</h3>
 <p>Until 2026-09-11 the <code>cli</code> backend was committed and never executed, and this report said so. The blocker was authentication, not code: <code>~/.claude/.credentials.json</code> carried <code>expiresAt: 0</code>. A token was minted, held outside the repository, and <code>tools/preflight.sh</code> now fails if a credential-shaped string reaches a tracked file.</p>
 <p><strong>The first attempt died before the model was reached</strong>, <code>PermissionError: [Errno 13] Permission denied: ''</code>. <code>run.sh</code> resolved the binary with <code>command -v claude</code> in a non-login shell where <code>~/.local/bin</code> is absent from <code>PATH</code>, and the empty string went into <code>subprocess.run</code>. The existing handler caught <code>FileNotFoundError</code>, which is the wrong exception for an empty program name. Registered as an environmental failure, logged, retried.</p>
