@@ -108,7 +108,7 @@ Three findings changed how we report every number (`docs/measurement-methodology
 
 ### 5.1 Setting a target that means something, and a fix that did nothing
 
-The v1 periods were illustrative, chosen when the benchmark was 3,584 cells; at 55,413 an 8 ns `clk_a` target demands four times what a single-cycle RV32I with async-read memory reaches in sky130, and moving WNS from −25 to −24 against that is not progress toward anything. So we measured what each domain requires and set `sdc/bench_top_v2.sdc` about 10% tighter (`clk_a` 33.29 measured to 30.0, `clk_b` and `clk_e` 29.49 to 26.5). Generated-clock `-edges` are relative to master edges, so no edge list changed. v1 is retained unchanged as the frozen record: revising a target with disclosure is not editing constraints mid-campaign, which stays forbidden. `sdc/bench_top_v3.sdc` (§7.3) applies the same method to the buffered flow. Under v2 the baseline **meets** `clk_a` at +1.333 ns and the two AES-bound domains sit at −4.957; **read those against §7.2**, which shows what they become once wires exist.
+The v1 periods were illustrative, chosen when the benchmark was 3,584 cells; at 55,413 an 8 ns `clk_a` target demands four times what a single-cycle RV32I with async-read memory reaches in sky130. So we measured what each domain requires and set `sdc/bench_top_v2.sdc` about 10% tighter, keeping v1 unchanged as the frozen record: revising a target with disclosure is not editing constraints mid-campaign, which stays forbidden. `sdc/bench_top_v3.sdc` (§7.3) applies the same method to the buffered flow. Under v2 the baseline **meets** `clk_a` at +1.333 ns and the two AES-bound domains sit at −4.957; **read those against §8**, which shows what they become once wires exist.
 
 **Finding 1 above was correct and not in effect for eight commits.** The exclusion list scans the liberty for cell names; the liberty writes `cell ("name")` with quotes and the regex expected it without, so it matched nothing and returned an empty flag string. Every netlist built in between carries 203 `lpflow` cells and the 12.8 ns artifact the exclusion exists to remove. Found by reading a critical-path report and seeing the banned cell at 12.824 ns on a path where it was forbidden; there was no test, which is why nothing caught it. All affected numbers were re-measured: the `clk_a` baseline carried **4.62 ns** of artifact and proven transforms' deltas moved 40 to 50%, but **no qualitative conclusion changed**. The exclusion is also **not** uniformly beneficial: `clk_a` gains 4.62 ns while `clk_b` and `clk_e` each lose 1.97, because constraining the mapper removes options from paths that used those cells benignly.
 
@@ -235,8 +235,7 @@ Batch 1's registration required any second batch to be registered separately wit
 
 **A4 takes `clk_b` from −4.957 to −0.032**, a 99.4% reduction adding no storage. **Both numbers are zero-parasitic**; the same group with parasitics is −43.438 (§7.2), against which +4.925 ns is about **11% of the real violation**. **The precondition gate fired for the first time**: A6 declared k = 0 while splitting a 15-entry array into two 8-entry ones, the flop count moved by +256, and G3 rejected it before any solver ran. And **A5 is why we registered a control**: it unrolls a reset loop, touches nothing on the read path, and still moves `clk_b` by +0.436, so A4's honest figure is **+4.489 above a change that does nothing**.
 
-**A2 is the batch's real finding, and it is a bug in our gate.** A2 is equivalent by inspection; the gate said REFUTED on one partition of 573 and it looked like a second P4. Three things did not fit: simulation agreed on all 16 values of `round`; EQY had proved **128 of 128** partitions feeding the output it failed; and that partition's log ends `Reached maximum number of time steps`, a **bound**, not a counterexample. EQY prints the same summary line for both and we matched on the string. The gate now separates `model found` from depth exhaustion, and P4's log carries concrete values confirmed by directed simulation, so **P4 stands**. One trap worth passing on: clamping `round` to its reachable range *outside* the designs changed nothing, because **EQY proves each partition with its inputs as free variables**, so an external constraint never reaches the cone.
- A3's REFUTED was re-checked under §9's null control and holds, failing on `eq_ready`, an output the control proves (§7.6).
+**A2 is the batch's real finding, and it is a bug in our gate**, told in §9: EQY prints the same "Failed to prove equivalence" line for a counterexample and for a depth bound, and we matched on the string. Three things did not fit, and the one that mattered was that EQY had proved **128 of 128** partitions feeding the output it failed. One trap worth passing on: clamping `round` to its reachable range *outside* the designs changed nothing, because **EQY proves each partition with its inputs as free variables**. A3's REFUTED was re-checked under §9's null control and holds (§7.6).
 
 ### 7.2 The second router: which lever, before which transform
 
@@ -246,17 +245,7 @@ Four of batch 1's six proposals were proven correct and three made timing *worse
 
 The control was registered in advance: synthesize `bench_top` twice from identical RTL under identical SDC, differing only by appending `buffer -N 16; upsize; dnsize` to the ABC script, which Yosys ships in its `-liberty -constr` script and our flow was not running. Both violated groups close, `clk_b` **−4.957 to +12.600 MET**, zero RTL change, 1,419 buffers, identical flop count. Checked rather than trusted: **49,923 of 49,924** obligations discharged, the residual a top-level XOR undriven in *both* designs.
 
-That control has no parasitics, so we ran **OpenROAD** on the same unbuffered netlist. **All three groups close**: `clk_a` −36.723 → **+17.593**, `clk_b` −43.438 → **+12.367**, `clk_e` −47.683 → **+19.529**, at **+20.2% area**, with identical flop counts and both runs reproducing exactly.
-
-**The closure survives a clock tree.** Those numbers use ideal clocks, so we ran CTS and global routing on the same flow:
-
-| point | clk_a | clk_b | clk_e | clock network |
-|---|---|---|---|---|
-| post-place | +17.593 | +12.367 | +19.529 | **ideal** |
-| post-CTS | **+17.616** | **+8.694** | **+18.428** | **propagated** |
-| post-global-route | **+17.117** | **+8.987** | **+18.647** | **propagated** |
-
-Every group meets at every point, for 7,833 µm² (+1.45%) and 1,547 clock buffers. `clk_b` pays 3.673 ns for its tree and the mechanism is in the same report: its launch path sits **3.514 ns** deeper than its capture path, so imbalance and slack loss agree to 0.16 ns. Propagation was verified rather than assumed, and `report_clock_skew` printed empty on this build so no skew number is claimed.
+That control has no parasitics. With them, **all three groups close** and the closure survives a clock tree and global routing; the numbers, the area cost and the required-period table are in §8, which is where deliverable 5 lives.
 
 The *before* column carries the project's largest correction (§9): every timing number published before this experiment was **zero-parasitic**. That strengthens the routing argument rather than weakening it, because wire delay is definitionally not an RTL problem.
 
@@ -400,6 +389,16 @@ That is the only batch-3 transform that improved every group, and it has the str
 Five asynchronous domains have no single F_max, so the design-level figure is the factor **k** by which every period must be scaled for all of them to meet: `k = max(required / period)`. Before, **k = 2.799**, binding on `clk_e`, so the design runs at **0.357x** its SDC target. After, **k = 0.844**, binding on `clk_b`, so it runs at **1.185x** target with margin. **The flow improves achievable frequency by 3.32x.** **Read that against §9**: the *before* column is a flow that was not running the `buffer; upsize; dnsize` script Yosys ships in `-liberty -constr`, worth 17.557 ns on its own. A meaningful part of the 3.32x is a flow defect we shipped, not a lever we invented, and the same is true of the +55.805 ns closure.
 
 Two honesty notes. The binding domain **moves** from `clk_e` to `clk_b`, so before-and-after F_max for any single group is not a like-for-like comparison; the scaling factor is. And only `clk_a`, `clk_b` and `clk_e` are reported, because `clk_c` and `clk_d` met at baseline and were never in the optimization loop.
+
+**And the closure survives a clock tree.** Those numbers use ideal clocks, which is standard for `repair_design` and not a signoff number, so we ran CTS and global routing on the same flow:
+
+| point | clk_a | clk_b | clk_e | clock network |
+|---|---|---|---|---|
+| post-place | +17.593 | +12.367 | +19.529 | **ideal** |
+| post-CTS | **+17.616** | **+8.694** | **+18.428** | **propagated** |
+| post-global-route | **+17.117** | **+8.987** | **+18.647** | **propagated** |
+
+Every group meets at every point, for 7,833 µm² (+1.45%) and 1,547 clock buffers. `clk_b` pays 3.673 ns for its tree and the mechanism is in the same report: its launch path sits **3.514 ns** deeper than its capture path, so imbalance and slack loss agree to 0.16 ns. Propagation was verified rather than assumed, and `report_clock_skew` printed empty on this build so no skew number is claimed.
 
 **Core level** (`rv32i_core` alone, transform is 100% of the design; reset false-pathed, otherwise the recovery check masks the data path):
 

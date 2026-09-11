@@ -240,7 +240,7 @@
 <p><strong>A single library cell was worth 4.83 ns of pure artifact.</strong> The first critical path put 19.5 ns of 33.0 ns in <em>two cells</em>, which is drive, not logic depth. The culprit was <code>sky130_fd_sc_hd__lpflow_isobufsrc_1</code>, a low-power isolation cell ABC selected on area cost. Excluding the <code>lpflow</code> and <code>probe</code> families, as standard sky130 flows do, moved WNS from <strong>−27.37 to −22.54 with zero RTL change</strong>.</p>
 <p><strong>The measurement tool has a zero noise floor</strong>: swapping a module for <em>itself</em> returns 0.000 delta on every path group. <strong>But local RTL changes have non-local effects.</strong> Given that null control, the +1.398 ns a <code>domain_b</code>-only change produces on <code>clk_a</code> is not noise, it is ABC's global mapping moving an unrelated group. <strong>Reporting rule adopted:</strong> a transform's effect is the delta in the group it touches, and movement elsewhere is reported separately, never folded into the claimed benefit.</p>
 <h3>5.1 Setting a target that means something, and a fix that did nothing</h3>
-<p>The v1 periods were illustrative, chosen when the benchmark was 3,584 cells; at 55,413 an 8 ns <code>clk_a</code> target demands four times what a single-cycle RV32I with async-read memory reaches in sky130, and moving WNS from −25 to −24 against that is not progress toward anything. So we measured what each domain requires and set <code>sdc/bench_top_v2.sdc</code> about 10% tighter (<code>clk_a</code> 33.29 measured to 30.0, <code>clk_b</code> and <code>clk_e</code> 29.49 to 26.5). Generated-clock <code>-edges</code> are relative to master edges, so no edge list changed. v1 is retained unchanged as the frozen record: revising a target with disclosure is not editing constraints mid-campaign, which stays forbidden. <code>sdc/bench_top_v3.sdc</code> (§7.3) applies the same method to the buffered flow. Under v2 the baseline <strong>meets</strong> <code>clk_a</code> at +1.333 ns and the two AES-bound domains sit at −4.957; <strong>read those against §7.2</strong>, which shows what they become once wires exist.</p>
+<p>The v1 periods were illustrative, chosen when the benchmark was 3,584 cells; at 55,413 an 8 ns <code>clk_a</code> target demands four times what a single-cycle RV32I with async-read memory reaches in sky130. So we measured what each domain requires and set <code>sdc/bench_top_v2.sdc</code> about 10% tighter, keeping v1 unchanged as the frozen record: revising a target with disclosure is not editing constraints mid-campaign, which stays forbidden. <code>sdc/bench_top_v3.sdc</code> (§7.3) applies the same method to the buffered flow. Under v2 the baseline <strong>meets</strong> <code>clk_a</code> at +1.333 ns and the two AES-bound domains sit at −4.957; <strong>read those against §8</strong>, which shows what they become once wires exist.</p>
 <p><strong>Finding 1 above was correct and not in effect for eight commits.</strong> The exclusion list scans the liberty for cell names; the liberty writes <code>cell ("name")</code> with quotes and the regex expected it without, so it matched nothing and returned an empty flag string. Every netlist built in between carries 203 <code>lpflow</code> cells and the 12.8 ns artifact the exclusion exists to remove. Found by reading a critical-path report and seeing the banned cell at 12.824 ns on a path where it was forbidden; there was no test, which is why nothing caught it. All affected numbers were re-measured: the <code>clk_a</code> baseline carried <strong>4.62 ns</strong> of artifact and proven transforms' deltas moved 40 to 50%, but <strong>no qualitative conclusion changed</strong>. The exclusion is also <strong>not</strong> uniformly beneficial: <code>clk_a</code> gains 4.62 ns while <code>clk_b</code> and <code>clk_e</code> each lose 1.97, because constraining the mapper removes options from paths that used those cells benignly.</p>
 <h3>5.3 G0, constraint integrity: the one attack no equivalence checker can see</h3>
 <p>Everything above trusts the SDC. We measured what that trust is worth. On <strong>one netlist, 26,958 cells, byte-identical in every row</strong>, with no RTL edit, no resynthesis and no gate resized, the only thing varied was the constraint file:</p>
@@ -594,49 +594,12 @@
 </tbody>
 </table>
 <p><strong>A4 takes <code>clk_b</code> from −4.957 to −0.032</strong>, a 99.4% reduction adding no storage. <strong>Both numbers are zero-parasitic</strong>; the same group with parasitics is −43.438 (§7.2), against which +4.925 ns is about <strong>11% of the real violation</strong>. <strong>The precondition gate fired for the first time</strong>: A6 declared k = 0 while splitting a 15-entry array into two 8-entry ones, the flop count moved by +256, and G3 rejected it before any solver ran. And <strong>A5 is why we registered a control</strong>: it unrolls a reset loop, touches nothing on the read path, and still moves <code>clk_b</code> by +0.436, so A4's honest figure is <strong>+4.489 above a change that does nothing</strong>.</p>
-<p><strong>A2 is the batch's real finding, and it is a bug in our gate.</strong> A2 is equivalent by inspection; the gate said REFUTED on one partition of 573 and it looked like a second P4. Three things did not fit: simulation agreed on all 16 values of <code>round</code>; EQY had proved <strong>128 of 128</strong> partitions feeding the output it failed; and that partition's log ends <code>Reached maximum number of time steps</code>, a <strong>bound</strong>, not a counterexample. EQY prints the same summary line for both and we matched on the string. The gate now separates <code>model found</code> from depth exhaustion, and P4's log carries concrete values confirmed by directed simulation, so <strong>P4 stands</strong>. One trap worth passing on: clamping <code>round</code> to its reachable range <em>outside</em> the designs changed nothing, because <strong>EQY proves each partition with its inputs as free variables</strong>, so an external constraint never reaches the cone.
- A3's REFUTED was re-checked under §9's null control and holds, failing on <code>eq_ready</code>, an output the control proves (§7.6).</p>
+<p><strong>A2 is the batch's real finding, and it is a bug in our gate</strong>, told in §9: EQY prints the same "Failed to prove equivalence" line for a counterexample and for a depth bound, and we matched on the string. Three things did not fit, and the one that mattered was that EQY had proved <strong>128 of 128</strong> partitions feeding the output it failed. One trap worth passing on: clamping <code>round</code> to its reachable range <em>outside</em> the designs changed nothing, because <strong>EQY proves each partition with its inputs as free variables</strong>. A3's REFUTED was re-checked under §9's null control and holds (§7.6).</p>
 <h3>7.2 The second router: which lever, before which transform</h3>
 <p>Four of batch 1's six proposals were proven correct and three made timing <em>worse</em>. The obvious reading is that LLM RTL proposals do not help. The measured reading is more useful.</p>
 <p><code>tools/classify_path.py</code> scores what fraction of a path's delay comes from cells driving 32 or more loads. Batch 1's target path is <strong>58.9% fanout-attributable</strong>; the design-level AES path is <strong>91.4%</strong>, with 21.029 ns in a single <code>nor4_1</code> driving <strong>300 loads</strong>. Those proposals were aimed at the wrong variable, though not at an untouchable one: §7.6 and §7.7 show two proven RTL transforms moving that same 91.4% path.</p>
 <p>The control was registered in advance: synthesize <code>bench_top</code> twice from identical RTL under identical SDC, differing only by appending <code>buffer -N 16; upsize; dnsize</code> to the ABC script, which Yosys ships in its <code>-liberty -constr</code> script and our flow was not running. Both violated groups close, <code>clk_b</code> <strong>−4.957 to +12.600 MET</strong>, zero RTL change, 1,419 buffers, identical flop count. Checked rather than trusted: <strong>49,923 of 49,924</strong> obligations discharged, the residual a top-level XOR undriven in <em>both</em> designs.</p>
-<p>That control has no parasitics, so we ran <strong>OpenROAD</strong> on the same unbuffered netlist. <strong>All three groups close</strong>: <code>clk_a</code> −36.723 → <strong>+17.593</strong>, <code>clk_b</code> −43.438 → <strong>+12.367</strong>, <code>clk_e</code> −47.683 → <strong>+19.529</strong>, at <strong>+20.2% area</strong>, with identical flop counts and both runs reproducing exactly.</p>
-<p><strong>The closure survives a clock tree.</strong> Those numbers use ideal clocks, so we ran CTS and global routing on the same flow:</p>
-<table>
-<thead>
-<tr>
-<th>point</th>
-<th>clk_a</th>
-<th>clk_b</th>
-<th>clk_e</th>
-<th>clock network</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>post-place</td>
-<td>+17.593</td>
-<td>+12.367</td>
-<td>+19.529</td>
-<td><strong>ideal</strong></td>
-</tr>
-<tr>
-<td>post-CTS</td>
-<td><strong>+17.616</strong></td>
-<td><strong>+8.694</strong></td>
-<td><strong>+18.428</strong></td>
-<td><strong>propagated</strong></td>
-</tr>
-<tr>
-<td>post-global-route</td>
-<td><strong>+17.117</strong></td>
-<td><strong>+8.987</strong></td>
-<td><strong>+18.647</strong></td>
-<td><strong>propagated</strong></td>
-</tr>
-</tbody>
-</table>
-<p>Every group meets at every point, for 7,833 µm² (+1.45%) and 1,547 clock buffers. <code>clk_b</code> pays 3.673 ns for its tree and the mechanism is in the same report: its launch path sits <strong>3.514 ns</strong> deeper than its capture path, so imbalance and slack loss agree to 0.16 ns. Propagation was verified rather than assumed, and <code>report_clock_skew</code> printed empty on this build so no skew number is claimed.</p>
+<p>That control has no parasitics. With them, <strong>all three groups close</strong> and the closure survives a clock tree and global routing; the numbers, the area cost and the required-period table are in §8, which is where deliverable 5 lives.</p>
 <p>The <em>before</em> column carries the project's largest correction (§9): every timing number published before this experiment was <strong>zero-parasitic</strong>. That strengthens the routing argument rather than weakening it, because wire delay is definitionally not an RTL problem.</p>
 <p>On one group under one SDC the ladder runs: best batch-1 RTL transform <strong>+0.485</strong>, best batch-2 <strong>+4.925</strong>, both zero-parasitic; ABC's buffering control <strong>+17.557</strong>; and <strong><code>repair_design</code> +55.805</strong>, the only one with parasitics. The mapping-level control pointed the right way and understated the real pass by <strong>3.2x</strong>, which is what a control is for.</p>
 <p>Two results keep this from being a simple "buffering wins" story. <strong>A4 gained 4.925 ns while leaving max fanout exactly unchanged</strong> (2,193 in gold and in every proven variant), as pre-registered in H2, because synthesis re-merged its duplicated cones. <strong>That re-merge is not universal</strong>: the unattended proposal in §7.7 duplicates a control cone and the mapper keeps it, for +1.414 ns. And <strong>after buffering the remaining violations are mixed, not depth-dominated</strong>, first reported as DEPTH at 0.0% and corrected (§9) to <strong>34.4% and 42.8%</strong>. <strong>The two levers are sequential, not alternative.</strong></p>
@@ -902,6 +865,42 @@
 </table>
 <p>Five asynchronous domains have no single F_max, so the design-level figure is the factor <strong>k</strong> by which every period must be scaled for all of them to meet: <code>k = max(required / period)</code>. Before, <strong>k = 2.799</strong>, binding on <code>clk_e</code>, so the design runs at <strong>0.357x</strong> its SDC target. After, <strong>k = 0.844</strong>, binding on <code>clk_b</code>, so it runs at <strong>1.185x</strong> target with margin. <strong>The flow improves achievable frequency by 3.32x.</strong> <strong>Read that against §9</strong>: the <em>before</em> column is a flow that was not running the <code>buffer; upsize; dnsize</code> script Yosys ships in <code>-liberty -constr</code>, worth 17.557 ns on its own. A meaningful part of the 3.32x is a flow defect we shipped, not a lever we invented, and the same is true of the +55.805 ns closure.</p>
 <p>Two honesty notes. The binding domain <strong>moves</strong> from <code>clk_e</code> to <code>clk_b</code>, so before-and-after F_max for any single group is not a like-for-like comparison; the scaling factor is. And only <code>clk_a</code>, <code>clk_b</code> and <code>clk_e</code> are reported, because <code>clk_c</code> and <code>clk_d</code> met at baseline and were never in the optimization loop.</p>
+<p><strong>And the closure survives a clock tree.</strong> Those numbers use ideal clocks, which is standard for <code>repair_design</code> and not a signoff number, so we ran CTS and global routing on the same flow:</p>
+<table>
+<thead>
+<tr>
+<th>point</th>
+<th>clk_a</th>
+<th>clk_b</th>
+<th>clk_e</th>
+<th>clock network</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>post-place</td>
+<td>+17.593</td>
+<td>+12.367</td>
+<td>+19.529</td>
+<td><strong>ideal</strong></td>
+</tr>
+<tr>
+<td>post-CTS</td>
+<td><strong>+17.616</strong></td>
+<td><strong>+8.694</strong></td>
+<td><strong>+18.428</strong></td>
+<td><strong>propagated</strong></td>
+</tr>
+<tr>
+<td>post-global-route</td>
+<td><strong>+17.117</strong></td>
+<td><strong>+8.987</strong></td>
+<td><strong>+18.647</strong></td>
+<td><strong>propagated</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Every group meets at every point, for 7,833 µm² (+1.45%) and 1,547 clock buffers. <code>clk_b</code> pays 3.673 ns for its tree and the mechanism is in the same report: its launch path sits <strong>3.514 ns</strong> deeper than its capture path, so imbalance and slack loss agree to 0.16 ns. Propagation was verified rather than assumed, and <code>report_clock_skew</code> printed empty on this build so no skew number is claimed.</p>
 <p><strong>Core level</strong> (<code>rv32i_core</code> alone, transform is 100% of the design; reset false-pathed, otherwise the recovery check masks the data path):</p>
 <table>
 <thead>
