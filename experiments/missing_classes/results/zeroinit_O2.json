@@ -1,0 +1,18 @@
+{
+  "id": "O2",
+  "def_id": "fsm_output_coded_state_assignment",
+  "declared_k": 0,
+  "declared_branch": 4,
+  "assumption": "unreset storage starts ZEROED and identical in both instances (setundef -init -zero); every verdict below is conditional on it",
+  "G1": "PASS",
+  "G2": "PASS",
+  "gold_cells": 7975,
+  "gate_cells": 8033,
+  "gold_dff": 4386,
+  "gate_dff": 4384,
+  "G3": "PASS(state-remap: k=0, flop delta unconstrained)",
+  "dff_delta": -2,
+  "G4_bmc": "PASS -- 19s",
+  "G4_pdr": "PROVEN -- 124s",
+  "G4": "PROVEN"
+}
