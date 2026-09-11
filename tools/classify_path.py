@@ -403,15 +403,45 @@ def parse_path(report_text):
         r"^\s*(?:(\d+)\s+)?(-?\d+\.\d+)\s+(-?\d+\.\d+)\s+[v^]\s+"
         r"([A-Za-z_\\][\w\\/\[\]\.$:]*)/(\w+)\s+\((sky130_fd_sc_hd__\w+)\)",
         re.M)
+    # SCOPE TO ONE PATH FIRST.
+    #
+    # `report_checks -group_path_count 1` returns one path PER PATH GROUP, and
+    # a design whose SDC sets input or output delay has more than one group. On
+    # 2026-09-11 the first external design tried (i2c, register-to-register plus
+    # input-to-register) produced a report ending:
+    #
+    #        3.688   slack (MET)
+    #       -0.396   slack (VIOLATED)
+    #
+    # This function took the slack with re.search, which returns the FIRST
+    # match, read 3.688 MET and returned NO_ACTION for a design the same run
+    # had just measured at -0.396. remeasure.sta_slack() uses findall and takes
+    # the LAST, which is why one run printed both numbers. Two parsers in this
+    # project disagreed about which path is the path.
+    #
+    # It also collected cell rows across the WHOLE text, so on a multi-block
+    # report the rows came from several paths while the slack came from one.
+    #
+    # bench_top's SDC sets no input or output delay, so every report there has
+    # a single block and this never surfaced. Selecting the WORST block, not
+    # the first and not the last, is what the classifier always meant.
+    blocks = re.split(r"^(?=Startpoint:)", report_text, flags=re.M)
+    blocks = [b for b in blocks if "slack (" in b] or [report_text]
+    def block_slack(b):
+        m = re.search(r"^\s*(-?\d+\.\d+)\s+slack \((MET|VIOLATED)\)", b, re.M)
+        return (float(m.group(1)), m.group(2) == "MET") if m else (None, None)
+    scored = [(block_slack(b), b) for b in blocks]
+    scored = [x for x in scored if x[0][0] is not None]
+    if scored:
+        (slack, met), report_text = min(scored, key=lambda x: x[0][0])
+    else:
+        slack = met = None
+
     for m in pat.finditer(report_text):
         rfo, incr, _arr, inst, pin, ctype = m.groups()
         rows.append({"incr": float(incr), "inst": inst,
                      "pin": pin, "cell": ctype,
                      "report_fanout": int(rfo) if rfo is not None else None})
-    m = re.search(r"^\s*(-?\d+\.\d+)\s+slack \((MET|VIOLATED)\)",
-                  report_text, re.M)
-    slack = float(m.group(1)) if m else None
-    met = (m.group(2) == "MET") if m else None
     return rows, slack, met
 
 
