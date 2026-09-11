@@ -781,12 +781,29 @@ def main():
                 v = str(g.get("G4", "?"))
                 print(f"  gate {p['id']} ({g.get('def_id')}): "
                       f"G3={g.get('G3')} G4={v}")
-                # Only PROVEN is accepted. UNRESOLVED is NOT a pass.
-                if not v.startswith("PROVEN"):
+                # Only a FULL PROVEN is accepted. UNRESOLVED is not a pass,
+                # and neither is a partial proof.
+                #
+                # gate_proposal.py can now return
+                #   PROVEN (partial: 2 of 3 outputs; round_key undecidable...)
+                # when its null control shows the harness cannot decide one
+                # output. startswith("PROVEN") accepted that as a full pass,
+                # which would have let the loop confirm a transform on a proof
+                # that excludes the module's primary data output. Caught by
+                # reading this call site after changing the verdict string,
+                # before any run used it.
+                partial = "partial:" in v
+                if partial or not v.startswith("PROVEN"):
+                    if partial:
+                        print(f"  REJECT {p['id']}: the obligation is proven "
+                              f"only over a subset of outputs. A partial proof "
+                              f"is not a pass.")
                     record(iter=it, step="gate", proposal=p["id"],
                            def_id=g.get("def_id"),
                            declared_k=g.get("declared_k"), G1=g.get("G1"),
-                           G2=g.get("G2"), G3=g.get("G3"), G4=v)
+                           G2=g.get("G2"), G3=g.get("G3"), G4=v,
+                           partial=partial,
+                           undecidable=g.get("G4_undecidable_outputs"))
                     continue
 
                 # G7. A transform can pass G4 and still break a clock crossing:
