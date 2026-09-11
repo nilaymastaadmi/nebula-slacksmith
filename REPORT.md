@@ -66,8 +66,8 @@ All five are discharged on blocks of the benchmark itself. Two pieces of §6 evi
 | | `online_proposer` O1, O2 | handoff | 1 | O1 kept, O2 proven and 11.434 ns worse |
 | | `fanout_replication_round_key_update` | **unattended** | 1 | **PROVEN, +1.414 ns on every group** (§7.7) |
 | pipelining | P5, A3 | frozen | 2 | **proposed twice, proven never.** A3 refuted, P5 refuted-uncorroborated. The proven `pipeline_cut_rigid` in §6 is hand-built |
-| **retiming** | `missing_classes` O1 | **handoff** | 5 | **no frozen or unattended proposal has ever been a retiming.** PROVEN, costs 4.616 ns (§7.6) |
-| **FSM optimization** | `missing_classes` O2 | **handoff** | 4 | same provenance. PROVEN, **+3.185 ns**, the largest RTL gain on that group (§7.6) |
+| **retiming** | `missing_classes` O1 | **handoff** | 5 | PROVEN, costs 4.616 ns (§7.6) |
+| **FSM optimization** | `missing_classes` O2 | **handoff** | 4 | PROVEN, **+3.185 ns**, the largest RTL gain on that group (§7.6). An unattended proposal on an external design also reached branch 4 (§7.2) |
 
 **So the engine recommends four of four classes, and the evidence behind them is not equal.** Logic restructuring is demonstrated at all three tiers including unattended. Pipelining is proposed at the frozen tier and has never been proven. **Retiming and FSM optimization exist only at the handoff tier**, which means a model with this project's context wrote them, not a blind one: before 11 Sept the gate rejected both classes by construction (§7.6), so no frozen batch could have contained one.
 
@@ -272,9 +272,9 @@ Two results keep this from being a simple "buffering wins" story. **A4 gained 4.
 
 **No `--force-lever`.** The router selected the RTL lever unforced, on a genuine register-to-register violation, and the `cli` backend returned a usable proposal on a design it had never seen. Run twice it returned *different* transforms, `onehot_idle_bit_recode` and `parallel_case_onehot_decode`, both aimed at the same thing the classifier reported: `c_state` encodes 18 states in 17 bits as one-hot-except-idle, so every `case` arm becomes a wide equality compare, which the mapper builds as the `or4/nor4b/or4b/o41ai` tree on the critical path. The second is **PROVEN by EQY**.
 
-**Getting there took six runs and every failure was a defect in our own tooling**, none of which touches a published result and none of which `bench_top` could ever have shown: the classifier scored the **first** path block rather than the worst (our SDC sets no input delay, so our reports have one block); the loop resolved a module to a file by **filename** (our benchmark is one module per file); the prompt showed the proposer a *different path* than the router had acted on; the gate suffixed only the target module, so a three-module file collided; `target_file` was composed with a hardcoded `rtl/` prefix; and the proposer's CLI timeout was too short for a 25 KB module. **Two of those were turning a proposal EQY proves into a reported harness error.**
+**Getting there took six runs, and every failure was a defect in our own tooling** that `bench_top` structurally could not expose: the classifier scored the **first** path block rather than the worst (our SDC has one path group); the loop resolved a module by **filename** and the gate suffixed only the target module (our benchmark is one module per file, `i2c.v` has three); the prompt showed the proposer a *different path* than the router acted on; `target_file` carried a hardcoded `rtl/` prefix; and the CLI timeout was short for a 25 KB module. None touches a published result. **Two were turning a proposal EQY proves into a reported harness error.**
 
-That cuts both ways and the report should say so. It is evidence that the router works and that the tooling had never left its own benchmark. Both are true, and a submission that presented six bug fixes purely as diligence would be selling the first half without the second.
+That cuts both ways and this report should say so: it is evidence that the router works, and that the tooling had never left its own benchmark.
 
 ### 7.3 The closed loop
 

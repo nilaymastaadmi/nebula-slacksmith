@@ -172,14 +172,14 @@
 <td><code>missing_classes</code> O1</td>
 <td><strong>handoff</strong></td>
 <td>5</td>
-<td><strong>no frozen or unattended proposal has ever been a retiming.</strong> PROVEN, costs 4.616 ns (§7.6)</td>
+<td>PROVEN, costs 4.616 ns (§7.6)</td>
 </tr>
 <tr>
 <td><strong>FSM optimization</strong></td>
 <td><code>missing_classes</code> O2</td>
 <td><strong>handoff</strong></td>
 <td>4</td>
-<td>same provenance. PROVEN, <strong>+3.185 ns</strong>, the largest RTL gain on that group (§7.6)</td>
+<td>PROVEN, <strong>+3.185 ns</strong>, the largest RTL gain on that group (§7.6). An unattended proposal on an external design also reached branch 4 (§7.2)</td>
 </tr>
 </tbody>
 </table>
@@ -645,8 +645,8 @@
 <pre><code>classify wb_clk_i: DEPTH_DOMINATED (fanout share 0.0) -&gt; rtl
 </code></pre>
 <p><strong>No <code>--force-lever</code>.</strong> The router selected the RTL lever unforced, on a genuine register-to-register violation, and the <code>cli</code> backend returned a usable proposal on a design it had never seen. Run twice it returned <em>different</em> transforms, <code>onehot_idle_bit_recode</code> and <code>parallel_case_onehot_decode</code>, both aimed at the same thing the classifier reported: <code>c_state</code> encodes 18 states in 17 bits as one-hot-except-idle, so every <code>case</code> arm becomes a wide equality compare, which the mapper builds as the <code>or4/nor4b/or4b/o41ai</code> tree on the critical path. The second is <strong>PROVEN by EQY</strong>.</p>
-<p><strong>Getting there took six runs and every failure was a defect in our own tooling</strong>, none of which touches a published result and none of which <code>bench_top</code> could ever have shown: the classifier scored the <strong>first</strong> path block rather than the worst (our SDC sets no input delay, so our reports have one block); the loop resolved a module to a file by <strong>filename</strong> (our benchmark is one module per file); the prompt showed the proposer a <em>different path</em> than the router had acted on; the gate suffixed only the target module, so a three-module file collided; <code>target_file</code> was composed with a hardcoded <code>rtl/</code> prefix; and the proposer's CLI timeout was too short for a 25 KB module. <strong>Two of those were turning a proposal EQY proves into a reported harness error.</strong></p>
-<p>That cuts both ways and the report should say so. It is evidence that the router works and that the tooling had never left its own benchmark. Both are true, and a submission that presented six bug fixes purely as diligence would be selling the first half without the second.</p>
+<p><strong>Getting there took six runs, and every failure was a defect in our own tooling</strong> that <code>bench_top</code> structurally could not expose: the classifier scored the <strong>first</strong> path block rather than the worst (our SDC has one path group); the loop resolved a module by <strong>filename</strong> and the gate suffixed only the target module (our benchmark is one module per file, <code>i2c.v</code> has three); the prompt showed the proposer a <em>different path</em> than the router acted on; <code>target_file</code> carried a hardcoded <code>rtl/</code> prefix; and the CLI timeout was short for a 25 KB module. None touches a published result. <strong>Two were turning a proposal EQY proves into a reported harness error.</strong></p>
+<p>That cuts both ways and this report should say so: it is evidence that the router works, and that the tooling had never left its own benchmark.</p>
 <h3>7.3 The closed loop</h3>
 <p><code>tools/slacksmith.py</code> runs all of the above as one command: <strong>measure, classify, route, apply, re-measure, repeat</strong>, stopping when every group meets, when no lever remains, or at <code>--max-iters</code>, logging every decision with its evidence to <code>decisions.jsonl</code>.</p>
 <p>Against SDC v2 it closes in <strong>2 iterations and 46.7 seconds</strong>, and the RTL lever never fires because nothing is left for it. To exercise both branches the target must be one the flow cannot already clear, so <code>sdc/bench_top_v3.sdc</code> applies v2's methodology to the corrected flow (<code>sdc/make_v3.py</code>). Under v3 the physical lever alone closes <code>clk_b</code> outright, −18.957 to +5.6; the RTL lever then gates P1, P2 and P3, EQY proves all three, and <strong>the loop reverts all three on G5.</strong></p>
