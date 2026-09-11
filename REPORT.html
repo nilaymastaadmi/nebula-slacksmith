@@ -26,9 +26,9 @@
 <p>Repository: <code>github.com/nilaymastaadmi/nebula-slacksmith</code> (branch <code>sandbox</code>). Every number in this report was produced by running the flow; the command that produced each one is in the cited experiment directory.</p>
 <h2>1. Summary</h2>
 <p>An LLM proposes RTL transforms. A formal gate decides whether they are correct. We built both halves, then measured the half everyone assumes works. An LLM pointed at a timing report fails in two ways, and we measured both: it proposes transforms that are <strong>wrong</strong>, and transforms that are <strong>correct and aimed at the wrong variable</strong>.</p>
-<p><strong>Failure one, correctness.</strong> We asked an LLM for transforms against real timing reports, froze every proposal before running any check, and ran two pre-registered batches. <strong>3 of 12 were formally refuted, 1 more was rejected at precondition, 1 is unresolved.</strong> One of the three parses, elaborates, passes every precondition, reduces cell count by 208, and is wrong. A testbench running the design's own shipped firmware misses it. Twenty thousand random instruction vectors miss it. The formal gate caught it in 46 seconds with a concrete counterexample. <strong>The gates that agentic RTL tools actually ship with would have accepted a broken rewrite.</strong> That count started at 4 refuted; it is 3 because batch 2 caught <strong>our own gate manufacturing a refutation</strong> (§7.1, §9).</p>
+<p><strong>Failure one, correctness.</strong> We asked an LLM for transforms against real timing reports, froze every proposal before running any check, and ran two pre-registered batches. <strong>3 of 12 were formally refuted, 1 more was rejected at precondition, 1 is unresolved.</strong> Of those three refutations, <strong>two are corroborated and one is not</strong>: P5's null control does not close on a 2,048-flop design, so its verdict is reported as refuted-uncorroborated throughout (§7.6, §10). One of the three parses, elaborates, passes every precondition, reduces cell count by 208, and is wrong. A testbench running the design's own shipped firmware misses it. Twenty thousand random instruction vectors miss it. The formal gate caught it in 46 seconds with a concrete counterexample. <strong>The gates that agentic RTL tools actually ship with would have accepted a broken rewrite.</strong> That count started at 4 refuted; it is 3 because batch 2 caught <strong>our own gate manufacturing a refutation</strong> (§7.1, §9).</p>
 <p><strong>Failure two, relevance.</strong> Then we asked whether the transforms that <em>are</em> correct actually help. Mostly they did not, for a measurable reason: the binding paths were <strong>59% to 91% fanout-attributable delay</strong>, which is a net's load, and physical buffering is built to fix that. <strong>OpenROAD <code>repair_design</code>, changing zero lines of RTL, bought +55.805 ns and closed all three groups</strong> at 20.2% area, against <strong>+4.925 ns</strong> from our best proven RTL transform.</p>
-<p><strong>We over-claimed that and a later measurement caught us.</strong> Earlier drafts said <em>no RTL rewrite shortens a net's load delay</em>. The absolute is false: on a path scored <strong>91.4% fanout-attributable</strong>, an FSM re-encoding bought <strong>+3.185 ns</strong> and a fanout split, proposed with no human in the loop, bought <strong>+1.414 ns</strong> with no group paying (§7.6, §7.7). The honest claim is a <strong>ratio, not an impossibility</strong>: RTL work bought about <strong>one sixth</strong> of what physical buffering bought here, which is why this is a router and not a rule.</p>
+<p><strong>We over-claimed that and a later measurement caught us.</strong> Earlier drafts said <em>no RTL rewrite shortens a net's load delay</em>. The absolute is false: on a path scored <strong>91.4% fanout-attributable</strong>, an FSM re-encoding bought <strong>+3.185 ns</strong> and a fanout split, proposed with no human in the loop, bought <strong>+1.414 ns</strong> with no group paying (§7.6, §7.7). The honest claim is a <strong>ratio, and it has to name its pair or it means nothing</strong>. Like for like, under SDC v3, zero-parasitic, on <code>clk_b</code>: the FSM re-encoding buys <strong>+3.185 ns</strong> against the physical lever's <strong>+24.557</strong> (−18.957 to +5.6) on the same group in the same run, <strong>about one eighth</strong>. Quoting other pairs gives anything from a third to a seventeenth because they mix SDC versions and parasitic regimes, so this report quotes the one pair measured under one model. <strong>The quantity that would matter most is not measured</strong>: every RTL number here is taken from the unbuffered baseline, while the router runs the levers in sequence, so the <em>marginal</em> RTL gain after buffering is known for exactly one transform (P2, which flipped sign) and is unmeasured for batch 3.</p>
 <p><strong>One limit that belongs here and not in a footnote.</strong> <strong>Under a correct classifier the router never selects the RTL lever on this benchmark at all</strong>; every in-loop RTL result used <code>--force-lever rtl</code>, logged as <code>lever_forced</code>. That is a finding about the benchmark. The unattended backend does now run, <strong>N = 1</strong> (§7.7).</p>
 <p>So SlackSmith routes twice: the <strong>proof obligation</strong> by declared transform type, and the <strong>fix</strong> by measured path pathology, which the measurement forced on us. The two levers are sequential rather than alternative, and where they run out we say so.</p>
 <h2>2. The problem, and what is actually new here</h2>
@@ -127,42 +127,63 @@
 </tbody>
 </table>
 <p><strong>The four optimization classes the objectives name, each scored separately.</strong> A class is covered when the engine <em>proposes</em> it and the gate <em>routes</em> it, not when the report mentions it.</p>
+<p><strong>Provenance matters and is stated per proposal.</strong> Three tiers, and they are not equivalent evidence. <strong>Frozen</strong>: the model wrote it against a timing report and every proposal was committed before any check ran. <strong>Handoff</strong>: the model wrote it against live loop state, but through the session driving this project, which carries full context. <strong>Unattended</strong>: <code>claude -p</code>, no human, no project context beyond the prompt.</p>
 <table>
 <thead>
 <tr>
 <th>class</th>
-<th>proposed by the engine</th>
-<th>obligation branch</th>
+<th>proposals</th>
+<th>provenance</th>
+<th>branch</th>
 <th>honest status</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>logic restructuring</td>
-<td>10 proposals: P1, P2, P3, P6, P4, A1, A4, A5, and <code>online_proposer</code>'s O1 and O2</td>
-<td>1, combinational (EQY)</td>
-<td>the only class with proven, timing-positive proposals</td>
+<td>P1, P2, P3, P6, P4, A1, A4, A5</td>
+<td>frozen</td>
+<td>1</td>
+<td>8 of the 12 frozen proposals</td>
+</tr>
+<tr>
+<td></td>
+<td><code>online_proposer</code> O1, O2</td>
+<td>handoff</td>
+<td>1</td>
+<td>O1 kept, O2 proven and 11.434 ns worse</td>
+</tr>
+<tr>
+<td></td>
+<td><code>fanout_replication_round_key_update</code></td>
+<td><strong>unattended</strong></td>
+<td>1</td>
+<td><strong>PROVEN, +1.414 ns on every group</strong> (§7.7)</td>
 </tr>
 <tr>
 <td>pipelining</td>
 <td>P5, A3</td>
-<td>2, k-padded miter</td>
-<td><strong>proposed twice, proven never.</strong> Both refuted. The proven <code>pipeline_cut_rigid</code> in §6 is hand-built, and this table says so rather than letting §6 imply otherwise</td>
+<td>frozen</td>
+<td>2</td>
+<td><strong>proposed twice, proven never.</strong> A3 refuted, P5 refuted-uncorroborated. The proven <code>pipeline_cut_rigid</code> in §6 is hand-built</td>
 </tr>
 <tr>
 <td><strong>retiming</strong></td>
-<td><code>missing_classes</code>'s O1</td>
-<td><strong>5, sequential miter</strong></td>
-<td><strong>the engine could not propose one until 11 Sept</strong>, see §7.6</td>
+<td><code>missing_classes</code> O1</td>
+<td><strong>handoff</strong></td>
+<td>5</td>
+<td><strong>no frozen or unattended proposal has ever been a retiming.</strong> Proven 2 of 3 outputs, costs 4.616 ns (§7.6)</td>
 </tr>
 <tr>
 <td><strong>FSM optimization</strong></td>
-<td><code>missing_classes</code>'s O2</td>
-<td><strong>4, mapped-state</strong></td>
-<td>same cause; the one-hot re-encoding in §6 is hand-built</td>
+<td><code>missing_classes</code> O2</td>
+<td><strong>handoff</strong></td>
+<td>4</td>
+<td>same provenance. Proven 2 of 3 outputs, <strong>+3.185 ns</strong>, the largest RTL gain on that group (§7.6)</td>
 </tr>
 </tbody>
 </table>
+<p><strong>So the engine recommends four of four classes, and the evidence behind them is not equal.</strong> Logic restructuring is demonstrated at all three tiers including unattended. Pipelining is proposed at the frozen tier and has never been proven. <strong>Retiming and FSM optimization exist only at the handoff tier</strong>, which means a model with this project's context wrote them, not a blind one: before 11 Sept the gate rejected both classes by construction (§7.6), so no frozen batch could have contained one.</p>
 <p>Two of the four were unreachable by construction and we found out why only after an external review said so (§7.6). <code>dretime</code> also appears inside the ABC physical-lever script, which is a mapping-level pass and <strong>not</strong> the engine proposing a retiming; it is not counted here. <strong>Two experiments each number their proposals O1 and O2</strong>, <code>experiments/online_proposer/</code> and <code>experiments/missing_classes/</code>; they are always named with their directory here, and the collision is flagged rather than fixed by renumbering a registered artifact after its results existed.</p>
 <h2>4. The benchmark</h2>
 <p><code>bench_top</code> is <strong>55,413 standard cells</strong>, five independent asynchronous clock domains, each with its own active-low async reset and each driving at least one in-RTL generated clock.</p>
@@ -870,7 +891,7 @@
 </tr>
 </tbody>
 </table>
-<p>Five asynchronous domains have no single F_max, so the design-level figure is the factor <strong>k</strong> by which every period must be scaled for all of them to meet: <code>k = max(required / period)</code>. Before, <strong>k = 2.799</strong>, binding on <code>clk_e</code>, so the design runs at <strong>0.357x</strong> its SDC target. After, <strong>k = 0.844</strong>, binding on <code>clk_b</code>, so it runs at <strong>1.185x</strong> target with margin. <strong>The flow improves achievable frequency by 3.32x.</strong></p>
+<p>Five asynchronous domains have no single F_max, so the design-level figure is the factor <strong>k</strong> by which every period must be scaled for all of them to meet: <code>k = max(required / period)</code>. Before, <strong>k = 2.799</strong>, binding on <code>clk_e</code>, so the design runs at <strong>0.357x</strong> its SDC target. After, <strong>k = 0.844</strong>, binding on <code>clk_b</code>, so it runs at <strong>1.185x</strong> target with margin. <strong>The flow improves achievable frequency by 3.32x.</strong> <strong>Read that against §9</strong>: the <em>before</em> column is a flow that was not running the <code>buffer; upsize; dnsize</code> script Yosys ships in <code>-liberty -constr</code>, worth 17.557 ns on its own. A meaningful part of the 3.32x is a flow defect we shipped, not a lever we invented, and the same is true of the +55.805 ns closure.</p>
 <p>Two honesty notes. The binding domain <strong>moves</strong> from <code>clk_e</code> to <code>clk_b</code>, so before-and-after F_max for any single group is not a like-for-like comparison; the scaling factor is. And only <code>clk_a</code>, <code>clk_b</code> and <code>clk_e</code> are reported, because <code>clk_c</code> and <code>clk_d</code> met at baseline and were never in the optimization loop.</p>
 <p><strong>Core level</strong> (<code>rv32i_core</code> alone, transform is 100% of the design; reset false-pathed, otherwise the recovery check masks the data path):</p>
 <table>
@@ -930,7 +951,7 @@
 <p><strong>Three smaller ones, all surfaced by running rather than reading.</strong> Two harness bugs appeared as UNRESOLVED, which a report that left them there would have hidden behind something resembling a result: <code>sby</code> off PATH, then a generalization patch writing <code>{max(k,1)}</code> into the miter as literal Verilog. The loop's acceptance bar confirmed a step that traded a met group for 0.838 ns on another; the run is kept and the fix was registered mid-run and dated. And <strong>"everything reproduces from the repository" was itself unchecked</strong>: §10 claimed cold-clone reproduction had been verified per directory when it never had, because every script began <code>cd /mnt/c/Users/toshn/...</code>. A project arguing that claims must be checkable had shipped an unchecked claim about its own checkability.</p>
 <p><strong>A claim that was false, caught by simulation.</strong> We described <code>pipeline_cut_rigid(domain_a)</code> as boundary-proven <em>and therefore</em> module-equivalent. It is not: the consuming domain samples at half rate, so a one-cycle delay selects a different subsequence and <code>mac_result</code> diverges (<code>002a</code> vs <code>0031</code>). The sufficiency claim was withdrawn and the refuting testbench committed.</p>
 <h2>10. Demo, reproduction, limits</h2>
-<p>The demo walks the pipeline end to end and lands on a refutation with its counterexample, the case every simulation-gated tool would have passed. <code>DEMO.md</code> is the shot list and <code>tools/demo_check.sh</code> runs every command in it, failing if any breaks; it holds <strong>15 assertions</strong> and caught two stale claims on its first run. <strong><code>demo/explorer.html</code></strong> is the interactive deliverable: five runs steppable, each decision with the evidence it used, generated from the logs so it cannot drift from them. <strong>Reproduction, checked rather than asserted.</strong> Three clean clones at different names on a different filesystem passed <strong>12 of 12, 12 of 12 and 15 of 15</strong>, the last once the demo assertions existed (<code>experiments/reproducibility/</code>). Tool paths are environment variables, not constants. Each experiment directory holds its sources, <code>.sby</code>/<code>.eqy</code> configuration and raw logs; proofs re-run with <code>sby -f &lt;config&gt; pdr</code>. <code>SETUP.md</code> says which claims cost minutes and which cost an afternoon of synthesis.</p>
+<p>The demo walks the pipeline end to end and lands on a refutation with its counterexample, the case every simulation-gated tool would have passed. <code>DEMO.md</code> is the shot list and <code>tools/demo_check.sh</code> runs every command in it, failing if any breaks; it holds <strong>15 assertions</strong>, all passing as of 11 Sept, and caught two stale claims on its first run. <strong><code>demo/explorer.html</code></strong> is the interactive deliverable: five runs steppable, each decision with the evidence it used, generated from the logs so it cannot drift from them. <strong>Reproduction, checked rather than asserted.</strong> Three clean clones at different names on a different filesystem passed <strong>12 of 12, 12 of 12 and 15 of 15</strong>, the last once the demo assertions existed (<code>experiments/reproducibility/</code>). Tool paths are environment variables, not constants. Each experiment directory holds its sources, <code>.sby</code>/<code>.eqy</code> configuration and raw logs; proofs re-run with <code>sby -f &lt;config&gt; pdr</code>. <code>SETUP.md</code> says which claims cost minutes and which cost an afternoon of synthesis.</p>
 <p><strong>Limits we would rather state than be asked.</strong> <strong>N = 17 proposals</strong>, three target modules, one proposer model (<strong>Claude Opus 5</strong>, disclosed in every registration, default sampling, one sample per proposal, no best-of-n): outcomes, not rates. Unattended operation is <strong>N = 1</strong>. The physical flow reaches CTS and global routing, not signoff. The classifier's thresholds were chosen on our benchmark and one external verdict is flow-sensitive. The best run leaves <code>clk_e</code> short with no ABC lever left. Equivalence is proven for <code>repair_design</code>'s netlist pairs but <strong>not</strong> for the ABC buffering lever, where the method times out. Two of the batch-3 proofs hold over 2 of 3 outputs, and P5's refutation is <strong>uncorroborated</strong> because its null control does not close. Of the transforms proven correct, four made their own path group worse: <strong>proof and profit are independent questions, and we measured both.</strong></p>
 <p><em>Rendered A4, 18 mm margins, 9.5 pt serif, by <code>tools/render_report.py</code>; page count measured in a browser rather than estimated, and deliberately not quoted here, because a page count written into the document it measures is stale on the next edit. <code>tools/check_report_numbers.py</code> checks every number above against the repository.</em></p>
 </div>

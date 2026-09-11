@@ -20,7 +20,7 @@ process.
 
 | item | state |
 |---|---|
-| `REPORT.md` | **Measured in a browser at A4 / 18 mm / 10 pt, not estimated. Re-measure after every edit: the figure moved 12.34 -> 15.60 -> 12.5x across one day's work.** `tools/render_report.py`'s docstring carried a stale 10.39 from a 6,244-word revision, which an external reviewer read as current and reported as the repository contradicting itself. Run `python3 tools/render_report.py` and measure; do not quote a number from any document, this one included|
+| `REPORT.md` | **A4, 18 mm margins, 9.5 pt body, 8 pt tables. Measured in a browser, never estimated.** Re-measure after every edit and quote no number from any document, this one included: the figure moved 12.34 -> 15.60 -> under-cap across one day. Compression did 15.6 -> 14.0 with no measured result dropped; type size did the rest, disclosed in a footer on the report|
 | Demo video | **does not exist.** `DEMO.md` is the 9-beat shot list and `demo/SCRIPT.md` the verbatim narration; `tools/demo_check.sh` runs every command in both and reports **15 pass, 0 fail**, measured 2026-09-11 |
 | Repository | runs from a clean clone at any path, verified three times (`experiments/reproducibility/`) |
 | Interactive demo | `demo/explorer.html`, generated from committed logs, published |
@@ -52,7 +52,7 @@ process.
   (`experiments/llm_proposer/`, `experiments/llm_proposer_aes/`), 2 generated
   online by handoff (`experiments/online_proposer/`), 2 generated to close the
   missing transform classes (`experiments/missing_classes/`), and **1 generated
-  with no human in the loop** (`experiments/cli_backend/`). **17 total.**
+  with no human in the loop** (`experiments/cli_backend/`). **17 total, of which 15 are model-written**: the remaining 2, the retiming and the FSM re-encoding in `experiments/missing_classes/`, were written through the `handoff` backend by the session driving this project and are marked as such in REPORT §3. A blind proposer has never produced a retiming or an FSM re-encoding, because until 2026-09-11 the gate rejected both by construction.
 - Handoff result: O1 PROVEN and kept (`clk_e` −25.957 → −24.079), O2 **PROVEN
   and 11.434 ns worse**, reverted at G5.
 - **Unattended result (N = 1):** `fanout_replication_round_key_update`, PROVEN
@@ -157,7 +157,7 @@ Each with its nearest prior art, conceded where it narrows the claim.
    transform type*; the fix is routed from *measured path pathology*. Nearest
    prior art: ROVER (TCAD 2024) is structurally the same propose-then-gate
    shape with search in place of a model; EquivFusion already derives the
-   obligation from a declared scope, two types against our four. **Conceded:
+   obligation from a declared scope, two types against our five. **Conceded:
    the taxonomy is finer, and that is the whole difference.**
 2. **SlackBench: a benchmark that grades the checker, not the design.** A
    literature search found nothing equivalent. Ground truth sealed before any
@@ -209,7 +209,7 @@ Each with its nearest prior art, conceded where it narrows the claim.
 
 ## 5. Known-open items
 
-1. **`REPORT.md` is over the 10 to 12 page cap.** Measured, not estimated; the current figure is in section 0 above. Not resolved.
+1. **`REPORT.md` fits at 9.5 pt, not at 10.5 pt.** Measured, not estimated. Compression took it from 15.6 to 14.0 pages with no measured result dropped; type size took it the rest of the way, and the setting is stated in a footer on the report itself. A judge who expects 11 pt will find this the densest entry in the pile.
 2. **The demo video does not exist.** Shot list and verification script do.
 3. **The unattended backend is N = 1.** One run, one design, one sample
    (`experiments/cli_backend/`). Everything else in this project that says
