@@ -10,6 +10,12 @@ table-heavy, and tables carry far more content per vertical inch than prose,
 so any words-per-page rule overstates it.
 
 **Re-measure after every edit; do not quote a number from this docstring.**
+Typography is 9.5 pt serif at 1.26 line height on A4 with 18 mm margins,
+chosen on 2026-09-11 to fit an 11.82-page document inside a 12-page cap
+without dropping any measured result. The alternative was cutting a
+registered experiment to satisfy a formatting constraint. The settings
+are stated in a footer line on the report itself rather than left for a
+reader to infer.
 The 10.39 above is a historical measurement of a 6,244-word revision and was
 read as current by an external reviewer on 2026-09-11, who then reported the
 repository as contradicting itself. Measured 2026-09-11 at 8,073 source words:
@@ -45,14 +51,14 @@ OUT = os.path.join(HERE, "REPORT.html")
 CSS = """
   @page { size: A4; margin: 18mm; }
   html { background:#888; }
-  body { font-family: Georgia, 'Times New Roman', serif; font-size: 10pt;
-         line-height: 1.32; margin:0; }
+  body { font-family: Georgia, 'Times New Roman', serif; font-size: 9.5pt;
+         line-height: 1.26; margin:0; }
   #sheet { width: 658px; margin: 0 auto; background:#fff; padding: 0; }
   h1 { font-size: 19pt; margin: 0 0 2px 0; }
   h2 { font-size: 13pt; margin: 15px 0 5px 0; border-bottom:1px solid #bbb; }
   h3 { font-size: 11.3pt; margin: 11px 0 4px 0; }
   p  { margin: 6px 0; text-align: justify; }
-  table { border-collapse: collapse; font-size: 8.4pt; margin: 7px 0; width:100%; }
+  table { border-collapse: collapse; font-size: 8.0pt; margin: 7px 0; width:100%; }
   th, td { border: 1px solid #999; padding: 2px 5px; text-align: left; }
   th { background:#eee; }
   pre { background:#f4f4f4; font-size:8pt; padding:5px; overflow-x:auto;
