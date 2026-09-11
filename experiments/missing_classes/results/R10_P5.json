@@ -1,0 +1,20 @@
+{
+  "id": "P5",
+  "def_id": "pipeline_cut_rigid",
+  "declared_k": 1,
+  "declared_branch": 2,
+  "G1": "PASS",
+  "G2": "PASS",
+  "gold_cells": 8269,
+  "gate_cells": 8358,
+  "gold_dff": 2048,
+  "gate_dff": 2112,
+  "G3": "PASS",
+  "dff_delta": 64,
+  "G4_bmc": "FAIL -- miter_prop.eq_dmem_addr, 3s",
+  "G4_pdr": "FAIL -- miter_prop.eq_dmem_addr, 4s",
+  "G4_null_bmc": "FAIL -- miter_prop.eq_dmem_addr, 1s",
+  "G4_null_pdr": "FAIL -- miter_prop.eq_dmem_we, 3s",
+  "G4_null_control": "REFUTES (miter is unsound on this module)",
+  "G4": "CANNOT (null control refutes: the same miter rejects this module against itself, so the counterexample is the harness, not the transform)"
+}

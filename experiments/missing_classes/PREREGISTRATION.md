@@ -226,3 +226,50 @@ have one. Now it does.
 | **R8** | With the null control in place, O1 returns `CANNOT(null control refutes)` rather than `REFUTED`. |
 | **R9** | Re-running A3 unchanged under the null control also returns `CANNOT`, which would mean its published REFUTED was never decidable by this harness. If instead A3's null control **passes** while A3 itself fails, the published verdict was right for the stated reason and only O1 was contaminated. **I do not know which**, and both outcomes are reportable. |
 | **R10** | The null control changes no verdict for any proposal whose module has no unreset memory, so batch 1 (`rv32i_core`) is unaffected. |
+
+---
+
+## Amendment 4, 2026-09-11: the null control was unsound for k > 0, and R10 caught it
+
+### Scorecard for R8, R9, R10
+
+| # | registered | outcome |
+|---|---|---|
+| **R8** | O1 returns `CANNOT` rather than `REFUTED` | **CONFIRMED.** `G4_null_pdr: FAIL eq_round_key, 87s` on gold vs gold |
+| **R9** | A3 either `CANNOT` (never decidable) or null-passes (published verdict right) | **VOID.** Neither: the control itself was invalid at k=1, see below |
+| **R10** | the null control changes no verdict on `rv32i_core`, which has no unreset memory | **WRONG**, and this is the miss that mattered |
+
+### What R10 found
+
+P5 (`rv32i_core`, k=1) came back `CANNOT` with
+`G4_null_bmc: FAIL eq_dmem_addr, 1s`. `rv32i_core` has no unreset memory, so
+the artifact R8 diagnosed cannot be the cause.
+
+The cause is **the null control itself**. For `k > 0` the miter delays every
+gold output by k and compares `gp_n == t_n`. The null control sets the gate to
+an *undelayed* copy of the gold, so it compares gold-delayed against
+gold-undelayed. **That must fail for any design whose outputs ever change.**
+It is not evidence of anything.
+
+So the fix introduced a new defect of exactly the kind it was written to
+prevent: a control that reports failure regardless of the thing it is
+controlling for. **A3's `CANNOT` above is void for the same reason** and says
+nothing about whether its published REFUTED was sound. R9 is unresolved, not
+answered.
+
+### The corrected control
+
+The question a null control asks is "can this harness distinguish the module
+from itself?", which is a question about **state initialisation and has nothing
+to do with latency**. So the control must always be built as a **k = 0** miter,
+whatever the proposal declares. The miter builder is factored out so the gate
+and the control share one implementation rather than the control editing the
+gate's output.
+
+### Predictions, registered before the corrected control is written
+
+| # | prediction |
+|---|---|
+| **R11** | Under a k=0 null control, **P5 returns REFUTED again**, its published verdict, because `rv32i_core` has no unreset state to poison the control. |
+| **R12** | Under a k=0 null control, **O1 still returns `CANNOT`**, because its artifact is real. |
+| **R13** | **A3 returns REFUTED**, its published verdict, because `key_mem` poisons `eq_round_key` and A3 fails on `eq_ready`, which the k=0 control should prove. If instead the k=0 control fails on `eq_ready` too, A3 was never decidable and the published number in `experiments/llm_proposer_aes/` changes. I do not know which. |
