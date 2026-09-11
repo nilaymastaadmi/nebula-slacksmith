@@ -635,3 +635,39 @@ closed.
 amendment 5 and rejected it, correctly, in one paragraph. Two of the three
 wrong explanations this file has recorded for this verdict pointed away from the
 harness and toward the design, which is the direction that flatters the tool.
+
+---
+
+## Amendment 7, 2026-09-11: the null control was asking a harder question than the one posed
+
+The same review rejects R19's conclusion as an instrument problem rather than a
+result:
+
+> The refutation is a BMC counterexample found in 2 seconds, so it lives at
+> depth 1 or 2. Corroboration needs only that gold-vs-gold does not fail at
+> that depth [...] The downgrade is over-scrupulous as executed.
+
+**Correct.** A refutation found at step *n* is only as trustworthy as the
+harness is at step *n*. The control ran BMC to the proposal's full depth (20)
+and PDR to convergence over 2,048 flops, which is a strictly harder question,
+and on `rv32i_core` it answers nothing: both engines time out and a real
+refutation is downgraded for no reason.
+
+`failing_depth()` now reads the counterexample's step out of the BMC log and
+the control runs at `min(depth, step + 2)`. Both numbers are recorded in the
+result as `G4_counterexample_step` and `G4_null_depth`, so the verdict carries
+the depth its corroboration actually covers.
+
+**This narrows what a passing control means, and the narrower claim is the
+honest one.** It no longer says "the harness can distinguish these designs".
+It says "the harness does not produce a spurious failure at or below the depth
+where this refutation was found", which is exactly what is needed to trust that
+refutation and nothing more.
+
+| # | prediction |
+|---|---|
+| **R24** | P5's control **closes** at the bounded depth and P5 returns plain `REFUTED`, recovering the verdict R19 downgraded |
+| **R25** | The bound changes **no verdict** already obtained on `aes_key_mem`, whose control closed in 10 to 12 s at full depth anyway |
+
+If R24 misses, the downgrade in R19 stands on its own merits and the extra
+machinery bought nothing, which is also a reportable outcome.
