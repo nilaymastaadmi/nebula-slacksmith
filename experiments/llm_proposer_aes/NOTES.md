@@ -277,3 +277,32 @@ the safeguard only ever pointed one way.
 `PREREGISTRATION.md`, `proposals/A1..A6.json` and the six full module
 variants (frozen pre-gate), `fourchecker/tb_a2.v`,
 `fourchecker/miter_a2_guarded.sv`.
+
+---
+
+## Annotation 2026-09-11: A3's refutation was re-checked and holds
+
+A3's `REFUTED` was published on a sequential miter that, it turned out, also
+**refutes `aes_key_mem` against itself**. `round_key = key_mem[round]`, Yosys
+does not apply the module's async reset to a memory, and the two instances
+start from independent arbitrary contents. Found while gating an unrelated
+retiming proposal (`experiments/missing_classes/`, amendment 3).
+
+That made A3's verdict **confounded**: its stated mechanism was plausible, but
+the evidence could not distinguish it from the artifact.
+
+It can now. `tools/gate_proposal.py` runs a null control before reporting any
+refutation, and where the control fails it identifies *which* outputs the
+harness cannot decide and decides the rest. Re-run unchanged:
+
+| | result |
+|---|---|
+| null control | **REFUTES on `round_key`; PASSES on `ready`, `sboxw`** |
+| A3 | **REFUTED (partial: 2 of 3 outputs)**, failing on `eq_ready` |
+
+`ready` is an output the control proves, so A3 fails on a decidable output.
+**The published verdict stands, for the published reason**: A3 declared k = 1
+and delayed one of three outputs while the k-padded obligation delays all of
+them. The table above and the "1 of 6 formally REFUTED" count are unchanged.
+
+Nothing in this file was edited. This annotation is the record.
