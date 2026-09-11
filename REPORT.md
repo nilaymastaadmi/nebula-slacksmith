@@ -43,7 +43,7 @@ The reason latency is off-limits is real. Insert a pipeline stage and the design
 | k = 0, re-encoded state | mapped-state equivalence | SymbiYosys with supplied bijection |
 | k = 0, register moved | **retiming** | SymbiYosys sequential miter, no flop correspondence |
 
-All four branches are discharged on blocks of the benchmark itself, not on toy designs written to suit them (§6). Two pieces of §6 evidence are **fixtures by construction and are labelled as such**: the interface-classifier table in §6.1 (`mac_ref`, `alias_names`, `axi_style`, `costume_ready`) and the four mutants in §6.2. Those fixtures test the *classifier* and the *checkers*, which is what they are for; the obligations themselves run on benchmark RTL.
+Branches 1 to 4 are discharged on blocks of the benchmark itself, not on toy designs written to suit them (§6). Two pieces of §6 evidence are **fixtures by construction and are labelled as such**: the interface-classifier table in §6.1 (`mac_ref`, `alias_names`, `axi_style`, `costume_ready`) and the four mutants in §6.2. Those fixtures test the *classifier* and the *checkers*, which is what they are for; the obligations themselves run on benchmark RTL.
 
 ## 3. Deliverable coverage
 
@@ -125,7 +125,7 @@ So the policy became a gate. **G0 runs before G1**: SHA-256 the SDC actually loa
 
 `experiments/sdc_integrity/` is **exploratory, not pre-registered**, and is labelled that way in its own notes: it demonstrates a mechanism rather than testing a hypothesis, so there was nothing to be wrong about. It should not be read as carrying the pre-registration evidence that §7 does.
 
-## 6. Formal equivalence: four branches, all on real RTL
+## 6. Formal equivalence: five branches, discharged on benchmark blocks
 
 | transform | branch | verdict | engine |
 |---|---|---|---|
@@ -374,6 +374,12 @@ Power is vector-free at default switching activity and flat at 223 to 224 mW acr
 ## 9. What we got wrong
 
 Judged work should show its corrections, so here are ours, all committed with the evidence.
+
+**Our gate manufactured a refutation three times, so we stopped fixing them one at a time.** The first reported A2 as REFUTED when EQY had only run out of depth (§7.1). The second compared two independently uninitialised memory arrays and read the result as a transform being non-equivalent (`experiments/g7_in_loop/`). The third was found on 11 Sept: the sequential miter **refutes `aes_key_mem` against itself**, because `round_key = key_mem[round]` and Yosys does not apply a module's async reset to a memory, so the two instances start from different arbitrary contents. Gold versus gold: `FAIL eq_round_key, 1 s`. With that one output removed: `PDR PROVEN, 12 s`.
+
+Three occurrences of one failure mode is a process defect, not three accidents, so the fix is structural. **A null control now runs before any refutation is reported**: the same miter with the gate replaced by the gold, and if that also fails the gate reports `CANNOT` instead of `REFUTED`. §5 has had a null control on the timing side since the beginning, swap a module for itself and expect 0.000; the verification side did not have one. `CANNOT` was already a first-class outcome in SlackBench (§7.4) and is now one in the gate.
+
+**The first version of that fix was wrong in the same shape as the bug it fixed**, and a registered prediction is the only reason it was caught. The control was built at the proposal's own `k`, so for `k > 0` it compared gold-delayed against gold-undelayed and failed for any design whose outputs change. Prediction R10 said the control would change no verdict on `rv32i_core`, which has no unreset memory; `rv32i_core` came back `CANNOT` anyway. The control is now always built at `k = 0`, because it asks whether the harness can distinguish the module from itself, which is a question about state initialisation and not about latency.
 
 **Our gate manufactured a refutation.** It reported A2 as REFUTED when EQY had only run out of depth (§7.1). Every other bug below hid a real result behind an inconclusive verdict, which the rule "UNRESOLVED is never a verdict" is built to catch; this one turned a non-result into a confident claim, and no rule caught it. We found it by noticing a partition had failed while all 128 partitions feeding it had passed.
 

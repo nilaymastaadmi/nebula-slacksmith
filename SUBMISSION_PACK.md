@@ -111,7 +111,7 @@ process.
 | ... **retiming** | `retime_write_decode_forward` (O1), obligation branch 5 | **The gate could not express a retiming until 2026-09-11.** G3 required `k=0 -> flop delta 0`, and a retiming is k=0 with the flop count changed. Root-caused and fixed in `experiments/missing_classes/`; see the notes there for O1's verdict. `dretime` also exists as an ABC mapping pass, which is not the same thing |
 | ... **FSM optimization** | `experiments/fsm_reencode/` (hand-built), and `fsm_output_coded_state_assignment` (O2) through the gate | Branch 4 was **advertised to the proposer and not implemented**: any re-encoding changes the flop count, so G3 rejected it before the declared branch was read. The project's own one-hot returns `FAIL(declared k=0 but flop count changed by +12)` through the unmodified gate and `PROVEN` through the fixed one |
 | Evaluate timing, area, performance | D5 | area measured, +20.2% and +1.45% |
-| Formally verify equivalence | D6 | four branches plus G6 and G7 |
+| Formally verify equivalence | D6 | five branches plus G6 and G7 |
 
 ### Benchmark specification
 
