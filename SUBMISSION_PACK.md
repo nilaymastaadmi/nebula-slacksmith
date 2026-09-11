@@ -117,7 +117,18 @@ process.
 | ≥1 generated clock per master | **5**, one each | 5 `create_generated_clock` |
 | Clock Domain Crossings | gray-pointer async FIFOs on every multi-bit crossing, two-flop synchronizers on every single-bit one | `rtl/async_fifo.v`, `rtl/sync2ff.v`; G7 finds 8 real crossings in `bench_top` |
 | Clock divider logic, multiple ratios | **/2, /3, /4, /5** | `rtl/clkdiv.v`, `rtl/bench_top.v` |
-| ~50K standard cells | **48,616 instantiated**, 8,274 flops | `tools/bench_size.py`, cross-checked against a fresh Yosys flatten |
+| ~50K standard cells | **55,413** as REPORT §4 reports it; **48,616** on the fixture this row measures | see the note below |
+
+**Why two cell counts, and which is which.** `REPORT.md` §4, `README.md` and
+`docs/measurement-methodology.md` all say **55,413**: that is the v2 benchmark,
+hierarchical, before the physical lever runs. `tools/bench_size.py` and
+`DEMO.md` say **48,616**: that is `v3_bufsize_it3`, the *flattened*
+buffered-and-sized netlist the later experiments use. A buffered netlist being
+smaller than the unbuffered one looks like an error and is not: flattening
+collapses redundant decode logic across the hierarchy boundary (REPORT §7.3),
+and that saves more cells than the buffering adds. Both are ~50K and both are
+correct for the fixture named beside them. The count is cross-checked against a
+fresh Yosys `flatten` on each.
 
 ### Tools
 
@@ -143,7 +154,11 @@ Each with its nearest prior art, conceded where it narrows the claim.
    authors' own checker included and failing twice.
 3. **G0, constraint integrity as a gate.** No equivalence checker can catch a
    constraint edit, because the two designs are the same file. Measured at
-   +5.179 ns.
+   +5.179 ns on a byte-identical netlist. Written up in REPORT §5.3.
+   **`experiments/sdc_integrity/` is exploratory and not pre-registered**, and
+   says so in its own notes. It demonstrates a mechanism; it does not carry the
+   pre-registration evidence §4 below describes, and should not be counted
+   among the 17.
 4. **G7, CDC as a formal property rather than a lint.** Hamming safety checks
    that the value crossing a boundary changes at most one bit per cycle, so it
    checks the *property* and not the encoding. Detects both SlackBench CDC
@@ -194,7 +209,8 @@ Each with its nearest prior art, conceded where it narrows the claim.
 
 ## 6. How to verify any of this
 
-    git clone <repo> && cd slacksmith-benchmark
+    git clone https://github.com/nilaymastaadmi/nebula-slacksmith
+    cd nebula-slacksmith
     bash tools/preflight.sh      # names any missing dependency
     bash tools/demo_check.sh     # 15 assertions across the claims above
 

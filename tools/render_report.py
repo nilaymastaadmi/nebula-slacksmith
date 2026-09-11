@@ -5,9 +5,17 @@ against the organizer's 10 to 12 page limit is MEASURED rather than estimated.
 
 Estimating from word count was wrong by a wide margin here. At 6,244 words a
 words-per-page estimate calibrated on an earlier revision predicted 12.4 to
-14.6 pages. The measured figure at the settings below is **10.39**. The report
-is table-heavy, and tables carry far more content per vertical inch than prose,
+14.6 pages; the measured figure at that revision was 10.39. The report is
+table-heavy, and tables carry far more content per vertical inch than prose,
 so any words-per-page rule overstates it.
+
+**Re-measure after every edit; do not quote a number from this docstring.**
+The 10.39 above is a historical measurement of a 6,244-word revision and was
+read as current by an external reviewer on 2026-09-11, who then reported the
+repository as contradicting itself. Measured 2026-09-11 at 8,073 source words:
+**12.36 pages, over the 12-page cap.** A figure baked into a comment ages into
+a false claim, which is the same failure mode as the hard-coded paths this
+project already fixed once.
 
 Usage:
     pip install markdown

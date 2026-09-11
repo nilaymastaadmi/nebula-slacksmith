@@ -40,7 +40,7 @@ The reason latency is off-limits is real. Insert a pipeline stage and the design
 | k > 0, elastic interface | stream equivalence | SymbiYosys + `cover` |
 | k = 0, re-encoded state | mapped-state equivalence | SymbiYosys with supplied bijection |
 
-All four branches are proven on real RTL, not toys (§6).
+All four branches are discharged on blocks of the benchmark itself, not on toy designs written to suit them (§6). Two pieces of §6 evidence are **fixtures by construction and are labelled as such**: the interface-classifier table in §6.1 (`mac_ref`, `alias_names`, `axi_style`, `costume_ready`) and the four mutants in §6.2. Those fixtures test the *classifier* and the *checkers*, which is what they are for; the obligations themselves run on benchmark RTL.
 
 ## 3. Deliverable coverage
 
@@ -75,7 +75,7 @@ Four of the five crossings both launch *and* capture on generated clocks, which 
 
 Third-party content: the AES-128 core is `secworks/aes`, BSD-2-Clause, vendored unmodified under `rtl/aes/` with its license and a `THIRD_PARTY.md`. The RV32I core is ours, from `rv32-dsp-soc`, verified against a golden C++ instruction-set simulator over a 400-seed, 132,400-instruction differential regression.
 
-## 5. Timing analysis framework, and three findings about measurement
+## 5. Timing analysis framework, three findings, and the gate below all of them
 
 The SDC is **written once and frozen** before any optimization runs. The agent never edits constraints, and timing exceptions including multi-cycle paths are excluded from the transform set entirely, so no reported improvement can come from relaxing the measurement.
 
@@ -102,6 +102,25 @@ Under v2, and after the correction below, the baseline **meets** `clk_a` at +1.3
 Finding 1 above is correct in substance and **was not in effect**. The exclusion list is built by scanning the liberty for cell names; the liberty writes `cell ("name")` with quotes and the regex expected it without, so it matched nothing and silently returned an empty flag string. Every netlist built between that "fix" and its discovery carries 203 `lpflow` cells and the 12.8 ns artifact the exclusion exists to remove. It was found by reading a critical-path report and seeing the banned cell at 12.824 ns on a path where it was supposedly forbidden. There was no test, which is why nothing caught it, and every measurement since asserts the list is non-empty.
 
 All affected numbers were re-measured: the `clk_a` baseline carried **4.62 ns** of artifact and the proven transforms' deltas moved 40 to 50%, but **no qualitative conclusion changed**. The exclusion is also **not** uniformly beneficial, since `clk_a` gains 4.62 ns while `clk_b` and `clk_e` each lose 1.97 ns: constraining the mapper removes options from paths that used those cells benignly.
+
+### 5.3 G0, constraint integrity: the one attack no equivalence checker can see
+
+Everything above trusts the SDC. We measured what that trust is worth. On **one netlist, 26,958 cells, byte-identical in every row**, with no RTL edit, no resynthesis and no gate resized, the only thing varied was the constraint file:
+
+| appended constraint | `clk_e` |
+|---|---|
+| none (honest baseline) | **−0.319 VIOLATED** |
+| `set_multicycle_path 2 -setup -to <endpoint>/D` | −0.295 |
+| `set_false_path -to <endpoint>/D` | −0.295 |
+| `set_multicycle_path 2 -setup -from clk_e -to clk_e` | **+4.860 MET** |
+
+One line closes the group, worth **+5.179 ns**, more than this project's best formally proven RTL transform (+4.925), and it changes nothing at all. **Every checker we own returns "equivalent" on that pair, correctly, because the two designs are the same file.** A project whose entire correctness story is functional equivalence has no defence against a constraint edit.
+
+Mechanistically, the narrow version does not pay: aiming the exception at the reported endpoint buys 0.024 ns because the worst path moves to the next endpoint in the same group. Only the domain-wide exception works, and that is a conspicuous line in an SDC diff, provided anyone looks.
+
+So the policy became a gate. **G0 runs before G1**: SHA-256 the SDC actually loaded, compare it against the registered digest, count the timing exceptions, and refuse to report any measurement taken under constraints that differ from the frozen file (`sdc_fingerprint()` in `tools/slacksmith.py`, `--expect-sdc-sha`). It is cheap and it closes the one surface G1 to G5 structurally cannot reach.
+
+`experiments/sdc_integrity/` is **exploratory, not pre-registered**, and is labelled that way in its own notes: it demonstrates a mechanism rather than testing a hypothesis, so there was nothing to be wrong about. It should not be read as carrying the pre-registration evidence that §7 does.
 
 ## 6. Formal equivalence: four branches, all on real RTL
 
