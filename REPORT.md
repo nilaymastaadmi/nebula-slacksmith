@@ -365,6 +365,27 @@ failure SlackBench exists to measure, found in our own new checker, and caught o
 because gold was run through every check alongside gate. **A checker exercised only on
 the case expected to fail is indistinguishable from one that always fails.**
 
+### 7.6 Two of the four named classes were unreachable, and we found out from a reviewer
+
+The objectives name pipelining, logic restructuring, **retiming** and **FSM optimization**. For most of this project the engine proposed the first two. The explanation on the record was that nobody had written the others. **That explanation was never tested and it was wrong.**
+
+`gate_proposal.py`'s G3 check required `k = 0 ⇒ flop delta = 0`, with no exception. A retiming moves a register across combinational logic: k = 0, flop count changes. A state re-encoding widens a register: k = 0, flop count changes. **Neither could pass G3 whatever its content**, so the proposer could not express one. Worse, `proposer_prompt.md` *advertised* branch 4 to the model, described as "you re-encoded state, e.g. binary to one-hot", while every k = 0 proposal was routed to EQY before its declared branch was read. A proposer that followed the template was guaranteed a rejection.
+
+Measured on our own published one-hot `domain_b`, RTL unchanged: `FAIL(declared k=0 but flop count changed by +12)` through the old gate, `PROVEN` in 64 s through the fixed one. That is why `experiments/fsm_reencode/` carries a hand-written miter and never invokes the gate.
+
+Branches 4 and 5 are now implemented, both `k = 0` with the flop delta unconstrained, both discharged by the **sequential miter** rather than EQY, because neither leaves a flop correspondence for EQY to pair internal nets across. Against `aes_key_mem`, the module the loop actually binds on `clk_b`:
+
+| proposal | class | branch | verdict |
+|---|---|---|---|
+| O1 `retime_write_decode_forward` | retiming | 5 | **PROVEN**, 2 of 3 outputs |
+| O2 `fsm_output_coded_state_assignment` | FSM optimization | 4 | **PROVEN**, 2 of 3 outputs |
+
+**"2 of 3 outputs" is not a hedge and the excluded one is the payload.** `round_key = key_mem[round]`; `key_mem` holds 15 rows, an AES-128 schedule writes 11, `round` is a free 4-bit input, and Yosys does not apply an async reset to a memory. So `key_mem[12]` is arbitrary and independent in the two instances forever. This is **not** a harness limit: `round_key` equivalence is not a property of `aes_key_mem` at all without an assumption about reachable `round` values, which belongs to the enclosing core. A gate reporting it PROVEN would be reporting something false.
+
+**Getting to those two verdicts took three tries and cost us a published claim's certainty for an afternoon.** O1 first came back REFUTED. The counterexample showed the two instances starting from different arbitrary `key_mem` contents: **the miter refutes this module against itself**, `FAIL eq_round_key` in 1 s, and `PROVEN` in 12 s with that one output removed. So a null control now runs before any refutation is reported (§9). The first version of that control was built at the proposal's own k and compared gold-delayed against gold-undelayed, failing for every k > 0 proposal; registered prediction R10 caught it. The second reported `CANNOT` for a whole module when one output was poisoned, which would have discarded a decidable question; R13 caught that. Both misses are in `experiments/missing_classes/PREREGISTRATION.md` with the predictions that produced them.
+
+**The confound reached a published number and was cleared by measurement.** A3 (§7.1) is published REFUTED on this same module through this same miter. Under the per-output control its refutation fails on `eq_ready`, an output the control **proves**, so it was never the artifact and the published verdict stands unchanged. **P5 did not clear**: its control does not close in 300 s against 2,048 flops, so P5 is REFUTED **uncorroborated**, which is weaker than this report previously implied and is the true statement until the control closes.
+
 ## 8. Optimized RTL and PPA
 
 Core level (`rv32i_core` alone, transform is 100% of the design; reset false-pathed, otherwise the recovery check masks the data path):
