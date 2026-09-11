@@ -174,7 +174,7 @@ Two limits: pass 3 is bounded (depth 16), and exotic flow control that misses th
 
 ### 6.2 Why simulation is not a substitute, measured on four mutants
 
-Before the LLM experiment we measured the same question on four hand-built mutants of a known-correct transform, with a correct control that every method passes. **Two of the three invalid mutants escaped a realistic simulation gate.** One is the classic pipelining bug, stage 2 adding the current operand to a product one cycle old, invisible to any testbench holding that operand constant; the other is wrong on roughly one input in a million and survived 20,000 random vectors in both regimes, where formal refuted it instantly. §7 reproduces this on a real LLM proposal, and §7.4 turns it into a suite.
+Before the LLM experiment we measured the same question on four hand-built mutants of a known-correct transform, with a correct control that every method passes. **Two of the three invalid mutants escaped a realistic simulation gate.** One is the classic pipelining bug, stage 2 adding the current operand to a product one cycle old, invisible to any testbench holding that operand constant; the other is wrong on roughly one input in a million and survived 20,000 random vectors in both regimes, where formal refuted it instantly. §7 reproduces this on a real LLM proposal; §7.4 turns it into a suite.
 
 ## 7. The GenAI engine, and the experiment we pre-registered
 
@@ -284,7 +284,7 @@ Against SDC v2 it closes in **2 iterations and 46.7 seconds**, and the RTL lever
 
 **The proposer is online, and the reason it was not is a mistake we made.** Until 5 Sept this section said the loop could not generate proposals "because the anti-tuning rule forbids generating a proposal after seeing a gate result". That conflates two things: pre-registration forbids the **experimenter** changing the hypothesis or the scoring after seeing results, not the **system** proposing in response to a measurement, which is the loop working.
 
-**Two online proposals, both proven, one kept and one rejected by measurement.** O1 moved `clk_e` −25.957 to **−24.079** and was confirmed; O2 was **also PROVEN and made the design 11.434 ns worse**, reverted on G5. Proof and profit are independent questions, shown inside one run on a transform written minutes earlier. Three of six registered predictions held, and "online beats frozen" is reported **inconclusive at N = 2** rather than as the refutation it superficially resembles.
+**Two online proposals, both proven, one kept and one rejected by measurement.** O1 moved `clk_e` −25.957 to **−24.079** and was confirmed; O2 was **also PROVEN and made the design 11.434 ns worse**, reverted on G5. Proof and profit are independent questions, shown inside one run on a transform written minutes earlier. "Online beats frozen" is reported **inconclusive at N = 2**.
 
 **What it does not show.** The router never chose RTL: it chose `physical` every iteration and `--force-lever rtl` overrode it, logged as `lever_forced`. O1's stated mechanism was wrong while its number was real, since Yosys re-shares the decode we split. Running online exposed a defect present since the RTL lever existed: revert restored *pristine* source rather than the last confirmed variant, silently discarding O1's confirmed +1.878 ns. It needs two accepted transforms on one file to appear, so no frozen run ever reached it.
 
