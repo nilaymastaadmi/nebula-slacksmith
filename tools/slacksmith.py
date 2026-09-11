@@ -760,6 +760,29 @@ def main():
                 key = next((f for f in rtl_files
                             if os.path.basename(f) == f"{module}.v"), None)
                 if key is None:
+                    # Filename == module name is a convention of THIS
+                    # benchmark, not of Verilog. The first external design
+                    # tried (i2c, every module in one i2c.v) stopped here with
+                    # module_not_in_file_list after the router had correctly
+                    # chosen the RTL lever, so the run ended on a naming
+                    # assumption rather than on anything it measured.
+                    # Fall back to asking the files which one declares it.
+                    decl = re.compile(r"^\s*module\s+" + re.escape(module)
+                                      + r"\s*[#(;]", re.M)
+                    for f in rtl_files:
+                        path = os.path.join(a.rtl_dir, file_subs.get(f, f))
+                        try:
+                            with open(path, encoding="utf-8",
+                                      errors="replace") as fh:
+                                if decl.search(fh.read()):
+                                    key = f
+                                    break
+                        except OSError:
+                            continue
+                    if key is not None:
+                        print(f"  binding module {module} found in {key} "
+                              f"(filename does not match module name)")
+                if key is None:
                     record(iter=it, step="stop",
                            reason="module_not_in_file_list", module=module,
                            looked_for=f"{module}.v")
