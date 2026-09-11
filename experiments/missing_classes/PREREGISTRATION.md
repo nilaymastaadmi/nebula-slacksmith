@@ -130,3 +130,41 @@ condition. It is **not edited**. This experiment adds
 | # | prediction |
 |---|---|
 | **R7** | Implementing branch 4 lets the project's existing one-hot `domain_b` (the PROBE above, unchanged RTL) reach a verdict through `gate_proposal.py` for the first time, and that verdict is **PROVEN**, agreeing with the hand-built `miter_mapped.sv` result already in `experiments/fsm_reencode/`. If the two disagree, one of the two miters is wrong and that is the result. |
+
+---
+
+## Amendment 2, 2026-09-11, after the request was written and before its verdict
+
+**1. The loop did not bind `domain_b`.** This registration assumed the `clk_b`
+proposal would target the 10-state FSM. Live state disagreed: at iteration 1
+the `clk_b` critical path is inside **`aes_key_mem`**, 30.602 ns across 9
+cells, fanout share **0.9139**, with a `nor4_1` at **300 loads** carrying
+21.029 ns. The loop was not steered to a different module to suit the
+registration. R3, R4 and R5 are therefore scored against **`aes_key_mem`**,
+which is the harder and more honest test because it is the design's real
+binding path rather than a block chosen for being convenient.
+
+Proposal **O1** is a forward retiming of `round_ctr_reg` across the `key_mem`
+write decoder, declared branch 5, flop delta declared positive at k = 0.
+
+**2. Proposer contamination, disclosed.** Before this request was written, the
+session had already seen `PROBE_fsm` return **PROVEN** through the new branch 4.
+That is a G4 verdict on a transform of `domain_b`, so a proposer writing an FSM
+proposal for `domain_b` in this session **would not be blind**. Consequences,
+adopted now:
+
+- The FSM proposal in this experiment **may not be the binary-to-one-hot
+  re-encoding**, whose verdict is known. It must be a different FSM transform.
+- `PROBE_fsm` is reported as a **probe of the gate**, not as a proposal, and is
+  excluded from any proposal count.
+- R7's result stands as evidence about the *gate* (branch 4 reaches a verdict
+  at all, and agrees with the hand-built miter), not as evidence about the
+  *proposer*.
+
+**3. R5's bar, stated before the number exists.** R5 predicted the retimed
+variant does not improve its own group. The classifier puts **91.4%** of this
+path's delay in fanout, and this transform does not reduce fanout: it moves the
+decoder off the launch-to-capture path while the 300-load net remains. So the
+registered prediction is **no material improvement**, and any improvement at
+all would be evidence against the project's own fanout thesis and would be
+reported as such.
