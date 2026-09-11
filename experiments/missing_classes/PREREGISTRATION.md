@@ -802,3 +802,35 @@ never in question.
 
 If R28 misses, P5's published REFUTED is in real doubt rather than merely
 uncorroborated, and that is a much larger finding than anything above.
+
+## Amendment 9, 2026-09-11: the replay failed, and how it failed points somewhere worse
+
+R28's replay does not elaborate. `trace_tb.v` drives
+`UUT._witness_.anyinit_procdff_*`, which exist in the model SBY prepped and not
+in the RTL, so the testbench cannot be run against source. R28 and R29 are
+**VOID, not falsified**: the method was never exercised.
+
+**What the failure exposes matters more than the method.** The witness names
+are per instance:
+
+    UUT.u_g._witness_.anyinit_procdff_2072
+    UUT.u_t._witness_.anyinit_procdff_1882
+
+**Gold and gate are given separate initial values.** That is the same defect
+the reviewer identified on `aes_key_mem`, and `rv32i_core` has the same
+precondition: an unreset register file. P5's counterexample may depend on two
+copies of one CPU powering up with **different register files**, which is not a
+difference any transform introduced.
+
+If so, P5's published REFUTED is not merely uncorroborated. **It is wrong.**
+
+| # | prediction |
+|---|---|
+| **R30** | With `--zero-init`, P5 **still REFUTES**. Its stated mechanism, a k-padded obligation delaying all outputs against a transform that delays some, has nothing to do with power-up state, exactly as A3's did not |
+| **R31** | With `--zero-init`, the null control on `rv32i_core` **closes**, because the register file is no longer independently arbitrary. This is the same fix that took `aes_key_mem`'s control from failing in 1 s to passing, and if it holds it settles R19, R24, R26 and R27 in one run |
+
+**R30 is registered as the expected outcome and R31 as the useful one.** If R30
+misses, a published refutation in `experiments/llm_proposer/` is an artifact of
+our harness and the report's headline count changes from "3 of 12 formally
+refuted" to 2. That would be the largest single correction in this project and
+it would have been found by a reviewer's paragraph about a different module.
