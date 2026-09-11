@@ -76,3 +76,61 @@ already returns a clean error for `FileNotFoundError`; an empty string raises
 `PermissionError` instead and slipped past it.
 
 Predictions C1 to C4 are unchanged and unseen.
+
+---
+
+## Attempt 2, 2026-09-11: the run completed with no human in it
+
+    claude: /home/toshn/.local/bin/claude
+    === iteration 1 ===
+    measure: clk_b=-18.957
+    classify clk_b: FANOUT_DOMINATED (fanout share 0.9139) -> physical
+      LEVER FORCED to rtl
+      online proposal O1: fanout_replication_round_key_update (declared k=0)
+      gate O1: G3=PASS G4=PROVEN
+      G7 O1: SKIPPED (aes_key_mem has no clock crossings)
+      APPLY O1 provisionally
+    1 iterations, 456.1s
+
+| # | registered | outcome |
+|---|---|---|
+| **C1** | valid JSON on the first attempt | **CONFIRMED.** `_extract_json` and `_validate` both passed first try, with two warnings and a failing hook message mixed into the captured text |
+| **C2** | the proposal reaches a G4 verdict of any kind | **CONFIRMED. PROVEN.** The loop measured, classified, proposed, gated and applied with no human in it |
+| **C4** | the transform is logic restructuring, not retiming or FSM | **CONFIRMED.** `fanout_replication_round_key_update`, declared branch 1 |
+| **C3** | no material improvement to `clk_b` | **NOT YET MEASURED.** `--max-iters 1` stopped the run after the provisional apply, before the confirm-or-revert re-measure |
+
+**D2's disclosure changes.** "The automated backend is committed unexercised"
+is no longer true. N = 1, one design, one sample, and the run is preserved at
+`results/run1/` with its request, its raw response, the variant and the
+decision log.
+
+### What the model proposed, and why C3 now matters more than it did
+
+Its own rationale:
+
+> The single-bit reg `round_key_update` gates one combined if-block that drives
+> ~384 bit-positions [...] matching the reported 300-fanout nor4 on the
+> critical path. Splitting it into two buffer-duplicated copies [...] halves
+> the load per net.
+
+**It went straight at the 300-load net**, which is the correct engineering
+response to a `FANOUT_DOMINATED` verdict and a sharper choice than the retiming
+this session wrote by hand for the same module.
+
+That makes C3 a test of **this project's central negative claim**, not a
+footnote. §1 and §7.2 say no RTL rewrite shortens a net's load delay. This is an
+RTL rewrite whose entire purpose is to shorten a net's load delay, and it is
+formally proven correct.
+
+**Registered mechanism, before the number exists.** I expect C3 to hold, and
+for a specific reason: the two "buffer copies" are pure aliases
+(`assign round_key_update_km = round_key_update;`). `opt_clean` merges
+equivalent nets, so after synthesis the driver's total load is unchanged and
+only the cone duplication survives. If that is what the measurement shows, the
+project's claim sharpens from *"RTL cannot shorten a net's load delay"* to
+**"RTL cannot express a fanout split that survives logic optimisation, because
+net merging is exactly what the optimiser does"** — which is a mechanism rather
+than an observation.
+
+If instead `clk_b` improves materially, the claim in §1 is too strong and the
+report changes.
