@@ -429,3 +429,31 @@ control **closes**, either PROVEN (corroborating the refutation) or FAIL
 (voiding it). If it still does not close, the honest conclusion is that this
 harness cannot corroborate any refutation on a 2,048-flop design and every
 `rv32i_core` refutation in the project inherits "uncorroborated".
+
+## R17, recorded as it landed, 2026-09-11
+
+    "G3": "PASS(state-remap: k=0, flop delta unconstrained)",
+    "dff_delta": -2,
+    "G4_null_control": "REFUTES on round_key; PASSES on ready,sboxw",
+    "G4_partial_pdr": "PROVEN -- 16s",
+    "G4": "PROVEN (partial: 2 of 3 outputs; round_key undecidable,
+            driven by state the reset does not reach)"
+
+**R17 CONFIRMED.** The FSM output-coded state assignment reaches a real verdict
+rather than `CANNOT`.
+
+**Both classes the problem statement names and this engine could not express
+are now proposed, routed and discharged.** Retiming through branch 5, FSM
+optimization through branch 4, each on the module the loop actually binds.
+
+**One number was not predicted: `dff_delta` is −2, not 0.** The re-encoding was
+designed to keep `key_mem_ctrl_reg` at three bits, so the flop count should not
+have moved. Synthesis removed two flops elsewhere, presumably because four
+control outputs became direct register bits and something feeding them became
+dead. Unexplained, recorded, and it does not affect the verdict: branch 4 leaves
+the flop delta unconstrained by design, which is the whole point of it.
+
+**Under the old G3 rule this proposal would have been rejected** with
+`FAIL(declared k=0 but flop count changed by -2)`, on a transform that is
+correct. That is the hypothesis of this experiment landing a second time,
+on a transform nobody wrote to demonstrate it.
