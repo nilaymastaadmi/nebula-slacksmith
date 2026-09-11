@@ -115,8 +115,8 @@ process.
 | Identify critical paths and timing violations | D3 | with fanout attribution |
 | GenAI recommends optimizations: **pipelining** | `pipeline_cut_rigid` (P5), k>0 rigid branch | refuted at G4, reported |
 | ... **logic restructuring** | operator sharing (P1,P2,P3,P6), `mux_priority_to_parallel` (P4), `array_write_decode_split` (O1), `array_read_mux_two_level` (O2) | the bulk of the proposals |
-| ... **retiming** | `retime_write_decode_forward` (O1), obligation branch 5 | **The gate could not express a retiming until 2026-09-11.** G3 required `k=0 -> flop delta 0`, and a retiming is k=0 with the flop count changed. Root-caused and fixed in `experiments/missing_classes/`; O1 is **PROVEN over 2 of 3 outputs** and **costs 4.616 ns** on its own group, a registered prediction that held. `dretime` also exists as an ABC mapping pass, which is not the same thing |
-| ... **FSM optimization** | `experiments/fsm_reencode/` (hand-built), and `fsm_output_coded_state_assignment` (O2) through the gate | Branch 4 was **advertised to the proposer and not implemented**: any re-encoding changes the flop count, so G3 rejected it before the declared branch was read. The project's own one-hot returns `FAIL(declared k=0 but flop count changed by +12)` through the unmodified gate and `PROVEN` through the fixed one. O2 is **PROVEN over 2 of 3 outputs** and buys **+3.185 ns**, the largest RTL gain on this group in the project |
+| ... **retiming** | `retime_write_decode_forward` (O1), obligation branch 5 | **The gate could not express a retiming until 2026-09-11.** G3 required `k=0 -> flop delta 0`, and a retiming is k=0 with the flop count changed. Root-caused and fixed in `experiments/missing_classes/`; O1 is **PROVEN** (unbounded, PDR) and **costs 4.616 ns** on its own group, a registered prediction that held. `dretime` also exists as an ABC mapping pass, which is not the same thing |
+| ... **FSM optimization** | `experiments/fsm_reencode/` (hand-built), and `fsm_output_coded_state_assignment` (O2) through the gate | Branch 4 was **advertised to the proposer and not implemented**: any re-encoding changes the flop count, so G3 rejected it before the declared branch was read. The project's own one-hot returns `FAIL(declared k=0 but flop count changed by +12)` through the unmodified gate and `PROVEN` through the fixed one. O2 is **PROVEN** (unbounded, PDR) and buys **+3.185 ns**, the largest RTL gain on this group in the project |
 | Evaluate timing, area, performance | D5 | area measured, +20.2% and +1.45% |
 | Formally verify equivalence | D6 | five branches plus G6 and G7 |
 
@@ -175,14 +175,23 @@ Each with its nearest prior art, conceded where it narrows the claim.
    checks the *property* and not the encoding. Detects both SlackBench CDC
    cases, which every functional checker in the suite gets wrong or cannot
    express.
-5. **A null control on the verification side.** Before any refutation is
+5. **Equal power-up state, and the check that it is not too strong.** A miter
+   that gives two copies of one chip *independent* arbitrary initial state asks
+   whether they agree from any **pair** of starting states, which no correct
+   transform satisfies. Fixing that turned two partial proofs into unbounded
+   ones over the full interface. The result only counts because a transform
+   **known to be broken still fails** under the same assumption, a void
+   condition registered before the assumption was written. Found by an external
+   reviewer, not by us; three of our own written explanations preceded it and
+   all three blamed the design rather than the tool.
+6. **A null control on the verification side.** Before any refutation is
    reported the gate re-runs the same miter with the gate replaced by the gold;
    if that also fails it reports `CANNOT` rather than `REFUTED`, and where only
    some outputs are undecidable it names them and decides the rest. Built
    because the miter was found **refuting `aes_key_mem` against itself**. REPORT
    §5 has had the equivalent control on the timing side since the start; the
    proof side had none.
-6. **Published negative results as primary output.** Registered predictions are
+7. **Published negative results as primary output.** Registered predictions are
    scored including the misses, and the misses are in the report. On 2026-09-11
    alone, 4 of 13 registered predictions missed and 3 of those 4 found a defect.
 
