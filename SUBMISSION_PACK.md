@@ -49,10 +49,16 @@ process.
 - `tools/gate_proposal.py` routes the proof obligation from the declared
   transform type.
 - Proposals: 12 frozen across two pre-registered batches
-  (`experiments/llm_proposer/`, `experiments/llm_proposer_aes/`), plus 2
-  generated online (`experiments/online_proposer/`).
-- Online result: O1 PROVEN and kept (`clk_e` −25.957 → −24.079), O2 **PROVEN
+  (`experiments/llm_proposer/`, `experiments/llm_proposer_aes/`), 2 generated
+  online by handoff (`experiments/online_proposer/`), 2 generated to close the
+  missing transform classes (`experiments/missing_classes/`), and **1 generated
+  with no human in the loop** (`experiments/cli_backend/`). **17 total.**
+- Handoff result: O1 PROVEN and kept (`clk_e` −25.957 → −24.079), O2 **PROVEN
   and 11.434 ns worse**, reverted at G5.
+- **Unattended result (N = 1):** `fanout_replication_round_key_update`, PROVEN
+  by EQY over all outputs, **+1.414 ns `clk_b`, +1.414 `clk_e`, +1.967 `clk_a`**,
+  no group paying for it. 456 s end to end. It is the only batch-3 transform
+  that improved every group.
 
 ### D3. Critical path and timing violation analysis
 - `tools/classify_path.py` scores what share of a path's delay comes from cells
@@ -109,8 +115,8 @@ process.
 | Identify critical paths and timing violations | D3 | with fanout attribution |
 | GenAI recommends optimizations: **pipelining** | `pipeline_cut_rigid` (P5), k>0 rigid branch | refuted at G4, reported |
 | ... **logic restructuring** | operator sharing (P1,P2,P3,P6), `mux_priority_to_parallel` (P4), `array_write_decode_split` (O1), `array_read_mux_two_level` (O2) | the bulk of the proposals |
-| ... **retiming** | `retime_write_decode_forward` (O1), obligation branch 5 | **The gate could not express a retiming until 2026-09-11.** G3 required `k=0 -> flop delta 0`, and a retiming is k=0 with the flop count changed. Root-caused and fixed in `experiments/missing_classes/`; see the notes there for O1's verdict. `dretime` also exists as an ABC mapping pass, which is not the same thing |
-| ... **FSM optimization** | `experiments/fsm_reencode/` (hand-built), and `fsm_output_coded_state_assignment` (O2) through the gate | Branch 4 was **advertised to the proposer and not implemented**: any re-encoding changes the flop count, so G3 rejected it before the declared branch was read. The project's own one-hot returns `FAIL(declared k=0 but flop count changed by +12)` through the unmodified gate and `PROVEN` through the fixed one |
+| ... **retiming** | `retime_write_decode_forward` (O1), obligation branch 5 | **The gate could not express a retiming until 2026-09-11.** G3 required `k=0 -> flop delta 0`, and a retiming is k=0 with the flop count changed. Root-caused and fixed in `experiments/missing_classes/`; O1 is **PROVEN over 2 of 3 outputs** and **costs 4.616 ns** on its own group, a registered prediction that held. `dretime` also exists as an ABC mapping pass, which is not the same thing |
+| ... **FSM optimization** | `experiments/fsm_reencode/` (hand-built), and `fsm_output_coded_state_assignment` (O2) through the gate | Branch 4 was **advertised to the proposer and not implemented**: any re-encoding changes the flop count, so G3 rejected it before the declared branch was read. The project's own one-hot returns `FAIL(declared k=0 but flop count changed by +12)` through the unmodified gate and `PROVEN` through the fixed one. O2 is **PROVEN over 2 of 3 outputs** and buys **+3.185 ns**, the largest RTL gain on this group in the project |
 | Evaluate timing, area, performance | D5 | area measured, +20.2% and +1.45% |
 | Formally verify equivalence | D6 | five branches plus G6 and G7 |
 
@@ -169,8 +175,16 @@ Each with its nearest prior art, conceded where it narrows the claim.
    checks the *property* and not the encoding. Detects both SlackBench CDC
    cases, which every functional checker in the suite gets wrong or cannot
    express.
-5. **Published negative results as primary output.** Registered predictions are
-   scored including the misses, and the misses are in the report.
+5. **A null control on the verification side.** Before any refutation is
+   reported the gate re-runs the same miter with the gate replaced by the gold;
+   if that also fails it reports `CANNOT` rather than `REFUTED`, and where only
+   some outputs are undecidable it names them and decides the rest. Built
+   because the miter was found **refuting `aes_key_mem` against itself**. REPORT
+   §5 has had the equivalent control on the timing side since the start; the
+   proof side had none.
+6. **Published negative results as primary output.** Registered predictions are
+   scored including the misses, and the misses are in the report. On 2026-09-11
+   alone, 4 of 13 registered predictions missed and 3 of those 4 found a defect.
 
 ---
 
