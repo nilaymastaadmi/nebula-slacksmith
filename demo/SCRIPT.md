@@ -70,8 +70,9 @@ does not have to guess. Tool names it will get wrong unless told:
 > It did not guess which lever to pull. Ninety-one percent of that path's
 > delay sits in cells driving thirty-two or more loads, and the worst single
 > cell burns twenty-one nanoseconds driving three hundred loads inside the
-> A E S key memory. No R T L rewrite shortens a net's load delay, so the tool
-> routed to a physical lever instead of spending a proposal on it.
+> A E S key memory. Physical buffering is built to fix a net's load and R T L
+> is not, so the tool routed to a physical lever instead of spending a proposal
+> on it.
 
 **CALLOUT (Remotion lower third):** `fanout 300 — 21.029 ns in one cell`
 
