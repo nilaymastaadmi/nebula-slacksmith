@@ -365,9 +365,24 @@ Four predictions were registered before the run. **Three held and the fourth was
 
 That is the only batch-3 transform that improved every group, and it has the strongest proof of the three (§7.6). It is also **N = 1**: one design, one sample of a nondeterministic generator, one run. The claim is that the automation path works, not that it works reliably.
 
-## 8. Optimized RTL and PPA
+## 8. Optimized RTL, frequency and PPA
 
-Core level (`rv32i_core` alone, transform is 100% of the design; reset false-pathed, otherwise the recovery check masks the data path):
+**Design level, with placement parasitics.** Required period is read from the **capture clock named in each path report**, not from the path group's `create_clock` period, and that distinction is not pedantic: after `repair_design` the `clk_b` group's binding path is captured by **`clk_b_div3` at 79.5 ns**, not by `clk_b` at 26.5. Deriving a frequency from the group name would have reported `clk_b` three times faster than it is.
+
+| group | capture clock | period | slack | **required period** | **F_max** |
+|---|---|---|---|---|---|
+| clk_a before | `clk_a` | 30.000 | −36.723 | 66.723 | 14.99 MHz |
+| clk_b before | `clk_b` | 26.500 | −43.438 | 69.938 | 14.30 MHz |
+| clk_e before | `clk_e` | 26.500 | −47.683 | 74.183 | 13.48 MHz |
+| clk_a after | `clk_a` | 30.000 | **+17.593** | **12.407** | **80.60 MHz** |
+| clk_b after | **`clk_b_div3`** | 79.500 | **+12.367** | **67.133** | **14.90 MHz** |
+| clk_e after | `clk_e` | 26.500 | **+19.529** | **6.971** | **143.45 MHz** |
+
+Five asynchronous domains have no single F_max, so the design-level figure is the factor **k** by which every period must be scaled for all of them to meet: `k = max(required / period)`. Before, **k = 2.799**, binding on `clk_e`, so the design runs at **0.357x** its SDC target. After, **k = 0.844**, binding on `clk_b`, so it runs at **1.185x** target with margin. **The flow improves achievable frequency by 3.32x.**
+
+Two honesty notes. The binding domain **moves** from `clk_e` to `clk_b`, so before-and-after F_max for any single group is not a like-for-like comparison; the scaling factor is. And only `clk_a`, `clk_b` and `clk_e` are reported, because `clk_c` and `clk_d` met at baseline and were never in the optimization loop.
+
+**Core level** (`rv32i_core` alone, transform is 100% of the design; reset false-pathed, otherwise the recovery check masks the data path):
 
 | variant | cells | data WNS (ns) | power (mW) |
 |---|---|---|---|
@@ -377,11 +392,9 @@ Core level (`rv32i_core` alone, transform is 100% of the design; reset false-pat
 | P3 | 6,700 | −12.65 | 6.62 |
 | P6 | 6,864 | **−7.88** | 6.38 |
 
-As frequency, which is what deliverable 5 asks for: at core level a 10 ns constraint with −9.84 ns of violation means a required period of 19.84 ns, so **F_max 50.4 MHz baseline and 55.9 MHz with P6**, an 11.0% improvement.
+**The rankings invert between contexts.** By core timing the best transform is P6; at design level P6 is the **worst** (−1.615 ns), and the only design-level winner is P2, nearly neutral at core level. Two real mechanisms: the core's critical path is not the design's, plus the non-local remapping quantified in §5. Earlier drafts quoted a core-level **F_max of 50.4 to 55.9 MHz, an 11.0% gain, for P6** — zero-parasitic, reset false-pathed, and for the transform that is worst where it matters. That was the most favourable framing available for the least useful result, and the parasitic-aware table above replaces it.
 
-**The rankings invert between contexts.** By core timing the best transform is P6 (+1.96 ns); at design level P6 is the **worst** (−1.615 ns), and the only design-level winner is P2, which is nearly neutral at core level. Two real mechanisms: the core's critical path is not the design's (inside `bench_top` the binding path runs through the wrapper's async-read memory and its fanout, not the ALU cone), plus the non-local remapping quantified in §5. We report both contexts for all four transforms, because a report quoting only the core table would name P6 the best transform and one quoting only the design table would name it the worst.
-
-Power is vector-free at default switching activity and flat at 223 to 224 mW across all variants (a 351-cell change is 0.6% of a 55K design), reported as a null. The resolvable area cost is `repair_design`'s **+20.2%** (§7.2).
+Power is vector-free at default switching activity and flat at 223 to 224 mW across all variants (a 351-cell change is 0.6% of a 55K design), reported as a null. Area: `repair_design` costs **+20.2%**, and CTS plus global routing a further **+1.45%** (§7.2).
 
 ## 9. What we got wrong
 
