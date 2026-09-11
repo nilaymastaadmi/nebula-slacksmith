@@ -26,19 +26,17 @@
 <p>Repository: <code>github.com/nilaymastaadmi/nebula-slacksmith</code> (branch <code>sandbox</code>). Every number in this report was produced by running the flow; the command that produced each one is in the cited experiment directory.</p>
 <h2>1. Summary</h2>
 <p>An LLM proposes RTL transforms. A formal gate decides whether they are correct. We built both halves, then measured the half everyone assumes works. An LLM pointed at a timing report fails in two ways, and we measured both: it proposes transforms that are <strong>wrong</strong>, and transforms that are <strong>correct and aimed at the wrong variable</strong>.</p>
-<p><strong>Failure one, correctness.</strong> We asked an LLM for transforms against real timing reports, froze every proposal before running any check, and ran two pre-registered batches. <strong>3 of 12 were formally refuted, 1 more was rejected at precondition, and 1 is unresolved.</strong> One of the three parses, elaborates, passes every precondition, reduces cell count by 208, and is wrong. A testbench running the design's own shipped firmware misses it. Twenty thousand random instruction vectors miss it. The formal gate caught it in 46 seconds with a concrete counterexample. <strong>The gates that agentic RTL tools actually ship with would have accepted a broken rewrite.</strong></p>
-<p>That count started at 4 refuted. It is 3 because batch 2 caught <strong>our own gate manufacturing a refutation</strong>: EQY prints the same "Failed to prove equivalence" line whether it found a counterexample or ran out of depth, and we matched on the string (§7.1).</p>
-<p><strong>Failure two, relevance.</strong> Then we asked whether the transforms that <em>are</em> correct actually help. Mostly they did not, for a measurable reason: the binding paths were <strong>59% to 91% fanout-attributable delay</strong>, and that delay is a net's load, which physical buffering is built to fix and RTL is not. <strong>OpenROAD <code>repair_design</code>, changing zero lines of RTL, bought +55.805 ns and closed all three groups</strong>, at 20.2% area, against <strong>+4.925 ns</strong> from our best proven RTL transform.</p>
-<p><strong>We over-claimed this and a later measurement caught us.</strong> Earlier drafts of this section said <em>no RTL rewrite shortens a net's load delay</em>. That absolute is false. On a path the classifier scored <strong>91.4% fanout-attributable</strong>, two of three batch-3 transforms improved it: an FSM re-encoding by <strong>+3.185 ns</strong> and a fanout split, proposed by the model with no human in the loop, by <strong>+1.414 ns</strong> with no group paying for it (§7.6, §7.7). The honest claim is a <strong>ratio, not an impossibility</strong>: RTL work on a fanout-dominated path bought about <strong>one sixth</strong> of what physical buffering bought here, which is why the router prefers physical and why it is a router rather than a rule.</p>
-<p><strong>One thing about this loop that belongs here and not in a footnote.</strong> <strong>Under a correct classifier the router never selects the RTL lever on this benchmark at all</strong>; every in-loop RTL result was produced with <code>--force-lever rtl</code>, logged as <code>lever_forced</code>. That is a finding about the benchmark, whose binding paths are fanout-dominated. The unattended backend does now run: one end-to-end run with no human in it, <strong>N = 1</strong> (§7.7).</p>
-<p>So SlackSmith routes twice: the <strong>proof obligation</strong> by declared transform type, and the <strong>fix</strong> by measured path pathology, which the measurement forced on us. The two levers are sequential rather than alternative, and where they run out we say so. Under our tightest target the RTL lever never fires at all, the flow itself proves a larger lever than anything we proposed, and <code>repair_design</code>'s output is now formally proven equivalent to its input in 38 seconds after four attempts that failed for reasons we can name.</p>
+<p><strong>Failure one, correctness.</strong> We asked an LLM for transforms against real timing reports, froze every proposal before running any check, and ran two pre-registered batches. <strong>3 of 12 were formally refuted, 1 more was rejected at precondition, 1 is unresolved.</strong> One of the three parses, elaborates, passes every precondition, reduces cell count by 208, and is wrong. A testbench running the design's own shipped firmware misses it. Twenty thousand random instruction vectors miss it. The formal gate caught it in 46 seconds with a concrete counterexample. <strong>The gates that agentic RTL tools actually ship with would have accepted a broken rewrite.</strong> That count started at 4 refuted; it is 3 because batch 2 caught <strong>our own gate manufacturing a refutation</strong> (§7.1, §9).</p>
+<p><strong>Failure two, relevance.</strong> Then we asked whether the transforms that <em>are</em> correct actually help. Mostly they did not, for a measurable reason: the binding paths were <strong>59% to 91% fanout-attributable delay</strong>, which is a net's load, and physical buffering is built to fix that. <strong>OpenROAD <code>repair_design</code>, changing zero lines of RTL, bought +55.805 ns and closed all three groups</strong> at 20.2% area, against <strong>+4.925 ns</strong> from our best proven RTL transform.</p>
+<p><strong>We over-claimed that and a later measurement caught us.</strong> Earlier drafts said <em>no RTL rewrite shortens a net's load delay</em>. The absolute is false: on a path scored <strong>91.4% fanout-attributable</strong>, an FSM re-encoding bought <strong>+3.185 ns</strong> and a fanout split, proposed with no human in the loop, bought <strong>+1.414 ns</strong> with no group paying (§7.6, §7.7). The honest claim is a <strong>ratio, not an impossibility</strong>: RTL work bought about <strong>one sixth</strong> of what physical buffering bought here, which is why this is a router and not a rule.</p>
+<p><strong>One limit that belongs here and not in a footnote.</strong> <strong>Under a correct classifier the router never selects the RTL lever on this benchmark at all</strong>; every in-loop RTL result used <code>--force-lever rtl</code>, logged as <code>lever_forced</code>. That is a finding about the benchmark. The unattended backend does now run, <strong>N = 1</strong> (§7.7).</p>
+<p>So SlackSmith routes twice: the <strong>proof obligation</strong> by declared transform type, and the <strong>fix</strong> by measured path pathology, which the measurement forced on us. The two levers are sequential rather than alternative, and where they run out we say so.</p>
 <h2>2. The problem, and what is actually new here</h2>
-<p>Timing closure is manual because static timing analysis speaks in cells and nets while RTL speaks in <code>always</code> blocks. An LLM bridges those representations well. The difficulty is not proposing a rewrite; it is knowing whether the rewrite is correct.</p>
-<p><strong>Scoped precisely, because the loose version is false.</strong> Generation-mode agents write any latency they like. The accurate claim is that we found no published system that both <em>changes</em> latency and <em>discharges a formal obligation for it</em>. Dr. RTL (ICCAD 2026) preserves micro-architecture "including pipeline latency", permitting only "latency-preserving sequential restructuring". RTLScout gates on a Verilator testbench with <code>abc cec</code> secondary and skipped on most of its sequential benchmarks, and CEC structurally cannot see an added register.</p>
-<p>Four neighbours narrow our claim, two of them badly. <strong>ASPEN</strong> (MLCAD 2025) and <strong>ROVER</strong> (TCAD 2024) pair rewriting with formal justification through combinational obligations, and ROVER's propose-then-EC-gate loop is <strong>structurally our shape with the search replaced by a model</strong>. <strong>EquivFusion</strong> (arXiv 2604.16571) already derives the obligation from a declared scope; our taxonomy is finer, five types against two, and that is honestly the whole difference. <strong>ElasticMiter</strong> (ASPLOS 2025) formalises latency-insensitive rewrites in Coq and states outright that latency-insensitivity is incompatible with standard sequential equivalence, which is our elastic branch proved more rigorously than we prove it, so "agreement modulo k cycles under back-pressure" is <strong>not ours</strong>. What remains is narrower: the five obligation types are routed <em>automatically from a declared transform type</em> on an entirely open-source stack, and Dr. RTL's 14% sequential-equivalence failure rate is what happens when that routing is left implicit.</p>
-<p><strong>And measuring how often the model is wrong is not new either.</strong> Dr. RTL reports an 86% SEC pass rate, and <strong>RealBench</strong> (arXiv 2507.16200) reports that <strong>44.2% of GPT-4-Turbo Verilog which passes RTLLMv2's testbenches fails formal verification</strong>. Both measure wrong code escaping a <em>weak</em> oracle. What we found measured nowhere is what escapes a checker of the <strong>wrong type</strong>, which is the four-checker matrix in §6.2 and §7, and the question <code>experiments/slackbench/</code> is registered to answer.</p>
-<p>The reason latency is off-limits is real. Insert a pipeline stage and the design is equivalent only under a latency offset the checker must be told about, so the profitable transforms are forbidden because the available checkers cannot express them.</p>
-<p><strong>What we built.</strong> Transforms are <em>typed</em>. The model emits a declared transform type rather than free-text Verilog, and that declaration mechanically determines which obligation is generated; one that cannot be discharged is never reported as a result. The interface classifier (§6.1) decides rigid versus elastic and the declared latency delta decides padded versus plain, so none of the routing is left to the model.</p>
+<p>Timing closure is manual because static timing analysis speaks in cells and nets while RTL speaks in <code>always</code> blocks. An LLM bridges those representations well. The difficulty is not proposing a rewrite; it is knowing whether the rewrite is correct. Insert a pipeline stage and the design is equivalent only under a latency offset the checker must be told about, so the profitable transforms are forbidden because the available checkers cannot express them.</p>
+<p><strong>Scoped precisely, because the loose version is false.</strong> Generation-mode agents write any latency they like. The accurate claim is that we found no published system that both <em>changes</em> latency and <em>discharges a formal obligation for it</em>. Dr. RTL (ICCAD 2026) preserves micro-architecture "including pipeline latency"; RTLScout gates on a Verilator testbench with <code>abc cec</code> secondary, and CEC structurally cannot see an added register.</p>
+<p><strong>Four neighbours narrow the claim, two of them badly.</strong> <strong>ASPEN</strong> (MLCAD 2025) and <strong>ROVER</strong> (TCAD 2024) pair rewriting with formal justification through combinational obligations, and ROVER's propose-then-EC-gate loop is <strong>structurally our shape with the search replaced by a model</strong>. <strong>EquivFusion</strong> (arXiv 2604.16571) already derives the obligation from a declared scope; our taxonomy is finer, five types against two, and that is honestly the whole difference. <strong>ElasticMiter</strong> (ASPLOS 2025) formalises latency-insensitive rewrites in Coq and states that latency-insensitivity is incompatible with standard sequential equivalence, which is our elastic branch proved more rigorously than we prove it, so "agreement modulo k cycles under back-pressure" is <strong>not ours</strong>. What remains is narrower: the five obligation types are routed <em>automatically from a declared transform type</em> on an entirely open-source stack, and Dr. RTL's 14% sequential-equivalence failure rate is what happens when that routing is left implicit.</p>
+<p><strong>Measuring how often the model is wrong is not new either.</strong> Dr. RTL reports an 86% SEC pass rate and <strong>RealBench</strong> (arXiv 2507.16200) reports <strong>44.2% of GPT-4-Turbo Verilog that passes RTLLMv2's testbenches failing formal verification</strong>. Both measure wrong code escaping a <em>weak</em> oracle. What we found measured nowhere is what escapes a checker of the <strong>wrong type</strong> (§6.2, §7, <code>experiments/slackbench/</code>).</p>
+<p><strong>What we built.</strong> Transforms are <em>typed</em>: the model emits a declared transform type rather than free-text Verilog, and that declaration mechanically determines which obligation is generated. One that cannot be discharged is never reported as a result. The interface classifier (§6.1) decides rigid versus elastic and the declared latency delta decides padded versus plain, so none of the routing is left to the model.</p>
 <table>
 <thead>
 <tr>
@@ -66,16 +64,16 @@
 <tr>
 <td>k = 0, re-encoded state</td>
 <td>mapped-state equivalence</td>
-<td>SymbiYosys with supplied bijection</td>
+<td>SymbiYosys, sequential miter</td>
 </tr>
 <tr>
 <td>k = 0, register moved</td>
 <td><strong>retiming</strong></td>
-<td>SymbiYosys sequential miter, no flop correspondence</td>
+<td>SymbiYosys, sequential miter</td>
 </tr>
 </tbody>
 </table>
-<p>Branches 1 to 4 are discharged on blocks of the benchmark itself, not on toy designs written to suit them (§6). Two pieces of §6 evidence are <strong>fixtures by construction and are labelled as such</strong>: the interface-classifier table in §6.1 (<code>mac_ref</code>, <code>alias_names</code>, <code>axi_style</code>, <code>costume_ready</code>) and the four mutants in §6.2. Those fixtures test the <em>classifier</em> and the <em>checkers</em>, which is what they are for; the obligations themselves run on benchmark RTL.</p>
+<p>All five are discharged on blocks of the benchmark itself. Two pieces of §6 evidence are <strong>fixtures by construction and labelled as such</strong>: the classifier table in §6.1 and the four mutants in §6.2. Those test the <em>classifier</em> and the <em>checkers</em>, which is what they are for.</p>
 <h2>3. Deliverable coverage</h2>
 <table>
 <thead>
@@ -221,13 +219,9 @@
 <p>Three findings changed how we report every number (<code>docs/measurement-methodology.md</code>):</p>
 <p><strong>A single library cell was worth 4.83 ns of pure artifact.</strong> The first critical path put 19.5 ns of 33.0 ns in <em>two cells</em>, which is drive, not logic depth. The culprit was <code>sky130_fd_sc_hd__lpflow_isobufsrc_1</code>, a low-power isolation cell ABC selected on area cost. Excluding the <code>lpflow</code> and <code>probe</code> families, as standard sky130 flows do, moved WNS from <strong>−27.37 to −22.54 with zero RTL change</strong>.</p>
 <p><strong>The measurement tool has a zero noise floor</strong>: swapping a module for <em>itself</em> returns 0.000 delta on every path group. <strong>But local RTL changes have non-local effects.</strong> Given that null control, the +1.398 ns a <code>domain_b</code>-only change produces on <code>clk_a</code> is not noise, it is ABC's global mapping moving an unrelated group. <strong>Reporting rule adopted:</strong> a transform's effect is the delta in the group it touches, and movement elsewhere is reported separately, never folded into the claimed benefit.</p>
-<h3>5.1 Setting a closure target that means something</h3>
-<p>The v1 periods were chosen as illustrative when the benchmark was 3,584 cells. At 55,413 cells an 8 ns <code>clk_a</code> target demands roughly four times what a single-cycle RV32I with async-read memory can reach in sky130, and against a target like that moving WNS from −25 ns to −24 ns is not progress toward anything.</p>
-<p>So we measured what each domain requires and set <code>sdc/bench_top_v2.sdc</code> about 10% tighter: <code>clk_a</code> 33.29 measured to 30.0 target, <code>clk_b</code> and <code>clk_e</code> 29.49 to 26.5, with <code>clk_c</code> and <code>clk_d</code> already met and tightened to 3.0 and 8.0. Generated-clock <code>-edges</code> are relative to master edges, so they scale automatically and no edge list changed. v1 is retained unchanged as the frozen record for every earlier measurement: revising a target with disclosure is not the same as editing constraints mid-campaign, which stays forbidden. <code>sdc/bench_top_v3.sdc</code> (§7.3) later applies the same method again, to the flow that includes the buffering pass.</p>
-<p>Under v2, and after the correction below, the baseline <strong>meets</strong> <code>clk_a</code> at +1.333 ns, with <code>clk_a_div2</code> at −0.543 and the two AES-bound domains at −4.957 each. <strong>Read those against §7.2</strong>, which shows what they become once wires exist.</p>
-<h3>5.2 The fix that did nothing, for eight commits</h3>
-<p>Finding 1 above is correct in substance and <strong>was not in effect</strong>. The exclusion list is built by scanning the liberty for cell names; the liberty writes <code>cell ("name")</code> with quotes and the regex expected it without, so it matched nothing and silently returned an empty flag string. Every netlist built between that "fix" and its discovery carries 203 <code>lpflow</code> cells and the 12.8 ns artifact the exclusion exists to remove. It was found by reading a critical-path report and seeing the banned cell at 12.824 ns on a path where it was supposedly forbidden. There was no test, which is why nothing caught it, and every measurement since asserts the list is non-empty.</p>
-<p>All affected numbers were re-measured: the <code>clk_a</code> baseline carried <strong>4.62 ns</strong> of artifact and the proven transforms' deltas moved 40 to 50%, but <strong>no qualitative conclusion changed</strong>. The exclusion is also <strong>not</strong> uniformly beneficial, since <code>clk_a</code> gains 4.62 ns while <code>clk_b</code> and <code>clk_e</code> each lose 1.97 ns: constraining the mapper removes options from paths that used those cells benignly.</p>
+<h3>5.1 Setting a target that means something, and a fix that did nothing</h3>
+<p>The v1 periods were illustrative, chosen when the benchmark was 3,584 cells; at 55,413 an 8 ns <code>clk_a</code> target demands four times what a single-cycle RV32I with async-read memory reaches in sky130, and moving WNS from −25 to −24 against that is not progress toward anything. So we measured what each domain requires and set <code>sdc/bench_top_v2.sdc</code> about 10% tighter (<code>clk_a</code> 33.29 measured to 30.0, <code>clk_b</code> and <code>clk_e</code> 29.49 to 26.5). Generated-clock <code>-edges</code> are relative to master edges, so no edge list changed. v1 is retained unchanged as the frozen record: revising a target with disclosure is not editing constraints mid-campaign, which stays forbidden. <code>sdc/bench_top_v3.sdc</code> (§7.3) applies the same method to the buffered flow. Under v2 the baseline <strong>meets</strong> <code>clk_a</code> at +1.333 ns and the two AES-bound domains sit at −4.957; <strong>read those against §7.2</strong>, which shows what they become once wires exist.</p>
+<p><strong>Finding 1 above was correct and not in effect for eight commits.</strong> The exclusion list scans the liberty for cell names; the liberty writes <code>cell ("name")</code> with quotes and the regex expected it without, so it matched nothing and returned an empty flag string. Every netlist built in between carries 203 <code>lpflow</code> cells and the 12.8 ns artifact the exclusion exists to remove. Found by reading a critical-path report and seeing the banned cell at 12.824 ns on a path where it was forbidden; there was no test, which is why nothing caught it. All affected numbers were re-measured: the <code>clk_a</code> baseline carried <strong>4.62 ns</strong> of artifact and proven transforms' deltas moved 40 to 50%, but <strong>no qualitative conclusion changed</strong>. The exclusion is also <strong>not</strong> uniformly beneficial: <code>clk_a</code> gains 4.62 ns while <code>clk_b</code> and <code>clk_e</code> each lose 1.97, because constraining the mapper removes options from paths that used those cells benignly.</p>
 <h3>5.3 G0, constraint integrity: the one attack no equivalence checker can see</h3>
 <p>Everything above trusts the SDC. We measured what that trust is worth. On <strong>one netlist, 26,958 cells, byte-identical in every row</strong>, with no RTL edit, no resynthesis and no gate resized, the only thing varied was the constraint file:</p>
 <table>
@@ -509,15 +503,13 @@
 <p>We ran the directed probe specifically so the two misses could not be mistaken for a phantom defect: the bug is fully visible to simulation (gold <code>ffffffff</code>, gate <code>0fffffff</code>). Both misses are stimulus weakness. The shipped firmware loop contains no shift instruction at all, so it can never reach the bug. <strong>The verdict tracks stimulus quality, not bug severity.</strong></p>
 <p>P5 shows the k-padded obligation doing its job in the other direction: refuted in 1 second because <code>alu_out</code> feeds the register file and PC, so a declared k = 1 shift is not what the transform actually does.</p>
 <h3>7.1 Batch 2, registered separately, on the AES key memory</h3>
-<p>Batch 1's registration required any second batch to be registered separately with its N added to the trial count, and we did (<code>02ead73</code> precedes <code>3b17e5d</code> precedes every result). <strong>Trial count: 16.</strong> Batch 2 targets <code>aes_key_mem</code>, which holds the worst path on <code>clk_b</code> and <code>clk_e</code> (−4.957 each); <code>u_aes_b</code> and <code>u_aes_e</code> are two instances of one module, so every edit is measured twice: a built-in replicate.</p>
+<p>Batch 1's registration required any second batch to be registered separately with its N added to the trial count (<code>02ead73</code> precedes <code>3b17e5d</code> precedes every result). <strong>Trial count: 16.</strong> Batch 2 targets <code>aes_key_mem</code>, which holds the worst path on <code>clk_b</code> and <code>clk_e</code>; <code>u_aes_b</code> and <code>u_aes_e</code> are two instances of one module, so every edit is measured twice.</p>
 <table>
 <thead>
 <tr>
 <th></th>
 <th>transform</th>
 <th>declared</th>
-<th>parse</th>
-<th>elab</th>
 <th>precond</th>
 <th><strong>formal</strong></th>
 <th>clk_b</th>
@@ -530,8 +522,6 @@
 <td>mux bank split</td>
 <td>k=0</td>
 <td>✓</td>
-<td>✓</td>
-<td>✓</td>
 <td>PROVEN</td>
 <td>+2.020</td>
 <td>+2.020</td>
@@ -540,8 +530,6 @@
 <td>A2</td>
 <td>decode duplication</td>
 <td>k=0</td>
-<td>✓</td>
-<td>✓</td>
 <td>✓</td>
 <td><strong>UNRESOLVED</strong></td>
 <td>n/a</td>
@@ -552,8 +540,6 @@
 <td>read port register</td>
 <td>k=1</td>
 <td>✓</td>
-<td>✓</td>
-<td>✓</td>
 <td><strong>REFUTED</strong></td>
 <td>n/a</td>
 <td>n/a</td>
@@ -562,8 +548,6 @@
 <td>A4</td>
 <td>one-hot read select</td>
 <td>k=0</td>
-<td>✓</td>
-<td>✓</td>
 <td>✓</td>
 <td>PROVEN</td>
 <td><strong>+4.925</strong></td>
@@ -574,8 +558,6 @@
 <td>reset unroll (control)</td>
 <td>k=0</td>
 <td>✓</td>
-<td>✓</td>
-<td>✓</td>
 <td>PROVEN</td>
 <td>+0.436</td>
 <td>+0.436</td>
@@ -584,8 +566,6 @@
 <td>A6</td>
 <td>key mem parity split</td>
 <td>k=0</td>
-<td>✓</td>
-<td>✓</td>
 <td><strong>REJECTED</strong></td>
 <td>n/a</td>
 <td>n/a</td>
@@ -593,9 +573,9 @@
 </tr>
 </tbody>
 </table>
-<p><strong>A4 takes <code>clk_b</code> from −4.957 to −0.032</strong>, a 99.4% reduction adding no storage, identically in both instances. <strong>Both numbers are zero-parasitic.</strong> The same group with placement parasitics is −43.438 (§7.2), against which A4's +4.925 ns is about <strong>11% of the real violation</strong>, not 99.4% of it. The percentage is true of the model it was measured in and is quoted here only with that model named. <strong>The precondition gate fired for the first time</strong>: A6 declared k = 0 while splitting a 15-entry array into two 8-entry ones, the flop count moved by +256, and G3 rejected it before any solver ran, which is exactly the case a silent state change would otherwise have had a <em>combinational</em> obligation generated for. And <strong>A5 is why we registered a control</strong>: it unrolls a reset loop, touches nothing on the read path, and still moves <code>clk_b</code> by +0.436 ns, so A4's honest figure is <strong>+4.489 above a change that does nothing</strong>.</p>
-<p><strong>A2 is the batch's real finding, and it is a bug in our gate.</strong> A2 is equivalent by inspection; the gate said REFUTED on one partition of 573 and it looked like a second P4. Three things did not fit: simulation agreed on all 16 values of <code>round</code>; EQY had proved <strong>128 of 128</strong> partitions feeding the output it failed; and that partition's log ends <code>Reached maximum number of time steps</code>, which is a <strong>bound</strong>, not a counterexample. EQY prints the same summary line for both and we matched on the string. The gate now separates <code>model found</code> from depth exhaustion, and we checked the correction does not cascade: P4's log carries concrete values, independently confirmed by directed simulation, so <strong>P4 stands</strong>.</p>
-<p>One trap worth passing on: clamping <code>round</code> to its reachable range <em>outside</em> the designs changed nothing, because <strong>EQY proves each partition with its inputs as free variables</strong>, so an external constraint never reaches the cone. Bugs that hide a result behind UNRESOLVED are the safe direction and our standing rule caught two here. A bug that turns a non-result into a confident REFUTED is the dangerous direction, and no rule caught it: what caught it was a partition failing while everything feeding it passed.</p>
+<p><strong>A4 takes <code>clk_b</code> from −4.957 to −0.032</strong>, a 99.4% reduction adding no storage. <strong>Both numbers are zero-parasitic</strong>; the same group with parasitics is −43.438 (§7.2), against which +4.925 ns is about <strong>11% of the real violation</strong>. <strong>The precondition gate fired for the first time</strong>: A6 declared k = 0 while splitting a 15-entry array into two 8-entry ones, the flop count moved by +256, and G3 rejected it before any solver ran. And <strong>A5 is why we registered a control</strong>: it unrolls a reset loop, touches nothing on the read path, and still moves <code>clk_b</code> by +0.436, so A4's honest figure is <strong>+4.489 above a change that does nothing</strong>.</p>
+<p><strong>A2 is the batch's real finding, and it is a bug in our gate.</strong> A2 is equivalent by inspection; the gate said REFUTED on one partition of 573 and it looked like a second P4. Three things did not fit: simulation agreed on all 16 values of <code>round</code>; EQY had proved <strong>128 of 128</strong> partitions feeding the output it failed; and that partition's log ends <code>Reached maximum number of time steps</code>, a <strong>bound</strong>, not a counterexample. EQY prints the same summary line for both and we matched on the string. The gate now separates <code>model found</code> from depth exhaustion, and P4's log carries concrete values confirmed by directed simulation, so <strong>P4 stands</strong>. One trap worth passing on: clamping <code>round</code> to its reachable range <em>outside</em> the designs changed nothing, because <strong>EQY proves each partition with its inputs as free variables</strong>, so an external constraint never reaches the cone.</p>
+<p>A3's REFUTED was re-checked on 11 Sept under the null control of §9, because the miter it used is the one later found refuting this module against itself. It fails on <code>eq_ready</code>, an output the control <strong>proves</strong>, so the verdict stands for the reason published (§7.6).</p>
 <h3>7.2 The second router: which lever, before which transform</h3>
 <p>Four of batch 1's six proposals were proven correct and three made timing <em>worse</em>. The obvious reading is that LLM RTL proposals do not help. The measured reading is more useful.</p>
 <p><code>tools/classify_path.py</code> scores what fraction of a path's delay comes from cells driving 32 or more loads. Batch 1's target path is <strong>58.9% fanout-attributable</strong>; the design-level AES path is <strong>91.4%</strong>, with 21.029 ns in a single <code>nor4_1</code> driving <strong>300 loads</strong>. Those proposals were aimed at the wrong variable, though not at an untouchable one: §7.6 and §7.7 show two proven RTL transforms moving that same 91.4% path.</p>
