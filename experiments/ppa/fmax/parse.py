@@ -34,14 +34,48 @@ def one(body):
     req = period - s
     return cap, period, s, req, (1000.0 / req if req > 0 else float("inf"))
 
+def scaling(rows):
+    """Factor every period must scale by for all clocks to meet.
+
+    Five asynchronous domains have no single F_max. What is well defined is
+    k = max(required / period) over the reported clocks: the design meets when
+    every period is scaled by at least k. k > 1 means it does not meet at the
+    SDC target; 1/k is the fraction of target frequency it reaches.
+    """
+    ks = [(req / per, name) for name, cap, per, sl, req, f in rows]
+    return max(ks)
+
+
 if __name__ == "__main__":
     text = open(sys.argv[1], encoding="utf-8", errors="replace").read()
     print("| path group | capture clock | period ns | slack ns | required period ns | F_max MHz |")
     print("|---|---|---|---|---|---|")
+    parsed = []
     for name, body in blocks(text):
         r = one(body)
         if r:
-            cap, per, s, req, f = r
-            print("| %s | %s | %.3f | %+.3f | **%.3f** | **%.2f** |" % (name, cap, per, s, req, f))
+            cap, per, sl, req, f = r
+            parsed.append((name, cap, per, sl, req, f))
+            print("| %s | %s | %.3f | %+.3f | **%.3f** | **%.2f** |"
+                  % (name, cap, per, sl, req, f))
         else:
             print("| %s | (no path reported) | | | | |" % name)
+
+    # The log carries the before block then the after block, same clock order.
+    half = len(parsed) // 2
+    if half and len(parsed) == 2 * half:
+        print()
+        for label, rows in (("before", parsed[:half]), ("after", parsed[half:])):
+            k, who = scaling(rows)
+            print("%-7s k = max(required/period) = **%.3f**, binding on %s "
+                  "-> design runs at **%.3fx** the SDC target frequency"
+                  % (label, k, who, 1.0 / k))
+        kb, _ = scaling(parsed[:half])
+        ka, _ = scaling(parsed[half:])
+        print()
+        print("**Improvement factor: %.3f / %.3f = %.2fx achievable frequency.**"
+              % (kb, ka, kb / ka))
+        print()
+        print("The binding domain may MOVE between the two halves, in which "
+              "case per-group before-and-after F_max is not like-for-like and "
+              "only the scaling factor is.")
