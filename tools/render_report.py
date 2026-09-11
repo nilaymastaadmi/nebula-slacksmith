@@ -10,7 +10,7 @@ table-heavy, and tables carry far more content per vertical inch than prose,
 so any words-per-page rule overstates it.
 
 **Re-measure after every edit; do not quote a number from this docstring.**
-Typography is 9.5 pt serif at 1.26 line height on A4 with 15 mm margins,
+Typography is 9.5 pt serif at 1.22 line height on A4 with 15 mm margins,
 chosen on 2026-09-11 to fit an 11.82-page document inside a 12-page cap
 without dropping any measured result. The alternative was cutting a
 registered experiment to satisfy a formatting constraint. The settings
@@ -52,7 +52,7 @@ CSS = """
   @page { size: A4; margin: 15mm; }
   html { background:#888; }
   body { font-family: Georgia, 'Times New Roman', serif; font-size: 9.5pt;
-         line-height: 1.26; margin:0; }
+         line-height: 1.22; margin:0; }
   #sheet { width: 680px; margin: 0 auto; background:#fff; padding: 0; }
   h1 { font-size: 19pt; margin: 0 0 2px 0; }
   h2 { font-size: 13pt; margin: 15px 0 5px 0; border-bottom:1px solid #bbb; }
