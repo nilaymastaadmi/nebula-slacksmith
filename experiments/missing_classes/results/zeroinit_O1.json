@@ -1,0 +1,18 @@
+{
+  "id": "O1",
+  "def_id": "retime_write_decode_forward",
+  "declared_k": 0,
+  "declared_branch": 5,
+  "assumption": "unreset storage starts ZEROED and identical in both instances (setundef -init -zero); every verdict below is conditional on it",
+  "G1": "PASS",
+  "G2": "PASS",
+  "gold_cells": 7975,
+  "gate_cells": 8024,
+  "gold_dff": 4386,
+  "gate_dff": 4416,
+  "G3": "PASS(state-remap: k=0, flop delta unconstrained)",
+  "dff_delta": 30,
+  "G4_bmc": "PASS -- 58s",
+  "G4_pdr": "PROVEN -- 222s",
+  "G4": "PROVEN"
+}

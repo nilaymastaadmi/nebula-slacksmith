@@ -384,6 +384,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--rtl-dir", default=os.path.join(REPO, "rtl"))
     ap.add_argument("--top", default="bench_top")
+    ap.add_argument("--rtl-files", default=None,
+                    help="file listing one RTL source per line, relative to "
+                         "--rtl-dir, replacing the built-in bench_top list. Use "
+                         "with --top to run the loop on a design that is not this "
+                         "project's benchmark.")
     ap.add_argument("--sdc", required=True)
     ap.add_argument("--liberty", required=True)
     ap.add_argument("--sta-bin", default=os.environ.get("STA_BIN", os.path.expanduser("~/tools/OpenSTA/build/sta")))
@@ -484,7 +489,22 @@ def main():
     record(step="g0_sdc", sdc=os.path.basename(a.sdc), sha256=sdc_sha,
            lines=sdc_lines, timing_exceptions=sdc_exc)
 
-    rtl_files = list(remeasure.BENCH_TOP_FILES)
+    # BENCH_TOP_FILES is this project's own benchmark. --rtl-files points the
+    # loop at any other design, which is what experiments/unforced/ needs: every
+    # RTL result here was produced with --force-lever rtl because bench_top's
+    # binding paths are fanout-dominated and the classifier correctly routes
+    # them to the physical lever. Testing whether the router EVER fires on its
+    # own requires a design with the opposite pathology.
+    if a.rtl_files:
+        with open(a.rtl_files, encoding="utf-8") as fh:
+            rtl_files = [ln.strip() for ln in fh
+                         if ln.strip() and not ln.startswith("#")]
+        if not rtl_files:
+            raise SystemExit("--rtl-files %s listed no files" % a.rtl_files)
+        print("rtl files: %d from %s (top %s)"
+              % (len(rtl_files), a.rtl_files, a.top))
+    else:
+        rtl_files = list(remeasure.BENCH_TOP_FILES)
     # Mutable so the RTL-lever block can increment it; the cap it enforces is
     # what stops an online run becoming "keep asking until something passes".
     online_count = [0]
