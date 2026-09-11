@@ -68,3 +68,59 @@ repair is recorded, as with the `cli` backend's first attempt.
 - Choosing the SDC target after seeing where the path lands. The target is
   0.9x the design's own measured requirement, the same rule
   `experiments/drrtl_transfer/` used for all 20 designs.
+
+---
+
+## Run 1, 2026-09-11: the router did not route, and the reason is a defect in the classifier
+
+    measure: wb_clk_i=-0.396
+    classify wb_clk_i: NO_ACTION (fanout share 0.0) -> none
+    no lever for verdict NO_ACTION.
+
+| # | registered | outcome |
+|---|---|---|
+| **U1** | the router selects RTL unforced | **NOT ANSWERED.** It selected neither lever |
+| **U5** | the loop terminates cleanly on a design that is not `bench_top` | **CONFIRMED.** `exit: 0`, no crash, `--rtl-files` worked first time |
+| U2, U3, U4 | about the proposal | **VOID.** No proposal was requested |
+
+### The defect
+
+`report_checks -to [get_clocks wb_clk_i] -group_path_count 1` returns **one path
+per path group**, and this SDC has two: input-to-register and
+register-to-register. The report therefore ends with two slack lines:
+
+       3.688   slack (MET)
+      -0.396   slack (VIOLATED)
+
+`classify_path.parse_path()` finds the slack with `re.search`, which returns the
+**first** match, so it read `3.688 MET` and returned `NO_ACTION`.
+`remeasure.sta_slack()` uses `re.findall` and takes the **last**, which is why
+the same run printed `-0.396` one line earlier. **Two parsers in this project
+disagree about which path is the path**, and the classifier takes the one that
+is not.
+
+Worse, `parse_path` collects its cell rows with `finditer` over the whole
+report, so on a multi-block report the rows are **mixed from both paths** while
+the slack comes from one of them. The 11 cells and 3.89 ns it reported are not
+necessarily one path.
+
+### Why this never surfaced on `bench_top`
+
+`sdc/bench_top_v3.sdc` sets no input or output delay, so every clock's report
+carries a single register-to-register group and a single slack line. The defect
+needs a second path group to appear, and this project's own benchmark has never
+had one. **The first external design tried exposed it immediately.**
+
+### Consequence for published results
+
+None of this project's published classifications is affected: they were all run
+on reports with one block. That is asserted from the SDC's contents and is
+checked below rather than assumed.
+
+| # | prediction |
+|---|---|
+| **U6** | Every `bench_top` classification re-runs unchanged after the fix, because each report has one path block |
+| **U7** | With the fix, `i2c` classifies **DEPTH_DOMINATED** and routes to **RTL**, unforced, matching the standalone verdict in `experiments/drrtl_transfer/` |
+
+The run is repeated after the fix. Per this registration, a crash or a defect
+is repaired and re-run; it is the *design* that may not be swapped.
