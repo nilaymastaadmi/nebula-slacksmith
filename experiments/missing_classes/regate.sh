@@ -33,3 +33,13 @@ python3 tools/gate_proposal.py \
   --rtl rtl/rv32i_core.v --module rv32i_core \
   --depth 20 --timeout 300 \
   --workdir "$SLACKSMITH_WORK/rg_P5" --repo . 2>&1 | tee $R/R10_P5.json
+
+echo "=================== R17: O2 (aes_key_mem, k=0, branch 4, FSM) ==================="
+python3 tools/gate_proposal.py \
+  --proposal experiments/missing_classes/proposals/O2.json \
+  --rtl rtl/aes/aes_key_mem.v --module aes_key_mem \
+  --clk clk --rst reset_n \
+  --inputs "key:256,keylen:1,init:1,round:4,new_sboxw:32" \
+  --outputs "round_key:128,ready:1,sboxw:32" \
+  --depth 20 --timeout 300 \
+  --workdir "$SLACKSMITH_WORK/rg_O2" --repo . 2>&1 | tee $R/R17_O2.json

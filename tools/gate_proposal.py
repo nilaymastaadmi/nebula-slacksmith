@@ -127,16 +127,22 @@ def declared_branch(p, def_id):
     return None
 
 
-def null_control(a, wd, mod, nc, res):
-    """Run the same miter with the gate replaced by the gold, renamed.
+def null_control(a, wd, mod, nc, res, outs=None, tag="nullctl"):
+    """Run the miter with the gate replaced by the gold, renamed.
 
     Returns False if the null control also fails, meaning the miter cannot
     distinguish this module from itself and no refutation from it is
     trustworthy. Returns True if gold-vs-gold proves. Returns None if the
     control itself could not be decided, which is reported as inconclusive
     rather than silently treated as a pass.
+
+    ALWAYS built at k=0, whatever the proposal declares: the question is
+    whether the harness can tell the module from itself, which is about state
+    initialisation and not about latency. Built at the proposal's own k it
+    compared gold-delayed against gold-undelayed and failed for every k>0
+    proposal, which prediction R10 in experiments/missing_classes caught.
     """
-    nwd = os.path.join(wd, "nullctl")
+    nwd = os.path.join(wd, tag)
     os.makedirs(nwd, exist_ok=True)
     gold_src = io.open(os.path.join(wd, "gold.v"), encoding="utf-8").read()
     io.open(os.path.join(nwd, "gold.v"), "w", encoding="utf-8").write(gold_src)
@@ -144,7 +150,7 @@ def null_control(a, wd, mod, nc, res):
         gold_src.replace(mod + "_gold", mod + "_gate"))
     io.open(os.path.join(nwd, "miter_prop.sv"), "w", encoding="utf-8").write(
         build_miter(nc["p"], nc["def_id"], mod, nc["clk"], nc["rst"],
-                    nc["outs"], nc["ins"], 0))
+                    outs if outs is not None else nc["outs"], nc["ins"], 0))
     rp = os.path.join(os.path.abspath(a.repo), "tools", "run_proof.py")
     r = sh([sys.executable, rp, "--top", "miter_prop",
             "--file", "gold.v", "--file", "gate.v", "--file", "miter_prop.sv",
@@ -159,6 +165,10 @@ def null_control(a, wd, mod, nc, res):
         if line.startswith("pdr:"):
             np = line.split(":", 1)[1].strip()
     res["G4_null_bmc"], res["G4_null_pdr"] = nb, np
+    res["_null_fail_output"] = None
+    m = re.search(r"miter_prop\.eq_(\w+)", nb + " " + np)
+    if m:
+        res["_null_fail_output"] = m.group(1)
     if nb.startswith("FAIL") or np.startswith("FAIL"):
         return False
     if np.startswith("PROVEN"):
@@ -444,17 +454,76 @@ def main():
         #
         # This is the third refutation this project's own harness has
         # manufactured. The other two are in REPORT §9.
-        nl = null_control(a, wd, mod,
-                          {"p": p, "def_id": def_id, "clk": clk, "rst": rst,
-                           "outs": outs, "ins": ins}, res)
-        if nl is False:
-            res["G4_null_control"] = "REFUTES (miter is unsound on this module)"
-            res["G4"] = ("CANNOT (null control refutes: the same miter rejects "
-                         "this module against itself, so the counterexample is "
-                         "the harness, not the transform)")
-        else:
+        nc = {"p": p, "def_id": def_id, "clk": clk, "rst": rst,
+              "outs": outs, "ins": ins}
+        nl = null_control(a, wd, mod, nc, res)
+        if nl is True:
             res["G4_null_control"] = "PASS (gold vs gold proves)"
             res["G4"] = "REFUTED"
+        elif nl is None:
+            res["G4_null_control"] = "INCONCLUSIVE (gold vs gold neither proved nor failed)"
+            res["G4"] = ("REFUTED (null control inconclusive: the control did "
+                         "not close, so this refutation is not corroborated)")
+        else:
+            # The control refutes, so SOME output cannot be decided by this
+            # harness. Find which, by dropping the one it names and retrying,
+            # instead of abandoning the whole module. A proof over the
+            # surviving outputs is a real proof, restricted to them, and is
+            # reported as partial so it can never be read as full equivalence.
+            keep, dropped = list(outs), []
+            for _ in range(len(outs)):
+                bad = res.get("_null_fail_output")
+                if bad is None or not any(n == bad for n, _ in keep):
+                    break
+                dropped.append(bad)
+                keep = [(n, w) for n, w in keep if n != bad]
+                if not keep:
+                    break
+                sub = null_control(a, wd, mod, nc, res, outs=keep,
+                                   tag="nullctl_%d" % len(dropped))
+                if sub is True:
+                    break
+                if sub is None:
+                    res["G4_null_note"] = (
+                        "control inconclusive after dropping %s" % ",".join(dropped))
+                    break
+            res["G4_undecidable_outputs"] = dropped
+            res["G4_decidable_outputs"] = [n for n, _ in keep]
+            if not keep:
+                res["G4_null_control"] = "REFUTES on every output"
+                res["G4"] = ("CANNOT (null control refutes on every output: the "
+                             "miter cannot distinguish this module from itself)")
+            else:
+                # Re-run the real miter over the decidable outputs only.
+                io.open(mpath, "w", encoding="utf-8").write(
+                    build_miter(p, def_id, mod, clk, rst, keep, ins, k))
+                r2 = sh([sys.executable, rp, "--top", "miter_prop",
+                         "--file", "gold.v", "--file", "gate.v",
+                         "--file", "miter_prop.sv", "--workdir", wd,
+                         "--tasks", "bmc,pdr", "--depth", str(a.depth),
+                         "--timeout", str(a.timeout)])
+                o2 = r2.stdout + r2.stderr
+                io.open(os.path.join(wd, "g4_partial.log"), "w",
+                        encoding="utf-8").write(o2)
+                b2 = p2 = "?"
+                for line in o2.splitlines():
+                    if line.startswith("bmc:"):
+                        b2 = line.split(":", 1)[1].strip()
+                    if line.startswith("pdr:"):
+                        p2 = line.split(":", 1)[1].strip()
+                res["G4_partial_bmc"], res["G4_partial_pdr"] = b2, p2
+                res["G4_null_control"] = (
+                    "REFUTES on %s; PASSES on %s"
+                    % (",".join(dropped), ",".join(n for n, _ in keep)))
+                suffix = (" (partial: %d of %d outputs; %s undecidable, "
+                          "driven by state the reset does not reach)"
+                          % (len(keep), len(outs), ",".join(dropped)))
+                if p2.startswith("PROVEN"):
+                    res["G4"] = "PROVEN" + suffix
+                elif b2.startswith("FAIL") or p2.startswith("FAIL"):
+                    res["G4"] = "REFUTED" + suffix
+                else:
+                    res["G4"] = "UNRESOLVED" + suffix
     else:
         res["G4"] = "UNRESOLVED"
     print(json.dumps(res, indent=2))
