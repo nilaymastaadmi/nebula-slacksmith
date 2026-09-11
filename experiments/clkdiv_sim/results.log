@@ -1,0 +1,7 @@
+clkdiv, source period 5.000 ns, reset released at 13.300 ns
+  DIV=2  period 10.000 ns  high 5.000 ns  duty 50.0%
+  DIV=3  period 15.000 ns  high 7.500 ns  duty 50.0%
+  DIV=4  period 20.000 ns  high 10.000 ns  duty 50.0%
+  DIV=5  period 25.000 ns  high 12.500 ns  duty 50.0%
+CLKDIV OK: /2 /3 /4 /5 all exact
+experiments/clkdiv_sim/tb_clkdiv.sv:96: $finish called at 2013300 (1ps)
