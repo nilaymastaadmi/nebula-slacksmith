@@ -100,3 +100,51 @@ This directory numbers its proposals **O1** and **O2**, and so does
 The collision was noticed after both were registered and gated. Renumbering a
 pre-registered artifact once its results exist is worse than living with the
 collision, so every reference names the directory.
+
+## Scorecard
+
+Registered text for every prediction is in `PREREGISTRATION.md` with five dated
+amendments. **13 predictions, 4 misses, and 3 of the 4 misses found a defect.**
+
+| # | prediction | outcome |
+|---|---|---|
+| R1 | the gate rejects a correct retiming at G3 | CONFIRMED |
+| R2 | it rejects the project's own one-hot for the same reason | CONFIRMED on mechanism, **MISS on the number**: predicted +6 flops, measured +12 |
+| R7 | branch 4 lets the one-hot reach a verdict, and it is PROVEN | CONFIRMED, `PROVEN` 64 s |
+| R8 | O1 returns `CANNOT`, not `REFUTED` | CONFIRMED |
+| **R10** | the null control changes no `rv32i_core` verdict | **WRONG.** Found the control unsound at k>0 |
+| R11 | P5 returns REFUTED under a k=0 control | CONFIRMED verdict, **justification not demonstrated**: the control never closed and the code labelled the timeout a pass |
+| R12 | O1 still `CANNOT`; its artifact is real | CONFIRMED |
+| **R13** | A3 returns its published REFUTED | **WRONG.** Found module-granular `CANNOT` too coarse |
+| R14 | A3 REFUTED on `eq_ready` under per-output control | CONFIRMED. **Published verdict holds** |
+| R15 | O1 PROVEN over the decidable outputs | CONFIRMED, 2 of 3 |
+| R16 | P5 unchanged | CONFIRMED, and uncorroborated |
+| R17 | O2 reaches a partial verdict, not `CANNOT` | CONFIRMED, `PROVEN` 2 of 3 |
+| R18 | O2 does not materially improve `clk_b` | see `results/` |
+
+## What this experiment cost and what it bought
+
+**Bought.** Two of the four optimization classes the problem statement names
+went from structurally unproposable to proposed, routed and discharged. A null
+control on the verification side, which this project had on the timing side
+from the beginning and had never built for proofs. A published refutation
+(A3) re-checked and held. One (P5) demoted to uncorroborated.
+
+**Cost.** Five defects of this session's own, four of them in code written
+*today to fix the previous one*:
+
+1. G3 rejecting two named classes, the original defect.
+2. The null control built at the proposal's own `k`, so it failed for every
+   k>0 proposal. Caught by R10.
+3. `CANNOT` at module granularity, discarding decidable outputs. Caught by R13.
+4. `None` from the control reported as `PASS (gold vs gold proves)` when both
+   engines had timed out. **This one reached the project owner as a stated
+   fact** before being caught by reading the call site.
+5. `slacksmith.py` testing `v.startswith("PROVEN")`, which would have accepted
+   a partial proof as a full pass and confirmed a transform on a proof that
+   excludes the module's primary data output. Caught before any run used it.
+
+Three of those five were caught by **registered predictions that missed**.
+That is the argument for pre-registration stated as a measurement rather than
+as a principle: the predictions that were wrong did more work than the ones
+that were right.
