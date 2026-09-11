@@ -445,6 +445,25 @@ def parse_path(report_text):
     return rows, slack, met
 
 
+def worst_block(report_text):
+    """The single path block with the lowest slack.
+
+    `report_checks -group_path_count 1` returns one path PER PATH GROUP, so a
+    design whose SDC sets input or output delay produces several. Anything that
+    wants "the critical path" and takes the first block gets whichever group
+    OpenSTA printed first, which is not necessarily the binding one. Exposed
+    2026-09-11 on i2c, where the first block was a recovery check that MET at
+    +3.688 and the violating register-to-register path was second at -0.396.
+    """
+    blocks = re.split(r"^(?=Startpoint:)", report_text, flags=re.M)
+    scored = []
+    for b in blocks:
+        m = re.search(r"^\s*(-?\d+\.\d+)\s+slack \((?:MET|VIOLATED)\)", b, re.M)
+        if m:
+            scored.append((float(m.group(1)), b))
+    return min(scored, key=lambda x: x[0])[1] if scored else report_text
+
+
 def classify(report_text, netlist_path, top="bench_top", src_map=None):
     rows, slack, met = parse_path(report_text)
     if not rows:

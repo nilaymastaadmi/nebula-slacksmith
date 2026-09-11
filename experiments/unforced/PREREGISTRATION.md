@@ -127,52 +127,46 @@ is repaired and re-run; it is the *design* that may not be swapped.
 
 ---
 
-## Run 3, observed mid-run: the router fired, and the path it fired at is a recovery check
+## Run 3, and a misdiagnosis of mine, corrected within the hour
 
-The prompt the loop handed the model carries this path:
+**What I wrote first, and it was wrong.** Seeing `Path Group: asynchronous` and
+`recovery check` in the prompt the loop handed the model, I recorded that the
+router had fired at a reset recovery check, blamed my own SDC for not
+false-pathing the reset, and called it a classifier defect.
 
-    Startpoint: arst_i (input port clocked by wb_clk_i)
-    Endpoint:   _257_ (recovery check against rising-edge clock wb_clk_i)
-    Path Group: asynchronous
-    Path Type:  max
+**Measured, both queries on the same netlist and SDC:**
 
-**That is an asynchronous-reset recovery check, not a logic path.** Its −0.396
-ns is the margin on reset deassertion. No RTL transform is the right answer to
-it; a reset synchronizer or a declared false path is.
+    REG-TO-REG   byte_controller/bit_controller/_394_   -0.396  VIOLATED
+    RECOVERY     arst_i -> _257_                        +3.688  MET
 
-### Two separate problems, and they belong to different parties
+**The recovery check meets.** The violating path is a genuine
+register-to-register data path inside `i2c_master_bit_ctrl`. The classifier
+selected it correctly, and `U1` needs no qualifier: **the router routed a real
+data path to the RTL lever with no override.**
 
-**1. A setup error of mine.** `experiments/unforced/i2c.sdc` does not false-path
-the async reset. This project knows to do that: REPORT §8's core-level
-measurement says "reset false-pathed, otherwise the recovery check masks the
-data path". I did not apply the same care to a design I set up in twenty
-minutes, and the result is that the loop optimised the wrong thing.
+My SDC does not need a reset false path either. Both halves of the earlier
+entry were wrong, and both were wrong in the direction of blaming the setup for
+something the tool was doing right.
 
-**2. A defect in the classifier, which is the more interesting one.**
-`classify_path.py` has **no notion of path kind**. It read a path whose report
-says `Path Group: asynchronous` and `recovery check`, scored its fanout share,
-returned `DEPTH_DOMINATED` and routed it to an LLM. A router that cannot tell a
-data path from a recovery check will confidently spend a proposal on something
-no RTL rewrite can fix. On `bench_top` that never arose, because
-`sdc/bench_top_v3.sdc` declares `set_clock_groups -asynchronous` and the resets
-never produced the worst path.
+### The real defect, which is narrower and in a different place
 
-### How this is being handled, stated before the run finishes
+The **classifier** was fixed earlier today to score the worst block. **The
+prompt was not.** `slacksmith.py` passed `reports[worst]` verbatim, so the model
+was shown the report's *first* block: the recovery check that meets. The router
+and the proposer were looking at different paths, and the proposer's was the
+wrong one.
 
-- **Run 3 stands as recorded.** Whatever the model returns is reported. It is
-  evidence about the router and about the classifier, and it is not evidence
-  about whether GenAI can improve `i2c`'s data path.
-- **U1 is scored CONFIRMED with a qualifier**: the router selected RTL with no
-  override, and the path it selected was one it should have excluded. Both
-  halves are true and reporting only the first would be the misreport this
-  registration exists to prevent.
-- **Adding a false path and re-running is a SEPARATE experiment** with its own
-  registration. Editing this SDC after seeing where the path landed is exactly
-  the void condition written above, and the fact that the edit is defensible
-  does not make it exempt.
-- The classifier defect is fixed on its own merits, not to rescue this run.
+That is why the prompt's own evidence table lists `bit_controller` cells, from
+the binding path, directly above a path report for a different path entirely.
+The inconsistency was visible in the prompt and I read past it.
+
+`classify_path.worst_block()` is now shared by both, so there is one answer to
+"which path is the path" instead of two.
 
 | # | prediction, registered now |
 |---|---|
-| **U8** | `classify_path.py` gains a path-kind check and returns a distinct verdict for non-data paths; re-running run 3 unchanged then yields that verdict rather than `DEPTH_DOMINATED` |
-| **U9** | No `bench_top` classification changes, because no report there has ever carried a `recovery check` or an `asynchronous` path group |
+| **U10** | Re-running shows the model a report whose `Startpoint` is in `i2c_master_bit_ctrl`, matching the evidence table above it |
+| **U11** | No `bench_top` result changes; its reports have one block, so `worst_block()` returns what was already being passed |
+
+U8 and U9, registered against the wrong diagnosis, are **VOID**.
+

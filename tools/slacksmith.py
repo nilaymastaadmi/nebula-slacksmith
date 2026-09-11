@@ -803,7 +803,18 @@ def main():
                     "module": module,
                     "target_file": f"rtl/{key}",
                     "module_source": open(src_path, encoding="utf-8").read(),
-                    "timing_report": (reports.get(worst) or "")[:6000],
+                    # The BINDING path, not the first block in the report.
+                    # `report_checks -group_path_count 1` returns one path per
+                    # path group, and on 2026-09-11 the first external design
+                    # tried handed the model a RECOVERY CHECK that MET (+3.688)
+                    # while the violating register-to-register path (-0.396)
+                    # sat in the second block. The classifier had already been
+                    # fixed to score the worst block; the prompt had not, so
+                    # the router and the proposer were looking at different
+                    # paths. bench_top never showed it: its SDC sets no input
+                    # or output delay, so every report there has one block.
+                    "timing_report": classify_path.worst_block(
+                        reports.get(worst) or "")[:6000],
                     "proposal_id": pid,
                 }
                 online_count[0] += 1
