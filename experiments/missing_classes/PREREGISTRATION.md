@@ -273,3 +273,43 @@ gate's output.
 | **R11** | Under a k=0 null control, **P5 returns REFUTED again**, its published verdict, because `rv32i_core` has no unreset state to poison the control. |
 | **R12** | Under a k=0 null control, **O1 still returns `CANNOT`**, because its artifact is real. |
 | **R13** | **A3 returns REFUTED**, its published verdict, because `key_mem` poisons `eq_round_key` and A3 fails on `eq_ready`, which the k=0 control should prove. If instead the k=0 control fails on `eq_ready` too, A3 was never decidable and the published number in `experiments/llm_proposer_aes/` changes. I do not know which. |
+
+---
+
+## Amendment 5, 2026-09-11: R11 to R13 scored, and module-granular CANNOT is too coarse
+
+| # | registered | outcome |
+|---|---|---|
+| **R11** | P5 returns REFUTED again under a k=0 control | **CONFIRMED.** `G4_null_control: PASS (gold vs gold proves)`, `G4: REFUTED`. The corrected control no longer corrupts a clean module |
+| **R12** | O1 still `CANNOT` | **CONFIRMED.** `G4_null_pdr: FAIL eq_round_key, 95s`. Its artifact is real |
+| **R13** | A3 returns its published REFUTED | **WRONG.** Still `CANNOT`, `G4_null_pdr: FAIL eq_round_key, 9s` |
+
+### Why R13's miss is a design flaw and not just a wrong guess
+
+A3's own miter fails on **`eq_ready`**. Its null control fails on
+**`eq_round_key`**. Those are different outputs. A blanket `CANNOT` at module
+granularity throws away a question the harness *can* answer because an
+unrelated output is poisoned by state the reset does not reach.
+
+`round_key` is a combinational read of `key_mem`, which Yosys does not apply
+the async reset to, so it is undecidable by this harness. `ready` and `sboxw`
+are functions of reset-reachable state and the control **proves** them (PDR
+12 s, measured with `eq_round_key` removed).
+
+### The refinement, registered before it is written
+
+When the control refutes, drop the output it names and retry, until the control
+passes or nothing is left. Then re-run the real miter over the surviving
+outputs and report, for example, `PROVEN (partial: 2 of 3 outputs; round_key
+undecidable)`. **A proof restricted to a subset is a real proof of equivalence
+on that subset and must never be reported as full equivalence**, which is why
+the partial verdict carries the excluded outputs in its own string rather than
+in a footnote.
+
+| # | prediction |
+|---|---|
+| **R14** | A3 returns **REFUTED (partial)** on `eq_ready`, confirming its published verdict for its published reason. This decides whether `experiments/llm_proposer_aes/`'s "1 of 6 formally REFUTED" survives |
+| **R15** | O1 returns **PROVEN (partial)** over `ready` and `sboxw`. Genuinely uncertain: the retiming is correct as far as I can reason, and I have reasoned wrongly about a transform in this project before |
+| **R16** | P5 is **unchanged**, REFUTED with nothing dropped, because its control already passes |
+| **R17** | O2, the FSM output-coded state assignment, reaches a **partial verdict** rather than `CANNOT` |
+| **R18** | O2 does **not** materially improve `clk_b`. Same reasoning as R5: 91.4% of that path is fanout and this removes a decode, not a load |

@@ -12,9 +12,9 @@
   "G3": "PASS(state-remap: k=0, flop delta unconstrained)",
   "dff_delta": 30,
   "G4_bmc": "FAIL -- miter_prop.eq_round_key, 1s",
-  "G4_pdr": "FAIL -- miter_prop.eq_round_key, 78s",
+  "G4_pdr": "FAIL -- miter_prop.eq_round_key, 60s",
   "G4_null_bmc": "FAIL -- miter_prop.eq_round_key, 1s",
-  "G4_null_pdr": "FAIL -- miter_prop.eq_round_key, 87s",
+  "G4_null_pdr": "FAIL -- miter_prop.eq_round_key, 95s",
   "G4_null_control": "REFUTES (miter is unsound on this module)",
   "G4": "CANNOT (null control refutes: the same miter rejects this module against itself, so the counterexample is the harness, not the transform)"
 }

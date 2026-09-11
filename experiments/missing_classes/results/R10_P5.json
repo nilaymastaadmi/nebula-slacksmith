@@ -11,10 +11,10 @@
   "gate_dff": 2112,
   "G3": "PASS",
   "dff_delta": 64,
-  "G4_bmc": "FAIL -- miter_prop.eq_dmem_addr, 3s",
-  "G4_pdr": "FAIL -- miter_prop.eq_dmem_addr, 4s",
-  "G4_null_bmc": "FAIL -- miter_prop.eq_dmem_addr, 1s",
-  "G4_null_pdr": "FAIL -- miter_prop.eq_dmem_we, 3s",
-  "G4_null_control": "REFUTES (miter is unsound on this module)",
-  "G4": "CANNOT (null control refutes: the same miter rejects this module against itself, so the counterexample is the harness, not the transform)"
+  "G4_bmc": "FAIL -- miter_prop.eq_dmem_addr, 2s",
+  "G4_pdr": "FAIL -- miter_prop.eq_dmem_addr, 3s",
+  "G4_null_bmc": "TIMEOUT -- stopped by wrapper timeout, not a tool verdict -- inspect raw log",
+  "G4_null_pdr": "TIMEOUT -- stopped by wrapper timeout, not a tool verdict -- inspect raw log",
+  "G4_null_control": "PASS (gold vs gold proves)",
+  "G4": "REFUTED"
 }

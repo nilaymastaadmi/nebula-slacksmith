@@ -1,0 +1,11 @@
+{
+  "id": "O2",
+  "def_id": "fsm_output_coded_state_assignment",
+  "target_module": "aes_key_mem",
+  "target_file": "rtl/aes/aes_key_mem.v",
+  "latency_delta_k": 0,
+  "obligation_branch": "4 (mapped-state equivalence)",
+  "variant_file": "experiments/missing_classes/aes_key_mem_O2.v",
+  "rationale": "The binding path launches from the key_mem write enables, which are gated by round_key_update. round_key_update is a pure decode of key_mem_ctrl_reg == CTRL_GENERATE, so a 3-bit compare sits between the state register and 1,920 flop enables on the measured 300-load net. Re-encode the four states so that every control output that is a pure function of state is a single register bit: bit 0 = INIT (round_ctr_rst), bit 1 = DONE (ready_new), bit 2 = GENERATE (round_key_update, round_ctr_inc). Same width, same flop count, decode removed from the enable path. The next-state logic and the write-enable conditions, which depend on inputs, stay in the case statement.",
+  "note": "Flop count is unchanged, so this would pass G3 under the old k=0 rule, but the state encoding changed and EQY pairs internal nets by name: key_mem_ctrl_reg's bits carry different meanings in the two designs. Branch 4 is the correct obligation and is declared."
+}

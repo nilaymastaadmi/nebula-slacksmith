@@ -12,9 +12,9 @@
   "G3": "PASS",
   "dff_delta": 256,
   "G4_bmc": "FAIL -- miter_prop.eq_ready, 1s",
-  "G4_pdr": "FAIL -- miter_prop.eq_ready, 5s",
-  "G4_null_bmc": "FAIL -- miter_prop.eq_ready, 1s",
-  "G4_null_pdr": "FAIL -- miter_prop.eq_ready, 4s",
+  "G4_pdr": "FAIL -- miter_prop.eq_ready, 3s",
+  "G4_null_bmc": "FAIL -- miter_prop.eq_round_key, 1s",
+  "G4_null_pdr": "FAIL -- miter_prop.eq_round_key, 9s",
   "G4_null_control": "REFUTES (miter is unsound on this module)",
   "G4": "CANNOT (null control refutes: the same miter rejects this module against itself, so the counterexample is the harness, not the transform)"
 }
