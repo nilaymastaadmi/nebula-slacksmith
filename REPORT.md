@@ -156,9 +156,7 @@ So the policy became a gate. **G0 runs before G1**: SHA-256 the SDC actually loa
 
 ### 6.1 Choosing the branch: the interface classifier
 
-A k-padded obligation is *wrong* for an elastic interface. We measured that too: pointed at a valid/ready pair with back-pressure, the k-padded miter is **refuted in 0 seconds on a design that is correct**, because under back-pressure the two designs hold different numbers of in-flight transactions and no fixed cycle offset exists. A tool that emits the wrong obligation reports a correct transform as broken.
-
-So the branch is chosen automatically, in three passes, each able to overrule the last: **lexical** (candidate handshake ports by name), **structural** (does the candidate reach a flop's D or enable cone, since a signal that never reaches state cannot stall anything), and **formal** (prove output stability under back-pressure, so the verdict is a discharged obligation rather than a heuristic).
+A k-padded obligation is *wrong* for an elastic interface: pointed at a valid/ready pair with back-pressure, the k-padded miter is **refuted in 0 seconds on a design that is correct**, because the two designs hold different numbers of in-flight transactions and no fixed cycle offset exists. **A tool that emits the wrong obligation reports a correct transform as broken.** So the branch is chosen in three passes, each able to overrule the last: **lexical** (handshake ports by name), **structural** (does the candidate reach a flop's D or enable cone, since a signal that never reaches state cannot stall anything), and **formal** (prove output stability under back-pressure, so the verdict is a discharged obligation rather than a heuristic).
 
 | module | lexical | structural | formal | verdict |
 |---|---|---|---|---|
@@ -168,9 +166,7 @@ So the branch is chosen automatically, in three passes, each able to overrule th
 | `axi_style` (AXI prefixes) | `m_axis_tready` | reaches `$dff.D` | PASSED | ELASTIC |
 | `costume_ready` | `out_ready` | **REJECTED** | **FAILED** | **RIGID** |
 
-`costume_ready` is the case that earns the machinery: handshake-shaped port names, not an elastic interface. Both later passes reject it by *independent* arguments, the signal never reaching state and the data changing while stalled.
-
-Two limits: pass 3 is bounded (depth 16), and exotic flow control that misses the lexical pass is classified rigid, the unsafe direction; defaulting unrecognised interfaces to elastic is not yet implemented.
+`costume_ready` earns the machinery: handshake-shaped port names, not an elastic interface, rejected by two *independent* arguments. Two limits: pass 3 is bounded at depth 16, and exotic flow control that misses the lexical pass is classified rigid, the unsafe direction.
 
 ### 6.2 Why simulation is not a substitute, measured on four mutants
 
@@ -444,4 +440,4 @@ The demo walks the pipeline end to end and lands on a refutation with its counte
 
 **Limits we would rather state than be asked.** **N = 17 proposals, of which 15 are model-written** and 2 were written by this project's own session through the `handoff` backend (§3), three target modules, one proposer model (**Claude Opus 5**, disclosed in every registration, default sampling, one sample per proposal, no best-of-n): outcomes, not rates. Unattended operation is **N = 1**. The physical flow reaches CTS and global routing, not signoff. The classifier's thresholds were chosen on our benchmark and one external verdict is flow-sensitive. The best run leaves `clk_e` short with no ABC lever left. Equivalence is proven for `repair_design`'s netlist pairs but **not** for the ABC buffering lever, where the method times out. The two batch-3 proofs are conditional on a stated initial-state assumption, and P5's refutation is **uncorroborated** because its null control does not close. Of the transforms proven correct, four made their own path group worse: **proof and profit are independent questions, and we measured both.**
 
-*Rendered A4, 18 mm margins, 9.5 pt serif, by `tools/render_report.py`; page count measured in a browser rather than estimated, and deliberately not quoted here, because a page count written into the document it measures is stale on the next edit. `tools/check_report_numbers.py` checks every number above against the repository.*
+*Rendered A4, 15 mm margins, 9.5 pt serif, by `tools/render_report.py`; page count measured in a browser rather than estimated, and deliberately not quoted here, because a page count written into the document it measures is stale on the next edit. `tools/check_report_numbers.py` checks every number above against the repository.*

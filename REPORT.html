@@ -1,10 +1,10 @@
 <!doctype html><html><head><meta charset="utf-8">
 <style>
-  @page { size: A4; margin: 18mm; }
+  @page { size: A4; margin: 15mm; }
   html { background:#888; }
   body { font-family: Georgia, 'Times New Roman', serif; font-size: 9.5pt;
          line-height: 1.26; margin:0; }
-  #sheet { width: 658px; margin: 0 auto; background:#fff; padding: 0; }
+  #sheet { width: 680px; margin: 0 auto; background:#fff; padding: 0; }
   h1 { font-size: 19pt; margin: 0 0 2px 0; }
   h2 { font-size: 13pt; margin: 15px 0 5px 0; border-bottom:1px solid #bbb; }
   h3 { font-size: 11.3pt; margin: 11px 0 4px 0; }
@@ -352,8 +352,7 @@
 <p><code>cec</code> cannot express the question; <code>dsec</code> and EQY express it and correctly answer no, because the designs are not cycle-for-cycle equivalent. None can express equivalence <em>modulo k cycles</em>, so a pipeline gated on any of them can only ever reject a latency change. Measured evidence for the routing decision, not an argument.</p>
 <p><strong>We mutation-tested our own checker, and it failed.</strong> The stream-equivalence obligation asserts only once both designs have completed a transaction. We built a mutant reproducing a real documented deadlock bug, confirmed by simulation that it never produces output, and ran the proof: <strong>PDR reported PROVEN in 0 seconds</strong> for a design that deadlocks, because the assert's guard was unreachable and it was vacuously true. Fixed with a <code>cover</code> property that distinguishes the real design (REACHED) from the mutant (UNREACHABLE). We found this by testing the verifier, not the design.</p>
 <h3>6.1 Choosing the branch: the interface classifier</h3>
-<p>A k-padded obligation is <em>wrong</em> for an elastic interface. We measured that too: pointed at a valid/ready pair with back-pressure, the k-padded miter is <strong>refuted in 0 seconds on a design that is correct</strong>, because under back-pressure the two designs hold different numbers of in-flight transactions and no fixed cycle offset exists. A tool that emits the wrong obligation reports a correct transform as broken.</p>
-<p>So the branch is chosen automatically, in three passes, each able to overrule the last: <strong>lexical</strong> (candidate handshake ports by name), <strong>structural</strong> (does the candidate reach a flop's D or enable cone, since a signal that never reaches state cannot stall anything), and <strong>formal</strong> (prove output stability under back-pressure, so the verdict is a discharged obligation rather than a heuristic).</p>
+<p>A k-padded obligation is <em>wrong</em> for an elastic interface: pointed at a valid/ready pair with back-pressure, the k-padded miter is <strong>refuted in 0 seconds on a design that is correct</strong>, because the two designs hold different numbers of in-flight transactions and no fixed cycle offset exists. <strong>A tool that emits the wrong obligation reports a correct transform as broken.</strong> So the branch is chosen in three passes, each able to overrule the last: <strong>lexical</strong> (handshake ports by name), <strong>structural</strong> (does the candidate reach a flop's D or enable cone, since a signal that never reaches state cannot stall anything), and <strong>formal</strong> (prove output stability under back-pressure, so the verdict is a discharged obligation rather than a heuristic).</p>
 <table>
 <thead>
 <tr>
@@ -402,8 +401,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>costume_ready</code> is the case that earns the machinery: handshake-shaped port names, not an elastic interface. Both later passes reject it by <em>independent</em> arguments, the signal never reaching state and the data changing while stalled.</p>
-<p>Two limits: pass 3 is bounded (depth 16), and exotic flow control that misses the lexical pass is classified rigid, the unsafe direction; defaulting unrecognised interfaces to elastic is not yet implemented.</p>
+<p><code>costume_ready</code> earns the machinery: handshake-shaped port names, not an elastic interface, rejected by two <em>independent</em> arguments. Two limits: pass 3 is bounded at depth 16, and exotic flow control that misses the lexical pass is classified rigid, the unsafe direction.</p>
 <h3>6.2 Why simulation is not a substitute, measured on four mutants</h3>
 <p>Before the LLM experiment we measured the same question on four hand-built mutants of a known-correct transform, with a correct control that every method passes. <strong>Two of the three invalid mutants escaped a realistic simulation gate.</strong> One is the classic pipelining bug, stage 2 adding the current operand to a product one cycle old, invisible to any testbench holding that operand constant; the other is wrong on roughly one input in a million and survived 20,000 random vectors in both regimes, where formal refuted it instantly. §7 reproduces this on a real LLM proposal; §7.4 turns it into a suite.</p>
 <h2>7. The GenAI engine, and the experiment we pre-registered</h2>
@@ -961,12 +959,12 @@
 <h2>10. Demo, reproduction, limits</h2>
 <p>The demo walks the pipeline end to end and lands on a refutation with its counterexample, the case every simulation-gated tool would have passed. <code>DEMO.md</code> is the shot list and <code>tools/demo_check.sh</code> runs every command in it, failing if any breaks; it holds <strong>15 assertions</strong>, all passing as of 11 Sept, and caught two stale claims on its first run. <strong><code>demo/explorer.html</code></strong> is the interactive deliverable: five runs steppable, each decision with the evidence it used, generated from the logs so it cannot drift from them. <strong>Reproduction, checked rather than asserted.</strong> Three clean clones at different names on a different filesystem passed <strong>12 of 12, 12 of 12 and 15 of 15</strong>, the last once the demo assertions existed (<code>experiments/reproducibility/</code>). Tool paths are environment variables, not constants. Each experiment directory holds its sources, <code>.sby</code>/<code>.eqy</code> configuration and raw logs; proofs re-run with <code>sby -f &lt;config&gt; pdr</code>. <code>SETUP.md</code> says which claims cost minutes and which cost an afternoon of synthesis.</p>
 <p><strong>Limits we would rather state than be asked.</strong> <strong>N = 17 proposals, of which 15 are model-written</strong> and 2 were written by this project's own session through the <code>handoff</code> backend (§3), three target modules, one proposer model (<strong>Claude Opus 5</strong>, disclosed in every registration, default sampling, one sample per proposal, no best-of-n): outcomes, not rates. Unattended operation is <strong>N = 1</strong>. The physical flow reaches CTS and global routing, not signoff. The classifier's thresholds were chosen on our benchmark and one external verdict is flow-sensitive. The best run leaves <code>clk_e</code> short with no ABC lever left. Equivalence is proven for <code>repair_design</code>'s netlist pairs but <strong>not</strong> for the ABC buffering lever, where the method times out. The two batch-3 proofs are conditional on a stated initial-state assumption, and P5's refutation is <strong>uncorroborated</strong> because its null control does not close. Of the transforms proven correct, four made their own path group worse: <strong>proof and profit are independent questions, and we measured both.</strong></p>
-<p><em>Rendered A4, 18 mm margins, 9.5 pt serif, by <code>tools/render_report.py</code>; page count measured in a browser rather than estimated, and deliberately not quoted here, because a page count written into the document it measures is stale on the next edit. <code>tools/check_report_numbers.py</code> checks every number above against the repository.</em></p>
+<p><em>Rendered A4, 15 mm margins, 9.5 pt serif, by <code>tools/render_report.py</code>; page count measured in a browser rather than estimated, and deliberately not quoted here, because a page count written into the document it measures is stale on the next edit. <code>tools/check_report_numbers.py</code> checks every number above against the repository.</em></p>
 </div>
 <script>
 window.__pageinfo = function () {
   var h = document.getElementById('sheet').getBoundingClientRect().height;
-  var pageH = 987;   // A4 text block at 96dpi with 18mm margins
+  var pageH = 1009;  // A4 text block at 96dpi with 15mm margins
   return { contentPx: Math.round(h), pageHeightPx: pageH,
            pages: +(h / pageH).toFixed(2) };
 };

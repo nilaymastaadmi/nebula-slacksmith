@@ -10,7 +10,7 @@ table-heavy, and tables carry far more content per vertical inch than prose,
 so any words-per-page rule overstates it.
 
 **Re-measure after every edit; do not quote a number from this docstring.**
-Typography is 9.5 pt serif at 1.26 line height on A4 with 18 mm margins,
+Typography is 9.5 pt serif at 1.26 line height on A4 with 15 mm margins,
 chosen on 2026-09-11 to fit an 11.82-page document inside a 12-page cap
 without dropping any measured result. The alternative was cutting a
 registered experiment to satisfy a formatting constraint. The settings
@@ -31,10 +31,10 @@ Usage:
 To get the page count, open the HTML in a browser and run in the console:
 
     var s = document.getElementById('sheet');
-    s.getBoundingClientRect().height / 987
+    s.getBoundingClientRect().height / 1009
 
-987 px is the A4 text-block height at 96 dpi with 18 mm margins
-(1123 px page - 2 x 68 px). The divisor changes if you change the margins.
+1009 px is the A4 text-block height at 96 dpi with 15 mm margins
+(1123 px page - 2 x 57 px). The divisor changes if you change the margins.
 
 To produce the PDF: open the HTML and print to PDF with **A4, 18 mm margins,
 background graphics on, scale 100%**. Those are the settings the 10.39 figure
@@ -49,11 +49,11 @@ SRC = os.path.join(HERE, "REPORT.md")
 OUT = os.path.join(HERE, "REPORT.html")
 
 CSS = """
-  @page { size: A4; margin: 18mm; }
+  @page { size: A4; margin: 15mm; }
   html { background:#888; }
   body { font-family: Georgia, 'Times New Roman', serif; font-size: 9.5pt;
          line-height: 1.26; margin:0; }
-  #sheet { width: 658px; margin: 0 auto; background:#fff; padding: 0; }
+  #sheet { width: 680px; margin: 0 auto; background:#fff; padding: 0; }
   h1 { font-size: 19pt; margin: 0 0 2px 0; }
   h2 { font-size: 13pt; margin: 15px 0 5px 0; border-bottom:1px solid #bbb; }
   h3 { font-size: 11.3pt; margin: 11px 0 4px 0; }
@@ -72,7 +72,7 @@ CSS = """
 MEASURE_JS = """
 window.__pageinfo = function () {
   var h = document.getElementById('sheet').getBoundingClientRect().height;
-  var pageH = 987;   // A4 text block at 96dpi with 18mm margins
+  var pageH = 1009;  // A4 text block at 96dpi with 15mm margins
   return { contentPx: Math.round(h), pageHeightPx: pageH,
            pages: +(h / pageH).toFixed(2) };
 };
@@ -103,7 +103,7 @@ def main():
     print(f"wrote {a.out} ({os.path.getsize(a.out)} bytes) from {words} words")
     print("open it and run this in the console for the page count:")
     print("    document.getElementById('sheet').getBoundingClientRect()"
-          ".height / 987")
+          ".height / 1009")
 
 
 if __name__ == "__main__":
