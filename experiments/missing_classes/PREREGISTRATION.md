@@ -857,3 +857,50 @@ while turning two correct transforms from partial proofs into unbounded ones,
 is doing the job it was built for.
 
 R31, whether the control now closes, is still running.
+
+## R31, recorded as it landed, and P5 is closed
+
+    "G4_null_bmc": "TIMEOUT", "G4_null_control": "INCONCLUSIVE"
+
+**R31 WRONG.** Even with both instances zeroed, gold-vs-gold on `rv32i_core`
+does not close.
+
+**Five configurations have now been tried** and none closes: depth 20 at 300 s,
+depth 20 at 1800 s, depth 5 at 300 s, depth 5 at 1800 s, and depth 20 at 900 s
+with equal power-up state. **P5 is closed as an investigation.** Further budget
+is not a plan, and the trace-replay route is void (amendment 9).
+
+### The final statement on P5, which is not the one R19 wrote
+
+R19 left it at "refuted, uncorroborated", which reads as *this verdict might be
+anything*. R30 narrows that considerably. The **one artifact class this project
+has actually found** in its own miter is two instances powering up in different
+states, and P5's counterexample **survives its removal unchanged**. So:
+
+> **P5 is REFUTED.** Its counterexample survives the assumption that eliminates
+> the only artifact class this harness is known to produce, and its stated
+> mechanism is about latency padding rather than initial state. What remains
+> unproven is the general claim that the harness can distinguish `rv32i_core`
+> from itself, which does not close at any budget tried. The refutation is
+> reported with that limit attached rather than without it.
+
+That is a weaker claim than "corroborated" and a much stronger one than
+"uncorroborated" as R19 left it, and the difference was bought by a test
+suggested for an entirely different module.
+
+### Scorecard for the null-control work
+
+| # | outcome |
+|---|---|
+| R19 | WRONG, control does not close at 1800 s |
+| R24 | WRONG, bounded control still does not close |
+| R25 | CONFIRMED, bound changes no `aes_key_mem` verdict and closes in 1 s |
+| R26 | CONFIRMED, the BMC-acceptance fix is correct and insufficient |
+| R27 | WRONG, 1800 s at depth 5 does not close |
+| R28, R29 | **VOID**, the replay method never elaborated |
+| R30 | CONFIRMED, P5 is not a power-up artifact |
+| R31 | WRONG, the control does not close even zeroed |
+
+**Six attempts, two confirmations, and the useful finding is a measured limit
+rather than a recovered verdict.** On two copies of 2,048 flops this harness
+finds a counterexample in 1 second and cannot prove the absence of one in 1800.
