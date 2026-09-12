@@ -25,7 +25,7 @@ process.
 | Repository | runs from a clean clone at any path, verified three times (`experiments/reproducibility/`) |
 | Interactive demo | `demo/explorer.html`, generated from committed logs, published |
 | `claude` CLI auth | **working.** Token minted 2026-09-11 and held outside the repository in `~/.slacksmith_token`; `tools/preflight.sh` fails if a credential-shaped string ever reaches a tracked file |
-| Repository | **pushed**, `origin/sandbox`. This row deliberately names **no commit hash**: a commit cannot contain its own hash, so any hash typed here is stale the moment it is committed, and a stale hash is the exact failure this project argues against. Verify instead with `git fetch && git rev-list --count origin/sandbox..HEAD` (expect **0**) and `git log --oneline -1`. Until 2026-09-12 the remote was 109 commits behind and an external reviewer found it, which is why this row points at a command rather than at the tree |
+| Repository | **pushed**, `origin/sandbox`. This row deliberately names **no commit hash**: a commit cannot contain its own hash, so any hash typed here is stale the moment it is committed, and a stale hash is the exact failure this project argues against. Verify instead with `git fetch && git rev-list --count origin/sandbox..HEAD` (expect **0**) and `git log --oneline -1`. Until 2026-09-12 the remote was 109 commits behind and an external reviewer found it, which is why this row points at a command rather than at the tree. **Verified on 2026-09-12 by cloning the remote URL to a second path** and running `tools/preflight.sh` and `tools/demo_check.sh` from that clone: all dependencies present, no credential-shaped string tracked, **15 pass, 0 fail**, concurrently with the same check in the working tree |
 
 ---
 

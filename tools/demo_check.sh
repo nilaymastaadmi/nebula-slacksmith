@@ -13,8 +13,8 @@ PASS=0; FAIL=0
 # evidence mid-flight. A check that cannot be run twice at once cannot be used
 # to compare two trees, which is the job it was given on 2026-09-12 when a
 # verification run from a fresh clone of the remote was run alongside one in the
-# working tree. Whether that collision explains the 2 failures the clone
-# reported is recorded in NOTES, measured rather than assumed.
+# working tree, which scored 13 of 15 against the tree's 15. Measured after
+# this fix, both run concurrently: 15 pass, 0 fail each (REPORT section 9).
 RUN=${DEMO_CHECK_RUN:-$$}
 W=$SLACKSMITH_WORK/demo_run/$RUN; rm -rf $W
 # Scratch for this script's own output. Previously $HOME, which dumped a dozen
