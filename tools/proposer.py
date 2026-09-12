@@ -246,11 +246,22 @@ def propose_cli(ctx, a, workdir, timeout=None):
     if not a.claude_bin or not os.path.isfile(a.claude_bin)        and not shutil.which(a.claude_bin):
         return [], ("claude CLI path is empty or not a file: %r. Pass "
                     "--claude-bin with a real path." % a.claude_bin)
+    # The prompt goes on STDIN, not in argv. It carries the target module's
+    # whole source, and Linux caps a single argument at 128 KB
+    # (MAX_ARG_STRLEN), so a large module killed the run outright with
+    # OSError: [Errno 7] Argument list too long. Found 2026-09-12 on tv80,
+    # whose tv80_mcode is a microcode decoder of about 2,600 lines;
+    # aes_key_mem at 434 lines and i2c at 25 KB were both under the ceiling,
+    # which is why three designs' worth of runs never reached it. The request
+    # file written above is unchanged, so the committed record of what the
+    # model was asked is the same artifact it always was.
     try:
-        r = subprocess.run([a.claude_bin, "-p", prompt],
+        r = subprocess.run([a.claude_bin, "-p"], input=prompt,
                            capture_output=True, text=True, timeout=timeout)
     except (FileNotFoundError, PermissionError) as e:
         return [], "claude CLI not runnable at %r: %s" % (a.claude_bin, e)
+    except OSError as e:
+        return [], "claude CLI could not be started: %s" % e
     except subprocess.TimeoutExpired:
         return [], "claude CLI timed out after %ds" % timeout
     out = r.stdout + r.stderr

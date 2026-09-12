@@ -152,3 +152,52 @@ Nothing else changes. No gate, no classifier, no lever policy, no SDC.
 **R82.** After the repair, all three replayed runs reach the proposer, and the
 binding module is reported as `tv80_mcode`. *Prior: strong, and if it misses the
 defect was misdiagnosed, which is worth knowing before any proposal is judged.*
+
+---
+
+## Amendment 2, 2026-09-12: a second harness defect, same discipline
+
+**R82. CONFIRMED.** All three replayed runs unmangled the module and found it:
+
+```
+unmangled parameterised module $paramod$1a08092a...\tv80_mcode -> tv80_mcode
+binding module tv80_mcode found in tv80.v (filename does not match module name)
+```
+
+The diagnosis was right. The runs then died one step further on:
+
+```
+OSError: [Errno 7] Argument list too long: '/home/toshn/.local/bin/claude'
+```
+
+**Our harness again, and again a limit no earlier design reached.**
+`tools/proposer.py`'s `cli` backend passes the whole prompt as a single argv
+element. The prompt carries the target module's full source, and `tv80_mcode`
+is a microcode decoder of roughly 2,600 lines, which puts one argument past
+Linux's 128 KB per-argument ceiling. `aes_key_mem` at 434 lines and `i2c` at
+25 KB were both comfortably under it.
+
+### The repair, stated before it is written
+
+Pass the prompt on **stdin** rather than as an argument: `claude -p` with the
+text on standard input. The request file written beside it is unchanged, so the
+committed artifact of what the model was asked stays byte-identical in form.
+
+Nothing else changes. No gate, no classifier, no lever policy, no SDC, no
+prompt text.
+
+### Prediction
+
+**R85.** After the repair, all three replayed runs reach a **G4 verdict of any
+kind**. *Prior: strong. The two failures so far were both lookups and plumbing,
+neither of which touched the model or the gate.*
+
+### What this pair of defects is worth saying out loud
+
+Two defects, both in our tooling, both found by pointing the loop at a design
+larger and less regular than the benchmark it was built on, and **neither
+touched a published result**. That is the same finding `experiments/unforced/`
+reported on `i2c` and it is now reproduced on a third design: the router and the
+gate are sound, and the plumbing around them had exactly one design's worth of
+testing. Reported here rather than quietly fixed, because a tool that only works
+on its author's benchmark is the thing this project keeps warning about.
