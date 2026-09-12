@@ -21,6 +21,18 @@ An LLM proposes RTL transforms. A formal gate decides whether they are correct. 
 
 So SlackSmith routes twice: the **proof obligation** by declared transform type, and the **fix** by measured path pathology, which the measurement forced on us. The two levers are sequential rather than alternative, and where they run out we say so.
 
+### 1.1 What the agent actually automates, and what we cannot claim about it
+
+The practical case for this tool is not that it optimizes better than an engineer. It is that the loop below runs as **one command**, and every step of it is otherwise a human reading a report and deciding:
+
+Each step is otherwise a human reading a report and deciding: fingerprint the SDC (G0); synthesize and time; **classify the binding path** by fanout against depth, which takes ~2 s and routes *away* from RTL when the lever is physical; propose the transform (5 to 9 min unattended); **write the miter or EQY script that proves it**, which the typed branch generates (1 s to 222 s); re-time; accept or revert.
+
+End to end: **46.7 s** for the v2 benchmark to close, **456 s** for the unattended run that measured, classified, proposed, proved and applied without a human.
+
+**What we cannot claim: a speed-up ratio.** We never timed an engineer doing the same work, so there is no denominator, and inventing one would be the kind of number this report spends §9 apologising for. What is measured is the automation's own cost and the decisions it takes unaided: it reverted three formally proven transforms that made timing worse, and it declined to spend a proposal on a path that was 91.4% fanout, both without being asked.
+
+**Where the time goes is worth saying**: synthesis dominates, the proposer is minutes, the proof is seconds. An agent that proposes faster does not help, because proposing was never the slow part.
+
 ## 2. The problem, and what is actually new here
 
 Timing closure is manual because static timing analysis speaks in cells and nets while RTL speaks in `always` blocks. An LLM bridges those representations well. The difficulty is not proposing a rewrite; it is knowing whether the rewrite is correct. Insert a pipeline stage and the design is equivalent only under a latency offset the checker must be told about, so the profitable transforms are forbidden because the available checkers cannot express them.
@@ -110,7 +122,7 @@ Three findings changed how we report every number (`docs/measurement-methodology
 
 The v1 periods were illustrative, chosen when the benchmark was 3,584 cells; at 55,413 an 8 ns `clk_a` target demands four times what a single-cycle RV32I with async-read memory reaches in sky130. So we measured what each domain requires and set `sdc/bench_top_v2.sdc` about 10% tighter, keeping v1 unchanged as the frozen record: revising a target with disclosure is not editing constraints mid-campaign, which stays forbidden. `sdc/bench_top_v3.sdc` (§7.3) applies the same method to the buffered flow. Under v2 the baseline **meets** `clk_a` at +1.333 ns and the two AES-bound domains sit at −4.957; **read those against §8**, which shows what they become once wires exist.
 
-**Finding 1 above was correct and not in effect for eight commits.** The exclusion list scans the liberty for cell names; the liberty writes `cell ("name")` with quotes and the regex expected it without, so it matched nothing and returned an empty flag string. Every netlist built in between carries 203 `lpflow` cells and the 12.8 ns artifact the exclusion exists to remove. Found by reading a critical-path report and seeing the banned cell at 12.824 ns on a path where it was forbidden; there was no test, which is why nothing caught it. All affected numbers were re-measured: the `clk_a` baseline carried **4.62 ns** of artifact and proven transforms' deltas moved 40 to 50%, but **no qualitative conclusion changed**. The exclusion is also **not** uniformly beneficial: `clk_a` gains 4.62 ns while `clk_b` and `clk_e` each lose 1.97, because constraining the mapper removes options from paths that used those cells benignly.
+**Finding 1 above was correct and not in effect for eight commits.** The exclusion list scans the liberty for cell names; the liberty writes `cell ("name")` with quotes and the regex expected it without, so it matched nothing and returned an empty flag string. Every netlist built in between carries 203 `lpflow` cells and the 12.8 ns artifact the exclusion exists to remove. Found by reading a critical-path report and seeing the banned cell at 12.824 ns on a path where it was forbidden; there was no test, which is why nothing caught it. All affected numbers were re-measured: the `clk_a` baseline carried **4.62 ns** of artifact and proven transforms' deltas moved 40 to 50%, but **no qualitative conclusion changed**. The exclusion is **not** uniformly beneficial: `clk_a` gains 4.62 ns while `clk_b` and `clk_e` each lose 1.97.
 
 ### 5.3 G0, constraint integrity: the one attack no equivalence checker can see
 
@@ -170,7 +182,7 @@ A k-padded obligation is *wrong* for an elastic interface: pointed at a valid/re
 
 ### 6.2 Why simulation is not a substitute, measured on four mutants
 
-Before the LLM experiment we measured the same question on four hand-built mutants of a known-correct transform, with a correct control that every method passes. **Two of the three invalid mutants escaped a realistic simulation gate.** One is the classic pipelining bug, stage 2 adding the current operand to a product one cycle old, invisible to any testbench holding that operand constant; the other is wrong on roughly one input in a million and survived 20,000 random vectors in both regimes, where formal refuted it instantly. §7 reproduces this on a real LLM proposal; §7.4 turns it into a suite.
+Before the LLM experiment we measured the same question on four hand-built mutants of a known-correct transform, with a correct control every method passes. **Two of the three invalid mutants escaped a realistic simulation gate**: the classic pipelining bug, stage 2 adding the current operand to a product one cycle old, invisible to any testbench holding that operand constant; and one wrong on roughly one input in a million that survived 20,000 random vectors in both regimes, where formal refuted it instantly. §7 reproduces this on a real LLM proposal; §7.4 turns it into a suite.
 
 ## 7. The GenAI engine, and the experiment we pre-registered
 
@@ -231,7 +243,7 @@ Batch 1's registration required any second batch to be registered separately wit
 
 **A4 takes `clk_b` from −4.957 to −0.032**, a 99.4% reduction adding no storage. **Both numbers are zero-parasitic**; the same group with parasitics is −43.438 (§7.2), against which +4.925 ns is about **11% of the real violation**. **The precondition gate fired for the first time**: A6 declared k = 0 while splitting a 15-entry array into two 8-entry ones, the flop count moved by +256, and G3 rejected it before any solver ran. And **A5 is why we registered a control**: it unrolls a reset loop, touches nothing on the read path, and still moves `clk_b` by +0.436, so A4's honest figure is **+4.489 above a change that does nothing**.
 
-**A2 is the batch's real finding, and it is a bug in our gate**, told in §9: EQY prints the same "Failed to prove equivalence" line for a counterexample and for a depth bound, and we matched on the string. Three things did not fit, and the one that mattered was that EQY had proved **128 of 128** partitions feeding the output it failed. One trap worth passing on: clamping `round` to its reachable range *outside* the designs changed nothing, because **EQY proves each partition with its inputs as free variables**. A3's REFUTED was re-checked under §9's null control and holds (§7.6).
+**A2 is the batch's real finding, and it is a bug in our gate**, told in §9: EQY prints the same "Failed to prove equivalence" line for a counterexample and for a depth bound, and we matched on the string. Three things did not fit, and the one that mattered was that EQY had proved **128 of 128** partitions feeding the output it failed. A3's REFUTED was re-checked under §9's null control and holds (§7.6).
 
 ### 7.2 The second router: which lever, before which transform
 
@@ -265,7 +277,7 @@ That cuts both ways and this report should say so: it is evidence that the route
 
 ### 7.3 The closed loop
 
-`tools/slacksmith.py` runs all of the above as one command: **measure, classify, route, apply, re-measure, repeat**, stopping when every group meets, when no lever remains, or at `--max-iters`, logging every decision with its evidence to `decisions.jsonl`.
+`tools/slacksmith.py` runs all of the above as one command (§1.1), logging every decision with its evidence to `decisions.jsonl`.
 
 Against SDC v2 it closes in **2 iterations and 46.7 seconds**, and the RTL lever never fires because nothing is left for it. To exercise both branches the target must be one the flow cannot already clear, so `sdc/bench_top_v3.sdc` applies v2's methodology to the corrected flow (`sdc/make_v3.py`). Under v3 the physical lever alone closes `clk_b` outright, −18.957 to +5.6; the RTL lever then gates P1, P2 and P3, EQY proves all three, and **the loop reverts all three on G5.**
 
@@ -273,7 +285,7 @@ Against SDC v2 it closes in **2 iterations and 46.7 seconds**, and the RTL lever
 
 **The acceptance bar itself was wrong, and a registered run caught it.** Under a per-group G5 bar, a sizing step gaining 0.838 ns on `clk_e` while costing `clk_a` 3.466 ns was **confirmed**. A registration written mid-run measures G5 across all groups: that run reverts it and ends in **4 iterations instead of 8, 1 group violating instead of 2**. Both runs are kept.
 
-**Under v3 with a corrected classifier the RTL lever never fires at all**, so the runs above measured three proven transforms on a path the router should not have sent them to. The flow was the larger lever: **flattening alone moves `clk_a` by +22.446 ns** (`experiments/flatten_control/`), because across the module boundary ABC collapses decode logic our wrapper's tied instruction bits make redundant and the 387-load net stops existing.
+**Under v3 with a corrected classifier the RTL lever never fires at all**, so the runs above measured three proven transforms on a path the router should not have sent them to. The flow was the larger lever: **flattening alone moves `clk_a` by +22.446 ns**, because across the module boundary ABC collapses decode logic our wrapper's tied instruction bits make redundant (`experiments/flatten_control/`).
 
 **`repair_design`'s output is formally proven equivalent to its input**: 5,832 compare points, all proven, **38 seconds**. Four earlier attempts failed and were published at the time as an open limitation; every cause was mundane (`equiv_make` matches wire names, so hierarchical against flat gave 86 compare points; a k-padded miter asked a sequential question of a combinational change). This is translation validation per run, not a proof of the algorithm, and says nothing about whether the timing gain is real.
 
@@ -396,19 +408,7 @@ Two honesty notes. The binding domain **moves** from `clk_e` to `clk_b`, so befo
 
 Every group meets at every point, for 7,833 µm² (+1.45%) and 1,547 clock buffers. `clk_b` pays 3.673 ns for its tree and the mechanism is in the same report: its launch path sits **3.514 ns** deeper than its capture path, so imbalance and slack loss agree to 0.16 ns. Propagation was verified rather than assumed, and `report_clock_skew` printed empty on this build so no skew number is claimed.
 
-**Core level** (`rv32i_core` alone, transform is 100% of the design; reset false-pathed, otherwise the recovery check masks the data path):
-
-| variant | cells | data WNS (ns) | power (mW) |
-|---|---|---|---|
-| gold | 6,769 | −9.84 | 6.26 |
-| P1 | 6,702 | −9.46 | 6.25 |
-| P2 | **6,441** | −9.81 | **6.20** |
-| P3 | 6,700 | −12.65 | 6.62 |
-| P6 | 6,864 | **−7.88** | 6.38 |
-
-**The rankings invert between contexts.** By core timing the best transform is P6; at design level P6 is the **worst** (−1.615 ns), and the only design-level winner is P2, nearly neutral at core level. Two real mechanisms: the core's critical path is not the design's, plus the non-local remapping quantified in §5. Earlier drafts quoted a core-level **F_max of 50.4 to 55.9 MHz, an 11.0% gain, for P6** — zero-parasitic, reset false-pathed, and for the transform that is worst where it matters. That was the most favourable framing available for the least useful result, and the parasitic-aware table above replaces it.
-
-**Before and after, all three of P, P and A on one pair of netlists.** The same `bench_top`, the same SDC, measured across `repair_design`, which is the step that actually closes the design:
+**Core level, and the rankings invert.** Measured on `rv32i_core` alone, P2 is the smallest and lowest-power variant (6,441 cells, 6.20 mW against gold's 6,769 and 6.26) and P6 has the best core timing. **At design level P6 is the worst** (−1.615 ns) and P2 is the only winner. Two real mechanisms: the core's critical path is not the design's, plus the non-local remapping quantified in §5. Earlier drafts quoted a core-level **F_max of 50.4 to 55.9 MHz, an 11.0% gain, for P6**, zero-parasitic and reset false-pathed, for the transform that is worst where it matters. That was the most favourable framing available for the least useful result, and the parasitic-aware table above replaces it.
 
 | metric | before | after | delta |
 |---|---|---|---|
