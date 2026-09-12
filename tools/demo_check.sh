@@ -8,10 +8,21 @@ set -u
 #   usage: bash tools/demo_check.sh
 . "$(dirname "${BASH_SOURCE[0]}")/env.sh"
 PASS=0; FAIL=0
-W=$SLACKSMITH_WORK/demo_run; rm -rf $W
+# One scratch tree per run, keyed by PID. These were two fixed paths, each
+# wiped with rm -rf at start, so two demo_check runs at once delete each other's
+# evidence mid-flight. A check that cannot be run twice at once cannot be used
+# to compare two trees, which is the job it was given on 2026-09-12 when a
+# verification run from a fresh clone of the remote was run alongside one in the
+# working tree. Whether that collision explains the 2 failures the clone
+# reported is recorded in NOTES, measured rather than assumed.
+RUN=${DEMO_CHECK_RUN:-$$}
+W=$SLACKSMITH_WORK/demo_run/$RUN; rm -rf $W
 # Scratch for this script's own output. Previously $HOME, which dumped a dozen
 # stray .txt files into the home directory of anyone who ran it.
-D=$SLACKSMITH_WORK/demo_check; rm -rf $D; mkdir -p $D
+D=$SLACKSMITH_WORK/demo_check/$RUN; rm -rf $D; mkdir -p $D
+echo "scratch: $D"
+echo "run dir: $W"
+
 
 chk () {  # $1 label, $2 file to search, $3.. expected substrings
   local label=$1 f=$2; shift 2
