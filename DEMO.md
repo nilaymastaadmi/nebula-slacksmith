@@ -252,9 +252,9 @@ One netlist, 26,958 cells, identical in every row. Only the constraints vary.
     baseline_honest           11.158     5.665    -0.319
     mcp_whole_clk_e           11.158     5.665     4.860
 
-> One line of SDC closes the group. It is worth 5.179 nanoseconds, which is
-> more than our best formally-proven RTL transform bought, for changing
-> nothing at all. Every equivalence checker we own would call these two
+> One line of SDC closes the group. It is worth 5.179 nanoseconds, for
+> changing nothing at all. (The comparison to our best proven RTL transform
+> is withdrawn, REPORT §5.2: different fixtures.) Every equivalence checker we own would call these two
 > designs equivalent, correctly, because they are the same file. Proof of
 > equivalence is necessary and nowhere near sufficient for believing a
 > timing number.

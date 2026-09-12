@@ -5,14 +5,19 @@ is what `tools/demo_check.sh` verifies; this file is the audio layer and adds
 nothing that is not evidenced there.
 
 **Budget: 5 minutes.** Sarvam runs about 150 words per minute, so the ceiling
-is roughly **750 words of narration**. This script is 690. Do not add to it
-without cutting something.
+is **750 words of narration** and the target is under 700, because 5:00 is the
+ceiling and not the target. **The count is measured, never written here:**
+`python3 tools/script_words.py` counts the quoted narration lines and fails
+above 750. Until 2026-09-12 this header said 690 while the file held 983,
+6.6 minutes at 150 wpm; the count had been written once and never re-measured
+after two rounds of narration corrections. Do not add to the narration
+without cutting something, and re-run the counter after every edit.
 
 **Screen is a real terminal throughout.** Remotion builds **only the title card
 and the end card**. Every number marked ZOOM TARGET below is reached with
 Recordly's cursor zoom on the real terminal output, not a graphic: a callout
 restating a number the tool just printed is weaker than the tool printing it.
-This matches `demo/VIDEO_PROMPT.md`, which the two files previously contradicted.
+This matches `demo/VIDEO_PROMPT.md`.
 
 ---
 
@@ -43,11 +48,9 @@ does not have to guess. Tool names it will get wrong unless told:
 **SCREEN:** Remotion title card
 
 > We found no published agentic R T L optimizer that both changes latency and
-> discharges a formal obligation for it, because adding a pipeline stage breaks
-> conventional equivalence checking. Four neighbours come close and the report
-> names them. We made transforms typed, so the declared type picks
-> the proof obligation, and latency-changing transforms become checkable.
-> Then we measured whether the generative A I half actually works.
+> discharges a formal obligation for it. We made transforms typed, so the declared type picks the proof obligation, and
+> latency-changing transforms become checkable. Then we measured whether the
+> generative A I half works.
 
 ---
 
@@ -57,29 +60,25 @@ does not have to guess. Tool names it will get wrong unless told:
 **SCREEN:** `python3 tools/bench_size.py`
 
 > Forty-eight thousand six hundred and sixteen standard cells. Five
-> asynchronous clock domains, each with its own asynchronous reset and its own
-> generated clock in R T L, including odd divide-by-three and divide-by-five.
-> Gray-code asynchronous FIFOs on every multi-bit crossing. An R V thirty-two
-> I core and two A E S cores. Not a toy.
+> asynchronous clock domains, each with its own generated clock in R T L,
+> including odd ratios. Gray-code FIFOs on every multi-bit crossing. An R V
+> thirty-two I core and two A E S cores. Not a toy.
 
 ---
 
-## Beat 2. The closed loop. 50 seconds. **This is the demo. Run it live.**
+## Beat 2. The closed loop. 45 seconds. **This is the demo. Run it live.**
 
 **COVERS:** deliverables 1, 2 and 3
 **SCREEN:** the loop command, then `tools/show_run.py` on the same run
 
-> One command. Two iterations. Under a minute, and nobody steering it.
+> One command. Two iterations. Under a minute, nobody steering it. Physical
+> lever only here; the generative half runs unattended in a separate run,
+> later.
 >
-> This run uses the physical lever only. The generative half running unattended
-> is a separate run and a separate number, and it comes later.
->
-> It did not guess which lever to pull. Ninety-one percent of that path's
-> delay sits in cells driving thirty-two or more loads, and the worst single
-> cell burns twenty-one nanoseconds driving three hundred loads inside the
-> A E S key memory. Physical buffering is built to fix a net's load and R T L
-> is not, so the tool routed to a physical lever instead of spending a proposal
-> on it.
+> It did not guess. Ninety-one percent of that path's delay is in cells
+> driving thirty-two or more loads; the worst cell burns twenty-one
+> nanoseconds driving three hundred loads. Buffering fixes a net's load and
+> R T L does not, so the tool routed physical instead of spending a proposal.
 
 **ZOOM TARGET:** `fanout 300 — 21.029 ns in one cell`
 
@@ -90,47 +89,40 @@ does not have to guess. Tool names it will get wrong unless told:
 **COVERS:** deliverables 2 and 4
 **SCREEN:** `tools/show_run.py experiments/closed_loop/run_v3_final.jsonl`
 
-> Three transforms here are all formally proven correct, and all three make
-> the number worse. The loop reverted every one of them by itself. Passing a
-> formal gate means correct. It does not mean useful, and those are separate
-> bars that this tool measures separately.
+> Three transforms here are formally proven correct, and all three make the
+> number worse. The loop reverted every one by itself. Proven means correct,
+> not useful, and this tool measures the two separately.
 >
-> The problem statement names four optimization classes. For most of this
-> project the engine proposed two of them, and we assumed nobody had written
-> the other two. That was wrong. Our own gate required a transform to preserve
-> the flop count, which excludes every retiming and every state re-encoding by
-> construction. Both now route through their own proof obligation.
+> The brief names four optimization classes. For most of this project our gate
+> rejected retiming and state re-encoding by construction; both now route
+> through their own proof obligation.
 >
-> And on the path our classifier scored ninety-one percent fanout, the model
-> running unattended proposed a fanout split, our gate proved it, and it bought
-> one point four one four nanoseconds on clock B and clock E, and one point nine
-> six seven on clock A, with no group paying for it. We had written in
-> our own summary that no R T L rewrite shortens a net's load delay. That
-> sentence is now gone.
+> On that ninety-one percent fanout path, the model running unattended, lever
+> forced by hand, proposed a fanout split. Our gate proved it; measured outside
+> the loop it bought one point four one four nanoseconds with no group paying.
 
 ---
 
-## Beat 4. The refutation. 60 seconds. **The best beat. Do not cut it.**
+## Beat 4. The refutation. 55 seconds. **The best beat. Do not cut it.**
 
 **COVERS:** deliverable 6
 **SCREEN:** the git log showing registration precedes results, then the table
 
-> Proposal P four rewrote the A L U's shift arms into one ternary. It parses,
-> it elaborates, it passes every precondition, and it saves two hundred and
-> eight cells. It is also wrong. A conditional operator takes its signedness
-> from both branches, so pairing a signed branch with an unsigned one silently
-> degrades an arithmetic right shift into a logical one, and the instruction
-> breaks for every negative operand.
+> Proposal P four rewrote the A L U's shift arms into one ternary. It passes
+> every precondition and saves two hundred and eight cells. It is also wrong. A conditional operator takes its signedness from
+> both branches, so a signed branch paired with an unsigned one silently turns
+> an arithmetic right shift into a logical one, and the instruction breaks for
+> every negative operand.
 >
 > The file it edited carries a six-line comment warning about exactly this,
 > ten lines above the code it changed.
 >
 > Formal verification caught it in forty-six seconds with a concrete
-> counterexample. The design's own shipped firmware missed it. Twenty thousand
-> random instruction words missed it.
+> counterexample. The design's own firmware missed it. Twenty thousand random
+> instruction words missed it.
 >
-> The verdict tracks stimulus quality, not bug severity. Every one of those
-> simulation gates is what a real agentic R T L tool ships with today.
+> The verdict tracks stimulus quality, not bug severity. Those simulation
+> gates are what agentic R T L tools ship with today.
 
 **ZOOM TARGETS:** `46 s — counterexample a=ae19f605` and `20,000 vectors — missed`.
 Both are evidenced: the witness is in `experiments/llm_proposer_aes/NOTES.md` and
@@ -139,35 +131,34 @@ Both are evidenced: the witness is in `experiments/llm_proposer_aes/NOTES.md` an
 
 ---
 
-## Beat 5. Levers, and what closure costs. 40 seconds.
+## Beat 5. Levers, what survives, and what closure costs. 50 seconds.
 
-**COVERS:** deliverable 5
-**SCREEN:** the lever table, then the PPA numbers
+**COVERS:** deliverables 4 and 5
+**SCREEN:** the lever table, then `experiments/composed_rtl/results/post_repair_summary.txt`, then the PPA numbers
 
-> Like for like, one S D C and one timing model, on clock B: our best R T L
-> transform buys three point one eight five nanoseconds while the physical lever
-> takes the same group from minus eighteen point nine to plus five point six in
-> the same run. About one eighth. We report that as the finding it is.
+> Like for like on clock B: our best R T L
+> transform buys three point one eight five nanoseconds; the physical lever
+> takes the same group from minus eighteen point nine to plus five point six.
+> About one eighth.
 >
-> With placement parasitics all three groups close: clock A from minus
-> thirty-six point seven to plus seventeen point six, clock B from minus
-> forty-three point four to plus twelve point four, clock E from minus
-> forty-seven point seven to plus nineteen point five. The price is twenty
-> point two percent area, and closure survives clock tree synthesis and global
-> routing at seven thousand eight hundred square microns.
+> Then we composed our three proven transforms into one file. Before wires,
+> five point one six five nanoseconds together, fifty-four percent of the sum
+> of the parts. After the physical flow: zero, within the flow's own noise.
+> The classifier had routed that path to buffering before any of this was
+> measured. It was right.
+>
+> With placement parasitics all three groups close, at twenty point two
+> percent more area and forty-seven percent more power, and closure survives
+> a clock tree and global routing.
 
-**ZOOM TARGETS:** `+55.805 ns — zero lines of RTL` and `3.32x achievable frequency`.
-Say with the second one: **part of that 3.32x is a flow defect we shipped**, the
-missing `buffer; upsize` script, worth 17.557 ns on its own (REPORT section 9).
+**ZOOM TARGETS:** `+55.805 ns — zero lines of RTL`, then the `composed` row of
+the post-repair summary against `gold`, then `3.32x achievable frequency`. Say with
+the last one: **part of that 3.32x is a flow defect we shipped**, the missing
+`buffer; upsize` script, worth 17.557 ns on its own (REPORT section 9).
 
-Optional twelve seconds if the cut has room, and the strongest single number for
-a silicon audience:
-
-> Five asynchronous domains have no single maximum frequency, so we report the
-> factor every period has to scale by for all of them to meet. Before the
-> physical flow that factor is two point eight. After it, zero point eight
-> four. **The design goes from thirty-six percent of its target frequency to a
-> hundred and eighteen percent**, with placement parasitics in the model.
+The 2.799 to 0.844 scaling-factor line (36% to 118% of target) was cut for
+time on 2026-09-12; it is in REPORT §8 and may return only if the counter
+allows it.
 
 ---
 
@@ -176,17 +167,10 @@ a silicon audience:
 **COVERS:** thought process
 **SCREEN:** `tools/verdict_regression.sh`, then `tools/classify_regression.py`
 
-> Our own gate reported a solver timeout as a refutation, because the checker
-> prints the same line for both. We only noticed because one partition failed
-> while all one hundred and twenty-eight partitions feeding it had passed.
->
-> Worse: our path classifier undercounted fanout across module boundaries. Its
-> own documentation named the tell, a six point seven six two nanosecond cell
-> at fanout one, and that exact number sat in every log we produced for three
-> days. The cell drives three hundred and eighty-seven loads.
->
-> Both are standing regression tests now. Every wrong log is still in the
-> repository, next to the corrected verdict.
+> Our gate once reported a solver timeout as a refutation. Worse, our path classifier undercounted fanout across module boundaries. The
+> tell, a six point seven six two nanosecond cell at fanout one, sat in every
+> log for three days. That cell drives three hundred and eighty-seven loads.
+> Both are regression tests now; every wrong log stays in the repository.
 
 ---
 
@@ -195,40 +179,30 @@ a silicon audience:
 **COVERS:** innovation, gate zero
 **SCREEN:** `bash experiments/sdc_integrity/run.sh`
 
-> One netlist. Twenty-six thousand nine hundred and fifty-eight cells,
-> identical in every row. Only the constraints change.
->
-> One line of S D C closes the group. It is worth five point one seven nine
-> nanoseconds, which is more than our best formally proven transform bought,
-> for changing nothing at all. Every equivalence checker we own would call
-> these two designs equivalent, correctly, because they are the same file.
->
-> So the loop hashes the S D C, counts its timing exceptions, and refuses to
-> report slack measured under constraints that are not the registered ones.
+> One netlist, identical in every row. One line of S D C closes the group, worth five point
+> one seven nine nanoseconds for changing nothing. Every equivalence checker
+> we own calls the two designs equivalent, correctly: they are the same file.
+> So the loop hashes the S D C, counts its exceptions, and refuses to report
+> slack measured under constraints that are not the registered ones.
 
-**ZOOM TARGET:** `+5.179 ns — byte-identical netlist`. Say that this is measured on
-a 26,958-cell flat netlist, a different fixture from the 55,413-cell benchmark, so it
-is not a like-for-like comparison against any RTL transform.
+**ZOOM TARGET:** `+5.179 ns — byte-identical netlist`. The comparison to any RTL
+transform ("more than our best proven transform bought") is **withdrawn** in REPORT
+§5.2: 26,958-cell flat fixture against the 55,413-cell benchmark. It was in this
+narration until 2026-09-12 (`REVIEW_RESULT_2026-09-12_r4.md`). Do not say it.
 
 ---
 
-## Beat 8. We built the exam and published our own score. 40 seconds.
+## Beat 8. We built the exam and published our own score. 35 seconds.
 
 **COVERS:** innovation
 **SCREEN:** the SlackBench results table
 
-> Eight transform pairs with ground truth declared before any checker ran,
-> each one built to defeat a specific checker's abstraction. One wrong
-> transform survived forty thousand simulated cycles. Combinational and
-> sequential equivalence checking could not even express five of the eight
-> questions. Two checkers confidently rejected a pair that is provably
-> equivalent.
->
-> And ours declines rather than answers on one case. An induction-only shortcut in
-> this harness was wrong twice; the shipped gate discharges with B M C plus P D R
-> and scores seven of eight. We registered in advance that it should not sweep
-> its own suite, because a benchmark its author aces tells you about the
-> benchmark and not about the tool.
+> Eight transform pairs, ground truth sealed before any checker ran. One wrong transform survived
+> forty thousand simulated cycles. Equivalence checking could not express five
+> of the eight questions. Two checkers rejected a provably equivalent pair.
+> Ours declines on one case and scores seven of eight. We registered that it
+> should not sweep its own suite: a benchmark its author aces describes the
+> benchmark, not the tool.
 
 ---
 
@@ -249,9 +223,13 @@ No narration.
   run, which classifies the path and pulls the physical lever; "nobody steering
   it" refers to the loop, and the narration says so in the next sentence. The
   unattended generative run is a different run, a different SDC (v3) and a
-  different number (`experiments/cli_backend/`, N = 1, REPORT §7.7). Do not let
-  the two merge in the edit.
-- **Never read a table aloud.** Point at one number. The callouts carry the
-  rest.
-- Beat 4 is the strongest sixty seconds in the video. If the cut runs long,
-  take it out of Beat 5 or Beat 8, never Beat 4.
+  different number (`experiments/cli_backend/`, N = 1, REPORT §7.7), and Beat 3
+  keeps its qualifiers on camera: lever forced by hand, gain measured outside
+  the loop. Do not let the two merge in the edit.
+- **Beat 5's composition line is the report's headline negative result** and
+  it stays in the cut: the video must not tell a cleaner story than the
+  document (`experiments/composed_rtl/NOTES.md`, amendment 2, N = 5).
+- **Never read a table aloud.** Point at one number.
+- Beat 4 is the strongest fifty-five seconds in the video. If the cut runs
+  long, take it out of Beat 6 or Beat 8, never Beat 4 or Beat 5's second
+  paragraph.

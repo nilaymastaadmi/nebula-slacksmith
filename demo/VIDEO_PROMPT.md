@@ -153,5 +153,9 @@ text was wrong in 2.2 and gets shortened there.
   merge them.
 - **Retracted claims stay retracted.** Do not reinstate "no RTL rewrite
   shortens a net's load delay", the universal "every published optimizer"
-  framing, or the 55.805-over-4.925 ratio. `DEMO.md` and `SCRIPT.md` carry the
-  corrected wording and say why.
+  framing, the 55.805-over-4.925 ratio, or Beat 7's "more than our best proven
+  transform bought" (withdrawn in REPORT §5.2, removed from the narration
+  2026-09-12). `DEMO.md` and `SCRIPT.md` carry the corrected wording and say why.
+- **Beat 3's unattended run keeps its qualifiers on camera**: lever forced by
+  hand, gain measured outside the loop. REPORT §7.7 puts them in the sentence,
+  so the narration does too.
