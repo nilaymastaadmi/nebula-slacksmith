@@ -1,0 +1,33 @@
+=============== null_gold_vs_gold ===============
+synthesizing baseline into /home/toshn/slacksmith_work/cr_baseline ...
+synthesizing variant (aes_load in place of u_aes_b) ...
+
+clock              baseline    variant      delta
+clk_a               -13.167    -13.167     +0.000
+clk_b               -18.957    -18.957     +0.000
+clk_e               -25.957    -25.957     +0.000
+=============== A4_onehot_read ===============
+reusing cached baseline: /home/toshn/slacksmith_work/cr_baseline/baseline_mapped.v
+synthesizing variant (aes_load in place of u_aes_b) ...
+
+clock              baseline    variant      delta
+clk_a               -13.167    -12.180     +0.987
+clk_b               -18.957    -14.032     +4.925
+clk_e               -25.957    -21.032     +4.925
+=============== O2_fsm_reencode ===============
+reusing cached baseline: /home/toshn/slacksmith_work/cr_baseline/baseline_mapped.v
+synthesizing variant (aes_load in place of u_aes_b) ...
+
+clock              baseline    variant      delta
+clk_a               -13.167    -12.639     +0.528
+clk_b               -18.957    -15.772     +3.185
+clk_e               -25.957    -22.772     +3.185
+=============== O1_fanout_split ===============
+reusing cached baseline: /home/toshn/slacksmith_work/cr_baseline/baseline_mapped.v
+synthesizing variant (aes_load in place of u_aes_b) ...
+
+clock              baseline    variant      delta
+clk_a               -13.167    -11.200     +1.967
+clk_b               -18.957    -17.543     +1.414
+clk_e               -25.957    -24.543     +1.414
+=============== composed_A4_O2_O1 ===============
