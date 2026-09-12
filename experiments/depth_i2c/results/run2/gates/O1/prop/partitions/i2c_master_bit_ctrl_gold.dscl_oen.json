@@ -1,0 +1,34 @@
+{
+  "partition": {
+    "index": 10,
+    "name": "i2c_master_bit_ctrl_gold.dscl_oen",
+    "inbits": {
+      "clk": [
+        0
+      ],
+      "scl_oen": [
+        0
+      ]
+    },
+    "outbits": {
+      "dscl_oen": [
+        0
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.i2c_master_bit_ctrl_gold.dscl_oen",
+    "internal": {},
+    "unused": {},
+    "cellcount": 1,
+    "bitcount": 3
+  },
+  "gate_module": {
+    "name": "gold.i2c_master_bit_ctrl_gold.dscl_oen",
+    "internal": {},
+    "unused": {},
+    "cellcount": 1,
+    "bitcount": 3
+  }
+}

@@ -1,0 +1,12 @@
+[gold]
+read_verilog gold.v
+prep -top i2c_master_bit_ctrl_gold
+
+[gate]
+read_verilog gate.v
+rename i2c_master_bit_ctrl_gate i2c_master_bit_ctrl_gold
+prep -top i2c_master_bit_ctrl_gold
+
+[strategy sat]
+use sat
+depth 5

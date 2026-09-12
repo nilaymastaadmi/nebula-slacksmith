@@ -905,7 +905,16 @@ def main():
                 # synthesizes is built the same way the gate built the one it
                 # proved.
                 tf = p.get("target_file") or f"rtl/{p['target_module']}.v"
-                key = tf[len("rtl/"):] if tf.startswith("rtl/") else tf
+                # Key relative to --rtl-dir, not to a literal "rtl/". For an
+                # external design the literal prefix never matched, so a
+                # PROVEN proposal was gated and then skipped as "target not
+                # in the file list" (experiments/depth_i2c/, amendment 1).
+                # Reduces to the old behaviour for the default rtl/.
+                rd = os.path.relpath(a.rtl_dir, REPO).replace(os.sep, "/")
+                if tf.startswith(rd + "/"):
+                    key = tf[len(rd) + 1:]
+                else:
+                    key = tf[len("rtl/"):] if tf.startswith("rtl/") else tf
                 if key not in rtl_files:
                     record(iter=it, step="skip", proposal=p["id"],
                            reason=f"target {key} not in the file list")

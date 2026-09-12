@@ -1,0 +1,16 @@
+G0 sdc: i2c.sdc sha256 8a7f3816cbed6ab0 6 lines, timing exceptions none
+rtl files: 1 from experiments/depth_i2c/rtl_files.txt (top i2c_master_top)
+dont_use flags: 72
+engine: sta   clocks: wb_clk_i
+
+=== iteration 1 ===
+measure: wb_clk_i=-0.396
+classify wb_clk_i: DEPTH_DOMINATED (fanout share 0.0) -> rtl
+  binding module i2c_master_bit_ctrl found in i2c.v (filename does not match module name)
+  online proposal O1: parallel_case_attribute_on_fsm_decode (declared k=0)
+  gate O1 (parallel_case_attribute_on_fsm_decode): G3=None G4=?
+no proposal passed the gate.
+
+wrote /home/toshn/slacksmith_work/depth_i2c/run3/SUMMARY.md
+wrote /home/toshn/slacksmith_work/depth_i2c/run3/decisions.jsonl
+exit: 0

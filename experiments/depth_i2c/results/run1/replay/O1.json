@@ -1,0 +1,11 @@
+{
+ "id": "O1",
+ "def_id": "onehot_fsm_case_to_reachable_shift_decode",
+ "target_module": "i2c_master_bit_ctrl",
+ "target_file": "experiments/depth_i2c/rtl/i2c.v",
+ "latency_delta_k": 0,
+ "obligation_branch": "4 (mapped-state equivalence)",
+ "rationale": "The flagged path runs through the 17-way exact-match case decode of the one-hot c_state register, which read literally requires testing all 16 other bits clear on every branch and matches the wide OR/NOR/AOI chain on the critical path. The FSM is actually a shared idle dispatch feeding four independent one-bit shift chains that always return to idle, so given c_state stays one-hot-or-idle for every reachable state (true inductively from reset: idle sets at most one bit, every non-idle state has exactly one successor), every next-state bit and output collapses to reading individual bits and two small OR-groups instead of a 17-way priority network -- a single AND2 for 12 of the 17 next-state bits. That equivalence is conditioned on reachability rather than the full 2^17 input space, so it is declared against the sequential/reachability obligation rather than unscoped combinational EQY, matching how this project's own onehot_invariant/fsm_reencode work already treats this exact class of precondition.",
+ "variant_file": "experiments/depth_i2c/results/run1/replay/O1_i2c.v",
+ "replay_of": "run1"
+}

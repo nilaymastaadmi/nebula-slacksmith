@@ -1,0 +1,43 @@
+{
+  "partition": {
+    "index": 19,
+    "name": "i2c_master_bit_ctrl_gold.busy",
+    "inbits": {
+      "clk": [
+        0
+      ],
+      "nReset": [
+        0
+      ],
+      "rst": [
+        0
+      ],
+      "sta_condition": [
+        0
+      ],
+      "sto_condition": [
+        0
+      ]
+    },
+    "outbits": {
+      "busy": [
+        0
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.i2c_master_bit_ctrl_gold.busy",
+    "internal": {},
+    "unused": {},
+    "cellcount": 5,
+    "bitcount": 10
+  },
+  "gate_module": {
+    "name": "gold.i2c_master_bit_ctrl_gold.busy",
+    "internal": {},
+    "unused": {},
+    "cellcount": 5,
+    "bitcount": 10
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "partition": {
+    "index": 4,
+    "name": "i2c_master_bit_ctrl_gold.sda_o",
+    "inbits": {},
+    "outbits": {
+      "sda_o": [
+        0
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.i2c_master_bit_ctrl_gold.sda_o",
+    "internal": {},
+    "unused": {},
+    "cellcount": 1,
+    "bitcount": 1
+  },
+  "gate_module": {
+    "name": "gold.i2c_master_bit_ctrl_gold.sda_o",
+    "internal": {},
+    "unused": {},
+    "cellcount": 1,
+    "bitcount": 1
+  }
+}

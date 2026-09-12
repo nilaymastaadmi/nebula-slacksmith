@@ -115,13 +115,52 @@ def _validate(p, ctx):
     return None
 
 
+def needs_splice(full, module):
+    """True when the target module's file declares more than one module or
+    keeps a `define/`include at file scope. A comment-only header does not
+    count, so every bench_top variant file stays byte-identical to before."""
+    mods = re.findall(r"^[ \t]*module[ \t]+(\w+)", full, re.M)
+    head = re.split(r"^[ \t]*module\b", full, 1, flags=re.M)[0]
+    return len(mods) > 1 or re.search(r"^[ \t]*`(define|include)\b", head, re.M) is not None
+
+
+def splice_module(full, module, variant):
+    """Replace `module` in `full` with `variant` (one module's text), or return
+    None when no splice is needed or the module is not found.
+
+    Why: experiments/depth_i2c/ run 1, 2026-09-12. i2c.v declares three
+    modules behind five file-scope `define lines. The model returned the one
+    module it was asked for; written as the whole variant file it failed G1
+    on an undefined macro the gold copy carries, and on PROVEN the apply step
+    would have replaced i2c.v with a one-module file. bench_top never showed
+    it: one module per file, nothing at file scope."""
+    if not needs_splice(full, module):
+        return None
+    # A variant that already declares more than one module, or carries its
+    # own file-scope defines, is a whole-file rewrite (depth_i2c run 2 returned
+    # all of i2c.v with two attributes added) and is used as it is.
+    vmods = re.findall(r"^[ \t]*module[ \t]+(\w+)", variant, re.M)
+    if len(vmods) != 1 or vmods[0] != module or needs_splice(variant, module):
+        return None
+    m = re.search(r"^[ \t]*module[ \t]+%s\b.*?^[ \t]*endmodule[^\n]*"
+                  % re.escape(module), full, re.M | re.S)
+    if not m:
+        return None
+    return full[:m.start()] + variant.strip("\n") + full[m.end():]
+
+
 def _materialise(p, ctx, workdir):
     """Write variant_source to disk and point target_file at it, so the loop's
     existing splice/variant path can consume an online proposal unchanged."""
     vd = os.path.join(workdir, "online_variants")
     os.makedirs(vd, exist_ok=True)
     path = os.path.join(vd, "%s_%s.v" % (p["id"], ctx["module"]))
-    open(path, "w", encoding="utf-8", newline="\n").write(p["variant_source"])
+    text = p["variant_source"]
+    spliced = splice_module(ctx.get("module_source") or "", ctx["module"], text)
+    if spliced is not None:
+        text = spliced
+        p["spliced_into_file"] = True
+    open(path, "w", encoding="utf-8", newline="\n").write(text)
     p["variant_file"] = os.path.relpath(path, REPO)
     # ctx carries the real path; rtl/<module>.v is wrong for anything vendored
     # in a subdirectory, which is every AES source.

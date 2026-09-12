@@ -1,0 +1,17 @@
+SBY  9:59:04 [miter_prop_bmc] Removing directory '/home/toshn/slacksmith_work/depth_i2c/replay_run1/gates/O1/miter_prop_bmc'.
+SBY  9:59:04 [miter_prop_bmc] Copy '/home/toshn/slacksmith_work/depth_i2c/replay_run1/gates/O1/gold.v' to '/home/toshn/slacksmith_work/depth_i2c/replay_run1/gates/O1/miter_prop_bmc/src/gold.v'.
+SBY  9:59:04 [miter_prop_bmc] Copy '/home/toshn/slacksmith_work/depth_i2c/replay_run1/gates/O1/gate.v' to '/home/toshn/slacksmith_work/depth_i2c/replay_run1/gates/O1/miter_prop_bmc/src/gate.v'.
+SBY  9:59:04 [miter_prop_bmc] Copy '/home/toshn/slacksmith_work/depth_i2c/replay_run1/gates/O1/miter_prop.sv' to '/home/toshn/slacksmith_work/depth_i2c/replay_run1/gates/O1/miter_prop_bmc/src/miter_prop.sv'.
+SBY  9:59:04 [miter_prop_bmc] engine_0: smtbmc z3
+SBY  9:59:04 [miter_prop_bmc] base: starting process "cd miter_prop_bmc/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  9:59:04 [miter_prop_bmc] base: Warning: Encountered `full_case' comment! Such legacy hot comments are supported by Yosys, but are not part of any formal language specification. Using the Verilog `full_case' attribute or the SystemVerilog `unique' or `unique0' keywords is recommended!
+SBY  9:59:04 [miter_prop_bmc] base: Warning: Encountered `parallel_case' comment! Such legacy hot comments are supported by Yosys, but are not part of any formal language specification. Using the Verilog `parallel_case' attribute or the SystemVerilog `unique' or `priority' keywords is recommended!
+SBY  9:59:04 [miter_prop_bmc] base: ERROR: Module `i2c_master_bit_ctrl_gate' referenced in module `miter_prop' in cell `u_t' does not have a port named 'halted'.
+SBY  9:59:04 [miter_prop_bmc] base: finished (returncode=1)
+SBY  9:59:04 [miter_prop_bmc] base: task failed. ERROR.
+SBY  9:59:04 [miter_prop_bmc] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  9:59:04 [miter_prop_bmc] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  9:59:04 [miter_prop_bmc] summary: engine_0 (smtbmc z3) did not return a status
+SBY  9:59:04 [miter_prop_bmc] summary: engine_0 did not produce any traces
+SBY  9:59:04 [miter_prop_bmc] DONE (ERROR, rc=16)
+SBY  9:59:04 The following tasks failed: ['bmc']

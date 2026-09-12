@@ -1,0 +1,40 @@
+{
+  "partition": {
+    "index": 8,
+    "name": "i2c_master_bit_ctrl_gold.sSDA",
+    "inbits": {
+      "clk": [
+        0
+      ],
+      "nReset": [
+        0
+      ],
+      "rst": [
+        0
+      ],
+      "sda_i": [
+        0
+      ]
+    },
+    "outbits": {
+      "sSDA": [
+        0
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.i2c_master_bit_ctrl_gold.sSDA",
+    "internal": {},
+    "unused": {},
+    "cellcount": 2,
+    "bitcount": 6
+  },
+  "gate_module": {
+    "name": "gold.i2c_master_bit_ctrl_gold.sSDA",
+    "internal": {},
+    "unused": {},
+    "cellcount": 2,
+    "bitcount": 6
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "partition": {
+    "index": 3,
+    "name": "i2c_master_bit_ctrl_gold.sda_oen",
+    "inbits": {
+      "al": [
+        0
+      ],
+      "c_state": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "clk": [
+        0
+      ],
+      "clk_en": [
+        0
+      ],
+      "din": [
+        0
+      ],
+      "nReset": [
+        0
+      ],
+      "rst": [
+        0
+      ]
+    },
+    "outbits": {
+      "sda_oen": [
+        0
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.i2c_master_bit_ctrl_gold.sda_oen",
+    "internal": {},
+    "unused": {},
+    "cellcount": 25,
+    "bitcount": 48
+  },
+  "gate_module": {
+    "name": "gold.i2c_master_bit_ctrl_gold.sda_oen",
+    "internal": {},
+    "unused": {},
+    "cellcount": 25,
+    "bitcount": 48
+  }
+}

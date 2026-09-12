@@ -1,0 +1,194 @@
+OpenROAD f12e2f474102bfb875eeee57fb610d7d7de17770 
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ODB-0222] Reading LEF file: /home/toshn/orfs/flow/platforms/sky130hd/lef/sky130_fd_sc_hd.tlef
+[INFO ODB-0223]     Created 13 technology layers
+[INFO ODB-0224]     Created 25 technology vias
+[INFO ODB-0226] Finished LEF file:  /home/toshn/orfs/flow/platforms/sky130hd/lef/sky130_fd_sc_hd.tlef
+[INFO ODB-0222] Reading LEF file: /home/toshn/orfs/flow/platforms/sky130hd/lef/sky130_fd_sc_hd_merged.lef
+[INFO ODB-0225]     Created 441 library cells
+[INFO ODB-0226] Finished LEF file:  /home/toshn/orfs/flow/platforms/sky130hd/lef/sky130_fd_sc_hd_merged.lef
+[WARNING STA-0354] set_input_delay relative to a clock defined on the same port/pin not allowed.
+[WARNING IFP-0028] Core area lower left (2.000, 2.000) snapped to (2.300, 2.720).
+[INFO IFP-0001] Added 44 rows of 266 sites.
+Found 0 macro blocks.
+Using 1u default distance from corners.
+Using 2 tracks default min distance between IO pins.
+[INFO PPL-0010] Tentative 0 to set up sections.
+[INFO PPL-0001] Number of slots          462
+[INFO PPL-0002] Number of I/O            33
+[INFO PPL-0003] Number of I/O w/sink     33
+[INFO PPL-0004] Number of I/O w/o sink   2
+[INFO PPL-0005] Slots per section        200
+[INFO PPL-0006] Slots increase factor    0.01
+[INFO PPL-0008] Successfully assigned pins to sections.
+[INFO PPL-0012] I/O nets HPWL: 2186.00 um.
+[INFO GPL-0002] DBU: 1000
+[INFO GPL-0003] SiteSize: 460 2720
+[INFO GPL-0004] CoreAreaLxLy: 2300 2720
+[INFO GPL-0005] CoreAreaUxUy: 124660 122400
+[INFO GPL-0006] NumInstances: 587
+[INFO GPL-0007] NumPlaceInstances: 587
+[INFO GPL-0008] NumFixedInstances: 0
+[INFO GPL-0009] NumDummyInstances: 0
+[INFO GPL-0010] NumNets: 608
+[INFO GPL-0011] NumPins: 2342
+[INFO GPL-0012] DieAreaLxLy: 0 0
+[INFO GPL-0013] DieAreaUxUy: 126765 126765
+[INFO GPL-0014] CoreAreaLxLy: 2300 2720
+[INFO GPL-0015] CoreAreaUxUy: 124660 122400
+[INFO GPL-0016] CoreArea: 14644044800
+[INFO GPL-0017] NonPlaceInstsArea: 0
+[INFO GPL-0018] PlaceInstsArea: 6028281600
+[INFO GPL-0019] Util(%): 41.17
+[INFO GPL-0020] StdInstsArea: 6028281600
+[INFO GPL-0021] MacroInstsArea: 0
+[InitialPlace]  Iter: 1 CG residual: 0.00000011 HPWL: 10657482
+[InitialPlace]  Iter: 2 CG residual: 0.00000011 HPWL: 5434734
+[InitialPlace]  Iter: 3 CG residual: 0.00000011 HPWL: 5419923
+[InitialPlace]  Iter: 4 CG residual: 0.00000012 HPWL: 5451508
+[InitialPlace]  Iter: 5 CG residual: 0.00000007 HPWL: 5440551
+[INFO GPL-0031] FillerInit: NumGCells: 870
+[INFO GPL-0032] FillerInit: NumGNets: 608
+[INFO GPL-0033] FillerInit: NumGPins: 2342
+[INFO GPL-0023] TargetDensity: 0.60
+[INFO GPL-0024] AveragePlaceInstArea: 10269644
+[INFO GPL-0025] IdealBinArea: 17116072
+[INFO GPL-0026] IdealBinCnt: 855
+[INFO GPL-0027] TotalBinArea: 14644044800
+[INFO GPL-0028] BinCnt: 16 16
+[INFO GPL-0029] BinSize: 7648 7480
+[INFO GPL-0030] NumBins: 256
+[NesterovSolve] Iter: 1 overflow: 0.96773 HPWL: 1822964
+[NesterovSolve] Iter: 10 overflow: 0.962178 HPWL: 1855719
+[NesterovSolve] Iter: 20 overflow: 0.962066 HPWL: 1854315
+[NesterovSolve] Iter: 30 overflow: 0.961922 HPWL: 1854663
+[NesterovSolve] Iter: 40 overflow: 0.961694 HPWL: 1854848
+[NesterovSolve] Iter: 50 overflow: 0.961443 HPWL: 1855044
+[NesterovSolve] Iter: 60 overflow: 0.96126 HPWL: 1855373
+[NesterovSolve] Iter: 70 overflow: 0.961135 HPWL: 1855418
+[NesterovSolve] Iter: 80 overflow: 0.961097 HPWL: 1855776
+[NesterovSolve] Iter: 90 overflow: 0.961119 HPWL: 1856181
+[NesterovSolve] Iter: 100 overflow: 0.961147 HPWL: 1856917
+[NesterovSolve] Iter: 110 overflow: 0.961138 HPWL: 1858667
+[NesterovSolve] Iter: 120 overflow: 0.961047 HPWL: 1862490
+[NesterovSolve] Iter: 130 overflow: 0.960821 HPWL: 1870955
+[NesterovSolve] Iter: 140 overflow: 0.960502 HPWL: 1892377
+[NesterovSolve] Iter: 150 overflow: 0.960427 HPWL: 1940477
+[NesterovSolve] Iter: 160 overflow: 0.960243 HPWL: 2022724
+[NesterovSolve] Iter: 170 overflow: 0.948318 HPWL: 2147586
+[NesterovSolve] Iter: 180 overflow: 0.945407 HPWL: 2316115
+[NesterovSolve] Iter: 190 overflow: 0.92378 HPWL: 2552874
+[NesterovSolve] Iter: 200 overflow: 0.905848 HPWL: 2823950
+[NesterovSolve] Iter: 210 overflow: 0.884059 HPWL: 3095086
+[NesterovSolve] Iter: 220 overflow: 0.860398 HPWL: 3452915
+[NesterovSolve] Iter: 230 overflow: 0.833489 HPWL: 3898836
+[NesterovSolve] Iter: 240 overflow: 0.794803 HPWL: 4289642
+[NesterovSolve] Iter: 250 overflow: 0.771116 HPWL: 4675853
+[NesterovSolve] Iter: 260 overflow: 0.730638 HPWL: 5205582
+[NesterovSolve] Iter: 270 overflow: 0.687827 HPWL: 5566539
+[NesterovSolve] Iter: 280 overflow: 0.649662 HPWL: 5972543
+[NesterovSolve] Iter: 290 overflow: 0.601705 HPWL: 6394242
+[NesterovSolve] Iter: 300 overflow: 0.550619 HPWL: 6749877
+[NesterovSolve] Iter: 310 overflow: 0.500162 HPWL: 7106897
+[NesterovSolve] Iter: 320 overflow: 0.451901 HPWL: 7526394
+[NesterovSolve] Iter: 330 overflow: 0.404754 HPWL: 7894814
+[NesterovSolve] Iter: 340 overflow: 0.357621 HPWL: 8235926
+[NesterovSolve] Iter: 350 overflow: 0.310708 HPWL: 8418787
+[NesterovSolve] Iter: 360 overflow: 0.27226 HPWL: 8578242
+[NesterovSolve] Iter: 370 overflow: 0.234908 HPWL: 8643453
+[NesterovSolve] Iter: 380 overflow: 0.20123 HPWL: 8759060
+[NesterovSolve] Iter: 390 overflow: 0.169837 HPWL: 8857846
+[NesterovSolve] Iter: 400 overflow: 0.145252 HPWL: 8944688
+[NesterovSolve] Iter: 410 overflow: 0.121539 HPWL: 9021674
+[NesterovSolve] Finished with Overflow: 0.099678
+=====> BEFORE
+Startpoint: byte_controller/bit_controller/_448_
+            (rising edge-triggered flip-flop clocked by wb_clk_i)
+Endpoint: byte_controller/bit_controller/_450_
+          (rising edge-triggered flip-flop clocked by wb_clk_i)
+Path Group: wb_clk_i
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock wb_clk_i (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ byte_controller/bit_controller/_448_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   0.414    0.414 v byte_controller/bit_controller/_448_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.516    0.930 ^ byte_controller/bit_controller/_229_/Y (sky130_fd_sc_hd__nor4_1)
+   0.510    1.441 ^ byte_controller/bit_controller/_232_/Y (sky130_fd_sc_hd__nor4b_1)
+   0.541    1.982 ^ byte_controller/bit_controller/_234_/Y (sky130_fd_sc_hd__nor4b_1)
+   0.584    2.565 v byte_controller/bit_controller/_237_/X (sky130_fd_sc_hd__or4b_1)
+   1.444    4.009 ^ byte_controller/bit_controller/_240_/Y (sky130_fd_sc_hd__o41ai_1)
+   0.735    4.743 ^ byte_controller/bit_controller/_357_/X (sky130_fd_sc_hd__and3_1)
+   0.606    5.349 ^ byte_controller/bit_controller/_360_/X (sky130_fd_sc_hd__or2_0)
+   0.191    5.540 v byte_controller/bit_controller/_432_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.000    5.540 v byte_controller/bit_controller/_450_/D (sky130_fd_sc_hd__dfrtp_1)
+            5.540   data arrival time
+
+   3.560    3.560   clock wb_clk_i (rise edge)
+   0.000    3.560   clock network delay (ideal)
+   0.000    3.560   clock reconvergence pessimism
+            3.560 ^ byte_controller/bit_controller/_450_/CLK (sky130_fd_sc_hd__dfrtp_1)
+  -0.160    3.400   library setup time
+            3.400   data required time
+-----------------------------------------------------------
+            3.400   data required time
+           -5.540   data arrival time
+-----------------------------------------------------------
+           -2.140   slack (VIOLATED)
+
+
+Design area 6028 u^2 41% utilization.
+[INFO RSZ-0058] Using max wire length 1828um.
+[INFO RSZ-0039] Resized 112 instances.
+[WARNING DPL-0011] Could not find power special net.
+Placement Analysis
+---------------------------------
+total displacement       1701.5 u
+average displacement        2.9 u
+max displacement           12.8 u
+original HPWL            9129.0 u
+legalized HPWL          10836.2 u
+delta HPWL                   19 %
+
+=====> AFTER
+Startpoint: byte_controller/bit_controller/_448_
+            (rising edge-triggered flip-flop clocked by wb_clk_i)
+Endpoint: byte_controller/bit_controller/_463_
+          (rising edge-triggered flip-flop clocked by wb_clk_i)
+Path Group: wb_clk_i
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock wb_clk_i (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ byte_controller/bit_controller/_448_/CLK (sky130_fd_sc_hd__dfrtp_2)
+   0.423    0.423 v byte_controller/bit_controller/_448_/Q (sky130_fd_sc_hd__dfrtp_2)
+   0.438    0.861 ^ byte_controller/bit_controller/_229_/Y (sky130_fd_sc_hd__nor4_2)
+   0.400    1.261 ^ byte_controller/bit_controller/_232_/Y (sky130_fd_sc_hd__nor4b_2)
+   0.387    1.648 ^ byte_controller/bit_controller/_234_/Y (sky130_fd_sc_hd__nor4b_2)
+   0.570    2.218 v byte_controller/bit_controller/_237_/X (sky130_fd_sc_hd__or4b_4)
+   0.589    2.807 ^ byte_controller/bit_controller/_240_/Y (sky130_fd_sc_hd__o41ai_4)
+   0.434    3.241 ^ byte_controller/bit_controller/_357_/X (sky130_fd_sc_hd__and3_4)
+   0.248    3.489 ^ byte_controller/bit_controller/_360_/X (sky130_fd_sc_hd__or2_4)
+   0.119    3.608 v byte_controller/bit_controller/_376_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.000    3.608 v byte_controller/bit_controller/_463_/D (sky130_fd_sc_hd__dfrtp_2)
+            3.608   data arrival time
+
+   3.560    3.560   clock wb_clk_i (rise edge)
+   0.000    3.560   clock network delay (ideal)
+   0.000    3.560   clock reconvergence pessimism
+            3.560 ^ byte_controller/bit_controller/_463_/CLK (sky130_fd_sc_hd__dfrtp_2)
+  -0.139    3.421   library setup time
+            3.421   data required time
+-----------------------------------------------------------
+            3.421   data required time
+           -3.608   data arrival time
+-----------------------------------------------------------
+           -0.187   slack (VIOLATED)
+
+
+Design area 6437 u^2 44% utilization.

@@ -1,0 +1,3 @@
+{"iter": 1, "step": "gate", "proposal": "O1", "def_id": "onehot_fsm_case_to_reachable_shift_decode", "declared_k": 0, "G1": "FAIL", "G2": null, "G3": null, "G4": "?", "partial": false, "undecidable": null, "t": 991.6}
+{"iter": 1, "step": "gate", "proposal": "O1", "def_id": "parallel_case_attribute_on_fsm_decode", "declared_k": 0, "G1": "PASS", "G2": "PASS", "G3": "PASS", "G4": "PROVEN", "G7": "SKIPPED", "G7_why": "module not in the file list", "G7_introduced": null, "t": 297.4}
+{"iter": 1, "step": "gate", "proposal": "O1", "def_id": "parallel_case_attribute_on_fsm_decode", "declared_k": 0, "G1": "FAIL", "G2": null, "G3": null, "G4": "?", "partial": false, "undecidable": null, "t": 252.4}

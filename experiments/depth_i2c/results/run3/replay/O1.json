@@ -1,0 +1,11 @@
+{
+ "id": "O1",
+ "def_id": "parallel_case_attribute_on_fsm_decode",
+ "target_module": "i2c_master_bit_ctrl",
+ "target_file": "experiments/depth_i2c/rtl/i2c.v",
+ "latency_delta_k": 0,
+ "obligation_branch": "1 (combinational equivalence, EQY)",
+ "rationale": "The flagged path (Q of _394_ through or4/nor4/nor4b/or4b/o41ai/and3/a22o back to D of _394_) runs entirely through the state-machine case statement's next-state and output decode. The RTL only carries a plain `// synopsys full_case parallel_case` comment, which Yosys does not interpret as a synthesis directive, so the mutually exclusive case arms (each compares c_state, or cmd, against a distinct constant, so at most one ever matches) get elaborated as an implicit priority chain and ABC maps that into the long serial chain of wide gates on the reported path. Adding the real Yosys `(* parallel_case *)` attribute to both case statements tells the tool what is already structurally true, removing the artificial priority dependency between arms without adding any don't-cares: unmatched values still fall through and hold the current value exactly as before, so behavior is unchanged for every input including unreachable ones, and synthesis is free to rebalance the decode into a shallower structure.",
+ "variant_file": "experiments/depth_i2c/results/run3/replay/O1_i2c.v",
+ "replay_of": "run3"
+}

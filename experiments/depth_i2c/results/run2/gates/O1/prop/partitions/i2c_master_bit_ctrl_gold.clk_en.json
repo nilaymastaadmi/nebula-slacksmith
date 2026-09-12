@@ -1,0 +1,61 @@
+{
+  "partition": {
+    "index": 17,
+    "name": "i2c_master_bit_ctrl_gold.clk_en",
+    "inbits": {
+      "clk": [
+        0
+      ],
+      "cnt": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "ena": [
+        0
+      ],
+      "nReset": [
+        0
+      ],
+      "rst": [
+        0
+      ],
+      "slave_wait": [
+        0
+      ]
+    },
+    "outbits": {
+      "clk_en": [
+        0
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.i2c_master_bit_ctrl_gold.clk_en",
+    "internal": {},
+    "unused": {},
+    "cellcount": 8,
+    "bitcount": 29
+  },
+  "gate_module": {
+    "name": "gold.i2c_master_bit_ctrl_gold.clk_en",
+    "internal": {},
+    "unused": {},
+    "cellcount": 8,
+    "bitcount": 29
+  }
+}

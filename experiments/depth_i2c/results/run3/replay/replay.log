@@ -1,0 +1,20 @@
+G0 sdc: i2c.sdc sha256 8a7f3816cbed6ab0 6 lines, timing exceptions none
+rtl files: 1 from experiments/depth_i2c/rtl_files.txt (top i2c_master_top)
+dont_use flags: 72
+engine: sta   clocks: wb_clk_i
+
+=== iteration 1 ===
+measure: wb_clk_i=-0.396
+classify wb_clk_i: DEPTH_DOMINATED (fanout share 0.0) -> rtl
+  gate O1 (parallel_case_attribute_on_fsm_decode): G3=PASS G4=PROVEN
+  G7 O1: SKIPPED (module not in the file list)
+  APPLY O1 provisionally -> re-measure, confirm or revert on wb_clk_i
+
+=== iteration 2 ===
+measure: wb_clk_i=-0.396
+  G5 total: -0.396 -> -0.396 (not improved)
+  REVERT O1: wb_clk_i -0.396 -> -0.396, total violation not improved. G4 passed, G5 did not.
+
+wrote /home/toshn/slacksmith_work/depth_i2c/replay_run3/SUMMARY.md
+wrote /home/toshn/slacksmith_work/depth_i2c/replay_run3/decisions.jsonl
+exit: 0

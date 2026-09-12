@@ -1,0 +1,86 @@
+EQY  9:52:13 [prop] read_gold: starting process "yosys -ql prop/gold.log prop/gold.ys"
+EQY  9:52:13 [prop] read_gold: Warning: Encountered `full_case' comment! Such legacy hot comments are supported by Yosys, but are not part of any formal language specification. Using the Verilog `full_case' attribute or the SystemVerilog `unique' or `unique0' keywords is recommended!
+EQY  9:52:13 [prop] read_gold: Warning: Encountered `parallel_case' comment! Such legacy hot comments are supported by Yosys, but are not part of any formal language specification. Using the Verilog `parallel_case' attribute or the SystemVerilog `unique' or `priority' keywords is recommended!
+EQY  9:52:13 [prop] read_gate: starting process "yosys -ql prop/gate.log prop/gate.ys"
+EQY  9:52:13 [prop] read_gate: Warning: Encountered `full_case' comment! Such legacy hot comments are supported by Yosys, but are not part of any formal language specification. Using the Verilog `full_case' attribute or the SystemVerilog `unique' or `unique0' keywords is recommended!
+EQY  9:52:13 [prop] read_gate: Warning: Encountered `parallel_case' comment! Such legacy hot comments are supported by Yosys, but are not part of any formal language specification. Using the Verilog `parallel_case' attribute or the SystemVerilog `unique' or `priority' keywords is recommended!
+EQY  9:52:13 [prop] read_gold: finished (returncode=0)
+EQY  9:52:13 [prop] read_gate: finished (returncode=0)
+EQY  9:52:13 [prop] combine: starting process "yosys -ql prop/combine.log prop/combine.ys"
+EQY  9:52:13 [prop] combine: finished (returncode=0)
+EQY  9:52:13 [prop] partition: starting process "cd prop; yosys -ql partition.log partition.ys"
+EQY  9:52:13 [prop] partition: finished (returncode=0)
+EQY  9:52:13 [prop] run: starting process "make -C prop -f strategies.mk"
+EQY  9:52:13 [prop] run: make: Entering directory '/home/toshn/slacksmith_work/depth_i2c/run2/gates/O1/prop'
+EQY  9:52:13 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.al'..
+EQY  9:52:14 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.al' using strategy 'sat'
+EQY  9:52:14 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.busy'..
+EQY  9:52:14 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.busy' using strategy 'sat'
+EQY  9:52:14 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.c_state'..
+EQY  9:52:14 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.c_state' using strategy 'sat'
+EQY  9:52:14 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.clk_en'..
+EQY  9:52:14 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.clk_en' using strategy 'sat'
+EQY  9:52:14 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.cmd_ack'..
+EQY  9:52:14 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.cmd_ack' using strategy 'sat'
+EQY  9:52:14 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.cmd_stop'..
+EQY  9:52:14 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.cmd_stop' using strategy 'sat'
+EQY  9:52:14 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.cnt'..
+EQY  9:52:14 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.cnt' using strategy 'sat'
+EQY  9:52:14 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.dSCL'..
+EQY  9:52:14 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.dSCL' using strategy 'sat'
+EQY  9:52:14 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.dSDA'..
+EQY  9:52:15 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.dSDA' using strategy 'sat'
+EQY  9:52:15 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.dout'..
+EQY  9:52:15 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.dout' using strategy 'sat'
+EQY  9:52:15 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.dscl_oen'..
+EQY  9:52:15 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.dscl_oen' using strategy 'sat'
+EQY  9:52:15 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.sSCL'..
+EQY  9:52:15 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.sSCL' using strategy 'sat'
+EQY  9:52:15 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.sSDA'..
+EQY  9:52:15 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.sSDA' using strategy 'sat'
+EQY  9:52:15 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.scl_o'..
+EQY  9:52:15 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.scl_o' using strategy 'sat'
+EQY  9:52:15 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.scl_oen'..
+EQY  9:52:15 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.scl_oen' using strategy 'sat'
+EQY  9:52:15 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.sda_chk'..
+EQY  9:52:15 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.sda_chk' using strategy 'sat'
+EQY  9:52:15 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.sda_o'..
+EQY  9:52:15 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.sda_o' using strategy 'sat'
+EQY  9:52:15 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.sda_oen'..
+EQY  9:52:15 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.sda_oen' using strategy 'sat'
+EQY  9:52:15 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.slave_wait'..
+EQY  9:52:16 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.slave_wait' using strategy 'sat'
+EQY  9:52:16 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.sta_condition'..
+EQY  9:52:16 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.sta_condition' using strategy 'sat'
+EQY  9:52:16 [prop] run: Running strategy 'sat' on 'i2c_master_bit_ctrl_gold.sto_condition'..
+EQY  9:52:16 [prop] run: Proved equivalence of partition 'i2c_master_bit_ctrl_gold.sto_condition' using strategy 'sat'
+EQY  9:52:16 [prop] run: make -f strategies.mk summary
+EQY  9:52:16 [prop] run: make[1]: Entering directory '/home/toshn/slacksmith_work/depth_i2c/run2/gates/O1/prop'
+EQY  9:52:16 [prop] run: make[1]: Leaving directory '/home/toshn/slacksmith_work/depth_i2c/run2/gates/O1/prop'
+EQY  9:52:16 [prop] run: make: Leaving directory '/home/toshn/slacksmith_work/depth_i2c/run2/gates/O1/prop'
+EQY  9:52:16 [prop] run: finished (returncode=0)
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.sto_condition
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.sta_condition
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.slave_wait
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.sda_oen
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.sda_o
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.sda_chk
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.scl_oen
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.scl_o
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.sSDA
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.sSCL
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.dscl_oen
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.dout
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.dSDA
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.dSCL
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.cnt
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.cmd_stop
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.cmd_ack
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.clk_en
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.c_state
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.busy
+EQY  9:52:16 [prop] Successfully proved equivalence of partition i2c_master_bit_ctrl_gold.al
+EQY  9:52:16 [prop] Successfully proved designs equivalent
+EQY  9:52:16 [prop] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:02 (2)
+EQY  9:52:16 [prop] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:01 (1)
+EQY  9:52:16 [prop] DONE (PASS, rc=0)

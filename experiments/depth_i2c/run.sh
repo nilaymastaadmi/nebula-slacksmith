@@ -31,7 +31,7 @@ for i in $(seq 1 $N); do
   cp "$W"/decisions.jsonl "$W"/SUMMARY.md $R/run$i/ 2>/dev/null
   cp -r "$W"/cli "$W"/online_variants $R/run$i/ 2>/dev/null
   if [ -d "$W/gates" ]; then
-    (cd "$W/gates" && find . -type f \( -name '*.json' -o -name 'g4.log' -o -name '*.raw.log' -o -name 'miter_prop.sv' -o -name '*.eqy' \) \
+    (cd "$W/gates" && find . -type f \( -name '*.json' -o -name 'g4.log' -o -name '*.raw.log' -o -name '*.synth.log' -o -name 'miter_prop.sv' -o -name '*.eqy' \) \
       | while read -r f; do mkdir -p "$REPO/$R/run$i/gates/$(dirname "$f")"; cp "$f" "$REPO/$R/run$i/gates/$f"; done)
   fi
 done

@@ -1,0 +1,6 @@
+variant	A_unbuffered	B_abc_lever	C_before_repair	C_after_repair	area_before	area_after	cells_A	cells_B
+gold	-0.396	0.581	-1.092	0.041	6140	6648	560	574	
+control	-0.820	0.492	-2.140	-0.187	6028	6437	587	601	
+run2_O1_parallel_case_attribute_on_fsm_decode	-0.396	0.581	-1.092	0.041	6140	6648	560	574	
+run3_O1_replay	-0.396	0.581	-1.092	0.041	6140	6648	560	574	
+gold_run2			-1.092	0.041	6140	6648		
