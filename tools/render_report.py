@@ -55,18 +55,30 @@ CSS = """
          line-height: 1.22; margin:0; }
   #sheet { width: 680px; margin: 0 auto; background:#fff; padding: 0; }
   h1 { font-size: 19pt; margin: 0 0 2px 0; }
-  h2 { font-size: 13pt; margin: 15px 0 5px 0; border-bottom:1px solid #bbb; }
-  h3 { font-size: 11.3pt; margin: 11px 0 4px 0; }
-  p  { margin: 6px 0; text-align: justify; }
+  h2 { font-size: 12.5pt; margin: 11px 0 4px 0; border-bottom:1px solid #bbb; }
+  h3 { font-size: 10.8pt; margin: 8px 0 3px 0; }
+  p  { margin: 4px 0; text-align: justify; }
   table { border-collapse: collapse; font-size: 8.0pt; margin: 7px 0; width:100%; }
-  th, td { border: 1px solid #999; padding: 2px 5px; text-align: left; }
+  th, td { border: 1px solid #999; padding: 1px 4px; text-align: left; }
   th { background:#eee; }
   pre { background:#f4f4f4; font-size:8pt; padding:5px; overflow-x:auto;
         line-height:1.2; }
   code { font-family: Consolas, monospace; font-size: 9pt; }
   li { margin: 2px 0; }
   hr { border:0; border-top:1px solid #ccc; margin:10px 0; }
-  @media print { html { background:#fff; } #sheet { width:auto; } }
+  @media print {
+    html { background:#fff; }
+    #sheet { width:auto; }
+    /* Pagination control. Without these a table that will not fit is pushed
+       WHOLE to the next page, and a heading can be orphaned at a page foot.
+       That waste is why a document measuring 11.85 pages by continuous height
+       printed as 13; tools/page_count.py measures the real thing now. */
+    table { break-inside: auto; }
+    tr, th, td { break-inside: avoid; }
+    thead { display: table-header-group; }
+    h1, h2, h3 { break-after: avoid; break-inside: avoid; }
+    p, li { orphans: 2; widows: 2; }
+  }
 """
 
 MEASURE_JS = """
