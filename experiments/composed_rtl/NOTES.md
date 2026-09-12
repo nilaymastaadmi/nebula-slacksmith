@@ -148,3 +148,58 @@ worth 5.165 ns together, and two of them are worth 0.240 ns once the third is
 present. Every per-transform number in this project, ours included, is an
 overstatement of what that transform contributes to a design that already has
 other transforms in it.
+
+## Amendment 1 result: the control changes two of the three numbers above
+
+**R47. CONFIRMED.** The gold netlist through the identical flow a second time
+returns **+3.093 / +5.283 / −1.471** and **539,351 u²**, identical to the first
+run in every digit. The physical flow is deterministic here, so nothing below is
+run-to-run variation.
+
+**R48. CONFIRMED on `clk_b`, and it rescues nothing.** A5, the registered
+do-nothing transform, through the same flow:
+
+| post-repair | gold | A5 control | composed | control moves | composed moves |
+|---|---|---|---|---|---|
+| clk_a | +3.093 | **+3.950** | +2.235 | **+0.857** | −0.858 |
+| clk_b | +5.283 | **+5.277** | +5.046 | **−0.006** | **−0.237** |
+| clk_e | −1.471 | **−1.399** | −1.792 | **+0.072** | −0.321 |
+| area | 539,351 | **536,403** | 535,500 | **−2,948** | −3,851 |
+
+### What this forces
+
+**On `clk_b` the regression is real.** A transform that does nothing on the read
+path moves the post-repair number by **0.006 ns**. The composition moves it by
+**−0.237 ns**, forty times the control. **R38's WRONG stands**, and the finding
+stands with it: after `repair_design` the composed optimized RTL is genuinely,
+measurably slightly worse than the untouched RTL.
+
+**On `clk_a` the regression is withdrawn.** The control moves `clk_a` by
+**+0.857 ns** and the composition by **−0.858 ns**. Those are the same size. The
+post-repair `clk_a` number is not resolvable below roughly 0.86 ns for any RTL
+edit at all, so "the composition costs 0.858 ns on `clk_a`" is not a measurement
+and is not claimed. `clk_e` sits in between at 4.5x its control and is reported
+with that ratio attached rather than on its own.
+
+**The area result is mostly not ours, and that is the correction that matters
+most.** Earlier in this file the composition's **3,851 u²** smaller final design
+was called the surviving benefit. The do-nothing control is **2,948 u²**
+smaller. So **903 u², 0.17%**, is attributable to three formally proven
+transforms; the rest is what a physical flow does when handed any perturbed
+netlist. The "0.7% area" framing was wrong and is withdrawn here rather than
+left standing in a file nobody re-reads.
+
+### The honest final position on this experiment
+
+After a standard physical flow, three composed formally proven RTL transforms
+leave the design **0.237 ns slower on the group they targeted and 903 u²
+smaller**, and their large unbuffered gains (+5.165 zero-parasitic, +18.792 with
+parasitics) do not survive. On this design, on these paths, RTL optimization is
+not the lever.
+
+**This project's own classifier said so before any of it was measured.**
+`classify_path.py` routes these paths `FANOUT_DOMINATED` to the physical lever,
+and every RTL result in this repository was obtained by overriding it with
+`--force-lever rtl`. The negative result is not a surprise the project
+uncovered; it is the project's own routing decision, confirmed the expensive
+way.
