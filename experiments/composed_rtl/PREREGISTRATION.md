@@ -149,3 +149,52 @@ edit that should not matter".
 No result already recorded is withdrawn pending this. R37 stands either way:
 the marginal gain is smaller than the unbuffered gain by 5 to 19 ns, which no
 plausible noise floor reaches.
+
+---
+
+## Amendment 2, registered 2026-09-12 after amendment 1 was scored
+
+Amendment 1 established the post-repair noise floor with **one** do-nothing
+perturbation, A5. On `clk_b` it moved 0.006 ns; on `clk_a` it moved 0.857 ns.
+One perturbation is a point, not a floor. It says nothing about the spread on
+`clk_b` across other edits that do not touch the binding path, and R38's
+"WRONG" currently rests on the one group where the one control happened to be
+quiet. A fourth organiser review (2026-09-12) named that as the weakest step
+in the chain. Before −0.237 ns is written into REPORT.md as a regression, the
+floor gets three more points, and they are the three parts of the composition,
+whose unbuffered netlists already exist from `run.sh`.
+
+**R49.** Each of A4, O2 and O1 alone, through the identical OpenROAD flow,
+lands post-repair `clk_b` within **±0.30 ns** of gold's +5.283. No single
+proven transform survives `repair_design` on `clk_b` either. Prior: high; the
+composition of all three did not.
+
+**R50, the one that decides R38.** The spread of post-repair `clk_b` across
+the five perturbed netlists (A4, O2, O1, A5, composed), max minus min, is
+**less than 0.237 ns**. If it holds, the composition sits outside the spread of
+irrelevant edits and R38's WRONG stands. If it misses, −0.237 is inside the
+spread that edits not on the path produce, R38 becomes **VOID** by amendment
+1's own rule, and REPORT.md reports "the marginal timing gain after
+`repair_design` is zero within the flow's perturbation floor of X ns" rather
+than "worse". Prior: genuinely uncertain, and it is the reason this amendment
+exists.
+
+**R51.** The spread on `clk_a` across the same five exceeds **0.8 ns**,
+confirming that amendment 1's withdrawal of the `clk_a` regression generalises
+rather than resting on A5 alone.
+
+**R52.** The post-repair area of each single variant is **smaller than gold's**
+539,351 u². If 3 of 3 hold, area reduction after repair is what the flow does
+to any perturbed netlist, and the composition's residual 903 u² is not a
+transform effect. Prior: medium-high, A5 shrank by 2,948 u².
+
+**R53, the mapping-level pair for `experiments/depth_i2c/`.** After the ABC
+buffering lever (`buffer -N 16; upsize; dnsize`, the physical lever the loop
+applies), composed minus gold on `clk_b` is **less than +1.0 ns**, under 20% of
+the +5.165 unbuffered gain. This is the fanout-dominated cell of the survival
+table that `experiments/depth_i2c/` fills on the depth side, measured at the
+same level (mapping, zero-parasitic) as that experiment's buffered column, so
+the two cells are comparable.
+
+Scripts: `noise_floor2.sh` (R49 to R52) and `abc_pair.py` (R53). No result
+recorded so far is withdrawn pending this.
