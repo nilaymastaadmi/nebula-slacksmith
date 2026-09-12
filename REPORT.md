@@ -135,13 +135,13 @@ Everything above trusts the SDC. We measured what that trust is worth. On **one 
 | `set_false_path -to <endpoint>/D` | −0.295 |
 | `set_multicycle_path 2 -setup -from clk_e -to clk_e` | **+4.860 MET** |
 
-One line closes the group, worth **+5.179 ns**, more than this project's best formally proven RTL transform (+4.925), and it changes nothing at all. **Every checker we own returns "equivalent" on that pair, correctly, because the two designs are the same file.** A project whose entire correctness story is functional equivalence has no defence against a constraint edit.
+One line closes the group, worth **+5.179 ns**, and it changes nothing at all. Earlier drafts added "more than our best proven RTL transform (+4.925)"; that comparison is **withdrawn**, because the +5.179 is measured on a 26,958-cell flat netlist in one domain and the +4.925 on the 55,413-cell hierarchical benchmark. Different fixtures, so the sentence was doing rhetorical work the measurement does not support. The mechanism needs no comparison to land. **Every checker we own returns "equivalent" on that pair, correctly, because the two designs are the same file.** A project whose entire correctness story is functional equivalence has no defence against a constraint edit.
 
-Mechanistically, the narrow version does not pay: aiming the exception at the reported endpoint buys 0.024 ns because the worst path moves to the next endpoint in the same group. Only the domain-wide exception works, and that is a conspicuous line in an SDC diff, provided anyone looks.
+The narrow version does not pay: aiming the exception at the reported endpoint buys 0.024 ns because the worst path moves to the next endpoint. Only the domain-wide exception works, and that is a conspicuous line in an SDC diff, provided anyone looks.
 
 So the policy became a gate. **G0 runs before G1**: SHA-256 the SDC actually loaded, compare it against the registered digest, count the timing exceptions, and refuse to report any measurement taken under constraints that differ from the frozen file (`sdc_fingerprint()` in `tools/slacksmith.py`, `--expect-sdc-sha`). It is cheap and it closes the one surface G1 to G5 structurally cannot reach.
 
-`experiments/sdc_integrity/` is **exploratory, not pre-registered**, and is labelled that way in its own notes: it demonstrates a mechanism rather than testing a hypothesis, so there was nothing to be wrong about. It should not be read as carrying the pre-registration evidence that §7 does.
+`experiments/sdc_integrity/` is **exploratory, not pre-registered**, and says so in its own notes: it demonstrates a mechanism rather than testing a hypothesis.
 
 ## 6. Formal equivalence: five branches, discharged on benchmark blocks
 
@@ -361,7 +361,7 @@ Branches 4 and 5 are now implemented, both `k = 0` with the flop delta unconstra
 
 `setundef -init -zero` supplies that. Gold against **itself** went from failing `eq_round_key` at step 3 in 1 s to passing, and both proposals became **unbounded PDR proofs over all three outputs**. The assumption is **zero**, not "the same arbitrary value" (Yosys rejects a hierarchical assume here), which is strictly weaker and is what the design's own reset loop intends; it is written into every result JSON.
 
-**The check that makes those two proofs mean anything is the one on a transform known to be broken.** A3 (§7.1) is published REFUTED; under the same assumption it stays REFUTED, failing `eq_ready` in 1 s. An assumption that proved a known-bad transform would prove anything, and that void condition was registered before the assumption was written.
+**What makes those two proofs mean anything is the check on a transform known to be broken.** A3 stays REFUTED under the same assumption, failing `eq_ready` in 1 s. An assumption that proved a known-bad transform would prove anything, and that void condition was registered before the assumption was written.
 
 **The retiming is the worst RTL transform in the project and the FSM re-encoding is the best.** R5 predicted the retiming would not improve its group; it does not merely fail, it costs 4.616 ns. R18 predicted the FSM transform would not materially improve `clk_b`; it bought **+3.185 ns**, the largest RTL gain here, and it is the measurement that falsified §1's absolute.
 
@@ -373,7 +373,7 @@ Until 2026-09-11 the `cli` backend was committed and never executed, and this re
 
 **The first attempt died before the model was reached**, `PermissionError: [Errno 13] Permission denied: ''`. `run.sh` resolved the binary with `command -v claude` in a non-login shell where `~/.local/bin` is absent from `PATH`, and the empty string went into `subprocess.run`. The existing handler caught `FileNotFoundError`, which is the wrong exception for an empty program name. Registered as an environmental failure, logged, retried.
 
-**The second attempt ran the whole loop with no human in it**, 456 s: measure `clk_b = −18.957`, classify `FANOUT_DOMINATED` at 0.9139, propose, gate `G4=PROVEN`, G7 skip, apply. Request, raw response, variant and decision log are at `experiments/cli_backend/results/run1/`.
+**The second attempt ran the loop end to end with no human in it**, 456 s: measure `clk_b = −18.957`, classify `FANOUT_DOMINATED` at 0.9139, propose, gate `G4=PROVEN`, G7 skip, apply. **Three qualifiers belong in this sentence and not in a footnote**: the lever was `--force-lever rtl`, a human flag, because the classifier correctly routes this path to physical; the run was capped at `--max-iters 1`, so the loop's own accept-or-revert step never ran on the proposal; and the +1.414 ns below was measured afterwards by `time_O1.sh`, outside the loop. The unforced routing claim is §7.2's, on a different design. Request, raw response, variant and decision log are at `experiments/cli_backend/results/run1/`.
 
 Four predictions were registered before the run. **Three held and the fourth was the interesting one.** C1, valid JSON first attempt, held despite two warnings and a failing hook message mixed into the captured text. C2, a G4 verdict with no human, held. C4, logic restructuring rather than retiming or FSM, held.
 
