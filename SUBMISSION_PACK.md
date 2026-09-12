@@ -25,7 +25,7 @@ process.
 | Repository | runs from a clean clone at any path, verified three times (`experiments/reproducibility/`) |
 | Interactive demo | `demo/explorer.html`, generated from committed logs, published |
 | `claude` CLI auth | **working.** Token minted 2026-09-11 and held outside the repository in `~/.slacksmith_token`; `tools/preflight.sh` fails if a credential-shaped string ever reaches a tracked file |
-| Last push | branch `sandbox`, working tree clean |
+| Repository | **pushed.** `origin/sandbox` at `7095d91`, 0 commits behind. Verify with `git fetch && git rev-list --count origin/sandbox..HEAD` (expect 0). Until 2026-09-12 the remote was 109 commits behind and an external reviewer found it, so this row now names the commit rather than the tree |
 
 ---
 
@@ -251,6 +251,61 @@ Each with its nearest prior art, conceded where it narrows the claim.
    20 external designs of which 15 in scope. Outcomes, not rates.
 
 ---
+
+## 5b. Completed and pending, stated plainly
+
+| deliverable | state |
+|---|---|
+| D1 timing analysis framework | **complete** |
+| D2 GenAI optimization engine | **complete with a named limit**: 17 proposals in three provenance tiers, one unattended end-to-end run. **No run has yet both chosen RTL unforced and produced a proven, timing-positive transform.** The router chooses RTL unforced on `i2c`; that run's proposal came back `UNRESOLVED` |
+| D3 critical path analysis | **complete** |
+| D4 optimized RTL | **complete with a named limit**: four proven variants ship; they are **not composed into one optimized RTL**, and design-level closure comes from `repair_design`, not from RTL |
+| D5 timing, frequency, PPA | **complete.** Before/after for all three, including power at **+47.1%**, measured 2026-09-12 |
+| D6 formal equivalence | **complete.** Five branches, null control, void check. Open: the ABC buffering lever is unproven, and P5's control does not close |
+| D7 interactive demo | **complete.** `demo/explorer.html`, rebuild-checked |
+| **Demo video** | **PENDING.** Script, shot list, build prompt and recording checklist exist; nothing is recorded |
+
+**Pending, in priority order:** the video; composing the three helping transforms on `aes_key_mem` into one optimized RTL and measuring the marginal gain after buffering; one unforced run that proposes, proves *and* improves.
+
+## 5c. Overfitting, and testing beyond our own design
+
+The classifier's thresholds (`FANOUT_HI = 32`, share 0.50/0.20) were chosen on
+**our** benchmark. That is the overfitting risk and it is tested three ways.
+
+1. **20 external designs.** `experiments/drrtl_transfer/`, the designs published
+   with Dr. RTL, run through the same flow at 0.9x each design's own measured
+   requirement. 15 in scope, split 5 FANOUT / 3 MIXED / 7 DEPTH, byte-identical
+   across two executions. The physical lever closes **5 of 5** fanout-dominated
+   designs alone and **4 of 7** depth-dominated, which is the direction the
+   classifier predicts. The primary registered prediction was **wrong**.
+2. **A design the loop had never run on.** `experiments/unforced/` pointed the
+   whole loop at `i2c_master_top`. It exposed **six defects in our own tooling**
+   that our benchmark structurally could not: our SDC has one path group, our
+   benchmark is one module per file. **None affected a published result**, and
+   the finding cuts both ways: the router works, and the tooling had one
+   design's worth of testing.
+3. **A benchmark that grades the checker, not the design.**
+   `experiments/slackbench/`, 8 sealed cases with ground truth committed before
+   any checker ran, our own gate scored among them.
+
+**What this does not establish:** that the thresholds are right for designs
+unlike these. One external verdict is flow-sensitive, and the sample is 20
+designs from one paper plus one from another.
+
+## 5d. Models and keys
+
+**Model: Claude Opus 5**, disclosed in every registration, default sampling,
+one sample per proposal, no best-of-n. Three runs on one design returned three
+different transforms, so the nondeterminism is measured rather than assumed.
+
+**The proposer is not tied to it.** `tools/proposer.py` has three backends and
+the prompt is plain text with no provider-specific syntax:
+`--proposer handoff` writes the prompt to a file and reads a JSON reply, so any
+model reachable by any means can be dropped in with no code change;
+`--proposer cli` shells out to whatever `--claude-bin` names. Swapping to an
+open-weight model is a flag and a binary, not a port. **No API key is committed
+anywhere**: the token lives in `~/.slacksmith_token` outside the repository and
+`tools/preflight.sh` fails if a credential-shaped string reaches a tracked file.
 
 ## 6. How to verify any of this
 
