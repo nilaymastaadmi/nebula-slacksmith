@@ -1,0 +1,7 @@
+{
+  "model": "qwen2.5-coder:7b",
+  "total_duration": 160129914900,
+  "eval_count": 294,
+  "prompt_eval_count": 2050,
+  "wall_seconds": 160.5
+}

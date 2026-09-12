@@ -1,0 +1,2 @@
+2026-08-31 7e3ab9b4 proposals: 6 LLM-proposed transforms, committed BEFORE any gate runs
+2026-08-31 4ee45c22 pre-registration: LLM-proposed transforms through the SlackSmith gate

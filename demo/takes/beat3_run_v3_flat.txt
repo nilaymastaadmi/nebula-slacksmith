@@ -1,0 +1,19 @@
+it1  MEASURE   clk_a=9.279  clk_b=-4.065  clk_e=-15.762   physical=none  total=-19.827 rtl=[]
+it1  CLASSIFY  clk_e: FANOUT_DOMINATED (fanout share 0.9547, 20.473 ns over 6 cells) -> physical
+                17.567 ns  sky130_fd_sc_hd__nor4_1      fanout=256  _33563_
+                 1.978 ns  sky130_fd_sc_hd__dfrtp_1     fanout=150  _45590_
+it1  APPLY     physical: buffer (provisional)
+it2  MEASURE   clk_a=10.362  clk_b=5.665  clk_e=-0.613   physical=buffer  total=-0.613 rtl=[]
+it2  G5 TOTAL  -19.827 -> -0.613 (improved)
+it2  CONFIRM   buffer: clk_e -15.762 -> -0.613 (+15.149)
+it2  CLASSIFY  clk_e: MIXED (fanout share 0.3221, 5.889 ns over 19 cells) -> physical
+                 1.897 ns  sky130_fd_sc_hd__dfrtp_1     fanout=136  _44958_
+                 0.682 ns  sky130_fd_sc_hd__or4_2       fanout=2  _32594_
+it2  APPLY     physical: size (provisional)
+it3  MEASURE   clk_a=11.158  clk_b=5.665  clk_e=-0.319   physical=buffer+size  total=-0.319 rtl=[]
+it3  G5 TOTAL  -0.613 -> -0.319 (improved)
+it3  CONFIRM   size: clk_e -0.613 -> -0.319 (+0.294)
+it3  CLASSIFY  clk_e: MIXED (fanout share 0.3374, 5.595 ns over 19 cells) -> physical
+                 1.888 ns  sky130_fd_sc_hd__dfrtp_1     fanout=136  _44958_
+                   0.5 ns  sky130_fd_sc_hd__or4_1       fanout=1  _32084_
+it3  STOP      physical_exhausted

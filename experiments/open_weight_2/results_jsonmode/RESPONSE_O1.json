@@ -1,0 +1,10 @@
+{
+  "id": "O1",
+  "def_id": "aes_key_mem_retime",
+  "target_module": "aes_key_mem",
+  "target_file": "rtl/aes_key_mem.v",
+  "latency_delta_k": 0,
+  "obligation_branch": "5 (retiming, sequential miter)",
+  "rationale": "The transformation moves a register across combinational logic to improve timing, without changing the cycle-by-cycle behavior at the module's ports.",
+  "variant_source": "module aes_key_mem;\n\n  input wire [255:0] key;\n  input wire [3:0] keylen;\n  input wire init;\n  output wire [255:0] key_mem;\n  output wire ready;\n\n  reg [255:0] key_mem_reg;\n  reg ready_reg;\n\n  always @(posedge clk or posedge rst_n)\n    if (!rst_n)\n      begin\n        key_mem_reg <= 256'b0;\n        ready_reg <= 1'b0;\n      end\n    else if (init)\n      begin\n        key_mem_reg <= key;\n        ready_reg <= 1'b1;\n      end\n\n  assign key_mem = key_mem_reg;\n  assign ready = ready_reg;\n\nendmodule"
+}

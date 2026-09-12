@@ -1,0 +1,57 @@
+case        class     truth           k   checker    verdict  circular  detail
+CDC-1       CDC       EQUIVALENT      -1  cec        CANNOT   False     cannot build a miter: gold 3 latches / 5 inputs, gate 2 / 4
+CDC-1       CDC       EQUIVALENT      -1  dsec       CANNOT   False     cannot build a miter: gold 3 latches / 5 inputs, gate 2 / 4
+CDC-1       CDC       EQUIVALENT      -1  eqy        ACCEPT   False     all partitions proved
+CDC-1       CDC       EQUIVALENT      -1  sim_lazy   ACCEPT   False     19997 cycles, no difference
+CDC-1       CDC       EQUIVALENT      -1  sim_aggr   ACCEPT   False     19997 cycles, no difference
+CDC-1       CDC       EQUIVALENT      -1  miter_k    ACCEPT   False     sat proof succeeded
+CDC-1       CDC       EQUIVALENT      -1  miter_pdr  ACCEPT   False     PDR proved, unbounded
+CDC-2       CDC       EQUIVALENT      0   cec        REJECT   False     Input pattern:  lo01=0 lo12=0 pi04=0 pi01=1 lo00=0 pi03=1
+CDC-2       CDC       EQUIVALENT      0   dsec       REJECT   False     Networks are NOT EQUIVALENT after simulation.   Time =     0.01 sec
+CDC-2       CDC       EQUIVALENT      0   eqy        CANNOT   False     failed to prove, no counterexample reported
+CDC-2       CDC       EQUIVALENT      0   sim_lazy   ACCEPT   False     19998 cycles, no difference
+CDC-2       CDC       EQUIVALENT      0   sim_aggr   ACCEPT   False     19998 cycles, no difference
+CDC-2       CDC       EQUIVALENT      0   miter_k    REJECT   False     counterexample found by the padded miter
+CDC-2       CDC       EQUIVALENT      0   miter_pdr  ACCEPT   False     PDR proved, unbounded
+CONTROL-1   CONTROL   EQUIVALENT      0   cec        ACCEPT   False     Networks are equivalent after structural hashing.  Time =     0.00 sec
+CONTROL-1   CONTROL   EQUIVALENT      0   dsec       ACCEPT   False     Networks are equivalent.  Time =     0.00 sec
+CONTROL-1   CONTROL   EQUIVALENT      0   eqy        ACCEPT   False     all partitions proved
+CONTROL-1   CONTROL   EQUIVALENT      0   sim_lazy   ACCEPT   False     19998 cycles, no difference
+CONTROL-1   CONTROL   EQUIVALENT      0   sim_aggr   ACCEPT   False     19998 cycles, no difference
+CONTROL-1   CONTROL   EQUIVALENT      0   miter_k    ACCEPT   False     sat proof succeeded
+CONTROL-1   CONTROL   EQUIVALENT      0   miter_pdr  ACCEPT   False     PDR proved, unbounded
+CONTROL-2   CONTROL   EQUIVALENT      0   cec        CANNOT   False     cannot build a miter: gold 3 latches / 5 inputs, gate 4 / 6
+CONTROL-2   CONTROL   EQUIVALENT      0   dsec       CANNOT   False     cannot build a miter: gold 3 latches / 5 inputs, gate 4 / 6
+CONTROL-2   CONTROL   EQUIVALENT      0   eqy        ACCEPT   False     all partitions proved
+CONTROL-2   CONTROL   EQUIVALENT      0   sim_lazy   ACCEPT   False     19998 cycles, no difference
+CONTROL-2   CONTROL   EQUIVALENT      0   sim_aggr   ACCEPT   False     19998 cycles, no difference
+CONTROL-2   CONTROL   EQUIVALENT      0   miter_k    REJECT   True      counterexample found by the padded miter
+CONTROL-2   CONTROL   EQUIVALENT      0   miter_pdr  ACCEPT   False     PDR proved, unbounded
+LATENCY-1   LATENCY   EQUIVALENT      1   cec        CANNOT   False     cannot build a miter: gold 17 latches / 50 inputs, gate 49 / 82
+LATENCY-1   LATENCY   EQUIVALENT      1   dsec       CANNOT   False     cannot build a miter: gold 17 latches / 50 inputs, gate 49 / 82
+LATENCY-1   LATENCY   EQUIVALENT      1   eqy        CANNOT   False     failed to prove, no counterexample reported
+LATENCY-1   LATENCY   EQUIVALENT      1   sim_lazy   ACCEPT   False     19997 cycles, no difference
+LATENCY-1   LATENCY   EQUIVALENT      1   sim_aggr   ACCEPT   False     19997 cycles, no difference
+LATENCY-1   LATENCY   EQUIVALENT      1   miter_k    ACCEPT   True      sat proof succeeded
+LATENCY-1   LATENCY   EQUIVALENT      1   miter_pdr  CANNOT   False     timeout
+LATENCY-2   LATENCY   NOT_EQUIVALENT  1   cec        CANNOT   False     cannot build a miter: gold 17 latches / 50 inputs, gate 33 / 66
+LATENCY-2   LATENCY   NOT_EQUIVALENT  1   dsec       CANNOT   False     cannot build a miter: gold 17 latches / 50 inputs, gate 33 / 66
+LATENCY-2   LATENCY   NOT_EQUIVALENT  1   eqy        CANNOT   False     failed to prove, no counterexample reported
+LATENCY-2   LATENCY   NOT_EQUIVALENT  1   sim_lazy   ACCEPT   False     19997 cycles, no difference
+LATENCY-2   LATENCY   NOT_EQUIVALENT  1   sim_aggr   REJECT   False     differs at cycle 3: ['50412'] vs ['58886']
+LATENCY-2   LATENCY   NOT_EQUIVALENT  1   miter_k    REJECT   False     counterexample found by the padded miter
+LATENCY-2   LATENCY   NOT_EQUIVALENT  1   miter_pdr  REJECT   False     PDR found a counterexample
+STIMULUS-1  STIMULUS  NOT_EQUIVALENT  0   cec        REJECT   False     Input pattern:  pi29=1 pi02=1 pi15=0 pi01=0 pi14=0 pi03=0 pi13=1 pi04=0 pi07=1 pi10=1 pi05
+STIMULUS-1  STIMULUS  NOT_EQUIVALENT  0   dsec       REJECT   False     Networks are NOT EQUIVALENT after simulation.   Time =     0.12 sec
+STIMULUS-1  STIMULUS  NOT_EQUIVALENT  0   eqy        CANNOT   False     failed to prove, no counterexample reported
+STIMULUS-1  STIMULUS  NOT_EQUIVALENT  0   sim_lazy   ACCEPT   False     19998 cycles, no difference
+STIMULUS-1  STIMULUS  NOT_EQUIVALENT  0   sim_aggr   ACCEPT   False     19998 cycles, no difference
+STIMULUS-1  STIMULUS  NOT_EQUIVALENT  0   miter_k    REJECT   False     counterexample found by the padded miter
+STIMULUS-1  STIMULUS  NOT_EQUIVALENT  0   miter_pdr  REJECT   False     PDR found a counterexample
+STIMULUS-2  STIMULUS  NOT_EQUIVALENT  0   cec        CANNOT   False     cannot build a miter: gold 17 latches / 27 inputs, gate 18 / 28
+STIMULUS-2  STIMULUS  NOT_EQUIVALENT  0   dsec       CANNOT   False     cannot build a miter: gold 17 latches / 27 inputs, gate 18 / 28
+STIMULUS-2  STIMULUS  NOT_EQUIVALENT  0   eqy        CANNOT   False     failed to prove, no counterexample reported
+STIMULUS-2  STIMULUS  NOT_EQUIVALENT  0   sim_lazy   REJECT   False     differs at cycle 2: ['14'] vs ['7']
+STIMULUS-2  STIMULUS  NOT_EQUIVALENT  0   sim_aggr   REJECT   False     differs at cycle 2: ['61'] vs ['3']
+STIMULUS-2  STIMULUS  NOT_EQUIVALENT  0   miter_k    REJECT   False     counterexample found by the padded miter
+STIMULUS-2  STIMULUS  NOT_EQUIVALENT  0   miter_pdr  REJECT   False     PDR found a counterexample

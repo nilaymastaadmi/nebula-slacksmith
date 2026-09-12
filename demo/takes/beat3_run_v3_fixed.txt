@@ -1,0 +1,20 @@
+it1  MEASURE   clk_a=-13.167  clk_b=-18.957  clk_e=-25.957   physical=none  total=-58.081 rtl=[]
+it1  CLASSIFY  clk_e: FANOUT_DOMINATED (fanout share 0.9139, 30.602 ns over 9 cells) -> physical
+                21.029 ns  sky130_fd_sc_hd__nor4_1      fanout=300  u_aes_e/u_core/keymem/_07883_
+                 6.016 ns  sky130_fd_sc_hd__nor2_1      fanout=153  u_aes_e/u_core/keymem/_08792_
+it1  APPLY     physical: buffer (provisional)
+it2  MEASURE   clk_a=1.75  clk_b=5.556  clk_e=-1.444   physical=buffer  total=-1.444 rtl=[]
+it2  G5 TOTAL  -58.081 -> -1.444 (improved)
+it2  CONFIRM   buffer: clk_e -25.957 -> -1.444 (+24.513)
+it2  CLASSIFY  clk_e: MIXED (fanout share 0.2864, 6.816 ns over 15 cells) -> physical
+                 1.952 ns  sky130_fd_sc_hd__a21oi_1     fanout=59  u_aes_e/u_core/dec_block/_2115_
+                 0.663 ns  sky130_fd_sc_hd__or4_2       fanout=2  u_aes_e/u_core/dec_block/inv_sbox_inst/_2630_
+it2  APPLY     physical: size (provisional)
+it3  MEASURE   clk_a=-1.716  clk_b=5.6  clk_e=-0.606   physical=buffer+size  total=-2.322 rtl=[]
+it3  G5 TOTAL  -1.444 -> -2.322 (not improved)
+it3  REVERT    size: clk_e -1.444 -> -0.606, G5_total_no_improvement
+it4  MEASURE   clk_a=1.75  clk_b=5.556  clk_e=-1.444   physical=buffer  total=-1.444 rtl=[]
+it4  CLASSIFY  clk_e: MIXED (fanout share 0.2864, 6.816 ns over 15 cells) -> physical
+                 1.952 ns  sky130_fd_sc_hd__a21oi_1     fanout=59  u_aes_e/u_core/dec_block/_2115_
+                 0.663 ns  sky130_fd_sc_hd__or4_2       fanout=2  u_aes_e/u_core/dec_block/inv_sbox_inst/_2630_
+it4  STOP      physical_exhausted

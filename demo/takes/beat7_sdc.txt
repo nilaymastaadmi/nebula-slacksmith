@@ -1,0 +1,9 @@
+residual clk_e path: _44958_ -> _46869_
+
+constraint variant         clk_a     clk_b     clk_e
+baseline_honest           11.158     5.665    -0.319 
+mcp_on_endpoint           11.158     5.665    -0.295 
+false_path_endpoint       11.158     5.665    -0.295 
+mcp_whole_clk_e           11.158     5.665     4.860 
+
+cell count is identical in every row: 26958 cells, one netlist, zero RTL change

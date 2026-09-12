@@ -1,0 +1,25 @@
+{
+  "name": "slacksmith-cards",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Two cards only: a 5 s title card and a 5 s end card. No lower thirds, no callouts.",
+  "scripts": {
+    "studio": "remotion studio",
+    "title": "remotion render src/index.ts Title out/title.mp4",
+    "end": "remotion render src/index.ts End out/end.mp4",
+    "cards": "npm run title && npm run end",
+    "title-still": "remotion still src/index.ts Title out/title.png --frame=75",
+    "end-still": "remotion still src/index.ts End out/end.png --frame=75",
+    "stills": "npm run title-still && npm run end-still"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.416",
+    "remotion": "4.0.416",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.2",
+    "typescript": "5.9.3"
+  }
+}

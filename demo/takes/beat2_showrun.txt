@@ -1,0 +1,8 @@
+it?  g0_sdc  {'step': 'g0_sdc', 'sdc': 'bench_top_v2.sdc', 'sha256': '3164f5796363d98c2036a0ad5c9b3a5c8c2f2975cfd5011f72b5e9af9d08aa25', 'lines': 196, 'timing_exceptions': {'set_false_path': 1}, 't': 0.0}
+it1  MEASURE   clk_a=1.333  clk_b=-4.957  clk_e=-4.957   physical=none  total=-9.914 rtl=[]
+it1  CLASSIFY  clk_b: FANOUT_DOMINATED (fanout share 0.9139, 30.602 ns over 9 cells) -> physical
+                21.029 ns  sky130_fd_sc_hd__nor4_1      fanout=300  u_aes_b/u_core/keymem/_07883_
+                 6.016 ns  sky130_fd_sc_hd__nor2_1      fanout=153  u_aes_b/u_core/keymem/_08792_
+it1  APPLY     physical: abc buffer -N 16; upsize; dnsize
+it2  MEASURE   clk_a=12.784  clk_b=12.6  clk_e=20.394   physical=buffer+size  total=0.0 rtl=[]
+it2  STOP      all_met

@@ -30,8 +30,17 @@ import os
 import time
 import urllib.request
 
-def generate(host, model, prompt, timeout):
-    body = json.dumps({"model": model, "prompt": prompt, "stream": False}).encode()
+def generate(host, model, prompt, timeout, json_mode=False):
+    """json_mode sets Ollama's `format: json`, which constrains decoding to
+    valid JSON. It is OFF by default because run 1 had to match the first
+    experiment exactly. R84 registered the follow-up in advance: if run 1's
+    reply is not valid JSON, a labelled second run with this flag separates
+    envelope failure from engineering failure, and R73 stays missed either
+    way."""
+    payload = {"model": model, "prompt": prompt, "stream": False}
+    if json_mode:
+        payload["format"] = "json"
+    body = json.dumps(payload).encode()
     req = urllib.request.Request(host.rstrip("/") + "/api/generate", data=body,
                                  headers={"Content-Type": "application/json"})
     t0 = time.time()
@@ -46,13 +55,16 @@ def main():
     ap.add_argument("--model", default="qwen2.5-coder:7b")
     ap.add_argument("--host", default="http://localhost:11434")
     ap.add_argument("--timeout", type=float, default=1800)
+    ap.add_argument("--json-mode", action="store_true",
+                    help="Ollama format: json. R84's declared follow-up only.")
     ap.add_argument("--watch", type=float, default=900,
                     help="seconds to wait for a request before giving up")
     a = ap.parse_args()
 
     os.makedirs(a.dir, exist_ok=True)
     print("shim: watching %s for REQUEST_*.md" % a.dir, flush=True)
-    print("shim: model %s at %s, default sampling, one sample" % (a.model, a.host), flush=True)
+    print("shim: model %s at %s, default sampling, one sample, json_mode=%s"
+          % (a.model, a.host, a.json_mode), flush=True)
     seen = set()
     t_start = time.time()
     answered = 0
@@ -70,7 +82,7 @@ def main():
             prompt = open(os.path.join(a.dir, name), encoding="utf-8").read()
             print("shim: request %s, %d chars -> %s" % (pid, len(prompt), a.model), flush=True)
             try:
-                payload, secs = generate(a.host, a.model, prompt, a.timeout)
+                payload, secs = generate(a.host, a.model, prompt, a.timeout, a.json_mode)
             except Exception as e:                      # noqa: BLE001
                 # A failure here is a result, not a crash: the loop must see
                 # something and record it, the same way propose() treats a

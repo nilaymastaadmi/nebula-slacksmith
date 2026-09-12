@@ -1,0 +1,30 @@
+# Pre-registration: LLM-proposed RTL transforms through the SlackSmith gate
+
+Written 2026-08-31, **before any proposer code or any proposal exists**. Git
+proves the ordering:
+
+    git log --diff-filter=A --format='%ad %h %s' --date=short -- \
+      experiments/llm_proposer/PREREGISTRATION.md \
+      experiments/llm_proposer/proposals/
+
+This file must appear in an earlier commit than every file in `proposals/`
+and than any harness code. If it does not, this registration is void and the
+experiment must be reported as unregistered.
+
+## The question
+
+The abstract claims an LLM proposes typed transforms and a formal gate
+disposes. That has never been measured. Every transform proven so far
+(4 of 4) was proposed by hand, by a human with full project context, and
+each was refined until it passed. That is a demonstration, not evidence
+about LLM proposals.
+
+**Question:** when an LLM proposes RTL transforms against a real timing
+report with no opportunity to iterate, what fraction survive each gate, and
+what does the four-checker matrix say about the ones that fail?
+
+## Protocol, fixed in advance
+
+1. **Target.** The module containing the worst reg-to-reg path on the v2
+   benchmark, which is `rv32i_core` (instantiated as `u_rv32_a/u_core`).
+   Worst path 28.374 ns arrival against an 8 ns period, post-`lpflow` fix.

@@ -1,0 +1,7 @@
+repair_gold                clk_a=3.093    clk_b=5.283    clk_e=-1.471   area=539351
+repair_gold_run2           clk_a=3.093    clk_b=5.283    clk_e=-1.471   area=539351
+repair_A5                  clk_a=3.950    clk_b=5.277    clk_e=-1.399   area=536403
+repair_A4_onehot_read      clk_a=3.163    clk_b=5.287    clk_e=-1.713   area=534184
+repair_O2_fsm_reencode     clk_a=4.290    clk_b=5.098    clk_e=-1.478   area=541150
+repair_O1_fanout_split     clk_a=1.865    clk_b=5.139    clk_e=-1.959   area=537927
+repair_composed            clk_a=2.235    clk_b=5.046    clk_e=-1.792   area=535500

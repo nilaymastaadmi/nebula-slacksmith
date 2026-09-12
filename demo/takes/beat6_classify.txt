@@ -1,0 +1,29 @@
+== v3_bufonly_it4_clk_e
+   report column : MIXED share=0.2864 top fanout=59 source=report
+   netlist only  : MIXED share=0.2864 top fanout=59 source=netlist
+   cells checked 13, disagreements at or above fanout 32: 0, below: 0
+   PASS
+== v3_bufsize_it3_clk_a
+   report column : MIXED share=0.4277 top fanout=387 source=report
+   netlist only  : MIXED share=0.4277 top fanout=387 source=netlist
+   cells checked 31, disagreements at or above fanout 32: 0, below: 1
+      _12101_    sky130_fd_sc_hd__dfrtp_1       0.47 ns  sta=15 netlist=14
+   PASS
+== drrtl_tv80_A
+   report column : MIXED share=0.3684 top fanout=34 source=report
+   netlist only  : MIXED share=0.3684 top fanout=34 source=netlist
+   cells checked 25, disagreements at or above fanout 32: 0, below: 0
+   PASS
+== drrtl_DSP_A
+   report column : DEPTH_DOMINATED share=0.1101 top fanout=53 source=report
+   netlist only  : DEPTH_DOMINATED share=0.1101 top fanout=53 source=netlist
+   cells checked 51, disagreements at or above fanout 32: 0, below: 1
+      _1128_     sky130_fd_sc_hd__o32a_1       0.349 ns  sta=1 netlist=0
+   PASS
+== drrtl_cpu_pipe_A
+   report column : DEPTH_DOMINATED share=0.18 top fanout=78 source=report
+   netlist only  : DEPTH_DOMINATED share=0.18 top fanout=78 source=netlist
+   cells checked 34, disagreements at or above fanout 32: 0, below: 0
+   PASS
+
+5 of 5 fixtures pass

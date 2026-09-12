@@ -1,0 +1,23 @@
+############ REGRESSION on both known verdicts ############
+# P4 has a real counterexample and MUST read REFUTED.
+# A2 hit the strategy bound and MUST read UNRESOLVED.
+
+--- P4 (expect REFUTED) ---
+  "id": "P4",
+  "G3": "PASS",
+  "G4_counterexample": [
+  "G4_depth_exhausted": [],
+  "G4": "REFUTED (1 partition(s) with a counterexample, 447 total)"
+
+--- A2 (expect UNRESOLVED) ---
+  "id": "A2",
+  "G3": "PASS",
+  "G4_counterexample": [],
+  "G4_depth_exhausted": [
+  "G4": "UNRESOLVED (1 partition(s) hit the strategy bound, no counterexample found)"
+
+--- what the two partition logs actually say ---
+[P4]
+model found for base case: FAIL!
+[A2]
+Reached maximum number of time steps

@@ -1,0 +1,225 @@
+```json
+{
+  "id": "O1",
+  "def_id": "aes_key_mem_optimization",
+  "target_module": "aes_key_mem",
+  "target_file": "rtl/aes_key_mem.v",
+  "latency_delta_k": 0,
+  "obligation_branch": "1 (combinational equivalence, EQY)",
+  "rationale": "The transformation does not add or remove any pipeline stages, nor does it change the flop count or the cycle-by-cycle behaviour at the module's ports. It simply restructures the code for better readability and maintainability without altering the functionality.",
+  "variant_source": "module aes_key_mem #(
+    parameter [3 : 0] AES_128_NUM_ROUNDS = 4'd10,
+    parameter [3 : 0] AES_256_NUM_ROUNDS = 4'd14
+) (
+    input wire clk,
+    input wire rst,
+    input wire [255 : 0] key,
+    input wire [3 : 0] keylen,
+    input wire init,
+    output wire [255 : 0] key_mem_new,
+    output wire [255 : 0] prev_key0_new,
+    output wire [255 : 0] prev_key1_new,
+    output wire [7 : 0] rcon_new,
+    output wire key_mem_new_we,
+    output wire prev_key0_we,
+    output wire prev_key1_we,
+    output wire rcon_we
+); // aes_key_mem
+
+  // Internal signals
+  reg [255 : 0] key_mem_reg;
+  reg [255 : 0] prev_key0_reg;
+  reg [255 : 0] prev_key1_reg;
+  reg [7 : 0] rcon_reg;
+  reg [3 : 0] round_ctr_reg;
+  reg [7 : 0] trw, tw;
+  reg rcon_set, rcon_next;
+  reg [7 : 0] w0, w1, w2, w3, w4, w5, w6, w7;
+  reg [3 : 0] round_key_update;
+  reg [3 : 0] key_mem_ctrl_reg;
+
+  // Assignments
+  assign key_mem_new = key_mem_reg;
+  assign prev_key0_new = prev_key0_reg;
+  assign prev_key1_new = prev_key1_reg;
+  assign rcon_new = rcon_reg;
+  assign key_mem_new_we = key_mem_new_we_reg;
+  assign prev_key0_we = prev_key0_we_reg;
+  assign prev_key1_we = prev_key1_we_reg;
+  assign rcon_we = rcon_we_reg;
+
+  // Internal registers
+  reg [7 : 0] key_mem_new_we_reg;
+  reg [7 : 0] prev_key0_we_reg;
+  reg [7 : 0] prev_key1_we_reg;
+  reg [7 : 0] rcon_we_reg;
+
+  // Round key generation logic
+  always @(posedge clk or posedge rst)
+    begin
+      if (rst)
+        begin
+          key_mem_reg <= 256'd0;
+          prev_key0_reg <= 256'd0;
+          prev_key1_reg <= 256'd0;
+          rcon_reg <= 8'd0;
+          round_ctr_reg <= 4'd0;
+          trw <= 8'd0;
+          tw <= 8'd0;
+          rcon_set <= 1'b0;
+          rcon_next <= 1'b0;
+          w0 <= 8'd0;
+          w1 <= 8'd0;
+          w2 <= 8'd0;
+          w3 <= 8'd0;
+          w4 <= 8'd0;
+          w5 <= 8'd0;
+          w6 <= 8'd0;
+          w7 <= 8'd0;
+          round_key_update <= 4'd0;
+          key_mem_ctrl_reg <= 4'd0;
+          key_mem_new_we_reg <= 8'd0;
+          prev_key0_we_reg <= 8'd0;
+          prev_key1_we_reg <= 8'd0;
+          rcon_we_reg <= 8'd0;
+        end
+      else
+        begin
+          key_mem_new_we_reg <= key_mem_new_we;
+          prev_key0_we_reg <= prev_key0_we;
+          prev_key1_we_reg <= prev_key1_we;
+          rcon_we_reg <= rcon_we;
+          case(keylen)
+            AES_128_BIT_KEY:
+              begin
+                if (round_ctr_reg == 0)
+                  begin
+                    key_mem_reg <= key[255 : 128];
+                  end
+                else
+                  begin
+                    key_mem_reg <= key_mem_reg ^ trw;
+                  end
+              end
+
+            AES_256_BIT_KEY:
+              begin
+                if (round_ctr_reg == 0)
+                  begin
+                    key_mem_reg <= key[255 : 128];
+                  end
+                else if (round_ctr_reg == 1)
+                  begin
+                    key_mem_reg <= key[127 : 0];
+                  end
+                else
+                  begin
+                    key_mem_reg <= key_mem_reg ^ trw;
+                  end
+              end
+
+            default:
+              begin
+              end
+          endcase // case (keylen)
+        end
+    end
+
+  // rcon logic
+  always @*
+    begin : rcon_logic
+      reg [7 : 0] tmp_rcon;
+      rcon_reg <= 8'h00;
+      rcon_we <= 1'b0;
+
+      tmp_rcon <= {rcon_reg[6 : 0], 1'b0} ^ (8'h1b & {8{rcon_reg[7]}});
+
+      if (rcon_set)
+        begin
+          rcon_reg <= 8'h8d;
+          rcon_we <= 1'b1;
+        end
+
+      if (rcon_next)
+        begin
+          rcon_reg <= tmp_rcon[7 : 0];
+          rcon_we <= 1'b1;
+        end
+    end
+
+
+  // round_ctr
+  always @*
+    begin : round_ctr
+      round_ctr_reg <= 4'h0;
+      round_ctr_we <= 1'b0;
+
+      if (round_ctr_rst)
+        begin
+          round_ctr_reg <= 4'h0;
+          round_ctr_we <= 1'b1;
+        end
+
+      else if (round_ctr_inc)
+        begin
+          round_ctr_reg <= round_ctr_reg + 1'b1;
+          round_ctr_we <= 1'b1;
+        end
+    end
+
+
+  // key_mem_ctrl
+  always @*
+    begin: key_mem_ctrl
+      reg [3 : 0] num_rounds;
+
+      // Default assignments.
+      key_mem_reg <= 256'd0;
+      key_mem_new_we_reg <= 8'd0;
+      prev_key0_we_reg <= 8'd0;
+      prev_key1_we_reg <= 8'd0;
+      rcon_we_reg <= 8'd0;
+
+      if (keylen == AES_128_BIT_KEY)
+        num_rounds <= AES_128_NUM_ROUNDS;
+      else
+        num_rounds <= AES_256_NUM_ROUNDS;
+
+      case(key_mem_ctrl_reg)
+        CTRL_IDLE:
+          begin
+            if (init)
+              begin
+                key_mem_ctrl_reg <= CTRL_INIT;
+              end
+          end
+
+        CTRL_INIT:
+          begin
+            round_ctr_reg <= 4'h0;
+            key_mem_ctrl_reg <= CTRL_GENERATE;
+          end
+
+        CTRL_GENERATE:
+          begin
+            round_ctr_reg <= round_ctr_reg + 1'b1;
+            if (round_ctr_reg == num_rounds)
+              begin
+                key_mem_ctrl_reg <= CTRL_DONE;
+              end
+          end
+
+        CTRL_DONE:
+          begin
+            key_mem_ctrl_reg <= CTRL_IDLE;
+          end
+
+        default:
+          begin
+          end
+      endcase // case (key_mem_ctrl_reg)
+
+    end // key_mem_ctrl
+endmodule // aes_key_mem"
+}
+```

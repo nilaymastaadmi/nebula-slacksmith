@@ -1,0 +1,37 @@
+it1  MEASURE   clk_a=-13.167  clk_b=-18.957  clk_e=-25.957   physical=False rtl=[]
+it1  CLASSIFY  clk_e: FANOUT_DOMINATED (fanout share 0.9139, 30.602 ns over 9 cells) -> physical
+                21.029 ns  sky130_fd_sc_hd__nor4_1      fanout=300  u_aes_e/u_core/keymem/_07883_
+                 6.016 ns  sky130_fd_sc_hd__nor2_1      fanout=153  u_aes_e/u_core/keymem/_08792_
+it1  APPLY     physical: abc buffer -N 16; upsize; dnsize
+it2  MEASURE   clk_a=-1.716  clk_b=5.6  clk_e=-0.606   physical=True rtl=[]
+it2  CLASSIFY  clk_a: DEPTH_DOMINATED (fanout share 0.0, 17.13 ns over 33 cells) -> rtl
+                 6.762 ns  sky130_fd_sc_hd__and2_1      fanout=1  u_rv32_a/_1309_
+                 1.757 ns  sky130_fd_sc_hd__nor2_1      fanout=16  u_rv32_a/u_core/_06948_
+it2  GATE      P1 (operator_sharing_addsub) k=0 G3=PASS G4=PROVEN
+it2  APPLY     rtl: P1 (provisional)
+it3  MEASURE   clk_a=-2.026  clk_b=5.6  clk_e=-0.606   physical=True rtl=['../../../../../../../home/toshn/slacksmith_v3b/variants/P1_rv32i_core.v']
+it3  REVERT    P1: clk_a -1.716 -> -2.026, G5_no_improvement
+it4  MEASURE   clk_a=-1.716  clk_b=5.6  clk_e=-0.606   physical=True rtl=[]
+it4  CLASSIFY  clk_a: DEPTH_DOMINATED (fanout share 0.0, 17.13 ns over 33 cells) -> rtl
+                 6.762 ns  sky130_fd_sc_hd__and2_1      fanout=1  u_rv32_a/_1309_
+                 1.757 ns  sky130_fd_sc_hd__nor2_1      fanout=16  u_rv32_a/u_core/_06948_
+it4  GATE      P2 (operator_sharing_shifter) k=0 G3=PASS G4=PROVEN
+it4  APPLY     rtl: P2 (provisional)
+it5  MEASURE   clk_a=-2.201  clk_b=5.6  clk_e=-0.606   physical=True rtl=['../../../../../../../home/toshn/slacksmith_v3b/variants/P2_rv32i_core.v']
+it5  REVERT    P2: clk_a -1.716 -> -2.201, G5_no_improvement
+it6  MEASURE   clk_a=-1.716  clk_b=5.6  clk_e=-0.606   physical=True rtl=[]
+it6  CLASSIFY  clk_a: DEPTH_DOMINATED (fanout share 0.0, 17.13 ns over 33 cells) -> rtl
+                 6.762 ns  sky130_fd_sc_hd__and2_1      fanout=1  u_rv32_a/_1309_
+                 1.757 ns  sky130_fd_sc_hd__nor2_1      fanout=16  u_rv32_a/u_core/_06948_
+it6  GATE      P3 (operator_sharing_comparator) k=0 G3=PASS G4=PROVEN
+it6  APPLY     rtl: P3 (provisional)
+it7  MEASURE   clk_a=-2.02  clk_b=5.6  clk_e=-0.606   physical=True rtl=['../../../../../../../home/toshn/slacksmith_v3b/variants/P3_rv32i_core.v']
+it7  REVERT    P3: clk_a -1.716 -> -2.02, G5_no_improvement
+it8  MEASURE   clk_a=-1.716  clk_b=5.6  clk_e=-0.606   physical=True rtl=[]
+it8  CLASSIFY  clk_a: DEPTH_DOMINATED (fanout share 0.0, 17.13 ns over 33 cells) -> rtl
+                 6.762 ns  sky130_fd_sc_hd__and2_1      fanout=1  u_rv32_a/_1309_
+                 1.757 ns  sky130_fd_sc_hd__nor2_1      fanout=16  u_rv32_a/u_core/_06948_
+it8  GATE      P4 (mux_priority_to_parallel) k=0 G3=PASS G4=UNRESOLVED (1 partition(s) hit the strategy bound, no counterexample found)
+it8  GATE      P5 (pipeline_cut_rigid) k=1 G3=PASS G4=REFUTED
+it8  GATE      P6 (operator_sharing_branch_comparator) k=0 G3=PASS G4=PROVEN
+it8  APPLY     rtl: P6 (provisional)

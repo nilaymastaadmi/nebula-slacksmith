@@ -73,3 +73,57 @@ the surprising outcome.*
 N = 3, one author, one codebase, all three transforms written by the person
 timing them. This is a step ratio, not a workflow ratio, and the report sentence
 says so.
+
+---
+
+## Amendment 1, 2026-09-12, before any time was taken
+
+**R70 to R72 are suspended, not scored.** The author states he is not practised
+at writing formal obligations, so his time would not stand in for an engineer's.
+That matters more than it first looks: the two confounds run in **opposite
+directions** and cannot be signed.
+
+- He wrote these transforms and knows this codebase, which makes him **faster**
+  than a stranger, so his time is a floor and the ratio a ceiling.
+- He is not practised at miter authoring, which makes him **slower** than a
+  practised verification engineer, so his time is a ceiling and the ratio a
+  floor.
+
+With N = 1 and both confounds present, the bias has no sign, and a ratio whose
+direction of error is unknown is worse than no ratio. **If the author runs the
+tasks anyway the times are recorded and reported with both confounds stated,
+and R70 to R72 are scored then. Until that happens they stay open, not void.**
+
+**A borrowed denominator was considered and rejected.** A web search on
+2026-09-12 for published per-obligation authoring times returned none: the
+literature covers miter construction and overall verification effort share, not
+how long a person takes to write one equivalence obligation. Taking a number
+from a verification-effort survey and dividing by it would be a category error
+with a citation attached, which is the exact failure mode
+`tools/check_report_numbers.py` and `tools/tally_predictions.py` exist to catch
+in our own writing.
+
+## What replaces it, and why it is not a prediction
+
+`obligation_cost.py` counts **the numerator instead of guessing the
+denominator**: how much machinery each generated obligation is, measured from
+the committed artifacts.
+
+**This is a descriptive measurement, not a hypothesis test, and it carries no
+prediction id.** It was run before this amendment was written, so registering a
+prediction against it now would be scoring a coin after it landed. The project
+distinguishes the two deliberately, and this is the second kind.
+
+| branch | artifact | lines | code lines | port connections | properties |
+|---|---|---|---|---|---|
+| 1 combinational | `ctrl.eqy` | 11 | 9 | 0 | 0 |
+| 2 k-padded miter | `miter_pipeline_domain_a.sv` | 138 | 71 | 28 | 4 |
+| 2 runner | `miter.sby` | 32 | 23 | 0 | 0 |
+| 4 mapped-state miter | `miter_mapped.sv` | 108 | 48 | 18 | 6 |
+| 4 runner | `miter.sby` | 37 | 26 | 0 | 0 |
+| **total** | 5 artifacts | **326** | **177** | **46** | **10** |
+
+A reader can weigh 177 lines of hand-wired miter across three branches against
+their own experience. That is a better answer to "how does this speed up manual
+work" than a ratio this project cannot support, and it is checkable by running
+the script.

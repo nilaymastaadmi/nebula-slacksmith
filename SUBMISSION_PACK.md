@@ -365,6 +365,39 @@ tuned against Claude Opus 5. **No API key is committed
 anywhere**: the token lives in `~/.slacksmith_token` outside the repository and
 `tools/preflight.sh` fails if a credential-shaped string reaches a tracked file.
 
+## 5e. The speed-up the organisers asked for, and what we will say instead
+
+They asked entrants to show how AI agents speed up a previously manual
+optimisation workflow. **REPORT §1.1 refuses to state a ratio**, because no
+engineer was ever timed doing the work, and a web search on 2026-09-12 found no
+published per-obligation authoring time to borrow. Dividing by a number taken
+from a verification-effort survey would be a category error with a citation
+attached.
+
+**So the numerator is counted instead of the denominator guessed**
+(`experiments/speedup_step/obligation_cost.py`, run it yourself):
+
+| branch | artifact | lines | code lines | port connections | properties |
+|---|---|---|---|---|---|
+| 1 combinational | `ctrl.eqy` | 11 | 9 | 0 | 0 |
+| 2 k-padded miter | `miter_pipeline_domain_a.sv` | 138 | 71 | 28 | 4 |
+| 2 runner | `miter.sby` | 32 | 23 | 0 | 0 |
+| 4 mapped-state miter | `miter_mapped.sv` | 108 | 48 | 18 | 6 |
+| 4 runner | `miter.sby` | 37 | 26 | 0 | 0 |
+| **total** | 5 artifacts | **326** | **177** | **46** | **10** |
+
+Every line is generated from the declared transform type in about a second.
+Weigh 177 lines of hand-wired miter across three branches against your own
+experience; we will not divide by a time we did not measure.
+
+**The human side is registered and open, not abandoned**
+(`experiments/speedup_step/PREREGISTRATION.md`, R70 to R72, amendment 1). It is
+suspended because the one available author both wrote these transforms, which
+makes him faster than a stranger, and is not practised at formal setup, which
+makes him slower than a verification engineer. With N = 1 and both confounds
+present the bias has no sign, and a ratio whose direction of error is unknown is
+worse than no ratio.
+
 ## 6. How to verify any of this
 
     git clone https://github.com/nilaymastaadmi/nebula-slacksmith
