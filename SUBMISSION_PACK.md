@@ -1,4 +1,4 @@
-# SlackSmith: submission pack, state as of 2026-09-11
+# SlackSmith: submission pack, state as of 2026-09-12
 
 Nebula (Astera Labs @ BITS Pilani Goa), Track A: *Constraint Optimization
 through RTL Enhancement Using Generative AI*.
@@ -62,7 +62,19 @@ process.
 - **Unforced routing:** on `i2c_master_top` (Dr. RTL set, 560 cells,
   depth-dominated) the classifier selects the **RTL lever with no override**,
   and the `cli` backend returns usable proposals on a design it has never seen.
-  Run twice it returned *different* transforms; the second is **PROVEN by EQY**.
+  Run twice it returned *different* transforms. (A "PROVEN by EQY, by hand"
+  verdict on the second was withdrawn 2026-09-12: no artifact survives.
+  `experiments/depth_i2c/` replaces it with three kept unattended runs.)
+- **Unforced, end to end, on external IP** (`experiments/depth_i2c/`, 2026-09-12,
+  registered first): 3 of 3 unattended runs on `i2c_master_top` routed RTL with
+  no flag; run 2 **proposed, proved (EQY), applied, re-measured and reverted** a
+  `(* parallel_case *)` transform that synthesizes to a **byte-identical**
+  netlist, 0.000 ns at every level; run 3 drew the same transform; run 1's FSM
+  re-encoding came back UNRESOLVED and was refused. Two harness defects that
+  stood between PROVEN and applied were predicted in writing from run 1 and
+  confirmed by run 2 before being repaired. A do-nothing control on this
+  560-cell design moves unbuffered slack by 0.424 ns, so the depth-side
+  survival cell stays **empty**, and the pack says so.
 - **Unattended result (N = 1):** `fanout_replication_round_key_update`, PROVEN
   by EQY over all outputs, **+1.414 ns `clk_b`, +1.414 `clk_e`, +1.967 `clk_a`**,
   no group paying for it. 456 s end to end. It is the only batch-3 transform
@@ -77,9 +89,17 @@ process.
   (`tools/classify_regression.py`).
 
 ### D4. Optimized RTL implementation
-- `rtl/rv32i_core_P{1,2,3,6}.v`, plus AES key-memory variants and the online
-  variants under `experiments/online_proposer/results/variants/`.
-- 7 of 12 frozen proposals reached PROVEN; **3 of those made their own path
+- **One composed optimized RTL:** `experiments/composed_rtl/aes_key_mem_composed.v`,
+  A4 + O2 + O1 merged three-way against the gold file by `compose.sh`
+  (rebuild-checked), **PROVEN** on branch 4 by PDR under the zero-init assumption.
+  `clk_b`: **+5.165 ns** zero-parasitic (54.2% of the sum of its parts),
+  **0.000** after the ABC buffering lever, **−0.237 against a 0.24 ns perturbation
+  floor** after `repair_design` (N = 5 netlists, gold deterministic to every
+  digit). No timing benefit survives the physical lever on the paths the
+  classifier had already routed to it. REPORT §7.8, `experiments/composed_rtl/NOTES.md`.
+- Single variants: `rtl/rv32i_core_P{1,2,3,6}.v`, the AES key-memory variants and
+  the online variants under `experiments/online_proposer/results/variants/`.
+  7 of 12 frozen proposals reached PROVEN; **3 of those made their own path
   group worse**.
 
 ### D5. Timing, frequency and PPA comparison
@@ -223,7 +243,11 @@ Each with its nearest prior art, conceded where it narrows the claim.
   classifier that undercounted fanout and invalidated every DEPTH verdict, and
   a gate that manufactured a refutation.
 - **Reproducibility verified by running**, not asserted: clean clone at a
-  different path, 15 of 15 (`experiments/reproducibility/`).
+  different path, 15 of 15 (`experiments/reproducibility/`); `demo_check.sh`
+  re-run 2026-09-12 from WSL by the fourth review, **15 pass, 0 fail**.
+- **The tally is generated**: `tools/tally_predictions.py`, quoted in REPORT
+  §9 and re-run after every registration. REPORT §9 carried a stale hand-written
+  tally until the fourth review found it.
 
 ---
 
@@ -249,6 +273,14 @@ Each with its nearest prior art, conceded where it narrows the claim.
    the current proposals target.
 7. **Small N throughout.** 12 frozen proposals, 2 online, 8 benchmark cases,
    20 external designs of which 15 in scope. Outcomes, not rates.
+8. **The demo narration was over the 5-minute window until 2026-09-12.**
+   `demo/SCRIPT.md` said 690 words and held 983 (6.6 minutes at 150 wpm); the
+   count had been written once. It is now measured by `tools/script_words.py`,
+   which fails above 750, and the narration was cut to fit with every number
+   and every retraction kept.
+9. **One prediction registration this project wrote was flawed** (composed_rtl
+   amendment 2, R50: the perturbation spread included the netlist under test).
+   Scored as written, flaw disclosed beside the score.
 
 ---
 
@@ -257,15 +289,15 @@ Each with its nearest prior art, conceded where it narrows the claim.
 | deliverable | state |
 |---|---|
 | D1 timing analysis framework | **complete** |
-| D2 GenAI optimization engine | **complete with a named limit**: 17 proposals in three provenance tiers, one unattended end-to-end run. **No run has yet both chosen RTL unforced and produced a proven, timing-positive transform.** The router chooses RTL unforced on `i2c`; that run's proposal came back `UNRESOLVED` |
+| D2 GenAI optimization engine | **complete with a named limit**: 17 proposals in three provenance tiers, one unattended end-to-end run. **No run has yet both chosen RTL unforced and produced a proven, timing-positive transform.** The router chooses RTL unforced on `i2c`; that run's proposal came back `UNRESOLVED`. The `i2c` proposal REPORT §7.2 once called "PROVEN by EQY, by hand" has **no artifact** (the run script wiped its scratch) and is withdrawn; `experiments/depth_i2c/` re-runs the design three times unattended with everything kept |
 | D3 critical path analysis | **complete** |
-| D4 optimized RTL | **complete with a named limit**: four proven variants ship; they are **not composed into one optimized RTL**, and design-level closure comes from `repair_design`, not from RTL |
+| D4 optimized RTL | **complete**: one composed optimized RTL ships (`experiments/composed_rtl/`), proven; measured before wires, after the ABC lever and after `repair_design`. Its timing contribution after the physical flow is inside the flow's perturbation floor, and design-level closure comes from `repair_design`, not from RTL |
 | D5 timing, frequency, PPA | **complete.** Before/after for all three, including power at **+47.1%**, measured 2026-09-12 |
 | D6 formal equivalence | **complete.** Five branches, null control, void check. Open: the ABC buffering lever is unproven, and P5's control does not close |
 | D7 interactive demo | **complete.** `demo/explorer.html`, rebuild-checked |
 | **Demo video** | **PENDING.** Script, shot list, build prompt and recording checklist exist; nothing is recorded |
 
-**Pending, in priority order:** the video; composing the three helping transforms on `aes_key_mem` into one optimized RTL and measuring the marginal gain after buffering; one unforced run that proposes, proves *and* improves.
+**Pending, in priority order:** the video; one unforced run that proposes, proves *and* **improves** (`experiments/depth_i2c/` now proposes, proves, applies and reverts unforced; the gain was 0.000, so "improves" is still open); a depth-dominated design large enough that a null edit does not move it by 0.4 ns, to fill the survival table's second cell. Composition and the marginal gain after buffering: **done**, `experiments/composed_rtl/`.
 
 ## 5c. Overfitting, and testing beyond our own design
 
@@ -303,7 +335,15 @@ the prompt is plain text with no provider-specific syntax:
 `--proposer handoff` writes the prompt to a file and reads a JSON reply, so any
 model reachable by any means can be dropped in with no code change;
 `--proposer cli` shells out to whatever `--claude-bin` names. Swapping to an
-open-weight model is a flag and a binary, not a port. **No API key is committed
+open-weight model is a flag and a binary, not a port. **Exercised, not asserted**
+(`experiments/open_weight/`, registered first): Qwen2.5-7B-Instruct under Ollama,
+no key and no vendor, the identical request. Zero changes under `tools/`, and it
+**failed**: 1,172 s of CPU inference returned a reply that is not valid JSON,
+part VHDL, module interface not preserved; it never reached G1. Scored 2
+confirmed, 3 wrong, 1 void. That is "portability exercised, capability not
+demonstrated": it says what this loop needs from a model before any verification
+is reached, and nothing about larger open-weight models, since the prompt was
+tuned against Claude Opus 5. **No API key is committed
 anywhere**: the token lives in `~/.slacksmith_token` outside the repository and
 `tools/preflight.sh` fails if a credential-shaped string reaches a tracked file.
 

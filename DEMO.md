@@ -213,6 +213,25 @@ synthesis command, no buffering, no RTL, no placement:
 
 ---
 
+Then the composed result, the report's headline negative, replayed from a
+committed file (added 2026-09-12; the video must not tell a cleaner story than
+the report):
+
+    cat experiments/composed_rtl/results/post_repair_summary.txt
+    cat experiments/composed_rtl/results/abc_buffered_pair.txt
+
+> We composed our three proven transforms into one file. Before wires they are
+> worth 5.165 nanoseconds together, fifty-four percent of the sum of the parts.
+> After the ABC buffering lever, zero. After repair_design, minus 0.237 against
+> a 0.24 nanosecond floor from five perturbed netlists. The classifier had
+> routed that path to buffering before any of it was measured, and it was right.
+
+Point at the `composed` row against `gold`, and at the `+0.000` on clk_b in the
+ABC pair. Do not say "worse": amendment 2 made R38 VOID, not WRONG
+(`experiments/composed_rtl/NOTES.md`).
+
+---
+
 ## Beat 6. What we caught in ourselves, 40 seconds.
 
 > Six defects, all found by running things rather than reading them.
