@@ -1,0 +1,23 @@
+running OpenROAD (netlist: /home/toshn/slacksmith_work/cr_O2_fsm_reencode/variant/variant_mapped.v)
+openroad exit: 0
+=== slacks ===
+=====> FLOORPLAN
+=====> GLOBAL PLACEMENT
+=====> TIMING BEFORE repair_design
+---CLOCK:clk_a---
+          -52.572   slack (VIOLATED)
+---CLOCK:clk_b---
+          -44.323   slack (VIOLATED)
+---CLOCK:clk_e---
+          -52.064   slack (VIOLATED)
+Design area 451013 u^2 40% utilization.
+=====> REPAIR_DESIGN
+=====> DETAILED PLACEMENT
+=====> TIMING AFTER repair_design
+---CLOCK:clk_a---
+            4.290   slack (MET)
+---CLOCK:clk_b---
+            5.098   slack (MET)
+---CLOCK:clk_e---
+           -1.478   slack (VIOLATED)
+Design area 541150 u^2 48% utilization.

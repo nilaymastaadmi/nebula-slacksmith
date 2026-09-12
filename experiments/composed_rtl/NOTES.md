@@ -203,3 +203,72 @@ and every RTL result in this repository was obtained by overriding it with
 `--force-lever rtl`. The negative result is not a surprise the project
 uncovered; it is the project's own routing decision, confirmed the expensive
 way.
+
+## Amendment 2 result: four more perturbation points, and R38 is VOID
+
+Registered before running (`PREREGISTRATION.md` amendment 2, commit `8872a26`).
+`noise_floor2.sh` and `abc_pair.py`, raw logs in `results/repair_*.txt`,
+`results/post_repair_summary.txt` and `results/abc_buffered_pair.txt`.
+
+Post-repair, every netlist through the identical flow, gold twice:
+
+| netlist | clk_a | clk_b | clk_e | area u² | Δ clk_b | Δ area |
+|---|---|---|---|---|---|---|
+| gold, run 1 and run 2, identical | +3.093 | +5.283 | −1.471 | 539,351 | | |
+| A5, do-nothing edit | +3.950 | +5.277 | −1.399 | 536,403 | **−0.006** | −2,948 |
+| A4 alone | +3.163 | +5.287 | −1.713 | 534,184 | **+0.004** | −5,167 |
+| O2 alone | +4.290 | +5.098 | −1.478 | 541,150 | **−0.185** | **+1,799** |
+| O1 alone | +1.865 | +5.139 | −1.959 | 537,927 | **−0.144** | −1,424 |
+| composed A4+O2+O1 | +2.235 | +5.046 | −1.792 | 535,500 | **−0.237** | −3,851 |
+
+**R49. CONFIRMED.** A4 +0.004, O2 −0.185, O1 −0.144, all within ±0.30 of
+gold. No single proven transform survives `repair_design` on `clk_b` either.
+
+**R50. WRONG, by 0.004 ns.** The spread across the five perturbed netlists is
+**0.241**, not under 0.237. By the rule amendment 2 declared before running,
+**R38 is VOID**: the composition's −0.237 is not distinguishable from what
+perturbing the netlist does.
+
+The registration was flawed and the flaw is the registrant's: the five
+included the composition itself, so the test misses whenever the composition
+is the extreme point, which is exactly the case it was meant to separate.
+Scored as written, because a prediction is what it says. Stated so a reader
+can judge it anyway: excluding the composition, the other four span **0.189**
+(+0.004 to −0.185), and the composition sits 0.048 beyond that range. The two
+netlists that touch the read path, O2 and O1, move in the composition's
+direction; the two that do not, A5 (a do-nothing edit) and A4 (whose
+duplicated cones the mapper re-merges), sit at ±0.006. That is consistent
+with a small real cost from O2 and O1 that composing does not add to. It is
+not resolvable as one at N = 5, and it is not claimed.
+
+**R51. CONFIRMED.** `clk_a` spans **2.425 ns** across the five (+1.197 to
+−1.228). No RTL edit's effect on post-repair `clk_a` is resolvable in this
+flow, which generalises amendment 1's withdrawal.
+
+**R52. WRONG, 2 of 3.** O2 alone is **1,799 u² larger** than gold after
+repair; A4 is 5,167 smaller. Perturbed netlists land on both sides of gold by
+more than the composition's −3,851, so the composition's area is not a
+transform effect. The miss strengthens the withdrawal of the area headline
+rather than weakening it.
+
+**R53. CONFIRMED, at exactly zero.** After the ABC buffering lever
+(`buffer -N 16; upsize; dnsize`, the loop's physical lever), gold and
+composed both time `clk_b` at **+5.600**: delta **0.000**. The unbuffered
++5.165 survives the mapping-level lever at 0%. `clk_a` −0.272 and `clk_e`
+0.000, reported separately. Cells 30,264 against 30,275.
+
+### The honest final position, revised on N = 5
+
+After the mapping-level buffering lever, the composed RTL is worth **0.000
+ns** on `clk_b`. After the full physical flow it is worth **−0.237 ns against
+a five-netlist perturbation spread of 0.24 ns**, with every transform-bearing
+netlist at or below gold and the do-nothing edit at −0.006. The unbuffered
++5.165 and the with-parasitics +18.792 survive neither lever. "Genuinely,
+measurably slightly worse", written above on the strength of one control, is
+**withdrawn**; what N = 5 supports is *no timing benefit survives, and the
+direction, where it resolves at all, is not positive*. Area is not reportable
+in either direction (R52).
+
+That is the fanout-dominated row of a two-row table. The depth-dominated row,
+the same measurement on a design the classifier routes to RTL, is
+`experiments/depth_i2c/`.

@@ -1,0 +1,5 @@
+clock      gold+ABC  composed+ABC    delta
+clk_a        -1.716        -1.988   -0.272
+clk_b         5.600         5.600   +0.000
+clk_e        -0.606        -0.606   +0.000
+cells: gold+ABC 30264, composed+ABC 30275
