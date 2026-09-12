@@ -1,6 +1,6 @@
 # SlackSmith closed-loop run
 
-engine `sta`, sdc `tv80.sdc`, 1 iterations, 7.6s
+engine `sta`, sdc `tv80.sdc`, 1 iterations, 898.1s
 
 | iteration | clk |
 |---|---|

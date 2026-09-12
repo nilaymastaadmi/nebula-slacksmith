@@ -1,0 +1,16 @@
+SBY 12:11:48 [miter_prop_pdr] Removing directory '/home/toshn/slacksmith_work/depth_tv80/run1/gates/O1/miter_prop_pdr'.
+SBY 12:11:48 [miter_prop_pdr] Copy '/home/toshn/slacksmith_work/depth_tv80/run1/gates/O1/gold.v' to '/home/toshn/slacksmith_work/depth_tv80/run1/gates/O1/miter_prop_pdr/src/gold.v'.
+SBY 12:11:48 [miter_prop_pdr] Copy '/home/toshn/slacksmith_work/depth_tv80/run1/gates/O1/gate.v' to '/home/toshn/slacksmith_work/depth_tv80/run1/gates/O1/miter_prop_pdr/src/gate.v'.
+SBY 12:11:48 [miter_prop_pdr] Copy '/home/toshn/slacksmith_work/depth_tv80/run1/gates/O1/miter_prop.sv' to '/home/toshn/slacksmith_work/depth_tv80/run1/gates/O1/miter_prop_pdr/src/miter_prop.sv'.
+SBY 12:11:48 [miter_prop_pdr] engine_0: abc pdr
+SBY 12:11:48 [miter_prop_pdr] base: starting process "cd miter_prop_pdr/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY 12:11:48 [miter_prop_pdr] base: Warning: Encountered `translate_off' comment! Such legacy hot comments are supported by Yosys, but are not part of any formal language specification. Using a portable and standards-compliant construct such as `ifdef is recommended!
+SBY 12:11:49 [miter_prop_pdr] base: ERROR: Module `tv80_mcode_gate' referenced in module `miter_prop' in cell `u_t' does not have a port named 'halted'.
+SBY 12:11:49 [miter_prop_pdr] base: finished (returncode=1)
+SBY 12:11:49 [miter_prop_pdr] base: task failed. ERROR.
+SBY 12:11:49 [miter_prop_pdr] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY 12:11:49 [miter_prop_pdr] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY 12:11:49 [miter_prop_pdr] summary: engine_0 (abc pdr) did not return a status
+SBY 12:11:49 [miter_prop_pdr] summary: engine_0 did not produce any traces
+SBY 12:11:49 [miter_prop_pdr] DONE (ERROR, rc=16)
+SBY 12:11:49 The following tasks failed: ['pdr']

@@ -1,0 +1,189 @@
+EQY 12:37:43 [prop] read_gold: starting process "yosys -ql prop/gold.log prop/gold.ys"
+EQY 12:37:43 [prop] read_gold: Warning: Encountered `translate_off' comment! Such legacy hot comments are supported by Yosys, but are not part of any formal language specification. Using a portable and standards-compliant construct such as `ifdef is recommended!
+EQY 12:37:43 [prop] read_gate: starting process "yosys -ql prop/gate.log prop/gate.ys"
+EQY 12:37:43 [prop] read_gate: Warning: Encountered `translate_off' comment! Such legacy hot comments are supported by Yosys, but are not part of any formal language specification. Using a portable and standards-compliant construct such as `ifdef is recommended!
+EQY 12:37:44 [prop] read_gold: finished (returncode=0)
+EQY 12:37:44 [prop] read_gate: finished (returncode=0)
+EQY 12:37:44 [prop] combine: starting process "yosys -ql prop/combine.log prop/combine.ys"
+EQY 12:37:44 [prop] combine: finished (returncode=0)
+EQY 12:37:44 [prop] partition: starting process "cd prop; yosys -ql partition.log partition.ys"
+EQY 12:37:44 [prop] partition: finished (returncode=0)
+EQY 12:37:44 [prop] run: starting process "make -C prop -f strategies.mk"
+EQY 12:37:44 [prop] run: make: Entering directory '/home/toshn/slacksmith_work/depth_tv80/run3/gates/O1/prop'
+EQY 12:37:44 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.ALU_Op'..
+EQY 12:37:45 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.ALU_Op' using strategy 'sat'
+EQY 12:37:45 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.Arith16'..
+EQY 12:37:45 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.Arith16' using strategy 'sat'
+EQY 12:37:45 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.Call'..
+EQY 12:37:45 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.Call' using strategy 'sat'
+EQY 12:37:45 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.DDD.0'..
+EQY 12:37:45 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.DDD.0' using strategy 'sat'
+EQY 12:37:45 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.DDD.1'..
+EQY 12:37:45 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.DDD.1' using strategy 'sat'
+EQY 12:37:45 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.DDD.2'..
+EQY 12:37:45 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.DDD.2' using strategy 'sat'
+EQY 12:37:45 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.DPAIR.0'..
+EQY 12:37:45 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.DPAIR.0' using strategy 'sat'
+EQY 12:37:45 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.DPAIR.1'..
+EQY 12:37:45 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.DPAIR.1' using strategy 'sat'
+EQY 12:37:45 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.ExchangeAF'..
+EQY 12:37:45 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.ExchangeAF' using strategy 'sat'
+EQY 12:37:45 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.ExchangeDH'..
+EQY 12:37:46 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.ExchangeDH' using strategy 'sat'
+EQY 12:37:46 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.ExchangeRS'..
+EQY 12:37:46 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.ExchangeRS' using strategy 'sat'
+EQY 12:37:46 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.ExchangeRp'..
+EQY 12:37:46 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.ExchangeRp' using strategy 'sat'
+EQY 12:37:46 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.Halt'..
+EQY 12:37:46 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.Halt' using strategy 'sat'
+EQY 12:37:46 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.IMode'..
+EQY 12:37:46 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.IMode' using strategy 'sat'
+EQY 12:37:46 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.IORQ'..
+EQY 12:37:46 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.IORQ' using strategy 'sat'
+EQY 12:37:46 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.I_BC'..
+EQY 12:37:46 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.I_BC' using strategy 'sat'
+EQY 12:37:46 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.I_BT'..
+EQY 12:37:46 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.I_BT' using strategy 'sat'
+EQY 12:37:46 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.I_BTR'..
+EQY 12:37:46 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.I_BTR' using strategy 'sat'
+EQY 12:37:46 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.I_CCF'..
+EQY 12:37:46 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.I_CCF' using strategy 'sat'
+EQY 12:37:46 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.I_CPL'..
+EQY 12:37:47 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.I_CPL' using strategy 'sat'
+EQY 12:37:47 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.I_DJNZ'..
+EQY 12:37:47 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.I_DJNZ' using strategy 'sat'
+EQY 12:37:47 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.I_INRC'..
+EQY 12:37:47 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.I_INRC' using strategy 'sat'
+EQY 12:37:47 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.I_RETN'..
+EQY 12:37:47 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.I_RETN' using strategy 'sat'
+EQY 12:37:47 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.I_RLD'..
+EQY 12:37:47 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.I_RLD' using strategy 'sat'
+EQY 12:37:47 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.I_RRD'..
+EQY 12:37:47 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.I_RRD' using strategy 'sat'
+EQY 12:37:47 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.I_SCF'..
+EQY 12:37:47 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.I_SCF' using strategy 'sat'
+EQY 12:37:47 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.IncDec_16'..
+EQY 12:37:47 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.IncDec_16' using strategy 'sat'
+EQY 12:37:47 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.Inc_PC'..
+EQY 12:37:47 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.Inc_PC' using strategy 'sat'
+EQY 12:37:47 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.Inc_WZ'..
+EQY 12:37:48 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.Inc_WZ' using strategy 'sat'
+EQY 12:37:48 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.Jump'..
+EQY 12:37:48 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.Jump' using strategy 'sat'
+EQY 12:37:48 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.JumpE'..
+EQY 12:37:48 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.JumpE' using strategy 'sat'
+EQY 12:37:48 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.JumpXY'..
+EQY 12:37:48 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.JumpXY' using strategy 'sat'
+EQY 12:37:48 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.LDSPHL'..
+EQY 12:37:48 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.LDSPHL' using strategy 'sat'
+EQY 12:37:48 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.LDW'..
+EQY 12:37:48 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.LDW' using strategy 'sat'
+EQY 12:37:48 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.LDZ'..
+EQY 12:37:48 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.LDZ' using strategy 'sat'
+EQY 12:37:48 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.MCycles'..
+EQY 12:37:49 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.MCycles' using strategy 'sat'
+EQY 12:37:49 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.NoRead'..
+EQY 12:37:49 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.NoRead' using strategy 'sat'
+EQY 12:37:49 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.Prefix'..
+EQY 12:37:49 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.Prefix' using strategy 'sat'
+EQY 12:37:49 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.PreserveC'..
+EQY 12:37:49 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.PreserveC' using strategy 'sat'
+EQY 12:37:49 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.Read_To_Acc'..
+EQY 12:37:49 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.Read_To_Acc' using strategy 'sat'
+EQY 12:37:49 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.Read_To_Reg'..
+EQY 12:37:49 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.Read_To_Reg' using strategy 'sat'
+EQY 12:37:49 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.RstP'..
+EQY 12:37:49 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.RstP' using strategy 'sat'
+EQY 12:37:49 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.SSS.0'..
+EQY 12:37:49 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.SSS.0' using strategy 'sat'
+EQY 12:37:49 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.SSS.1'..
+EQY 12:37:49 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.SSS.1' using strategy 'sat'
+EQY 12:37:49 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.SSS.2'..
+EQY 12:37:50 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.SSS.2' using strategy 'sat'
+EQY 12:37:50 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.Save_ALU'..
+EQY 12:37:50 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.Save_ALU' using strategy 'sat'
+EQY 12:37:50 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.SetDI'..
+EQY 12:37:50 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.SetDI' using strategy 'sat'
+EQY 12:37:50 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.SetEI'..
+EQY 12:37:50 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.SetEI' using strategy 'sat'
+EQY 12:37:50 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.Set_Addr_To'..
+EQY 12:37:50 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.Set_Addr_To' using strategy 'sat'
+EQY 12:37:50 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.Set_BusA_To.3'..
+EQY 12:37:50 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.Set_BusA_To.3' using strategy 'sat'
+EQY 12:37:50 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.Set_BusA_To'..
+EQY 12:37:51 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.Set_BusA_To' using strategy 'sat'
+EQY 12:37:51 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.Set_BusB_To.3'..
+EQY 12:37:51 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.Set_BusB_To.3' using strategy 'sat'
+EQY 12:37:51 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.Set_BusB_To'..
+EQY 12:37:51 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.Set_BusB_To' using strategy 'sat'
+EQY 12:37:51 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.Special_LD'..
+EQY 12:37:52 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.Special_LD' using strategy 'sat'
+EQY 12:37:52 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.TStates'..
+EQY 12:37:52 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.TStates' using strategy 'sat'
+EQY 12:37:52 [prop] run: Running strategy 'sat' on 'tv80_mcode_gold.Write'..
+EQY 12:37:52 [prop] run: Proved equivalence of partition 'tv80_mcode_gold.Write' using strategy 'sat'
+EQY 12:37:52 [prop] run: make -f strategies.mk summary
+EQY 12:37:52 [prop] run: make[1]: Entering directory '/home/toshn/slacksmith_work/depth_tv80/run3/gates/O1/prop'
+EQY 12:37:52 [prop] run: make[1]: Leaving directory '/home/toshn/slacksmith_work/depth_tv80/run3/gates/O1/prop'
+EQY 12:37:52 [prop] run: make: Leaving directory '/home/toshn/slacksmith_work/depth_tv80/run3/gates/O1/prop'
+EQY 12:37:52 [prop] run: finished (returncode=0)
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.Write
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.TStates
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.Special_LD
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.Set_BusB_To.3
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.Set_BusB_To
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.Set_BusA_To.3
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.Set_BusA_To
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.Set_Addr_To
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.SetEI
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.SetDI
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.Save_ALU
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.SSS.2
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.SSS.1
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.SSS.0
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.RstP
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.Read_To_Reg
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.Read_To_Acc
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.PreserveC
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.Prefix
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.NoRead
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.MCycles
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.LDZ
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.LDW
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.LDSPHL
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.JumpXY
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.JumpE
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.Jump
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.Inc_WZ
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.Inc_PC
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.IncDec_16
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.I_SCF
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.I_RRD
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.I_RLD
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.I_RETN
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.I_INRC
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.I_DJNZ
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.I_CPL
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.I_CCF
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.I_BTR
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.I_BT
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.I_BC
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.IORQ
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.IMode
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.Halt
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.ExchangeRp
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.ExchangeRS
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.ExchangeDH
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.ExchangeAF
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.DPAIR.1
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.DPAIR.0
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.DDD.2
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.DDD.1
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.DDD.0
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.Call
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.Arith16
+EQY 12:37:52 [prop] Successfully proved equivalence of partition tv80_mcode_gold.ALU_Op
+EQY 12:37:52 [prop] Successfully proved designs equivalent
+EQY 12:37:52 [prop] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:09 (9)
+EQY 12:37:52 [prop] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:07 (7)
+EQY 12:37:52 [prop] DONE (PASS, rc=0)

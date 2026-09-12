@@ -1,0 +1,12 @@
+[gold]
+read_verilog gold.v
+prep -top tv80_mcode_gold
+
+[gate]
+read_verilog gate.v
+rename tv80_mcode_gate tv80_mcode_gold
+prep -top tv80_mcode_gold
+
+[strategy sat]
+use sat
+depth 5

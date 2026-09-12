@@ -1,0 +1,69 @@
+{
+  "partition": {
+    "index": 4,
+    "name": "tv80_mcode_gold.Set_BusB_To",
+    "inbits": {
+      "DDD": [
+        0
+      ],
+      "DPAIR": [
+        0,
+        1
+      ],
+      "F": [
+        0,
+        2,
+        6,
+        7
+      ],
+      "IR": [
+        6,
+        7
+      ],
+      "ISet": [
+        0,
+        1
+      ],
+      "IntCycle": [
+        0
+      ],
+      "MCycle": [
+        0,
+        1,
+        2,
+        3,
+        6
+      ],
+      "NMICycle": [
+        0
+      ],
+      "SSS": [
+        0,
+        1,
+        2
+      ]
+    },
+    "outbits": {
+      "Set_BusB_To": [
+        0,
+        1,
+        2
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.tv80_mcode_gold.Set_BusB_To",
+    "internal": {},
+    "unused": {},
+    "cellcount": 494,
+    "bitcount": 634
+  },
+  "gate_module": {
+    "name": "gold.tv80_mcode_gold.Set_BusB_To",
+    "internal": {},
+    "unused": {},
+    "cellcount": 494,
+    "bitcount": 634
+  }
+}

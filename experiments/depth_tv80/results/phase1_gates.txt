@@ -1,0 +1,3 @@
+{"iter": 1, "step": "gate", "proposal": "O1", "def_id": "onehot_mcycle_tail_case_merge", "declared_k": 0, "G1": "PASS", "G2": "PASS", "G3": "PASS(state-remap: k=0, flop delta unconstrained)", "G4": "UNRESOLVED", "partial": false, "undecidable": null, "t": 898.1}
+{"iter": 1, "step": "gate", "proposal": "O1", "def_id": "casez_parallel_case_hint", "declared_k": 0, "G1": "PASS", "G2": "PASS", "G3": "PASS", "G4": "PROVEN", "G7": "SKIPPED", "G7_why": "module not in the file list", "G7_introduced": null, "t": 465.8}
+{"iter": 1, "step": "gate", "proposal": "O1", "def_id": "flatten_mcycle_tail_override_priority", "declared_k": 0, "G1": "PASS", "G2": "PASS", "G3": "PASS", "G4": "PROVEN", "G7": "SKIPPED", "G7_why": "module not in the file list", "G7_introduced": null, "t": 1090.6}

@@ -1,0 +1,16 @@
+wrote /home/toshn/slacksmith_work/depth_tv80/run1/gates/O1/miter_prop.sby
+
+--- running bmc (timeout 420s) ---
+bmc: ERROR -- Module `tv80_mcode_gate' referenced in module `miter_prop' in cell `u_t' does not have a port named  -- inspect raw log
+  raw log: /home/toshn/slacksmith_work/depth_tv80/run1/gates/O1/miter_prop_bmc.raw.log
+
+--- running pdr (timeout 420s) ---
+pdr: ERROR -- Module `tv80_mcode_gate' referenced in module `miter_prop' in cell `u_t' does not have a port named  -- inspect raw log
+  raw log: /home/toshn/slacksmith_work/depth_tv80/run1/gates/O1/miter_prop_pdr.raw.log
+
+=== summary ===
+task     verdict    detail
+bmc      ERROR      Module `tv80_mcode_gate' referenced in module `miter_prop' in cell `u_t' does not have a port named  -- inspect raw log
+pdr      ERROR      Module `tv80_mcode_gate' referenced in module `miter_prop' in cell `u_t' does not have a port named  -- inspect raw log
+
+overall: no engine closed the property within budget -- not necessarily false, inspect raw logs

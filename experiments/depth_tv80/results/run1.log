@@ -8,24 +8,10 @@ measure: clk=-0.894
 classify clk: DEPTH_DOMINATED (fanout share 0.1602) -> rtl
   unmangled parameterised module $paramod$1a08092a55a4361642517ba6d8d0502484bd6d82\tv80_mcode -> tv80_mcode
   binding module tv80_mcode found in tv80.v (filename does not match module name)
-Traceback (most recent call last):
-  File "/mnt/c/Users/toshn/Projects/slacksmith-benchmark/tools/slacksmith.py", line 999, in <module>
-    main()
-  File "/mnt/c/Users/toshn/Projects/slacksmith-benchmark/tools/slacksmith.py", line 856, in main
-    props, perr = proposer.propose(ctx, a, a.workdir)
-                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/mnt/c/Users/toshn/Projects/slacksmith-benchmark/tools/proposer.py", line 279, in propose
-    return propose_cli(ctx, a, workdir)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/mnt/c/Users/toshn/Projects/slacksmith-benchmark/tools/proposer.py", line 250, in propose_cli
-    r = subprocess.run([a.claude_bin, "-p", prompt],
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/subprocess.py", line 548, in run
-    with Popen(*popenargs, **kwargs) as process:
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/subprocess.py", line 1026, in __init__
-    self._execute_child(args, executable, preexec_fn, close_fds,
-  File "/usr/lib/python3.12/subprocess.py", line 1955, in _execute_child
-    raise child_exception_type(errno_num, err_msg, err_filename)
-OSError: [Errno 7] Argument list too long: '/home/toshn/.local/bin/claude'
-exit: 1
+  online proposal O1: onehot_mcycle_tail_case_merge (declared k=0)
+  gate O1 (onehot_mcycle_tail_case_merge): G3=PASS(state-remap: k=0, flop delta unconstrained) G4=UNRESOLVED
+no proposal passed the gate.
+
+wrote /home/toshn/slacksmith_work/depth_tv80/run1/SUMMARY.md
+wrote /home/toshn/slacksmith_work/depth_tv80/run1/decisions.jsonl
+exit: 0
