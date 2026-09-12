@@ -109,6 +109,24 @@ process.
   `clk_e` −47.683 → **+19.529**, at **+20.2% area**.
 - Closure survives CTS and global routing (`experiments/openroad_cts/`),
   7,833 µm² (+1.45%), 1,547 clock buffers.
+- **Total power 94.5 mW → 139.0 mW, +47.1%** (`experiments/ppa/power/`),
+  vector-free at default activity, one model for both netlists, not a signoff
+  number.
+- **That +20.2% is one point on a curve, measured 2026-09-12**
+  (`experiments/closure_cost/`, registered before running, SDC v3 on the same
+  placed netlist, so its slacks are not the v2 numbers above). Three repair
+  arms: `repair_timing -setup` alone reaches a **worst group of −0.947 ns at
+  +6.90% area and 0.313 W** but meets no group outright; `repair_design`
+  (the published flow) **−1.471 at +20.17% and 0.408 W**, meeting two;
+  the two in sequence **−0.777 at +21.26% and 0.414 W**, also meeting two.
+  **No arm meets all three**, and on worst-group slack the published flow is
+  last of the three.
+- **Zero-parasitic, the loop's own ABC lever is not its best half**:
+  `buffer -N 16` alone meets **2 of 3** groups where `buffer; upsize; dnsize`
+  (the default `--lever-policy blunt`) meets **1 of 3**, the sizing pass
+  trading a met `clk_a` for 3.6% area. `upsize; dnsize` alone meets `clk_b`
+  for **+1.31% area and +1.4% power** with no cell added. Registered
+  predictions R64 to R69 and R83: four confirmed, three missed.
 
 ### D6. Formal equivalence verification report
 - **Five** obligation branches, all exercised on benchmark RTL: combinational
