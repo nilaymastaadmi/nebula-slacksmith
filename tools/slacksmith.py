@@ -758,6 +758,27 @@ def main():
                     record(iter=it, step="stop", reason="no_binding_module")
                     break
                 module = sorted(on_path)[0]
+                # Yosys renames a parameterised module in the netlist as
+                # $paramod$<hash>\<name>, or $paramod\<name>\<PARAM>=<value>.
+                # No source file declares that, so both lookups below miss and
+                # the loop stops on module_not_in_file_list with the router
+                # having chosen correctly. Found 2026-09-12 on tv80, whose
+                # tv80_mcode is parameterised: three unattended runs classified
+                # DEPTH, routed to RTL unforced, and ended without proposing.
+                # Same defect class as the i2c repair, one layer deeper: that
+                # one taught the lookup that filename need not equal module
+                # name, this one that the netlist's module name need not equal
+                # the source's.
+                if module.startswith("$paramod"):
+                    parts = [p for p in module.split("\\") if p and "=" not in p]
+                    if parts:
+                        cand = parts[-1]
+                        if cand.startswith("$paramod"):
+                            cand = cand.split("$")[-1]
+                        if cand:
+                            print(f"  unmangled parameterised module "
+                                  f"{module} -> {cand}")
+                            module = cand
                 # BENCH_TOP_FILES carries real relative paths, and the AES
                 # sources are vendored under rtl/aes/. Looking for
                 # rtl/<module>.v misses every one of them.

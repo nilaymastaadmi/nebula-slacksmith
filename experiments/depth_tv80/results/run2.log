@@ -1,0 +1,12 @@
+G0 sdc: tv80.sdc sha256 de9c16af1484a577 11 lines, timing exceptions none
+rtl files: 1 from experiments/depth_tv80/rtl_files.txt (top tv80s)
+dont_use flags: 72
+engine: sta   clocks: clk
+
+=== iteration 1 ===
+measure: clk=-0.894
+classify clk: DEPTH_DOMINATED (fanout share 0.1602) -> rtl
+
+wrote /home/toshn/slacksmith_work/depth_tv80/run2/SUMMARY.md
+wrote /home/toshn/slacksmith_work/depth_tv80/run2/decisions.jsonl
+exit: 0

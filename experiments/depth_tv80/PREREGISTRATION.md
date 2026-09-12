@@ -101,3 +101,54 @@ from the `cpu_pipe` the plan named and from the tv80 netlist the transfer study
 measured: this is upstream source at 3,447 cells and 8.938 ns, against that
 study's 4,023 cells and 9.797 ns, so its DEPTH verdict is re-derived here rather
 than inherited.
+
+---
+
+## Amendment 1, 2026-09-12: a harness defect, registered before the tool is touched
+
+All three runs exited before proposing. Every one of them classified correctly
+and routed to RTL unforced, then stopped:
+
+```
+{"step": "classify", "verdict": "DEPTH_DOMINATED", "fanout_delay_share": 0.1602,
+ "lever": "rtl", "routed_lever": "rtl", "lever_forced": false}
+{"step": "stop", "reason": "module_not_in_file_list",
+ "module": "$paramod$1a08092a55a4361642517ba6d8d0502484bd6d82\tv80_mcode"}
+```
+
+**This is our harness, not the model.** `tv80_mcode` is instantiated with
+parameters, so Yosys renames it `$paramod$<hash>\tv80_mcode` in the netlist.
+`tools/slacksmith.py` maps the binding module back to a source file by filename
+and then, since the `i2c` repair, by searching for its `module` declaration.
+Neither can match a mangled name, because no source file declares
+`$paramod$<hash>\tv80_mcode`.
+
+**It is the same defect class the `i2c` run found, one layer deeper.** That
+repair taught the lookup that filename need not equal module name. This one
+teaches it that the *netlist's* module name need not equal the *source's*.
+
+### The repair, stated before it is written
+
+Unmangle before looking up: split the netlist module name on backslashes, drop
+any segment containing `=` (a parameter binding), and take the last remaining
+segment as the source-level module name. `$paramod$<hash>\tv80_mcode` and
+`$paramod\tv80_mcode\WIDTH=32` both resolve to `tv80_mcode`.
+
+Nothing else changes. No gate, no classifier, no lever policy, no SDC.
+
+### Rules this repair follows
+
+- **All three samples had already exited** before `tools/` was touched. The
+  repair waits for the last sample by design, and it did.
+- **All three runs are replayed** through the repaired tool. A replay is not a
+  new sample: the three replayed runs are runs 1 to 3, and R76 to R81 are scored
+  on them. There is no fourth run.
+- **The failed runs are kept**, logs and decision files, next to the replayed
+  ones. `experiments/depth_i2c/` set that precedent and it is the reason this
+  defect was recognisable in one line.
+
+### Prediction on the repair itself
+
+**R82.** After the repair, all three replayed runs reach the proposer, and the
+binding module is reported as `tv80_mcode`. *Prior: strong, and if it misses the
+defect was misdiagnosed, which is worth knowing before any proposal is judged.*
