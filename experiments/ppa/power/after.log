@@ -1,0 +1,13 @@
+=====> after
+Group                  Internal  Switching    Leakage      Total
+                          Power      Power      Power      Power (Watts)
+----------------------------------------------------------------
+Sequential             1.64e-02   2.98e-03   9.73e-08   1.94e-02  14.0%
+Combinational          6.37e-02   5.56e-02   1.18e-07   1.19e-01  85.9%
+Clock                  1.02e-05   2.36e-04   4.76e-11   2.46e-04   0.2%
+Macro                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+Pad                    0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+----------------------------------------------------------------
+Total                  8.01e-02   5.88e-02   2.16e-07   1.39e-01 100.0%
+                          57.7%      42.3%       0.0%
+Error: after.tcl, 7 invalid command name "report_design_area"

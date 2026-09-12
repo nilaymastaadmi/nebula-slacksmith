@@ -955,7 +955,51 @@
 </tbody>
 </table>
 <p><strong>The rankings invert between contexts.</strong> By core timing the best transform is P6; at design level P6 is the <strong>worst</strong> (−1.615 ns), and the only design-level winner is P2, nearly neutral at core level. Two real mechanisms: the core's critical path is not the design's, plus the non-local remapping quantified in §5. Earlier drafts quoted a core-level <strong>F_max of 50.4 to 55.9 MHz, an 11.0% gain, for P6</strong> — zero-parasitic, reset false-pathed, and for the transform that is worst where it matters. That was the most favourable framing available for the least useful result, and the parasitic-aware table above replaces it.</p>
-<p>Power is vector-free at default switching activity and flat at 223 to 224 mW across all variants (a 351-cell change is 0.6% of a 55K design), reported as a null. Area: <code>repair_design</code> costs <strong>+20.2%</strong>, and CTS plus global routing a further <strong>+1.45%</strong> (§7.2).</p>
+<p><strong>Before and after, all three of P, P and A on one pair of netlists.</strong> The same <code>bench_top</code>, the same SDC, measured across <code>repair_design</code>, which is the step that actually closes the design:</p>
+<table>
+<thead>
+<tr>
+<th>metric</th>
+<th>before</th>
+<th>after</th>
+<th>delta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>clk_a</code> WNS</td>
+<td>−36.723 ns</td>
+<td><strong>+17.593</strong></td>
+<td>+54.316</td>
+</tr>
+<tr>
+<td><code>clk_b</code> WNS</td>
+<td>−43.438 ns</td>
+<td><strong>+12.367</strong></td>
+<td>+55.805</td>
+</tr>
+<tr>
+<td><code>clk_e</code> WNS</td>
+<td>−47.683 ns</td>
+<td><strong>+19.529</strong></td>
+<td>+67.212</td>
+</tr>
+<tr>
+<td>total power</td>
+<td>94.5 mW</td>
+<td><strong>139.0 mW</strong></td>
+<td><strong>+47.1%</strong></td>
+</tr>
+<tr>
+<td>design area</td>
+<td>448,840 µm²</td>
+<td>539,351 µm²</td>
+<td><strong>+20.2%</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Closure costs 47% more power and 20% more area.</strong> The power figure is new to this revision and the expectation was registered before it was run: 960 added buffers should raise internal and switching power, and they do, from 5.70e-02 to 8.01e-02 W internal and 3.75e-02 to 5.88e-02 switching (<code>experiments/ppa/power/</code>). It is a vector-free estimate at default switching activity, which compares two netlists under one model and is not a signoff number.</p>
+<p>At the RTL-variant level power is a <strong>null</strong>: flat at 223 to 224 mW across all four proven transforms, because a 351-cell change is 0.6% of a 55K design. Both facts belong in the same section: the transforms we proposed do not move power, and the pass that closes timing moves it by half again.</p>
 <h2>9. What we got wrong</h2>
 <p>Judged work should show its corrections, so here are ours, all committed with the evidence.</p>
 <p><strong>Our gate manufactured a refutation three times, so we stopped fixing them one at a time.</strong> It reported A2 as REFUTED when EQY had only run out of depth, found by noticing one partition had failed while all 128 feeding it had passed. It compared two independently uninitialised memory arrays and read that as a transform being non-equivalent (<code>experiments/g7_in_loop/</code>). And on 11 Sept the sequential miter was found <strong>refuting <code>aes_key_mem</code> against itself</strong>: <code>round_key = key_mem[round]</code>, Yosys does not apply a module's async reset to a memory, so the two instances start from different arbitrary contents. Gold versus gold, <code>FAIL eq_round_key</code> in 1 s; with that one output removed, <code>PDR PROVEN</code> in 12 s.</p>

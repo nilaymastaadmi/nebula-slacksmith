@@ -408,7 +408,19 @@ Every group meets at every point, for 7,833 µm² (+1.45%) and 1,547 clock buffe
 
 **The rankings invert between contexts.** By core timing the best transform is P6; at design level P6 is the **worst** (−1.615 ns), and the only design-level winner is P2, nearly neutral at core level. Two real mechanisms: the core's critical path is not the design's, plus the non-local remapping quantified in §5. Earlier drafts quoted a core-level **F_max of 50.4 to 55.9 MHz, an 11.0% gain, for P6** — zero-parasitic, reset false-pathed, and for the transform that is worst where it matters. That was the most favourable framing available for the least useful result, and the parasitic-aware table above replaces it.
 
-Power is vector-free at default switching activity and flat at 223 to 224 mW across all variants (a 351-cell change is 0.6% of a 55K design), reported as a null. Area: `repair_design` costs **+20.2%**, and CTS plus global routing a further **+1.45%** (§7.2).
+**Before and after, all three of P, P and A on one pair of netlists.** The same `bench_top`, the same SDC, measured across `repair_design`, which is the step that actually closes the design:
+
+| metric | before | after | delta |
+|---|---|---|---|
+| `clk_a` WNS | −36.723 ns | **+17.593** | +54.316 |
+| `clk_b` WNS | −43.438 ns | **+12.367** | +55.805 |
+| `clk_e` WNS | −47.683 ns | **+19.529** | +67.212 |
+| total power | 94.5 mW | **139.0 mW** | **+47.1%** |
+| design area | 448,840 µm² | 539,351 µm² | **+20.2%** |
+
+**Closure costs 47% more power and 20% more area.** The power figure is new to this revision and the expectation was registered before it was run: 960 added buffers should raise internal and switching power, and they do, from 5.70e-02 to 8.01e-02 W internal and 3.75e-02 to 5.88e-02 switching (`experiments/ppa/power/`). It is a vector-free estimate at default switching activity, which compares two netlists under one model and is not a signoff number.
+
+At the RTL-variant level power is a **null**: flat at 223 to 224 mW across all four proven transforms, because a 351-cell change is 0.6% of a 55K design. Both facts belong in the same section: the transforms we proposed do not move power, and the pass that closes timing moves it by half again.
 
 ## 9. What we got wrong
 
