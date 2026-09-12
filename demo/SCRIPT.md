@@ -8,8 +8,11 @@ nothing that is not evidenced there.
 is roughly **750 words of narration**. This script is 690. Do not add to it
 without cutting something.
 
-**Screen is a real terminal throughout.** Remotion is used for three things
-only: the title card, three lower-third number callouts, and the end card.
+**Screen is a real terminal throughout.** Remotion builds **only the title card
+and the end card**. Every number marked ZOOM TARGET below is reached with
+Recordly's cursor zoom on the real terminal output, not a graphic: a callout
+restating a number the tool just printed is weaker than the tool printing it.
+This matches `demo/VIDEO_PROMPT.md`, which the two files previously contradicted.
 
 ---
 
@@ -39,9 +42,10 @@ does not have to guess. Tool names it will get wrong unless told:
 **COVERS:** framing
 **SCREEN:** Remotion title card
 
-> Every published agentic R T L optimizer that holds a formal gate refuses to
-> change latency, because adding a pipeline stage breaks conventional
-> equivalence checking. We made transforms typed, so the declared type picks
+> We found no published agentic R T L optimizer that both changes latency and
+> discharges a formal obligation for it, because adding a pipeline stage breaks
+> conventional equivalence checking. Four neighbours come close and the report
+> names them. We made transforms typed, so the declared type picks
 > the proof obligation, and latency-changing transforms become checkable.
 > Then we measured whether the generative A I half actually works.
 
@@ -65,7 +69,10 @@ does not have to guess. Tool names it will get wrong unless told:
 **COVERS:** deliverables 1, 2 and 3
 **SCREEN:** the loop command, then `tools/show_run.py` on the same run
 
-> One command. Two iterations. Under fifty seconds, and no human in it.
+> One command. Two iterations. Under a minute, and nobody steering it.
+>
+> This run uses the physical lever only. The generative half running unattended
+> is a separate run and a separate number, and it comes later.
 >
 > It did not guess which lever to pull. Ninety-one percent of that path's
 > delay sits in cells driving thirty-two or more loads, and the worst single
@@ -74,7 +81,7 @@ does not have to guess. Tool names it will get wrong unless told:
 > is not, so the tool routed to a physical lever instead of spending a proposal
 > on it.
 
-**CALLOUT (Remotion lower third):** `fanout 300 — 21.029 ns in one cell`
+**ZOOM TARGET:** `fanout 300 — 21.029 ns in one cell`
 
 ---
 
@@ -96,7 +103,8 @@ does not have to guess. Tool names it will get wrong unless told:
 >
 > And on the path our classifier scored ninety-one percent fanout, the model
 > running unattended proposed a fanout split, our gate proved it, and it bought
-> one point four one four nanoseconds on every clock group. We had written in
+> one point four one four nanoseconds on clock B and clock E, and one point nine
+> six seven on clock A, with no group paying for it. We had written in
 > our own summary that no R T L rewrite shortens a net's load delay. That
 > sentence is now gone.
 
@@ -124,7 +132,10 @@ does not have to guess. Tool names it will get wrong unless told:
 > The verdict tracks stimulus quality, not bug severity. Every one of those
 > simulation gates is what a real agentic R T L tool ships with today.
 
-**CALLOUTS:** `46 s — counterexample a=ae19f605` and `20,000 vectors — missed`
+**ZOOM TARGETS:** `46 s — counterexample a=ae19f605` and `20,000 vectors — missed`.
+Both are evidenced: the witness is in `experiments/llm_proposer_aes/NOTES.md` and
+`tools/demo_check.sh`; the directed probe's differing outputs are `ffffffff` against
+`0fffffff` in `experiments/llm_proposer/fourchecker/RESULT.md`.
 
 ---
 
@@ -133,10 +144,10 @@ does not have to guess. Tool names it will get wrong unless told:
 **COVERS:** deliverable 5
 **SCREEN:** the lever table, then the PPA numbers
 
-> Same clock group, same constraints. Our best proven R T L transform bought
-> four point nine two five nanoseconds. OpenROAD's repair design pass, which
-> changes no R T L at all, bought fifty-five point eight. We report that as
-> the finding it is.
+> Like for like, one S D C and one timing model, on clock B: our best R T L
+> transform buys three point one eight five nanoseconds while the physical lever
+> takes the same group from minus eighteen point nine to plus five point six in
+> the same run. About one eighth. We report that as the finding it is.
 >
 > With placement parasitics all three groups close: clock A from minus
 > thirty-six point seven to plus seventeen point six, clock B from minus
@@ -145,7 +156,9 @@ does not have to guess. Tool names it will get wrong unless told:
 > point two percent area, and closure survives clock tree synthesis and global
 > routing at seven thousand eight hundred square microns.
 
-**CALLOUT:** `+55.805 ns — zero lines of RTL` and `3.32x achievable frequency`
+**ZOOM TARGETS:** `+55.805 ns — zero lines of RTL` and `3.32x achievable frequency`.
+Say with the second one: **part of that 3.32x is a flow defect we shipped**, the
+missing `buffer; upsize` script, worth 17.557 ns on its own (REPORT section 9).
 
 Optional twelve seconds if the cut has room, and the strongest single number for
 a silicon audience:
@@ -193,7 +206,9 @@ a silicon audience:
 > So the loop hashes the S D C, counts its timing exceptions, and refuses to
 > report slack measured under constraints that are not the registered ones.
 
-**CALLOUT:** `+5.179 ns — byte-identical netlist`
+**ZOOM TARGET:** `+5.179 ns — byte-identical netlist`. Say that this is measured on
+a 26,958-cell flat netlist, a different fixture from the 55,413-cell benchmark, so it
+is not a like-for-like comparison against any RTL transform.
 
 ---
 
@@ -209,7 +224,9 @@ a silicon audience:
 > questions. Two checkers confidently rejected a pair that is provably
 > equivalent.
 >
-> And ours is wrong twice. We registered in advance that it should not sweep
+> And ours declines rather than answers on one case. An induction-only shortcut in
+> this harness was wrong twice; the shipped gate discharges with B M C plus P D R
+> and scores seven of eight. We registered in advance that it should not sweep
 > its own suite, because a benchmark its author aces tells you about the
 > benchmark and not about the tool.
 

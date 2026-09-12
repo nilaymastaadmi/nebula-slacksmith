@@ -198,7 +198,7 @@
 <p><strong>The engine recommends four of four classes and the evidence is not equal.</strong> Logic restructuring is demonstrated at all three tiers including unattended. Pipelining is proposed at the frozen tier and never proven. <strong>Retiming and FSM optimization exist only at the handoff tier</strong>, so a model with this project's context wrote them, not a blind one: before 11 Sept the gate rejected both by construction (§7.6), so no frozen batch could have held one.</p>
 <p>Two of the four were unreachable by construction and we found out why only after an external review said so (§7.6). <code>dretime</code> also appears inside the ABC physical-lever script, which is a mapping-level pass and <strong>not</strong> the engine proposing a retiming; it is not counted here. <strong>Two experiments each number their proposals O1 and O2</strong>, <code>experiments/online_proposer/</code> and <code>experiments/missing_classes/</code>; they are always named with their directory here, and the collision is flagged rather than fixed by renumbering a registered artifact after its results existed.</p>
 <h2>4. The benchmark</h2>
-<p><code>bench_top</code> is <strong>55,413 standard cells</strong>, five independent asynchronous clock domains, each with its own active-low async reset and each driving at least one in-RTL generated clock.</p>
+<p><code>bench_top</code> is <strong>55,413 standard cells</strong> hierarchical, the figure this report uses throughout; <code>tools/bench_size.py</code> and the demo measure <strong>48,616</strong> on the later flattened, buffered-and-sized netlist, because flattening collapses redundant decode across the module boundary (§7.3) and saves more than buffering adds. Both are ~50K, both are cross-checked against a fresh Yosys <code>flatten</code>, and the pair is stated here so a viewer who sees one number and a reader who sees the other are not looking at a contradiction.  five independent asynchronous clock domains, each with its own active-low async reset and each driving at least one in-RTL generated clock.</p>
 <table>
 <thead>
 <tr>
@@ -786,14 +786,14 @@
 <td>retiming</td>
 <td>5</td>
 <td><strong>PROVEN</strong> (PDR, 222 s)</td>
-<td><strong>−4.616</strong></td>
+<td><strong>−4.616</strong> (and −4.616 on <code>clk_e</code>, +0.274 <code>clk_a</code>)</td>
 </tr>
 <tr>
 <td><code>fsm_output_coded_state_assignment</code></td>
 <td>FSM optimization</td>
 <td>4</td>
 <td><strong>PROVEN</strong> (PDR, 124 s)</td>
-<td><strong>+3.185</strong></td>
+<td><strong>+3.185</strong> (and +3.185 <code>clk_e</code>, +0.528 <code>clk_a</code>)</td>
 </tr>
 </tbody>
 </table>

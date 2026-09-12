@@ -76,7 +76,7 @@ Two of the four were unreachable by construction and we found out why only after
 
 ## 4. The benchmark
 
-`bench_top` is **55,413 standard cells**, five independent asynchronous clock domains, each with its own active-low async reset and each driving at least one in-RTL generated clock.
+`bench_top` is **55,413 standard cells** hierarchical, the figure this report uses throughout; `tools/bench_size.py` and the demo measure **48,616** on the later flattened, buffered-and-sized netlist, because flattening collapses redundant decode across the module boundary (§7.3) and saves more than buffering adds. Both are ~50K, both are cross-checked against a fresh Yosys `flatten`, and the pair is stated here so a viewer who sees one number and a reader who sees the other are not looking at a contradiction.  five independent asynchronous clock domains, each with its own active-low async reset and each driving at least one in-RTL generated clock.
 
 | domain | clock | divider | contents |
 |---|---|---|---|
@@ -342,8 +342,8 @@ Branches 4 and 5 are now implemented, both `k = 0` with the flop delta unconstra
 
 | proposal | class | branch | verdict | clk_b |
 |---|---|---|---|---|
-| `retime_write_decode_forward` | retiming | 5 | **PROVEN** (PDR, 222 s) | **−4.616** |
-| `fsm_output_coded_state_assignment` | FSM optimization | 4 | **PROVEN** (PDR, 124 s) | **+3.185** |
+| `retime_write_decode_forward` | retiming | 5 | **PROVEN** (PDR, 222 s) | **−4.616** (and −4.616 on `clk_e`, +0.274 `clk_a`) |
+| `fsm_output_coded_state_assignment` | FSM optimization | 4 | **PROVEN** (PDR, 124 s) | **+3.185** (and +3.185 `clk_e`, +0.528 `clk_a`) |
 
 **Both read "PROVEN, 2 of 3 outputs" for a day, and the partiality was ours.** This section argued the excluded output `round_key` was undecidable as a property of the design. **That was wrong.** The miter gave two instances *independent* arbitrary power-up state, which asks whether they agree from any **pair** of starting states: not equivalence, and unsatisfiable by any correct transform. Two copies of one chip start in the same state.
 
