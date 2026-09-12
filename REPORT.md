@@ -124,7 +124,7 @@ The v1 periods were illustrative, chosen when the benchmark was 3,584 cells; at 
 
 **Finding 1 above was correct and not in effect for eight commits.** The exclusion list scans the liberty for cell names; the liberty writes `cell ("name")` with quotes and the regex expected it without, so it matched nothing and returned an empty flag string. Every netlist built in between carries 203 `lpflow` cells and the 12.8 ns artifact the exclusion exists to remove. Found by reading a critical-path report and seeing the banned cell at 12.824 ns on a path where it was forbidden; there was no test, which is why nothing caught it. All affected numbers were re-measured: the `clk_a` baseline carried **4.62 ns** of artifact and proven transforms' deltas moved 40 to 50%, but **no qualitative conclusion changed**. The exclusion is **not** uniformly beneficial: `clk_a` gains 4.62 ns while `clk_b` and `clk_e` each lose 1.97.
 
-### 5.3 G0, constraint integrity: the one attack no equivalence checker can see
+### 5.2 G0, constraint integrity: the one attack no equivalence checker can see
 
 Everything above trusts the SDC. We measured what that trust is worth. On **one netlist, 26,958 cells, byte-identical in every row**, with no RTL edit, no resynthesis and no gate resized, the only thing varied was the constraint file:
 

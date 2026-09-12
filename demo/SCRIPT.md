@@ -245,10 +245,12 @@ No narration.
   becomes unreadable.
 - **Beat 2 is the only live compute.** If it is slow on the day, pre-run it to
   a file and play that back, and say so on camera.
-- **Beat 2's narration says "no human in it" and that is now literally true**
-  (`experiments/cli_backend/`, N = 1). It was not true before 11 September, when
-  this beat ran the handoff backend and a person pasted the prompt to a model.
-  If you demo the handoff backend instead, cut that clause.
+- **Beat 2's screen has no model call in it at all.** It is the v2 closed-loop
+  run, which classifies the path and pulls the physical lever; "nobody steering
+  it" refers to the loop, and the narration says so in the next sentence. The
+  unattended generative run is a different run, a different SDC (v3) and a
+  different number (`experiments/cli_backend/`, N = 1, REPORT §7.7). Do not let
+  the two merge in the edit.
 - **Never read a table aloud.** Point at one number. The callouts carry the
   rest.
 - Beat 4 is the strongest sixty seconds in the video. If the cut runs long,

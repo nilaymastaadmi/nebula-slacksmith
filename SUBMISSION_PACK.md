@@ -25,7 +25,7 @@ process.
 | Repository | runs from a clean clone at any path, verified three times (`experiments/reproducibility/`) |
 | Interactive demo | `demo/explorer.html`, generated from committed logs, published |
 | `claude` CLI auth | **working.** Token minted 2026-09-11 and held outside the repository in `~/.slacksmith_token`; `tools/preflight.sh` fails if a credential-shaped string ever reaches a tracked file |
-| Repository | **pushed.** `origin/sandbox` at `7095d91`, 0 commits behind. Verify with `git fetch && git rev-list --count origin/sandbox..HEAD` (expect 0). Until 2026-09-12 the remote was 109 commits behind and an external reviewer found it, so this row now names the commit rather than the tree |
+| Repository | **pushed**, `origin/sandbox`. This row deliberately names **no commit hash**: a commit cannot contain its own hash, so any hash typed here is stale the moment it is committed, and a stale hash is the exact failure this project argues against. Verify instead with `git fetch && git rev-list --count origin/sandbox..HEAD` (expect **0**) and `git log --oneline -1`. Until 2026-09-12 the remote was 109 commits behind and an external reviewer found it, which is why this row points at a command rather than at the tree |
 
 ---
 
@@ -173,7 +173,7 @@ Each with its nearest prior art, conceded where it narrows the claim.
    authors' own checker included and failing twice.
 3. **G0, constraint integrity as a gate.** No equivalence checker can catch a
    constraint edit, because the two designs are the same file. Measured at
-   +5.179 ns on a byte-identical netlist. Written up in REPORT §5.3.
+   +5.179 ns on a byte-identical netlist. Written up in REPORT §5.2.
    **`experiments/sdc_integrity/` is exploratory and not pre-registered**, and
    says so in its own notes. It demonstrates a mechanism; it does not carry the
    pre-registration evidence §4 below describes, and should not be counted

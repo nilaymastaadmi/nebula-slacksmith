@@ -12,10 +12,11 @@ waited on with the camera running.
 
 ## Beat 0. The claim, 25 seconds. One slide.
 
-> Every published agentic RTL optimizer that holds a formal gate refuses to
-> change latency, because a pipeline stage breaks conventional equivalence.
-> We made transforms *typed*, so the declared type picks the proof obligation
-> and latency-changing transforms become checkable.
+> We found no published agentic RTL optimizer that both changes latency and
+> discharges a formal obligation for it, because a pipeline stage breaks
+> conventional equivalence. Four neighbours come close and the report names
+> them. We made transforms *typed*, so the declared type picks the proof
+> obligation and latency-changing transforms become checkable.
 >
 > Then we measured whether the LLM half actually works. It fails two ways.
 
@@ -86,8 +87,14 @@ Say, pointing at the classify line:
 
 > It did not guess. 91% of that path's delay is in cells driving 32 or more
 > loads, and the worst single cell burns 21 nanoseconds driving **300** loads
-> inside the AES key memory. No RTL rewrite shortens a net's load delay, so
-> the tool routed to a physical lever instead of spending an LLM proposal.
+> inside the AES key memory. Physical buffering is built to fix a net's load
+> and RTL is not, so the tool routed to a physical lever instead of spending
+> an LLM proposal.
+
+Earlier cuts of this beat said *no RTL rewrite shortens a net's load delay*.
+That absolute is **retracted**: on this same 91.4%-fanout path an FSM
+re-encoding bought +3.185 ns and an unattended fanout split +1.414 ns
+(REPORT §1, §7.6, §7.7). Do not say it on camera.
 
 ---
 
@@ -177,8 +184,14 @@ precedes every result. Then:
 | **OpenROAD `repair_design`** | **+55.805** | **no** | **yes** |
 
 > We spent the project optimizing RTL on paths that were 59 to 91 percent
-> fanout. A pass that changes zero lines of RTL beats our best proven
-> transform by 11x and closes the design, at 20.2% area.
+> fanout. Like for like, one SDC and one timing model, on clk_b: our best
+> RTL transform buys +3.185 ns while the physical lever takes the same group
+> from −18.957 to +5.6 in the same run. About one eighth.
+
+The rows above mix SDC versions and parasitic regimes, which is why the
+`parasitics?` column exists and why the spoken ratio is the in-model pair,
+not 55.805 over 4.925. Quoting across the table gives anything from a third
+to a seventeenth (REPORT §1).
 >
 > And every number we published before that was zero-parasitic. With wires,
 > the baseline we reported as "+1.333, meets" is actually **−36.7**.
@@ -262,9 +275,11 @@ One netlist, 26,958 cells, identical in every row. Only the constraints vary.
 > questions. Two checkers confidently rejected a pair that is provably
 > equivalent.
 >
-> And ours is wrong twice. We registered in advance that it should not sweep
-> its own suite, because a benchmark its author aces tells you about the
-> benchmark, not the tool.
+> And ours declines rather than answers on one case. An induction-only
+> shortcut in this harness was wrong twice; the shipped gate discharges with
+> BMC plus PDR and scores seven of eight. We registered in advance that it
+> should not sweep its own suite, because a benchmark its author aces tells
+> you about the benchmark, not the tool.
 
 ---
 
