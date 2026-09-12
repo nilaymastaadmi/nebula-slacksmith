@@ -31,7 +31,9 @@ Fingerprint the SDC (G0); synthesize and time; **classify the binding path** by 
 
 ## 2. The problem, and what is actually new here
 
-Timing closure is manual because static timing analysis speaks in cells and nets while RTL speaks in `always` blocks. An LLM bridges those representations well. The difficulty is not proposing a rewrite; it is knowing whether the rewrite is correct. Insert a pipeline stage and the design is equivalent only under a latency offset the checker must be told about, so the profitable transforms are forbidden because the available checkers cannot express them.
+**Three things here are ours, stated before the concessions that narrow the rest.** **SlackBench grades a verification methodology**, not a design and not a testbench (§7.4): eight transform pairs with ground truth committed before any checker ran, our own gate scored among them. **G0 catches the one attack no equivalence checker can see** (§5.2): on a byte-identical netlist, changing only the constraint file closes a group, and every checker we own calls the two designs equivalent, correctly, because they are the same file. **A null control runs before any refutation is reported** (§9), because our own gate manufactured three refutations that were harness artifacts.
+
+Timing closure is manual because static timing analysis speaks in cells and nets while RTL speaks in `always` blocks, and an LLM bridges those well. The difficulty is not proposing a rewrite but knowing whether it is correct. Insert a pipeline stage and the design is equivalent only under a latency offset the checker must be told about, so the profitable transforms are forbidden because the available checkers cannot express them.
 
 **Scoped precisely, because the loose version is false.** Generation-mode agents write any latency they like. The accurate claim is that we found no published system that both *changes* latency and *discharges a formal obligation for it*. Dr. RTL (ICCAD 2026) preserves micro-architecture "including pipeline latency"; RTLScout gates on a Verilator testbench with `abc cec` secondary, and CEC structurally cannot see an added register.
 
