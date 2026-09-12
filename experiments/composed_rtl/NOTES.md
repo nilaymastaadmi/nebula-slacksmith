@@ -85,7 +85,56 @@ second gate the parts carry, under the equal-initial-state assumption.
 | cells (gate view) | 7,975 | 8,109 | +134 |
 | flops | 4,386 | 4,384 | **−2** |
 
-**R37, R38: pending.** `repair_design` is running on both netlists.
+## After `repair_design`: the measurement REPORT §1 said was missing
+
+Both netlists through the identical OpenROAD flow, SDC v3, placement
+parasitics, separate work dirs.
+
+| clk_b | gold | composed | composed minus gold |
+|---|---|---|---|
+| zero-parasitic, unbuffered | −18.957 | −13.792 | **+5.165** |
+| with parasitics, unbuffered | −57.438 | −38.646 | **+18.792** |
+| with parasitics, **after `repair_design`** | **+5.283** | **+5.046** | **−0.237** |
+
+All three groups, after `repair_design`:
+
+| clock | gold | composed | marginal RTL gain |
+|---|---|---|---|
+| clk_a | +3.093 | +2.235 | **−0.858** |
+| clk_b | +5.283 | +5.046 | **−0.237** |
+| clk_e | −1.471 | −1.792 | **−0.321** |
+
+**R37. CONFIRMED.** The marginal gain after buffering is smaller than the
+unbuffered gain, by any of the three comparisons above.
+
+**R38. WRONG.** It is not positive. It is **negative on every clock group**.
+After `repair_design`, the composed optimized RTL is slightly *worse* than the
+untouched gold RTL, by 0.237 ns on the group the whole project has been
+optimizing.
+
+### What that means, said plainly
+
+`repair_design` saturates. Starting it from a design that is already 18.792 ns
+better does not finish 18.792 ns better; it finishes 0.237 ns worse. The
+physical lever fixes what the RTL was fixing, and then some, and the RTL's
+remaining contribution is inside the noise of where the buffering happens to
+land.
+
+**The RTL is not worthless after buffering, but what it buys is area, not
+time.** Repair grew the gold design by **90,511 u²** (+20.2%) and the composed
+design by **87,732 u²** (+19.6%): the composition needed **2,779 u² less
+buffering**, 3.1% less, and the final design is **3,851 u² smaller**. The
+honest sentence is that three formally proven RTL transforms, composed, bought
+**0.7% area at a cost of 0.237 ns** once a standard physical flow had run.
+
+This is the number REPORT §1 named as the most important one the project had
+not measured, and it is the one that most constrains what this project may
+claim. Every RTL gain reported anywhere in this repository is an unbuffered
+gain. **On this design, under this flow, none of it survives buffering.**
+
+`clk_e` does not close under v3 in either design (−1.471 gold, −1.792
+composed), so v3 remains a target the flow does not meet, which is why it was
+chosen.
 
 ## What this says about D4
 
