@@ -57,8 +57,35 @@ into the `clk_b` claim. Note that composed `clk_a` equals O1's `clk_a` exactly,
 to three decimals, while A4 and O2 each moved it less. On `clk_a` the
 composition is O1 and nothing else.
 
-**R33, R34, R37, R38: pending.** G3 and G4 are running; `repair_design` on both
-netlists follows.
+**R33. WRONG.** The prediction said the composition's flop count would differ
+from gold by **0**. It differs by **−2** (gold 4,386, composed 4,384). G3 passed
+anyway, because branch 4 routes as `PASS(state-remap: k=0, flop delta
+unconstrained)`, which is the branch existing precisely so a re-encoded state is
+not judged by flop arithmetic.
+
+**The miss was avoidable and that is the interesting part.** O2's own gate record
+(`experiments/missing_classes/results/R17_O2.json`) already says `dff_delta: -2`.
+The composition's −2 **is** O2's −2: composing did not change storage, one part
+already had, and the registration asserted otherwise without reading the part's
+own result first. A prediction written from the proposals' prose rather than from
+their gate records.
+
+**R34. PARTIAL, pending the second gate.** The obligation router did select
+**branch 4 (mapped-state)**, as predicted. G4 returned **PROVEN (partial: 2 of 3
+outputs)**: `ready` and `sboxw` proven, `round_key` undecidable, with the null
+control reporting `REFUTES on round_key; PASSES on ready,sboxw`. That is the
+same verdict shape O2 alone gets, for the reason REPORT §9 documents: Yosys does
+not apply the module's async reset to `key_mem`, so the two instances start from
+different arbitrary contents. **The refutation was never reported as one**,
+because the null control ran first and caught it. `gate_zeroinit.sh` runs the
+second gate the parts carry, under the equal-initial-state assumption.
+
+| | gold | composed | delta |
+|---|---|---|---|
+| cells (gate view) | 7,975 | 8,109 | +134 |
+| flops | 4,386 | 4,384 | **−2** |
+
+**R37, R38: pending.** `repair_design` is running on both netlists.
 
 ## What this says about D4
 
