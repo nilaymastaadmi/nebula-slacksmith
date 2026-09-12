@@ -1,0 +1,29 @@
+========================================================================
+A0  plain abc -liberty, the flow every baseline came from
+  slacks {'clk_a': -13.167, 'clk_b': -18.957, 'clk_e': -25.957}  cells 28844  buffers 0  area None  power 0.282
+========================================================================
+A0b  _HEAD only: no buffering, no sizing
+  slacks {'clk_a': -13.167, 'clk_b': -18.957, 'clk_e': -25.957}  cells 28844  buffers 0  area None  power 0.282
+========================================================================
+A1  _HEAD + upsize; dnsize
+  slacks {'clk_a': -9.27, 'clk_b': 0.282, 'clk_e': -6.718}  cells 28844  buffers 14  area None  power 0.286
+========================================================================
+A2  _HEAD + buffer -N 16
+  slacks {'clk_a': 1.75, 'clk_b': 5.556, 'clk_e': -1.444}  cells 30264  buffers 1577  area None  power 0.299
+========================================================================
+A3  _HEAD + buffer -N 16; upsize; dnsize (the loop's lever)
+  slacks {'clk_a': -1.716, 'clk_b': 5.6, 'clk_e': -0.606}  cells 30264  buffers 1610  area None  power 0.291
+
+| arm | clk_a | clk_b | clk_e | cells | buffers | area (u^2) | power (W) |
+|---|---|---|---|---|---|---|---|
+| A0 | -13.167 | -18.957 | -25.957 | 28844 | 0 | n/a | 0.282 |
+| A0b | -13.167 | -18.957 | -25.957 | 28844 | 0 | n/a | 0.282 |
+| A1 | -9.270 | 0.282 | -6.718 | 28844 | 14 | n/a | 0.286 |
+| A2 | 1.750 | 5.556 | -1.444 | 30264 | 1577 | n/a | 0.299 |
+| A3 | -1.716 | 5.600 | -0.606 | 30264 | 1610 | n/a | 0.291 |
+
+netlist A0: /home/toshn/slacksmith_work/cc_A0/A0_mapped.v
+netlist A0b: /home/toshn/slacksmith_work/cc_A0b/A0b_mapped.v
+netlist A1: /home/toshn/slacksmith_work/cc_A1/A1_mapped.v
+netlist A2: /home/toshn/slacksmith_work/cc_A2/A2_mapped.v
+netlist A3: /home/toshn/slacksmith_work/cc_A3/A3_mapped.v

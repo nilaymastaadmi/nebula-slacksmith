@@ -1,0 +1,9 @@
+liberty: /home/toshn/sta_work/sky130hd_tt.lib, 428 cells with an area
+
+| netlist | cells | buffer-like | area (u^2) | unpriced |
+|---|---|---|---|---|
+| `cc_A0/A0_mapped.v` | 28844 | 196 | 288816 | 0 |
+| `cc_A0b/A0b_mapped.v` | 28844 | 196 | 288816 | 0 |
+| `cc_A1/A1_mapped.v` | 28844 | 196 | 292588 | 0 |
+| `cc_A2/A2_mapped.v` | 30264 | 1611 | 310381 | 0 |
+| `cc_A3/A3_mapped.v` | 30264 | 1615 | 299346 | 0 |
