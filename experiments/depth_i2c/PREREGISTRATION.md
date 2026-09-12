@@ -133,3 +133,58 @@ cell is a hypothesis with a data point in each cell, not a decision procedure;
 the report will say "on the one depth-dominated design measured", and the
 number of designs needed to say more is a question this experiment cannot
 answer.
+
+---
+
+## Amendment 1, registered 2026-09-12 after run 1 and before any re-gating
+
+Run 1 (`results/run1/`) returned `onehot_fsm_case_to_reachable_shift_decode`,
+declared k = 0, branch 4, after 991 s, and failed **G1**:
+
+    gate.v:169: ERROR: Unimplemented compiler directive or undefined macro `I2C_CMD_STOP.
+
+That is a harness defect, not a model defect, and it is the same class as the
+six `experiments/unforced/` found: `bench_top` is one module per file with
+nothing at file scope, and `i2c.v` is three modules behind five file-scope
+`` `define `` lines. Reading the code the failure points at exposes two more
+defects on the same path, neither of which any `bench_top` run could reach:
+
+1. `tools/proposer.py` `_materialise()` writes the model's bare module as the
+   variant file. `gate_proposal.py` reads that file as the whole gate source,
+   so the file-scope defines the gold copy carries are absent from the gate
+   copy (run 1's failure). The loop's apply step would then substitute that
+   one-module file for `i2c.v`, dropping the other two modules, so a PROVEN
+   proposal could never have been timed in-loop either.
+2. `tools/slacksmith.py`'s apply step derives the file key from `target_file`
+   by stripping a literal `rtl/` prefix. For `--rtl-dir experiments/depth_i2c/rtl`
+   the key becomes `experiments/depth_i2c/rtl/i2c.v`, which is not in the file
+   list, and the loop records `skip: target not in the file list` after a
+   PROVEN verdict. A proven proposal on an external design is gated, then
+   silently never applied.
+
+**Repair, applied only after run 3 completes so the three samples share one
+harness:** `_materialise()` splices the returned module back into the full
+source file whenever that file declares more than one module or carries a
+file-scope `` `define ``/`` `include `` (a comment-only header does not
+trigger it, so every `bench_top` variant file stays byte-identical); the apply
+step derives the key relative to `--rtl-dir`, which reduces to the old
+behaviour for the default `rtl/`.
+
+**Replay rule.** Every phase-1 proposal (runs 1 to 3) is replayed through the
+repaired loop as a frozen proposal with the identical design, SDC and flags,
+`--max-iters 2`, no `--force-lever`. The replay verdict is the verdict. A
+replay is not a fourth sample: it re-gates the three proposals that exist.
+Budgets are unchanged, so the void condition on hand-gating with a larger
+budget is not touched.
+
+**R61.** Run 1's proposal passes G1 and G2 under the repair. (It may still
+fail G3 or G4; that is the model's result and is scored under R55.)
+
+**R62.** No `bench_top` result changes: `tools/verdict_regression.sh` still
+reads P4 REFUTED and A2 UNRESOLVED, `tools/classify_regression.py` still
+passes 5 of 5, and the spliced variant for `experiments/cli_backend/`'s O1
+is byte-identical to the committed `O1_aes_key_mem.v`.
+
+**R63.** At least one of the three phase-1 proposals used a file-scope macro
+and therefore fails G1 without the repair, so this is a defect that would
+have hidden every macro-using proposal on this design, not a one-off.
