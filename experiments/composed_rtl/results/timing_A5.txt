@@ -1,0 +1,7 @@
+reusing cached baseline: /home/toshn/slacksmith_work/cr_baseline/baseline_mapped.v
+synthesizing variant (aes_load in place of u_aes_b) ...
+
+clock              baseline    variant      delta
+clk_a               -13.167    -13.167     +0.000
+clk_b               -18.957    -18.521     +0.436
+clk_e               -25.957    -25.521     +0.436
