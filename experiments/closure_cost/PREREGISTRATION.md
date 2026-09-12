@@ -1,7 +1,7 @@
 # Pre-registration: what closure costs, arm by arm
 
 Registered 2026-09-12, before any arm was run. Scored in `NOTES.md` here.
-Predictions **R64 to R70**; R1 to R63 are in the earlier registrations.
+Predictions **R64 to R69 and R83**; R1 to R63 are in the earlier registrations, and R70 to R82 are reserved by `PROMPT_FINAL_2026-09-12.md` for the blocks that follow this one.
 
 ## Why
 
@@ -80,7 +80,7 @@ carry internal and switching power and nothing else here changes activity.*
 `upsize` adds and `dnsize` removes, so the net is a difference of two larger
 numbers and could land either side.*
 
-**R70.** `_HEAD` alone (A0b against A0) moves `clk_b` by **more than 0.5 ns**,
+**R83.** `_HEAD` alone (A0b against A0) moves `clk_b` by **more than 0.5 ns**,
 that is, the resyn script is not a no-op and the confound A0b exists to remove
 is real. *Prior: moderate. If this misses, A0b was unnecessary and that is worth
 knowing too.*
@@ -103,3 +103,13 @@ knowing too.*
 No SDC is edited and no `set_max_fanout` or other constraint is added.
 `experiments/max_fanout/` already measured that lever and it made things worse.
 Closure bought by changing the target is what G0 exists to catch.
+
+---
+
+## Correction, same day, before any arm was scored
+
+The extra prediction was registered as R70 and renumbered to **R83** minutes
+later, without being run. R70 to R82 are reserved by the final-push plan for the
+speed-up, open-weight and depth-cell blocks, and two experiments answering to
+one id is how a scorecard silently loses a result. Nothing else changed: the
+prediction, its prior and its arm are as first written in `b614b2c`.
