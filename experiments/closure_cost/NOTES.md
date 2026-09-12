@@ -80,3 +80,71 @@ the untouched netlist. It cannot match `clkinv_*`, which is what those 196 cells
 are. The corrected count comes from `area_from_liberty.py`. A count of zero in a
 28,844-cell netlist should have been read as a broken regex immediately and was
 not.
+
+---
+
+## Physical arms, same placed gold, SDC v3
+
+All three start from the identical floorplan and global placement: **448,840 u²**,
+`clk_a −51.223`, `clk_b −57.438`, `clk_e −68.683`.
+
+| arm | repair command | clk_a | clk_b | clk_e | groups met | **worst group** | area (u²) | area added | power (W) | buffers | cells |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| **A4** | `repair_timing -setup` | −0.583 | −0.699 | −0.947 | **0 of 3** | **−0.947** | 479,814 | **+6.90%** | **0.313** | 719 | 48,083 |
+| **A5** | `repair_design` (**published**) | **+3.093** | **+5.283** | −1.471 | **2 of 3** | −1.471 | 539,351 | **+20.17%** | 0.408 | 1,162 | 47,294 |
+| **A6** | both, in sequence | **+3.093** | **+5.283** | **−0.777** | **2 of 3** | **−0.777** | 544,271 | **+21.26%** | 0.414 | 1,337 | 47,747 |
+
+**Void check passed.** A5 here returns `+3.093 / +5.283 / −1.471` and
+**539,351 u²**, identical in every digit to
+`experiments/composed_rtl/results/repair_gold.txt`. The two runs share only the
+netlist and the SDC, so the table is a measurement rather than an artifact of
+this script.
+
+## The finding on the physical side
+
+**The published flow is dominated in both directions, and nobody had measured
+it.**
+
+- **On timing:** A6 reaches `clk_e −0.777` where A5 reaches **−1.471**, for
+  **+0.91% more area** and **+1.5% more power**. Running `repair_timing -setup`
+  after `repair_design` halves the remaining violation for under one percent.
+- **On cost:** A4 gets **every group inside 0.947 ns** for **+6.90% area** and
+  **0.313 W**, against A5's **+20.17%** and **0.408 W**. A4 meets no group
+  outright, but its **worst** group is 0.524 ns better than A5's, at **one third
+  the area added** and **77% of the power**.
+
+Which arm is best depends on the question. If the metric is groups met, A5 and
+A6 tie and A4 loses. **If the metric is worst-group slack, the order is A6
+(−0.777), A4 (−0.947), A5 (−1.471), and the published flow is last.**
+
+## Scorecard, physical half
+
+**R64. CONFIRMED.** A4 closes **0 of 3**, A5 closes **2 of 3**.
+
+**R65. CONFIRMED.** A4 adds **30,974 u²** against A5's **90,511 u²**, which is
+**34.2%**, under the predicted half.
+
+**R66. WRONG.** A6 was predicted to close **all three** groups with area within
+5% of A5. The area half held (**+0.91%**). The closure half did not: `clk_e`
+remains **−0.777**, violated. Scored as written.
+
+**R67. CONFIRMED, and for a stronger reason than predicted.** No arm closes all
+three groups for under +10% area, because **no arm closes all three groups at
+all**, at any cost in this table. The prediction is right and the reason it is
+right is worse news than the prediction assumed.
+
+**R68. WRONG.** Power was predicted to rank the arms in buffer-count order in
+each regime. It does in the physical regime (A4 719 buffers 0.313 W, A5 1,162
+0.408 W, A6 1,337 0.414 W) and it does **not** in the zero-parasitic regime,
+where A3 carries more buffer-like cells than A2 and less power. A prediction
+that fails in one of the two regimes it covers is wrong, not half right.
+
+**Five of the seven predictions decided: R64, R65, R67, R69 confirmed; R66,
+R68, R83 missed.**
+
+## What this changes in the submission
+
+§8 has reported one closure point, `repair_design` at +20.2% area. That number
+stands, and it is now one row of a curve rather than the answer. The cheapest
+arm that gets every group inside a nanosecond costs **+6.90%**, and the best
+worst-group slack costs **+21.26%** and is not the published flow.

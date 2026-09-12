@@ -1,4 +1,5 @@
-running OpenROAD arm A4 (repair: repair_timing -setup)
+running OpenROAD arm A6 (repair: repair_design
+repair_timing -setup)
 openroad exit: 0
 =====> FLOORPLAN
 =====> GLOBAL PLACEMENT
@@ -10,14 +11,14 @@ openroad exit: 0
 ---CLOCK:clk_e---
           -68.683   slack (VIOLATED)
 Design area 448840 u^2 40% utilization.
-=====> REPAIR (A4): repair_timing -setup
+=====> REPAIR (A6): repair_design
 =====> DETAILED PLACEMENT
 =====> TIMING AFTER
 ---CLOCK:clk_a---
-           -0.583   slack (VIOLATED)
+            3.093   slack (MET)
 ---CLOCK:clk_b---
-           -0.699   slack (VIOLATED)
+            5.283   slack (MET)
 ---CLOCK:clk_e---
-           -0.947   slack (VIOLATED)
-Design area 479814 u^2 43% utilization.
-netlist: /home/toshn/slacksmith_work/cc_A4/repaired.v
+           -0.777   slack (VIOLATED)
+Design area 544271 u^2 49% utilization.
+netlist: /home/toshn/slacksmith_work/cc_A6/repaired.v
