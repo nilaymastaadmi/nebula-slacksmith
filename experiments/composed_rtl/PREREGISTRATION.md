@@ -105,3 +105,47 @@ globally than any one of them did. Reported separately, never folded into the
 If the null control is not 0.000, or if the composed file needs a hand edit to
 elaborate, the result is a report of that and nothing else. Both are recorded
 either way; the run directory is preserved whatever the verdict.
+
+---
+
+## Amendment 1, registered 2026-09-12 after R37 and R38 were scored
+
+R38 missed: the marginal gain after `repair_design` is **−0.237 ns** on `clk_b`,
+not positive. Before that number is reported as a finding it has to clear the
+bar this project sets for every other number, and it does not yet.
+
+**§5 established a noise floor for the synthesis and STA flow: swapping a module
+for itself returns 0.000 on every group. No equivalent control exists for the
+physical flow.** −0.237 ns is 4% of the +5.283 ns margin it sits in. Reporting it
+as "the RTL is worse after buffering" assumes the OpenROAD flow is repeatable to
+better than that, and nothing here has ever measured whether it is.
+
+So two controls run before R38's verdict is allowed to stand.
+
+**R47.** The flow is repeatable: the gold netlist through the identical
+OpenROAD flow a second time gives post-repair slacks identical to the first run
+on all three groups, delta **0.000**.
+
+**R48.** A5 moves post-repair `clk_b` by **less than 0.237 ns** against gold.
+A5 is the registered do-nothing control from `experiments/llm_proposer_aes/`:
+it unrolls a reset loop, touches nothing on the read path, and still moved
+`clk_b` by +0.436 ns zero-parasitic, which is why it exists. It is the right
+probe for the question "how much does the post-repair number move for an RTL
+edit that should not matter".
+
+**What each outcome means, declared now rather than after seeing it:**
+
+- Both hold: **R38's WRONG stands**. −0.237 is a real regression, the composed
+  RTL is genuinely slightly worse after buffering, and that is the finding.
+- **R48 misses** (A5 moves post-repair `clk_b` by 0.237 ns or more): **R38
+  becomes VOID**, not WRONG. The honest claim is then that the marginal gain
+  after buffering is **below the flow's own sensitivity to an irrelevant RTL
+  edit**, which is a weaker and more defensible statement than either "it helps"
+  or "it hurts", and the area result becomes the reportable one.
+- **R47 misses** (the flow is not deterministic): every post-repair number in
+  this project, including §8's closure table, acquires an error bar that has
+  never been stated, and that gets written up as its own correction.
+
+No result already recorded is withdrawn pending this. R37 stands either way:
+the marginal gain is smaller than the unbuffered gain by 5 to 19 ns, which no
+plausible noise floor reaches.

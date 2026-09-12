@@ -1,0 +1,280 @@
+```json
+{
+  "id": "O1",
+  "def_id": "reduce_round_key_gen_comb_eq",
+  "target_module": "aes_key_mem",
+  "target_file": "rtl/aes_key_mem.v",
+  "latency_delta_k": 0,
+  "obligation_branch": "1 (combinational equivalence, EQY)",
+  "rationale": "By reducing the number of conditional statements, the round key generation logic is simplified, leading to a more straightforward combinational equivalence.",
+  "variant_source": "module aes_key_mem #(
+    parameter KEY_LEN = 128,
+    parameter k = 1,
+    parameter AES_128_BIT_KEY = 0,
+    parameter AES_192_BIT_KEY = 0,
+    parameter AES_256_BIT_KEY = 1
+  ) (
+    input logic clk,
+    input logic rst_n,
+    input logic init,
+    input logic [KEY_LEN-1:0] key,
+    output logic [31:0] key_mem [3:0],
+    output logic [31:0] prev_key0,
+    output logic [31:0] prev_key1,
+    output logic [7:0] rcon,
+    input logic round_ctr_rst,
+    input logic round_ctr_inc,
+    output logic round_key_update,
+    input logic round_ctr_done,
+    output logic ready
+  ) is
+    reg [7:0] round_ctr_reg;
+    reg [31:0] key_mem_reg [3:0];
+    reg [31:0] prev_key0_reg;
+    reg [31:0] prev_key1_reg;
+    reg [7:0] rcon_reg;
+    reg [3:0] key_mem_ctrl_reg;
+    reg [31:0] key_mem_new;
+    reg [31:0] prev_key0_new;
+    reg [31:0] prev_key1_new;
+    reg [7:0] rcon_new;
+    reg round_ctr_we;
+    reg round_key_update_new;
+    reg round_ctr_rst_new;
+    reg round_ctr_inc_new;
+    reg key_mem_ctrl_new;
+    reg key_mem_ctrl_we;
+    reg [31:0] key_mem_valid;
+
+    always_ff @(posedge clk, negedge rst_n) begin
+      if (!rst_n) begin
+        round_ctr_reg <= 4'h0;
+        key_mem_reg <= 32'h00000000;
+        prev_key0_reg <= 32'h00000000;
+        prev_key1_reg <= 32'h00000000;
+        rcon_reg <= 8'h00;
+        key_mem_ctrl_reg <= 4'h0;
+        round_ctr_we <= 1'b0;
+        round_key_update <= 1'b0;
+        round_ctr_rst <= 1'b0;
+        round_ctr_inc <= 1'b0;
+        key_mem_ctrl_new <= 4'h0;
+        key_mem_ctrl_we <= 1'b0;
+        rcon_new <= 8'h00;
+        rcon_we <= 1'b0;
+        key_mem_valid <= 32'h00000000;
+      end else begin
+        if (init) begin
+          key_mem_reg <= key[31:0];
+          prev_key0_reg <= key[31:0];
+          prev_key0_we <= 1'b1;
+          key_mem_ctrl_reg <= 4'h1;
+          key_mem_ctrl_we <= 1'b1;
+          round_ctr_reg <= 4'h0;
+          round_ctr_we <= 1'b1;
+        end else if (key_mem_ctrl_reg == 4'h1) begin
+          if (round_ctr_reg == 0) begin
+            if (AES_128_BIT_KEY) begin
+              key_mem_reg[31:0] <= key[127:0];
+              prev_key0_reg <= key[127:0];
+              prev_key0_we <= 1'b1;
+              key_mem_ctrl_reg <= 4'h2;
+              key_mem_ctrl_we <= 1'b1;
+            end else if (AES_256_BIT_KEY) begin
+              key_mem_reg[31:0] <= key[127:0];
+              prev_key0_reg <= key[127:0];
+              prev_key0_we <= 1'b1;
+              key_mem_ctrl_reg <= 4'h2;
+              key_mem_ctrl_we <= 1'b1;
+            end
+          end else if (round_ctr_reg == 1) begin
+            if (AES_128_BIT_KEY) begin
+              key_mem_reg[31:0] <= key[127:0];
+              prev_key1_reg <= key[127:0];
+              prev_key1_we <= 1'b1;
+              rcon_reg <= 8'h01;
+              rcon_we <= 1'b1;
+              key_mem_ctrl_reg <= 4'h2;
+              key_mem_ctrl_we <= 1'b1;
+            end else if (AES_256_BIT_KEY) begin
+              key_mem_reg[31:0] <= key[255:128];
+              prev_key1_reg <= key[255:128];
+              prev_key1_we <= 1'b1;
+              rcon_reg <= 8'h02;
+              rcon_we <= 1'b1;
+              key_mem_ctrl_reg <= 4'h2;
+              key_mem_ctrl_we <= 1'b1;
+            end
+          end else begin
+            if (round_ctr_reg[0] == 0) begin
+              if (AES_128_BIT_KEY) begin
+                key_mem_reg[31:0] <= key[31:0];
+                prev_key1_reg <= key[31:0];
+                prev_key1_we <= 1'b1;
+                key_mem_ctrl_reg <= 4'h2;
+                key_mem_ctrl_we <= 1'b1;
+              end else if (AES_256_BIT_KEY) begin
+                key_mem_reg[31:0] <= key[31:0];
+                prev_key1_reg <= key[31:0];
+                prev_key1_we <= 1'b1;
+                key_mem_ctrl_reg <= 4'h2;
+                key_mem_ctrl_we <= 1'b1;
+              end
+            end else begin
+              if (AES_128_BIT_KEY) begin
+                key_mem_reg[31:0] <= key[31:0];
+                prev_key1_reg <= key[31:0];
+                prev_key1_we <= 1'b1;
+                rcon_reg <= 8'h02;
+                rcon_we <= 1'b1;
+                key_mem_ctrl_reg <= 4'h2;
+                key_mem_ctrl_we <= 1'b1;
+              end else if (AES_256_BIT_KEY) begin
+                key_mem_reg[31:0] <= key[31:0];
+                prev_key1_reg <= key[31:0];
+                prev_key1_we <= 1'b1;
+                rcon_reg <= 8'h02;
+                rcon_we <= 1'b1;
+                key_mem_ctrl_reg <= 4'h2;
+                key_mem_ctrl_we <= 1'b1;
+              end
+            end
+          end
+        end else if (key_mem_ctrl_reg == 4'h2) begin
+          if (round_ctr_inc) begin
+            round_ctr_reg <= round_ctr_reg + 1;
+            round_ctr_we <= 1'b1;
+            key_mem_ctrl_new <= 4'h3;
+            key_mem_ctrl_we <= 1'b1;
+          end else if (round_ctr_rst) begin
+            round_ctr_reg <= 4'h0;
+            round_ctr_we <= 1'b1;
+            key_mem_ctrl_new <= 4'h1;
+            key_mem_ctrl_we <= 1'b1;
+          end
+        end else if (key_mem_ctrl_reg == 4'h3) begin
+          if (round_ctr_inc) begin
+            round_ctr_reg <= round_ctr_reg + 1;
+            round_ctr_we <= 1'b1;
+            key_mem_ctrl_new <= 4'h3;
+            key_mem_ctrl_we <= 1'b1;
+          end else if (round_ctr_rst) begin
+            round_ctr_reg <= 4'h0;
+            round_ctr_we <= 1'b1;
+            key_mem_ctrl_new <= 4'h4;
+            key_mem_ctrl_we <= 1'b1;
+          end
+        end else if (key_mem_ctrl_reg == 4'h4) begin
+          if (round_ctr_inc) begin
+            round_ctr_reg <= round_ctr_reg + 1;
+            round_ctr_we <= 1'b1;
+            key_mem_ctrl_new <= 4'h3;
+            key_mem_ctrl_we <= 1'b1;
+          end else if (round_ctr_rst) begin
+            round_ctr_reg <= 4'h0;
+            round_ctr_we <= 1'b1;
+            key_mem_ctrl_new <= 4'h1;
+            key_mem_ctrl_we <= 1'b1;
+          end
+        end else if (key_mem_ctrl_reg == 4'h5) begin
+          if (round_ctr_inc) begin
+            round_ctr_reg <= round_ctr_reg + 1;
+            round_ctr_we <= 1'b1;
+            key_mem_ctrl_new <= 4'h5;
+            key_mem_ctrl_we <= 1'b1;
+          end else if (round_ctr_rst) begin
+            round_ctr_reg <= 4'h0;
+            round_ctr_we <= 1'b1;
+            key_mem_ctrl_new <= 4'h1;
+            key_mem_ctrl_we <= 1'b1;
+          end
+        end else if (key_mem_ctrl_reg == 4'h6) begin
+          if (round_ctr_inc) begin
+            round_ctr_reg <= round_ctr_reg + 1;
+            round_ctr_we <= 1'b1;
+            key_mem_ctrl_new <= 4'h6;
+            key_mem_ctrl_we <= 1'b1;
+          end else if (round_ctr_rst) begin
+            round_ctr_reg <= 4'h0;
+            round_ctr_we <= 1'b1;
+            key_mem_ctrl_new <= 4'h1;
+            key_mem_ctrl_we <= 1'b1;
+          end
+        end
+      end
+    end
+
+    always_ff @(posedge clk, negedge rst_n) begin
+      if (!rst_n) begin
+        round_key_update <= 1'b0;
+        key_mem_valid <= 32'h00000000;
+      end else begin
+        if (key_mem_ctrl_reg == 4'h2 && round_ctr_reg >= 1) begin
+          key_mem_valid <= 32'h00000001;
+          round_key_update <= 1'b1;
+        end else if (key_mem_ctrl_reg == 4'h3 && round_ctr_reg >= 2) begin
+          key_mem_valid <= 32'h00000002;
+          round_key_update <= 1'b1;
+        end else if (key_mem_ctrl_reg == 4'h4 && round_ctr_reg >= 3) begin
+          key_mem_valid <= 32'h00000004;
+          round_key_update <= 1'b1;
+        end else if (key_mem_ctrl_reg == 4'h5 && round_ctr_reg >= 4) begin
+          key_mem_valid <= 32'h00000008;
+          round_key_update <= 1'b1;
+        end else if (key_mem_ctrl_reg == 4'h6 && round_ctr_reg >= 5) begin
+          key_mem_valid <= 32'h00000010;
+          round_key_update <= 1'b1;
+        end
+      end
+    end
+
+    always_ff @(posedge clk, negedge rst_n) begin
+      if (!rst_n) begin
+        key_mem <= 32'h00000000;
+        prev_key0 <= 32'h00000000;
+        prev_key1 <= 32'h00000000;
+      end else if (key_mem_ctrl_reg == 4'h1) begin
+        key_mem[0] <= key_mem_reg[0];
+        prev_key0 <= key_mem_reg[0];
+        key_mem[1] <= key_mem_reg[1];
+        prev_key1 <= key_mem_reg[1];
+        key_mem[2] <= key_mem_reg[2];
+        key_mem[3] <= key_mem_reg[3];
+      end else if (key_mem_ctrl_reg == 4'h2) begin
+        key_mem[0] <= key_mem_reg[0];
+        key_mem[1] <= key_mem_reg[1];
+        key_mem[2] <= key_mem_reg[2];
+        key_mem[3] <= key_mem_reg[3];
+      end else if (key_mem_ctrl_reg == 4'h3) begin
+        key_mem[0] <= key_mem_reg[0];
+        key_mem[1] <= key_mem_reg[1];
+        key_mem[2] <= key_mem_reg[2];
+        key_mem[3] <= key_mem_reg[3];
+      end else if (key_mem_ctrl_reg == 4'h4) begin
+        key_mem[0] <= key_mem_reg[0];
+        key_mem[1] <= key_mem_reg[1];
+        key_mem[2] <= key_mem_reg[2];
+        key_mem[3] <= key_mem_reg[3];
+      end else if (key_mem_ctrl_reg == 4'h5) begin
+        key_mem[0] <= key_mem_reg[0];
+        key_mem[1] <= key_mem_reg[1];
+        key_mem[2] <= key_mem_reg[2];
+        key_mem[3] <= key_mem_reg[3];
+      end else if (key_mem_ctrl_reg == 4'h6) begin
+        key_mem[0] <= key_mem_reg[0];
+        key_mem[1] <= key_mem_reg[1];
+        key_mem[2] <= key_mem_reg[2];
+        key_mem[3] <= key_mem_reg[3];
+      end
+    end
+
+    always_ff @(posedge clk, negedge rst_n) begin
+      if (!rst_n) begin
+        ready <= 1'b0;
+      end else if (key_mem_valid == 32'h0000001F && round_ctr_done) begin
+        ready <= 1'b1;
+      end
+    end
+  endmodule"
+}
+```
