@@ -75,7 +75,7 @@ TCL
 }
 
 # Variants: gold, control, every in-loop PROVEN phase-1 proposal, then extras.
-VARS="gold:$REPO/$D/rtl/tv80.v ctrl_rename:$REPO/$D/rtl_ctrl_rename/tv80.v ctrl_reorder:$REPO/$D/rtl_ctrl_reorder/tv80.v"
+VARS="gold:$REPO/$D/rtl/tv80.v ctrl_rename:$REPO/$D/rtl_ctrl_rename/tv80.v ctrl_reorder:$REPO/$D/rtl_ctrl_reorder/tv80.v ctrl_flip:$REPO/$D/rtl_ctrl_flip/tv80.v"
 PROVEN=$(python3 - "$R" <<'PY'
 import glob, json, os, sys
 R = sys.argv[1]

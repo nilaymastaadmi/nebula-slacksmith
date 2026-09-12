@@ -1,0 +1,243 @@
+OpenROAD f12e2f474102bfb875eeee57fb610d7d7de17770 
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ODB-0222] Reading LEF file: /home/toshn/orfs/flow/platforms/sky130hd/lef/sky130_fd_sc_hd.tlef
+[INFO ODB-0223]     Created 13 technology layers
+[INFO ODB-0224]     Created 25 technology vias
+[INFO ODB-0226] Finished LEF file:  /home/toshn/orfs/flow/platforms/sky130hd/lef/sky130_fd_sc_hd.tlef
+[INFO ODB-0222] Reading LEF file: /home/toshn/orfs/flow/platforms/sky130hd/lef/sky130_fd_sc_hd_merged.lef
+[INFO ODB-0225]     Created 441 library cells
+[INFO ODB-0226] Finished LEF file:  /home/toshn/orfs/flow/platforms/sky130hd/lef/sky130_fd_sc_hd_merged.lef
+[WARNING STA-0354] set_input_delay relative to a clock defined on the same port/pin not allowed.
+[WARNING IFP-0028] Core area lower left (2.000, 2.000) snapped to (2.300, 2.720).
+[INFO IFP-0001] Added 98 rows of 585 sites.
+Found 0 macro blocks.
+Using 1u default distance from corners.
+Using 2 tracks default min distance between IO pins.
+[INFO PPL-0010] Tentative 0 to set up sections.
+[INFO PPL-0001] Number of slots          998
+[INFO PPL-0002] Number of I/O            46
+[INFO PPL-0003] Number of I/O w/sink     46
+[INFO PPL-0004] Number of I/O w/o sink   1
+[INFO PPL-0005] Slots per section        200
+[INFO PPL-0006] Slots increase factor    0.01
+[INFO PPL-0008] Successfully assigned pins to sections.
+[INFO PPL-0012] I/O nets HPWL: 6847.47 um.
+[INFO GPL-0002] DBU: 1000
+[INFO GPL-0003] SiteSize: 460 2720
+[INFO GPL-0004] CoreAreaLxLy: 2300 2720
+[INFO GPL-0005] CoreAreaUxUy: 271400 269280
+[INFO GPL-0006] NumInstances: 3429
+[INFO GPL-0007] NumPlaceInstances: 3429
+[INFO GPL-0008] NumFixedInstances: 0
+[INFO GPL-0009] NumDummyInstances: 0
+[INFO GPL-0010] NumNets: 3444
+[INFO GPL-0011] NumPins: 13590
+[INFO GPL-0012] DieAreaLxLy: 0 0
+[INFO GPL-0013] DieAreaUxUy: 273725 273725
+[INFO GPL-0014] CoreAreaLxLy: 2300 2720
+[INFO GPL-0015] CoreAreaUxUy: 271400 269280
+[INFO GPL-0016] CoreArea: 71731296000
+[INFO GPL-0017] NonPlaceInstsArea: 0
+[INFO GPL-0018] PlaceInstsArea: 29100409600
+[INFO GPL-0019] Util(%): 40.57
+[INFO GPL-0020] StdInstsArea: 29100409600
+[INFO GPL-0021] MacroInstsArea: 0
+[InitialPlace]  Iter: 1 CG residual: 0.00000031 HPWL: 29607515
+[InitialPlace]  Iter: 2 CG residual: 0.00000012 HPWL: 26647309
+[InitialPlace]  Iter: 3 CG residual: 0.00000008 HPWL: 26688144
+[InitialPlace]  Iter: 4 CG residual: 0.00000012 HPWL: 26892134
+[InitialPlace]  Iter: 5 CG residual: 0.00000010 HPWL: 26832598
+[INFO GPL-0031] FillerInit: NumGCells: 5275
+[INFO GPL-0032] FillerInit: NumGNets: 3444
+[INFO GPL-0033] FillerInit: NumGPins: 13590
+[INFO GPL-0023] TargetDensity: 0.60
+[INFO GPL-0024] AveragePlaceInstArea: 8486558
+[INFO GPL-0025] IdealBinArea: 14144263
+[INFO GPL-0026] IdealBinCnt: 5071
+[INFO GPL-0027] TotalBinArea: 71731296000
+[INFO GPL-0028] BinCnt: 64 64
+[INFO GPL-0029] BinSize: 4205 4165
+[INFO GPL-0030] NumBins: 4096
+[NesterovSolve] Iter: 1 overflow: 0.995075 HPWL: 7100673
+[NesterovSolve] Iter: 10 overflow: 0.989085 HPWL: 6831299
+[NesterovSolve] Iter: 20 overflow: 0.989148 HPWL: 6820603
+[NesterovSolve] Iter: 30 overflow: 0.989135 HPWL: 6816886
+[NesterovSolve] Iter: 40 overflow: 0.989134 HPWL: 6816693
+[NesterovSolve] Iter: 50 overflow: 0.989129 HPWL: 6816809
+[NesterovSolve] Iter: 60 overflow: 0.989124 HPWL: 6816809
+[NesterovSolve] Iter: 70 overflow: 0.989123 HPWL: 6817652
+[NesterovSolve] Iter: 80 overflow: 0.98912 HPWL: 6818171
+[NesterovSolve] Iter: 90 overflow: 0.98911 HPWL: 6819095
+[NesterovSolve] Iter: 100 overflow: 0.989086 HPWL: 6821188
+[NesterovSolve] Iter: 110 overflow: 0.988971 HPWL: 6827010
+[NesterovSolve] Iter: 120 overflow: 0.988705 HPWL: 6842180
+[NesterovSolve] Iter: 130 overflow: 0.988627 HPWL: 6874017
+[NesterovSolve] Iter: 140 overflow: 0.988365 HPWL: 6950176
+[NesterovSolve] Iter: 150 overflow: 0.987714 HPWL: 7156540
+[NesterovSolve] Iter: 160 overflow: 0.98693 HPWL: 7651463
+[NesterovSolve] Iter: 170 overflow: 0.983647 HPWL: 8593050
+[NesterovSolve] Iter: 180 overflow: 0.979194 HPWL: 9983081
+[NesterovSolve] Iter: 190 overflow: 0.972327 HPWL: 11671350
+[NesterovSolve] Iter: 200 overflow: 0.967045 HPWL: 13541899
+[NesterovSolve] Iter: 210 overflow: 0.957187 HPWL: 15668452
+[NesterovSolve] Iter: 220 overflow: 0.945893 HPWL: 18420349
+[NesterovSolve] Iter: 230 overflow: 0.929224 HPWL: 21912038
+[NesterovSolve] Iter: 240 overflow: 0.909395 HPWL: 25775501
+[NesterovSolve] Iter: 250 overflow: 0.884691 HPWL: 29981173
+[NesterovSolve] Iter: 260 overflow: 0.853933 HPWL: 34298271
+[NesterovSolve] Iter: 270 overflow: 0.825496 HPWL: 38141533
+[NesterovSolve] Iter: 280 overflow: 0.790639 HPWL: 42381968
+[NesterovSolve] Iter: 290 overflow: 0.75275 HPWL: 46649540
+[NesterovSolve] Iter: 300 overflow: 0.715543 HPWL: 50415380
+[NesterovSolve] Iter: 310 overflow: 0.673728 HPWL: 54492741
+[NesterovSolve] Iter: 320 overflow: 0.627115 HPWL: 58500702
+[NesterovSolve] Iter: 330 overflow: 0.582313 HPWL: 62247225
+[NesterovSolve] Iter: 340 overflow: 0.529136 HPWL: 64945966
+[NesterovSolve] Iter: 350 overflow: 0.486339 HPWL: 67241447
+[NesterovSolve] Iter: 360 overflow: 0.440139 HPWL: 69374336
+[NesterovSolve] Iter: 370 overflow: 0.391502 HPWL: 70956011
+[NesterovSolve] Iter: 380 overflow: 0.343036 HPWL: 72830908
+[NesterovSolve] Iter: 390 overflow: 0.306956 HPWL: 73957363
+[NesterovSolve] Iter: 400 overflow: 0.267515 HPWL: 75235448
+[NesterovSolve] Iter: 410 overflow: 0.236546 HPWL: 76109056
+[NesterovSolve] Iter: 420 overflow: 0.203988 HPWL: 76836700
+[NesterovSolve] Iter: 430 overflow: 0.177167 HPWL: 77479868
+[NesterovSolve] Iter: 440 overflow: 0.154743 HPWL: 78080182
+[NesterovSolve] Iter: 450 overflow: 0.137016 HPWL: 78543150
+[NesterovSolve] Iter: 460 overflow: 0.116412 HPWL: 78898900
+[NesterovSolve] Iter: 470 overflow: 0.0988076 HPWL: 79233574
+[NesterovSolve] Finished with Overflow: 0.098808
+=====> BEFORE
+Startpoint: i_tv80_core/_3574_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: i_tv80_core/i_reg/_394_
+          (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ i_tv80_core/_3574_/CLK (sky130_fd_sc_hd__dfrtp_1)
+   2.254    2.254 ^ i_tv80_core/_3574_/Q (sky130_fd_sc_hd__dfrtp_1)
+   0.951    3.205 v i_tv80_core/i_mcode/_0731_/Y (sky130_fd_sc_hd__nand4bb_1)
+   0.752    3.957 ^ i_tv80_core/i_mcode/_0747_/Y (sky130_fd_sc_hd__nor2_1)
+   0.170    4.127 v i_tv80_core/i_mcode/_0749_/Y (sky130_fd_sc_hd__nor3b_1)
+   0.258    4.385 v i_tv80_core/i_mcode/_0776_/X (sky130_fd_sc_hd__and4_1)
+   0.128    4.513 ^ i_tv80_core/i_mcode/_0833_/Y (sky130_fd_sc_hd__nand4b_1)
+   0.163    4.676 v i_tv80_core/i_mcode/_0862_/Y (sky130_fd_sc_hd__nand3_1)
+   0.317    4.993 ^ i_tv80_core/i_mcode/_0863_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.261    5.254 v i_tv80_core/i_mcode/_0867_/Y (sky130_fd_sc_hd__o211ai_1)
+   0.479    5.732 v i_tv80_core/_1788_/X (sky130_fd_sc_hd__or3_1)
+   0.133    5.865 v i_tv80_core/_1981_/Y (sky130_fd_sc_hd__mux2i_1)
+   0.808    6.673 ^ i_tv80_core/_1982_/Y (sky130_fd_sc_hd__o21ai_0)
+   2.754    9.427 ^ i_tv80_core/i_reg/_145_/Y (sky130_fd_sc_hd__nor3b_1)
+   0.516    9.943 v i_tv80_core/i_reg/_179_/Y (sky130_fd_sc_hd__a222oi_1)
+   0.499   10.442 ^ i_tv80_core/i_reg/_181_/Y (sky130_fd_sc_hd__nand3_1)
+   0.264   10.706 ^ i_tv80_core/_1810_/X (sky130_fd_sc_hd__maj3_1)
+   0.205   10.910 ^ i_tv80_core/_1813_/X (sky130_fd_sc_hd__and2_0)
+   0.209   11.119 ^ i_tv80_core/_1814_/X (sky130_fd_sc_hd__maj3_1)
+   0.135   11.254 v i_tv80_core/_1818_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.139   11.393 ^ i_tv80_core/_1820_/Y (sky130_fd_sc_hd__nor2_1)
+   0.128   11.521 v i_tv80_core/_1826_/Y (sky130_fd_sc_hd__a31oi_1)
+   0.185   11.707 v i_tv80_core/_1829_/Y (sky130_fd_sc_hd__nand2b_1)
+   0.178   11.885 v i_tv80_core/_1831_/Y (sky130_fd_sc_hd__nand2b_1)
+   0.554   12.438 ^ i_tv80_core/_1836_/Y (sky130_fd_sc_hd__o311ai_0)
+   0.149   12.587 v i_tv80_core/_1838_/Y (sky130_fd_sc_hd__nand2_1)
+   0.338   12.925 ^ i_tv80_core/_1840_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.189   13.114 ^ i_tv80_core/_1841_/Y (sky130_fd_sc_hd__xnor2_1)
+   0.110   13.223 v i_tv80_core/_1847_/Y (sky130_fd_sc_hd__a21oi_1)
+   0.765   13.989 ^ i_tv80_core/_1849_/Y (sky130_fd_sc_hd__o21ai_0)
+   0.001   13.990 ^ i_tv80_core/i_reg/_394_/D (sky130_fd_sc_hd__edfxtp_1)
+           13.990   data arrival time
+
+   8.044    8.044   clock clk (rise edge)
+   0.000    8.044   clock network delay (ideal)
+   0.000    8.044   clock reconvergence pessimism
+            8.044 ^ i_tv80_core/i_reg/_394_/CLK (sky130_fd_sc_hd__edfxtp_1)
+  -0.330    7.714   library setup time
+            7.714   data required time
+-----------------------------------------------------------
+            7.714   data required time
+          -13.990   data arrival time
+-----------------------------------------------------------
+           -6.276   slack (VIOLATED)
+
+
+Design area 29100 u^2 41% utilization.
+[INFO RSZ-0058] Using max wire length 1828um.
+[INFO RSZ-0034] Found 4 slew violations.
+[INFO RSZ-0036] Found 4 capacitance violations.
+[INFO RSZ-0038] Inserted 5 buffers in 4 nets.
+[INFO RSZ-0039] Resized 1021 instances.
+[WARNING DPL-0011] Could not find power special net.
+Placement Analysis
+---------------------------------
+total displacement       9020.5 u
+average displacement        2.6 u
+max displacement           20.8 u
+original HPWL           80935.8 u
+legalized HPWL          89385.3 u
+delta HPWL                   10 %
+
+=====> AFTER
+Startpoint: i_tv80_core/_3574_ (rising edge-triggered flip-flop clocked by clk)
+Endpoint: i_tv80_core/i_reg/_395_
+          (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (ideal)
+   0.000    0.000 ^ i_tv80_core/_3574_/CLK (sky130_fd_sc_hd__dfrtp_4)
+   1.218    1.218 ^ i_tv80_core/_3574_/Q (sky130_fd_sc_hd__dfrtp_4)
+   0.671    1.889 v i_tv80_core/i_mcode/_0722_/X (sky130_fd_sc_hd__or4b_4)
+   0.437    2.326 v i_tv80_core/i_mcode/_0746_/X (sky130_fd_sc_hd__or3_4)
+   0.182    2.509 v i_tv80_core/i_mcode/_0749_/Y (sky130_fd_sc_hd__nor3b_1)
+   0.243    2.752 v i_tv80_core/i_mcode/_0776_/X (sky130_fd_sc_hd__and4_1)
+   0.150    2.902 ^ i_tv80_core/i_mcode/_0833_/Y (sky130_fd_sc_hd__nand4b_1)
+   0.159    3.061 v i_tv80_core/i_mcode/_0862_/Y (sky130_fd_sc_hd__nand3_2)
+   0.285    3.346 ^ i_tv80_core/i_mcode/_0863_/Y (sky130_fd_sc_hd__o21ai_4)
+   0.162    3.508 v i_tv80_core/i_mcode/_0867_/Y (sky130_fd_sc_hd__o211ai_4)
+   0.458    3.966 v i_tv80_core/_1788_/X (sky130_fd_sc_hd__or3_4)
+   0.180    4.146 v i_tv80_core/_1981_/Y (sky130_fd_sc_hd__mux2i_2)
+   0.383    4.529 ^ i_tv80_core/_1982_/Y (sky130_fd_sc_hd__o21ai_4)
+   1.264    5.793 ^ i_tv80_core/i_reg/_145_/Y (sky130_fd_sc_hd__nor3b_4)
+   0.401    6.194 v i_tv80_core/i_reg/_179_/Y (sky130_fd_sc_hd__a222oi_1)
+   0.256    6.450 ^ i_tv80_core/i_reg/_181_/Y (sky130_fd_sc_hd__nand3_4)
+   0.220    6.670 ^ i_tv80_core/_1810_/X (sky130_fd_sc_hd__maj3_1)
+   0.203    6.873 ^ i_tv80_core/_1813_/X (sky130_fd_sc_hd__and2_0)
+   0.222    7.095 ^ i_tv80_core/_1814_/X (sky130_fd_sc_hd__maj3_1)
+   0.096    7.191 v i_tv80_core/_1818_/Y (sky130_fd_sc_hd__o21ai_1)
+   0.152    7.343 ^ i_tv80_core/_1820_/Y (sky130_fd_sc_hd__nor2_1)
+   0.121    7.464 v i_tv80_core/_1826_/Y (sky130_fd_sc_hd__a31oi_2)
+   0.183    7.647 v i_tv80_core/_1829_/Y (sky130_fd_sc_hd__nand2b_1)
+   0.217    7.864 v i_tv80_core/_1831_/Y (sky130_fd_sc_hd__nand2b_1)
+   0.336    8.200 ^ i_tv80_core/_1836_/Y (sky130_fd_sc_hd__o311ai_4)
+   0.131    8.331 v i_tv80_core/_1838_/Y (sky130_fd_sc_hd__nand2_1)
+   0.255    8.586 ^ i_tv80_core/_1840_/Y (sky130_fd_sc_hd__o21ai_1)
+   0.109    8.695 v i_tv80_core/_1966_/Y (sky130_fd_sc_hd__nand3b_1)
+   0.127    8.822 ^ i_tv80_core/_1967_/Y (sky130_fd_sc_hd__o21ai_1)
+   0.204    9.025 ^ i_tv80_core/_1968_/Y (sky130_fd_sc_hd__xnor2_1)
+   0.100    9.125 v i_tv80_core/_2005_/Y (sky130_fd_sc_hd__o21bai_1)
+   0.282    9.407 v i_tv80_core/_2008_/X (sky130_fd_sc_hd__a22o_2)
+   0.001    9.409 v i_tv80_core/i_reg/_395_/D (sky130_fd_sc_hd__edfxtp_1)
+            9.409   data arrival time
+
+   8.044    8.044   clock clk (rise edge)
+   0.000    8.044   clock network delay (ideal)
+   0.000    8.044   clock reconvergence pessimism
+            8.044 ^ i_tv80_core/i_reg/_395_/CLK (sky130_fd_sc_hd__edfxtp_1)
+  -0.282    7.762   library setup time
+            7.762   data required time
+-----------------------------------------------------------
+            7.762   data required time
+           -9.409   data arrival time
+-----------------------------------------------------------
+           -1.646   slack (VIOLATED)
+
+
+Design area 35259 u^2 49% utilization.

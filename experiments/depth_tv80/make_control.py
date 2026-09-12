@@ -8,6 +8,22 @@ moves for reasons that have nothing to do with an optimisation.
 
   ctrl_rename   renames the module `tv80_alu` and its single instantiation
   ctrl_reorder  moves that module's text to the end of the file
+  ctrl_flip     rewrites one ternary as its complement, `c ? a : b` into
+                `!c ? b : a`, on a decode line inside tv80_mcode
+
+MEASURED 2026-09-12, and it changes what these are worth:
+
+  ctrl_reorder  produces a netlist BYTE-IDENTICAL to gold. Yosys elaborates
+                modules by hierarchy, not by position in the file, so moving a
+                module's text is not a perturbation at all. It measures
+                reproducibility and nothing else. Kept, because a control that
+                turns out to be a no-op is worth keeping visible.
+  ctrl_rename   produces a DIFFERENT netlist, because module names propagate
+                into instance names, and identical timing to three decimals.
+                A real textual perturbation worth 0.000 ns.
+  ctrl_flip     exists because neither of the above changes netlist STRUCTURE,
+                and a floor measured only by name changes cannot tell you
+                whether the instrument resolves a small structural effect.
 
 Regenerated and checked on every run, so a control that drifts from its
 definition fails the run instead of quietly becoming a different experiment.
@@ -21,6 +37,12 @@ D = os.path.dirname(os.path.abspath(__file__))
 GOLD = os.path.join(D, "rtl", "tv80.v")
 OUT_RENAME = os.path.join(D, "rtl_ctrl_rename", "tv80.v")
 OUT_REORDER = os.path.join(D, "rtl_ctrl_reorder", "tv80.v")
+OUT_FLIP = os.path.join(D, "rtl_ctrl_flip", "tv80.v")
+
+# One decode line in tv80_mcode. `c ? a : b` and `!c ? b : a` are the same
+# function; the second builds a different cone.
+FLIP_FROM = "0 : MCycles = (F[Flag_Z]) ? 3'd2 : 3'd3;"
+FLIP_TO = "0 : MCycles = (!F[Flag_Z]) ? 3'd3 : 3'd2;"
 
 
 def write(path, text):
@@ -65,9 +87,16 @@ def main():
         return 4
     write(OUT_REORDER, moved)
 
+    # 3. Structural, and still functionally identical.
+    if gold.count(FLIP_FROM) != 1:
+        print("FATAL: expected exactly 1 flip site, found %d" % gold.count(FLIP_FROM))
+        return 5
+    write(OUT_FLIP, gold.replace(FLIP_FROM, FLIP_TO, 1))
+
     print("ctrl_rename : %d references renamed" % n)
     print("ctrl_reorder: moved %d chars of tv80_alu to the end, token count identical"
           % (b - a))
+    print("ctrl_flip   : 1 ternary rewritten as its complement")
     return 0
 
 
