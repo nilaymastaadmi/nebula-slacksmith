@@ -1,0 +1,2 @@
+cr_baseline: 28844 cells   /home/toshn/slacksmith_work/cr_baseline/baseline_mapped.v
+cr_composed_A4_O2_O1: 28839 cells   /home/toshn/slacksmith_work/cr_composed_A4_O2_O1/variant/variant_mapped.v

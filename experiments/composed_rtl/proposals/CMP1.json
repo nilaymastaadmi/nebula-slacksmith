@@ -1,0 +1,11 @@
+{
+  "id": "CMP1",
+  "def_id": "composed_a4_o2_o1",
+  "target_module": "aes_key_mem",
+  "target_file": "rtl/aes/aes_key_mem.v",
+  "latency_delta_k": 0,
+  "obligation_branch": "4 (mapped-state equivalence)",
+  "variant_file": "experiments/composed_rtl/aes_key_mem_composed.v",
+  "rationale": "Not a model proposal. This is the three-way merge of A4 (one-hot read select), O2 (FSM output-coded state assignment) and cli O1 (fanout split of round_key_update), composed against the gold file as the common ancestor by experiments/composed_rtl/compose.sh. It exists so deliverable D4 ships one optimized RTL rather than four separate proven variants, and so the marginal RTL gain after repair_design can be measured on something that carries all three levers at once.",
+  "note": "Routed to branch 4 because O2 re-encodes the state register, which leaves no flop correspondence for EQY, and branch 4 is the strictest obligation any of the three parts carried. k = 0: every part claims to preserve storage, and G3 checks that claim on the composition rather than on the parts."
+}

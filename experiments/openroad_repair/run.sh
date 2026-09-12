@@ -16,7 +16,12 @@ P=$ORFS_PLATFORM
 LIB=$LIBERTY
 NET=${1:-$HOME/bufexp/A.v}          # default: the unbuffered mapped netlist
 SDC=${2:-sdc/bench_top_v2.sdc}
-W=$HOME/or_repair; mkdir -p $W
+# Work dir is overridable because this script is now run more than once,
+# on more than one netlist. It was a fixed path, and $HOME/or_repair/
+# prerepair.v and repaired.v are the INPUTS to experiments/ppa/power/.
+# A second run at the default path would silently replace the netlists a
+# published power number was measured on. Default unchanged.
+W=${OR_REPAIR_WORK:-$HOME/or_repair}; mkdir -p $W
 
 [ -s "$NET" ] || { echo "FATAL: netlist $NET missing"; exit 2; }
 [ -s "$LIB" ] || { echo "FATAL: liberty missing"; exit 2; }
