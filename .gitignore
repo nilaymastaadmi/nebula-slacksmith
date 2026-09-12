@@ -18,3 +18,9 @@ __pycache__/
 .guildly/
 PROMPT.md
 graphify-out/
+
+# Remotion's install tree. The two card compositions are source and belong in
+# the repository; node_modules does not. On 2026-09-12 a `git add -A` in this
+# session swept 9,104 of its files into a commit while the video session was
+# installing, which is why this line exists rather than a reminder to be careful.
+demo/remotion/node_modules/
