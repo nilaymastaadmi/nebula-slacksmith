@@ -40,12 +40,52 @@ separate bars and it applied the second one.
 
 **R85. CONFIRMED** (amendment 2). All three replays reached a G4 verdict.
 
-**R79 and R80: VOID.** Both ask what fraction of an unbuffered gain survives a
-lever. **There is no positive unbuffered gain to survive anything.** Recorded as
-void rather than as a hit, because a prediction that cannot fail is not
-evidence.
+**R79. VOID.** It asks what fraction of an unbuffered gain survives the ABC
+lever. There is no positive unbuffered gain to survive anything.
+
+**R80. VOID, and this one took a decision.** It asks whether the post-repair
+gain exceeds the control's **0.375 ns** excursion. One transform's does:
+
+| variant | A unbuffered | B ABC lever | C before repair | **C after repair** | cells |
+|---|---|---|---|---|---|
+| gold | −0.894 | −0.296 | −6.072 | **−2.021** | 3,447 |
+| `ctrl_flip` (the floor) | −1.046 | −0.269 | −6.276 | **−1.646** | 3,429 |
+| run 2 `casez_parallel_case_hint` | −0.894 | −0.296 | −6.072 | **−2.021** | 3,447 |
+| run 3 `flatten_mcycle_tail_...` | **−1.162** | **−0.473** | **−6.935** | **−1.639** | 3,420 |
+
+Run 3 lands at **−1.639 against gold's −2.021**, a post-repair gain of
+**+0.382 ns** against a floor of 0.375. **It is not reported as a result**, for
+three reasons stated together:
+
+1. It beats the floor by **0.007 ns**, which is **1.9% of the floor itself**,
+   measured from a **single** control, so there is no spread and nothing
+   distinguishes the two numbers.
+2. **The loop reverted this transform**, because it is worse unbuffered
+   (−0.268) and worse after the ABC lever (−0.177). Three columns are worse and
+   one is better.
+3. `ctrl_flip`, a provably null edit, produces **the same shape**: worse
+   unbuffered, better after repair. Whatever moves the post-repair column here
+   is not sensitive to whether the edit does anything.
+
+Claiming +0.382 would mean quoting one column out of four, from a transform the
+tool itself rejected, against a floor it beats by less than a hundredth of a
+nanosecond. That is the cherry-pick this project exists to argue against, so
+R80 is void and the number is published here rather than in the report.
 
 **Four confirmed, two wrong, two void.**
+
+## The finding inside run 2, and it has happened before
+
+**`casez_parallel_case_hint` is byte-identical to gold in every column**:
+same slack in all four, same 29,173 u², same 3,447 cells. A formally proven
+transform that synthesis had **already applied**. Yosys infers the parallel-case
+structure without the hint, so the model's proposal was correct, provable, and
+a no-op.
+
+`experiments/depth_i2c/` run 2 found exactly this, on a different design, with a
+`(* parallel_case *)` attribute. **Two designs, two models' worth of proposals,
+the same dead end**: asked to speed up a wide `case` decode, the model reaches
+for the hint a modern synthesiser already infers.
 
 ## What this says, and it is the second time it has said it
 
