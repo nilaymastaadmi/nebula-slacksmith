@@ -83,7 +83,9 @@ report.
   beat 1 46.1 s, beat 6 583.0 s (it runs EQY), and beat 2 **93.88 s, 367.8 s and
   832.8 s** across three runs of one command. This file previously said "Beat 2
   is the only live compute, about 45 seconds" (finding 8). Pre-run all three into
-  files, play them back, and say so on camera.
+  files and play them back. **Say so in the narration wherever it implies the
+  output is live or fast**; beat 2's did ("under a minute"), beats 1 and 6 make
+  no liveness or timing claim and need no extra words.
 - Cursor-zoom on each **ZOOM TARGET** in `demo/SCRIPT.md`, and nowhere else.
 - Never read a table aloud. Point at one number and let the rest sit there.
 
