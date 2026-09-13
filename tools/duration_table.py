@@ -228,8 +228,41 @@ def markdown(d, args):
             else:
                 L.append(f"Target {mmss(args.target)} is already met with "
                          f"{-delta:.0f} s to spare.")
+    L += cut_markdown(d)
     L += ["", END]
     return "\n".join(L)
+
+
+def cut_markdown(d):
+    """The locked silent cut, measured: every segment's real duration from the
+    manifest the assembly step writes, against the narration floor for its beat.
+    Absent until a cut exists; nothing here is estimated."""
+    man_path = os.path.join(HERE, "demo", "takes", "video", "cut_manifest.json")
+    if not os.path.exists(man_path):
+        return []
+    man = json.load(io.open(man_path, encoding="utf-8"))
+    floors = {r["beat"]: r["floor"] for r in d["rows"]}
+    L = ["", "**Silent cut, measured** from `demo/takes/video/cut_manifest.json`. "
+         "Screen time for Beat 0 is the held title card only, excluding its fade in and out.", "",
+         "| segment | measured | narration floor | spare | check |",
+         "|---|---:|---:|---:|:---:|"]
+    for label, name, secs, _cum in man["rows"]:
+        beat = None
+        if name.startswith("00b"):
+            beat = "Beat 0"
+        elif name[:2].isdigit() and name[:2] not in ("00", "99"):
+            beat = f"Beat {int(name[:2])}"
+        if beat:
+            fl = floors[beat]
+            ok = "pass" if secs + 1e-6 >= fl else "**FAIL**"
+            L.append(f"| {label} | {secs:.3f} s | {fl:.1f} s | {secs - fl:+.2f} s | {ok} |")
+        else:
+            L.append(f"| {label} | {secs:.3f} s | | | |")
+    total = man["cut"]
+    within = WINDOW_LO <= total <= WINDOW_HI
+    L += [f"| **silent cut** | **{total:.3f} s = {mmss(total)}** | | "
+          f"{WINDOW_HI - total:+.2f} s to cap | {'pass' if within else '**FAIL**'} |"]
+    return L
 
 
 def main():

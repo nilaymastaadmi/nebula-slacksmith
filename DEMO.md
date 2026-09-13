@@ -312,9 +312,11 @@ A demo script last verified days ago is a liability on stage.
 
 ## Recording notes
 
-- Terminal at 110 columns or wider, or the classify lines wrap badly.
-- Beat 2 is the only live compute. If the room is slow, pre-run it into a
-  file and `cat` it, but say that you are doing so.
+- Terminal at 165 columns and 40 rows or larger. 110 was measured too narrow
+  for the classify lines on 2026-09-13 (`demo/PHASE1_CUT.md`, finding 4).
+- Beats 1, 2 and 6 are live compute, not only beat 2 (`demo/PHASE1_CUT.md`,
+  finding 8). Pre-run all three into files and play them back, and say so
+  wherever the narration implies the output is live or fast.
 - Do not read the tables aloud. Point at one number per table.
 - If asked "did you close the design", the honest answer is: **under the v2
   target, yes, at the placement level with `repair_design`, and

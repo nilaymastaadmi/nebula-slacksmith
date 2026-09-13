@@ -15,6 +15,10 @@ Decisions taken 2026-09-12, so later sessions do not reopen them:
 | recording width | **165 columns.** |
 | Beat 2 | pre-run and play back, see finding 1. |
 | Beats 1 and 6 | **also pre-run.** Measured 46.1 s and 583.0 s, see finding 8. |
+| Beat 5 caveat | **added 2026-09-13**: 3.32x is now said with its flow-defect caveat (finding 10). |
+| on-screen numbers | **read as "no invented or contradicting number"**, decided by the main session 2026-09-13 and written into `demo/VIDEO_PROMPT.md` step 4. Beat 3's one contradiction is flagged in its narration; finding 9. |
+| Beat 2 playback | **disclosed in narration**: "under a minute" is now "replayed from file", finding 2. No narration line states or implies the loop's runtime. |
+| narration | **humanized 2026-09-13**, at the request of the author. Every paragraph kept its beat and position and none got longer, so the recorded takes still fit; every spoken figure, qualifier and retraction was checked mechanically before and after. |
 
 A parallel session is committing to this repository. The generated block carries
 `demo/SCRIPT.md`'s fingerprint; if it no longer matches the file, the table is
@@ -55,43 +59,28 @@ Build:
 stalled here (`storage.googleapis.com` sent no data for 20 s). The variable
 points it at an installed Chrome instead. Unset, Remotion behaves as normal.
 
-## Step 3. Recordly, the screen. NOT DONE.
+## Step 3. Recordly, the screen. DONE.
 
-Recordly is `github.com/webadderallorg/recordly`: an open-source Electron
-desktop recorder and editor, AGPL, 27,108 stars, latest release v1.4.0
-(2026-09-08), with Windows builds. It has `electron-builder.json5`, an
-`electron/` tree and a Vite entry point, and **no CLI and no headless mode**.
+Recorded 2026-09-13, one take per beat, in `DEMO.md` order. The final set is the
+third full pass; the first two were discarded for a watcher bug and for
+Recordly's own "Stop" tooltip showing in frame.
 
-It is not installed here. Two things stand between this session and the takes,
-and only the first is hard:
+How the takes were made, since an agent could not do it alone:
 
-1. **Typing into a terminal is blocked.** In this environment terminals are
-   granted click-only access for computer use: clicks and scrolling are
-   allowed, typing and key presses are not. Driving the beats by hand is
-   therefore out.
-2. **The cursor zooms are a GUI edit.** Recordly's zooms are placed in its
-   editor after capture, which means clicking through a desktop app.
+- **The author clicked Record and Stop.** The Claude computer-use indicator is a
+  capturable screen-edge glow that appeared in every frame of every take the agent
+  clicked (measured from the raw files), so the agent did not touch the screen
+  during takes.
+- **`demo/present.sh` played each beat** in a fullscreen Windows Terminal profile
+  (`demo/terminal/slacksmith-demo.json`, 11 pt, 172 x 45), holding each screen for
+  as long as `demo/present_plan.py` derives from the narration.
+- **A background watcher triggered each take** on Recordly's native
+  `wgc-capture.exe` helper starting, then checked every raw take for the edge glow
+  and for Recordly's hover tooltip, re-arming a beat if either appeared. All 8 final
+  takes passed on the first try; an independent scan of 136 frames found neither,
+  with the detector re-validated on known positive and negative frames.
 
-The first is avoidable and should not be reported as a wall. A presenter script
-that plays the nine beats with pauses needs no typing at all: launch the
-terminal with the script as its command, and the screen shows the beats on its
-own. That leaves installing the app and hand-placing 7 zooms in its editor,
-which is a long and fragile chain to drive through screenshots but is not
-impossible. It also needs an explicit decision to download and install a
-desktop application, which is yours to give, not mine to assume.
-
-So the takes are blocked on a choice, not on a missing dependency. The fastest
-path is still a person at the keyboard; the automatable path exists and costs
-more.
-
-What is prepared so the recording session is deterministic:
-
-**`demo/takes/` holds the real output of every beat**, captured 2026-09-12 by
-running each command exactly as `DEMO.md` writes it. No command was altered.
-Three uses: the reference for what each screen must show, the playback file for
-beat 2, and the width and height budget for the terminal. The `cols`, `lines`
-and `measured` columns of the table below are read from these files, so the
-table tracks them.
+The eight takes, with their trigger offsets, are in `demo/takes/video/takes.tsv`.
 
 Recording checklist, derived from the measurements below:
 
@@ -117,23 +106,40 @@ bold value exceeds the recording terminal.
 
 <!-- BEGIN generated -->
 
-`demo/SCRIPT.md` sha256 `df4c70096e7fc97b`, 10,136 bytes. 150 wpm. Recording terminal 165x40.
+`demo/SCRIPT.md` sha256 `0f7b2c250345e7f0`, 10,353 bytes. 150 wpm. Recording terminal 165x40.
 
 | beat | words | floor | zoom | cols | lines | measured | screen |
 |---|---:|---:|:---:|---:|---:|---:|---|
 | Beat 0 | 47 | 19 s |  |  |  |  | Remotion title card |
-| Beat 1 | 46 | 18 s |  | 110 | 5 | 46.1 s | tools/bench_size.py |
-| Beat 2 | 73 | 29 s | yes | **204** | 15 | 832.8 s | the loop, then show_run.py |
-| Beat 3 | 99 | 40 s |  | 148 | 37 | 0.9 s | show_run.py on 3 committed logs |
-| Beat 4 | 128 | 51 s | yes | 89 | 30 | 11.4 s | prereg + git log, then the table |
+| Beat 1 | 45 | 18 s |  | 110 | 5 | 46.1 s | tools/bench_size.py |
+| Beat 2 | 72 | 29 s | yes | **204** | 15 | 832.8 s | the loop, then show_run.py |
+| Beat 3 | 98 | 39 s |  | 148 | 37 | 0.9 s | show_run.py on 3 committed logs |
+| Beat 4 | 127 | 51 s | yes | 89 | 30 | 11.4 s | prereg + git log, then the table |
 | Beat 5 | 121 | 48 s | yes | 83 | 7 | 0.3 s | lever table, post-repair, PPA |
 | Beat 6 | 59 | 24 s |  | 85 | 29 | 583.0 s | verdict_regression, classify_regression |
 | Beat 7 | 66 | 26 s | yes | 79 | 9 | 6.0 s | sdc_integrity/run.sh |
 | Beat 8 | 66 | 26 s |  | 162 | **57** | 0.0 s | SlackBench table |
-| **beats** | **705** | **282 s** | | | | | |
+| **beats** | **701** | **280 s** | | | | | |
 
-Title card 5.06 s probed, end card 5.06 s probed. **Floor runtime 292.1 s = 4:52**, window 3:00 to 5:00, 7.9 s slack to the cap.
-Target 4:52 needs 0 s out, which is 0 words, from Beat 6 or Beat 8 and never from Beat 4 or Beat 5's second paragraph.
+Title card 5.06 s probed, end card 5.06 s probed. **Floor runtime 290.5 s = 4:51**, window 3:00 to 5:00, 9.5 s slack to the cap.
+
+**Silent cut, measured** from `demo/takes/video/cut_manifest.json`. Screen time for Beat 0 is the held title card only, excluding its fade in and out.
+
+| segment | measured | narration floor | spare | check |
+|---|---:|---:|---:|:---:|
+| title card, fade in and hold | 4.600 s | | | |
+| Beat 0 narration over the title card | 18.800 s | 18.8 s | +0.00 s | pass |
+| title card, fade out | 0.400 s | | | |
+| Beat 1 (raw take, no zoom target) | 19.000 s | 18.0 s | +1.00 s | pass |
+| Beat 2 (Recordly export, zoomed) | 29.767 s | 28.8 s | +0.97 s | pass |
+| Beat 3 (raw take, no zoom target) | 40.200 s | 39.2 s | +1.00 s | pass |
+| Beat 4 (Recordly export, zoomed) | 51.800 s | 50.8 s | +1.00 s | pass |
+| Beat 5 (Recordly export, zoomed) | 48.967 s | 48.4 s | +0.57 s | pass |
+| Beat 6 (raw take, no zoom target) | 24.200 s | 23.6 s | +0.60 s | pass |
+| Beat 7 (Recordly export, zoomed) | 26.967 s | 26.4 s | +0.57 s | pass |
+| Beat 8 (raw take, no zoom target) | 27.000 s | 26.4 s | +0.60 s | pass |
+| end card | 5.000 s | | | |
+| **silent cut** | **296.700 s = 4:57** | | +3.30 s to cap | pass |
 
 <!-- END generated -->
 
@@ -155,6 +161,22 @@ silent card, then Beat 0's 19 s narrated over the same held card, so the card is
 on screen 24.1 s. Narrating Beat 0 from the first frame instead removes 5.06 s
 and lands the floor at 4:47.
 
+## The locked silent cut
+
+**`%USERPROFILE%\Videos\slacksmith-demo\slacksmith_silent_cut.mp4`**, 296.700 s,
+1920x1080, 30 fps, H.264, no audio. Kept out of the repository; the segments it is
+joined from are in `segments\` beside it.
+
+| layer | how it was made |
+|---|---|
+| title and end cards | Remotion, `demo/remotion/out/`. Beat 0 narrates over a held still of the title card between its fade in and fade out. |
+| beats 2, 4, 5, 7 | Recordly exports with manual zoom regions at 1.8x on each ZOOM TARGET. Every region is recorded in `demo/takes/video/zooms.tsv` (source, start, end, depth, target) so one beat can be re-edited without the others. |
+| beats 1, 3, 6, 8 | No ZOOM TARGET, so cut straight from the raw Recordly takes. Measured first: a Recordly export of an unzoomed frame differs from the raw by a mean of 0.03 per channel (99th percentile 1), so the two routes are visually identical. |
+| assembly | `ffmpeg` trim from each take's measured trigger offset minus 0.1 s, re-encoded to identical settings and joined with the concat demuxer. The per-segment durations above are read back from the output, not from the plan. |
+
+Joins verified: the first frame of all 12 segments shows its intended content, with
+no desktop, blank or stray frames.
+
 ---
 
 ## Findings. None of these were fixed silently.
@@ -174,6 +196,11 @@ by itself.
 both of today's measurements that sentence is false as spoken. Reporting, not
 editing: the narration is yours, the decision above is to keep what is written,
 and a replacement of the same length would keep the duration table valid.
+
+**Resolved 2026-09-13, main session's wording.** "under a minute," is now "replayed
+from file,", 3 words for 3. It is the only playback disclosure the narration needs:
+beats 1 and 6 make no liveness or timing claim. `tools/script_words.py` still prints
+701, so the table above is unchanged.
 
 **3. `~/demo_run` accumulates across runs.** After today's capture,
 `~/demo_run/decisions.jsonl` held 12 records with **2** `g0_sdc` markers, so
@@ -247,10 +274,66 @@ an 8.9x range on one machine with one command. Whatever the cause, that is not
 a number any document should assert, and it is now measured into the table
 instead.
 
+**9. The rule "no frame shows a number that is not in REPORT.md or
+SUBMISSION_PACK.md" cannot hold for real terminal output, and it does not hold
+here.** Audited from the exact text on each screen: **125 distinct numbers appear
+on screen, and 61 of them are in neither document** (the audit file lists 62; one,
+5.600, is 5.6 in the report). They are raw output of
+committed files and tools (intermediate iteration slacks, per-row table cells,
+fanout shares, cycle counts), so nothing is invented, and every spoken figure and
+every ZOOM TARGET does trace to the documents. But `demo/VIDEO_PROMPT.md` step 4
+says "no frame", and a real terminal cannot meet that literally. Either the rule
+is read as "no invented or disagreeing number", which this cut meets, or the
+screens need cropping to the numbers the report carries. That is a decision for
+you, not a fix.
+
+**Resolved 2026-09-13 by the main session: the rule means no invented number and no
+number that contradicts the documents for the same quantity; absence is not a
+finding.** Step 4 of `demo/VIDEO_PROMPT.md` now says so. Its check of all eight
+screens found one contradiction, and this audit had missed it because it compared
+numbers, not verdicts: beat 3's `run_v3_final` prints `clk_a: DEPTH_DOMINATED
+(fanout share 0.0, 17.13 ns over 33 cells)`, while REPORT 7.2 and 9 carry that path
+as MIXED and beat 6's own screen shows it at MIXED 0.4277. Checked here before
+applying: the log was committed 2026-09-01 (`fd08ea1`) and the cross-module fanout
+fix landed 2026-09-03 (`bb165ad`). No re-record: Beat 3 is one screen, so the flag is
+spoken while the stale verdict is visible. "Proven means correct, not useful, so the
+tool measures both separately." is now "This log predates our fanout fix; its depth
+verdicts are wrong.", 11 words for 11; the first sentence already says all three
+transforms are proven and make the number worse.
+
+**10. Seven spoken figures never appear on their beat's screen, and one ZOOM
+TARGET is never spoken.** Checked against the exact screen text:
+
+| beat | spoken | on that beat's screen? |
+|---|---|---|
+| 3 | one point four one four nanoseconds | no, it is the unattended `cli_backend` run, not `run_v3_final` |
+| 3 | four optimization classes | no |
+| 5 | three point one eight five nanoseconds | no |
+| 5 | minus eighteen point nine | no |
+| 5 | twenty point two percent more area | no |
+| 5 | forty-seven percent more power | no |
+| 8 | forty thousand simulated cycles | no, the screen shows 19,997 and 19,998 per simulator |
+| 5 | (not spoken) | **3.32x is a ZOOM TARGET, and `demo/SCRIPT.md` says to say it with a flow-defect caveat, but the narration never mentions it** |
+
+This predates the humanizing pass: the facts and their beats are unchanged. It
+weakens "point at one number and let the rest sit there", because the number being
+said is often not the one being pointed at.
+
+**Resolved in part, 2026-09-13, at the author's direction ("your call, if important
+add to narration").** One mismatch crossed the line `demo/VIDEO_PROMPT.md` draws, that
+the video must not tell a cleaner story than the document: Beat 5 zoomed onto
+"3.32x achievable frequency" without the caveat REPORT section 9 carries. Beat 5's
+third paragraph now says "Frequency rises three point three two times, partly our
+flow defect." To fit the recorded 11.7 s PPA screen at the same 28 words, it gave up
+"closure survives a clock tree and global routing", a positive claim, and kept both
+costs (twenty point two percent area, forty-seven percent power). The other six
+spoken-but-not-shown figures stay as narrated context. +55.805 stays unspoken on
+purpose, so it cannot be heard as the retracted 55.805-over-4.925 ratio.
+
 ## Verifications that came back clean
 
-- **Every number the video says or shows traces to `REPORT.md` or
-  `SUBMISSION_PACK.md`.** 24 spelled-out spoken figures and 6 digit-numbers in
+- **Every number the video says, and every ZOOM TARGET, traces to `REPORT.md` or
+  `SUBMISSION_PACK.md`.** Numbers only shown on screen are finding 9. 24 spelled-out spoken figures and 6 digit-numbers in
   the ZOOM TARGET lines, all found. "minus eighteen point nine" is a spoken
   rounding of 18.957, which is in the report.
 - `tools/check_report_numbers.py`: 218 numbers checked, 0 unsupported.
@@ -258,12 +341,15 @@ instead.
   rewrite shortens a net's load delay" absolute, the universal "every published
   optimizer" framing, the 55.805-over-4.925 ratio, and beat 7's withdrawn
   comparison to the best proven RTL transform.
-- Beat 4 is intact at 128 words, and Beat 5's composed-RTL paragraph is present.
+- Beat 4 is intact at 127 words, and Beat 5's composed-RTL paragraph is present.
 - Beat 5's headline negative is real on screen: `repair_composed` `clk_b` 5.046
-  against `repair_gold` 5.283 is the -0.237 the narration states, and the ABC
+  against `repair_gold` 5.283 is the -0.237 behind the narration's "zero, within
+  the flow's own noise", and the ABC
   pair shows `+0.000` on `clk_b`.
 
 ## Phase 2 does not start yet
 
-No audio was generated. No Sarvam call was made. Phase 2 needs a locked silent
-cut and this table signed off, and the cut needs the takes from step 3.
+No audio was generated. No Sarvam call was made. Phase 1 is complete: the silent
+cut is locked and the measured per-beat table is above. Phase 2 starts when that
+table is signed off. Findings 2, 9 and 10 are resolved in the narration, word for
+word, so no take was re-recorded.

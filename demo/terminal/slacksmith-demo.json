@@ -1,0 +1,18 @@
+{
+  "$help": "Windows Terminal fragment for recording the demo. Adds one profile and changes no existing one. Install: copy this file to %LOCALAPPDATA%\\Microsoft\\Windows Terminal\\Fragments\\SlackSmith\\. Remove: delete that folder. Why it exists: at the default 12pt font this 1920x1080, 125%-scaled screen gives 157 columns, measured 2026-09-13, and beat 8's table needs 162 (demo/PHASE1_CUT.md finding 4). Background and foreground match demo/remotion/src/facts.ts so the terminal and the two cards read as one video.",
+  "profiles": [
+    {
+      "name": "SlackSmith demo",
+      "commandline": "wsl.exe -d Ubuntu",
+      "font": { "face": "Cascadia Mono", "size": 11 },
+      "background": "#101214",
+      "foreground": "#e9e6e0",
+      "cursorColor": "#101214",
+      "padding": "10",
+      "scrollbarState": "hidden",
+      "closeOnExit": "never",
+      "bellStyle": "none",
+      "hidden": false
+    }
+  ]
+}

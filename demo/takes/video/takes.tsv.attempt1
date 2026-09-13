@@ -1,0 +1,3 @@
+beat	raw	rec_start_ms	go_ms	offset_s	take_s	corner	glow
+1	recording-1789291312526.mp4	1789291312526	1789291312200	-0.326	18.9	#0F1013	clean
+2	recording-1789291863912.mp4	1789291863912	1789291878079	14.167	29.7	n/a	unchecked
