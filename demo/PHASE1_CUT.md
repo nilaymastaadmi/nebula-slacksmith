@@ -374,6 +374,37 @@ before the zoom (mean difference 0.000) and at the splice (0.03 to 0.12); frames
 150, 610 and 1500 of the spliced file match their sources exactly while their
 neighbours differ; Beat 5's segment length is unchanged at 48.967 s.
 
+**12. Contradiction check by eye, all eight beats, against REPORT.md and
+SUBMISSION_PACK.md at `f4e58fc`.** `demo/takes/video/onscreen_numbers_audit.txt` is
+regenerated: 125 distinct numbers on screen, 61 in neither document (5.600 is
+REPORT's 5.6; `1.184` now matches REPORT section 8). None of the files the screens
+show changed after the takes were recorded. Each screen value was then compared
+with what the documents state for the same quantity, verdicts and labels included.
+
+- **Beats 1, 2, 4, 6, 7, 8: no contradiction.** Beat 2's `set_false_path: 1` now
+  matches REPORT section 4's reset false path. Beat 6's `0.2864` is v3's `clk_e`
+  path; REPORT's 34.4% is case 4 in `docs/path-classification.md` (`clk_b`, v2
+  periods / 6), a different path. Beat 8's confusion matrix, recomputed from
+  `raw.tsv`, equals REPORT section 7.4 cell for cell.
+- **Beat 3: the two retracted verdicts are flagged (finding 11).** One residual,
+  not a contradiction of a REPORT figure: the screen shows four PROVEN transforms,
+  P1, P2, P3 reverted and P6 applied provisionally, and the log ends there (27
+  records, the last an `apply`). The narration says "All three transforms here".
+  REPORT section 7.3 describes the run as P1 to P3. P2's on-screen change, -0.485,
+  is the buffered value REPORT states; REPORT's P table (-1.555, -2.102, -1.615) is
+  the unbuffered batch, so it does not describe this run.
+- **Beat 5: one label disagreement.** `experiments/ppa/fmax/results/table.md` names
+  the after-row capture clock `clk_b` at a 79.500 ns period; REPORT section 8 names
+  it `clk_b_div3`, which the period confirms (3 x 26.500). It is visible inside the
+  3.32x zoom region and not spoken.
+- **Spoken figures: all trace except one.** Beat 6's "sat in every log for three
+  days" is in neither document; it came from `DEMO.md`. The commits give 51.5 hours:
+  6.762 first appears in `fb572f5` (2026-08-31 23:26) and the fix is `bb165ad`
+  (2026-09-03 02:56). Proposed, not applied: "three days" becomes "two days" (word
+  for word), once REPORT section 9 carries the interval.
+- **Document to document, not on screen:** REPORT section 1 says binding paths are
+  59% to 91% fanout-attributable; SUBMISSION_PACK D3 says 58.9% to 98.95%.
+
 ## Verifications that came back clean
 
 - **Every number the video says, and every ZOOM TARGET, traces to `REPORT.md` or
@@ -394,7 +425,7 @@ neighbours differ; Beat 5's segment length is unchanged at 48.967 s.
 ## Phase 2 does not start yet
 
 No audio was generated. No Sarvam call was made. Findings 2, 9, 10 and 11 are
-resolved in the narration; finding 11 also re-took Beat 3 and re-cut Beat 5's first
+resolved in the narration, and finding 12's items are proposals for the main session; finding 11 also re-took Beat 3 and re-cut Beat 5's first
 zoom. Phase 2 starts only when all of these hold:
 
 - the Beat 3 re-take is in the cut: done, `recording-1789314137904.mp4`;

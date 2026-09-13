@@ -1,5 +1,5 @@
 On-screen numbers absent from REPORT.md and SUBMISSION_PACK.md, per beat, from the exact text each screen shows.
-Screens per demo/present.sh; beats 1, 2 (loop), 6 are replays of demo/takes/. Generated 2026-09-13.
+Screens per demo/present.sh; beats 1, 2 (loop), 6 are replays of demo/takes/. Generated 2026-09-13 against REPORT.md and SUBMISSION_PACK.md at f4e58fc.
 
 beat 1: 4 distinct on screen, 3 absent
   30,264, 6,639, 8,274
@@ -13,8 +13,8 @@ beat 3: 19 distinct on screen, 8 absent
 beat 4: 4 distinct on screen, 1 absent
   28.374
 
-beat 5: 62 distinct on screen, 30 absent
-  -0.272, -0.606, -1.399, -1.478, -1.713, -1.716, -1.792, -1.959, -1.988, 1.184, 1.865, 2.235, 3.093, 3.163, 3.950, 30264, 30275, 4.290, 5.046, 5.098, 5.139, 5.277, 5.283, 5.287, 5.600, 534184, 535500, 536403, 537927, 541150
+beat 5: 62 distinct on screen, 29 absent
+  -0.272, -0.606, -1.399, -1.478, -1.713, -1.716, -1.792, -1.959, -1.988, 1.865, 2.235, 3.093, 3.163, 3.950, 30264, 30275, 4.290, 5.046, 5.098, 5.139, 5.277, 5.283, 5.287, 5.600, 534184, 535500, 536403, 537927, 541150
 
 beat 6: 9 distinct on screen, 7 absent
   0.1101, 0.18, 0.2864, 0.349, 0.3684, 0.4277, 0.47
@@ -25,4 +25,4 @@ beat 7: 6 distinct on screen, 2 absent
 beat 8: 7 distinct on screen, 6 absent
   0.01, 0.12, 19997, 19998, 50412, 58886
 
-TOTAL: 125 distinct on-screen numbers, 62 absent from both documents
+TOTAL: 125 distinct on-screen numbers, 61 absent from both documents
