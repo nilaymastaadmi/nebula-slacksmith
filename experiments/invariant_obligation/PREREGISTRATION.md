@@ -147,3 +147,62 @@ number.*
 
 Two proposals, two designs, one invariant. A new obligation type demonstrated
 once is a demonstration, not a method.
+
+---
+
+## Amendment 1, 2026-09-13: a third defect, found while building the invariant proof
+
+**R86. CONFIRMED** before this amendment was written. The derived port list for
+`aes_key_mem` equals the hand-written table exactly: inputs, outputs, clock
+`clk`, reset `reset_n`. The derivation also reports `tv80_mcode` as **purely
+combinational**, 6 inputs and 46 outputs, no clock, no reset, which is itself a
+finding: run 1's model declared a **mapped-state** obligation (branch 4) for a
+module that has no state.
+
+### Defect 3: the gate proves a parameterised module at its defaults
+
+Building the child obligation meant reading how `tv80_mcode` is instantiated:
+
+    tv80s       parameter Mode = 1;              // 1 => Fast Z80
+    tv80_core   tv80_mcode #(Mode, Flag_C, ...)  // passes Mode = 1 down
+    tv80_mcode  parameter Mode = 0;              // its own default
+
+`tv80_mcode` references `Mode` **42 times**. The gate reads the module on its own,
+so both EQY and the miter elaborate it at **`Mode = 0`**, a different decoder
+from the **`Mode = 1`** one the design contains.
+
+**What this does and does not touch:**
+
+- `depth_tv80` **run 2**: EQY PROVEN at `Mode = 0`. Its whole-design netlist at
+  `Mode = 1` is **byte-identical to gold** in `experiments/depth_tv80/`'s
+  survival table, so it is equivalent at the instantiated value regardless. The
+  verdict's conclusion stands; its stated basis was the wrong elaboration.
+- `depth_tv80` **run 3**: EQY PROVEN at `Mode = 0` only. **Its equivalence at
+  `Mode = 1` has never been checked.** It was reverted, so no unproven RTL
+  shipped, but "2 of 3 PROVEN" is overstated by one until it is.
+- `depth_i2c`: **unaffected.** `i2c_master_bit_ctrl`'s `parameter`s are
+  state-encoding constants in the body and it is never instantiated with `#(`.
+- Every benchmark module this gate has proven (`rv32i_core`, `aes_key_mem`): no
+  header parameters overridden at instantiation. **Unaffected**, and checked by
+  reading, which is stated as a limit of this amendment rather than a proof.
+
+**Not repaired in `tools/` in this block.** Threading instantiated parameters from
+the parent into the gate is a real change to how every obligation is elaborated,
+and R87 is mid-run on the current tool. The invariant proof below sets
+`Mode = 1` explicitly, experiment-side, and run 3 is re-checked the same way.
+
+### Predictions added
+
+**R94.** Run 3's transform, re-checked by EQY with `chparam -set Mode 1` on both
+sides, is **PROVEN**. *Prior: moderate. The transform flattens an override
+priority in the tail block; whether that interacts with `Mode`-gated arms has
+not been read.*
+
+**R95.** Run 1's transform, re-gated plainly at `Mode = 1` with no invariant, is
+**not PROVEN**. This replaces R88's framing: R88 is still scored on the repaired
+gate as registered, which elaborates at the default, and R95 asks the same
+question of the decoder that is actually in the design.
+
+The invariant obligation (R90 to R92) is built at `Mode = 1` from the start,
+because an invariant-carrying proof about the wrong elaboration would be the
+same defect with more steps.
