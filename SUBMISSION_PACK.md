@@ -315,7 +315,7 @@ Each with its nearest prior art, conceded where it narrows the claim.
 | D7 interactive demo | **complete.** `demo/explorer.html`, rebuild-checked |
 | **Demo video** | **PENDING.** Script, shot list, build prompt and recording checklist exist; nothing is recorded |
 
-**Pending, in priority order:** the video; one unforced run that proposes, proves *and* **improves** (`experiments/depth_i2c/` now proposes, proves, applies and reverts unforced; the gain was 0.000, so "improves" is still open); a depth-dominated design large enough that a null edit does not move it by 0.4 ns, to fill the survival table's second cell. Composition and the marginal gain after buffering: **done**, `experiments/composed_rtl/`.
+**Pending, in priority order:** the video; one unforced run that proposes, proves *and* **improves**. That is **still open after two designs**: `experiments/depth_i2c/` and `experiments/depth_tv80/` both route RTL unforced 3 of 3 and both prove and revert, gains 0.000, 0.000 and −0.268. The survival table's depth cell was attempted on a design large enough to show a gain (tv80, 3,447 cells, 0.152 ns floor) and **is empty there too**. Composition and the marginal gain after buffering: **done**, `experiments/composed_rtl/`. Closure cost: **done**, `experiments/closure_cost/`.
 
 ## 5c. Overfitting, and testing beyond our own design
 
@@ -358,10 +358,15 @@ open-weight model is a flag and a binary, not a port. **Exercised, not asserted*
 no key and no vendor, the identical request. Zero changes under `tools/`, and it
 **failed**: 1,172 s of CPU inference returned a reply that is not valid JSON,
 part VHDL, module interface not preserved; it never reached G1. Scored 2
-confirmed, 3 wrong, 1 void. That is "portability exercised, capability not
-demonstrated": it says what this loop needs from a model before any verification
-is reached, and nothing about larger open-weight models, since the prompt was
-tuned against Claude Opus 5. **No API key is committed
+confirmed, 3 wrong, 1 void. **Run again with a code-specialised model**
+(`experiments/open_weight_2/`, Qwen2.5-Coder-7B, registered first): the identical
+failure, 1,335 s and invalid JSON. **With Ollama's JSON mode, registered in
+advance as the follow-up, it returned valid JSON in 160 s and failed G1**: no
+port list, reset on the rising edge of an active-low signal. **The wall is the
+engineering, not the envelope.** Across two open-weight models and three runs, no
+proposal reached the formal gate. So: portability exercised twice, capability
+**not demonstrated at 7B on CPU**. Nothing here speaks for 32B or 70B open-weight
+models served over an API, and the prompt was tuned against Claude Opus 5. **No API key is committed
 anywhere**: the token lives in `~/.slacksmith_token` outside the repository and
 `tools/preflight.sh` fails if a credential-shaped string reaches a tracked file.
 
