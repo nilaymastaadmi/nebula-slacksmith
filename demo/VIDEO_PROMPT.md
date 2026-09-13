@@ -75,11 +75,15 @@ report.
 
 ## Step 3. Recordly, the screen
 
-- **Terminal at 110 columns or wider**, or Beat 2's classify lines wrap and
-  become unreadable.
+- **Terminal at 165 columns and 40 rows or larger.** This file said 110 until
+  2026-09-13; the recording measured 110 as too narrow for the classify lines
+  (`demo/PHASE1_CUT.md`, finding 4).
 - Record the beats in `DEMO.md` order, one take per beat.
-- **Beat 2 is the only live compute**, about 45 seconds. If it is slow on the
-  day, pre-run it into a file, play that back, and say so on camera.
+- **Beats 1, 2 and 6 are live compute, not one beat.** Measured on 2026-09-13:
+  beat 1 46.1 s, beat 6 583.0 s (it runs EQY), and beat 2 **93.88 s, 367.8 s and
+  832.8 s** across three runs of one command. This file previously said "Beat 2
+  is the only live compute, about 45 seconds" (finding 8). Pre-run all three into
+  files, play them back, and say so on camera.
 - Cursor-zoom on each **ZOOM TARGET** in `demo/SCRIPT.md`, and nowhere else.
 - Never read a table aloud. Point at one number and let the rest sit there.
 
