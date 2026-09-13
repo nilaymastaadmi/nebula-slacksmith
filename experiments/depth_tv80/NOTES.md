@@ -10,7 +10,7 @@ iterations so the loop's own accept-or-revert step runs.
 
 | run | transform proposed | G1 | G2 | G3 | G4 | gate time | G5 |
 |---|---|---|---|---|---|---|---|
-| 1 | `onehot_mcycle_tail_case_merge` | PASS | PASS | PASS (state-remap) | **UNRESOLVED** | 898 s | — |
+| 1 | `onehot_mcycle_tail_case_merge` | PASS | PASS | PASS (state-remap) | ~~UNRESOLVED~~ **never gated**, see below | 898 s | — |
 | 2 | `casez_parallel_case_hint` | PASS | PASS | PASS | **PROVEN** | 466 s | **REVERT**, −0.894 → −0.894 |
 | 3 | `flatten_mcycle_tail_override_priority` | PASS | PASS | PASS | **PROVEN** | 1,091 s | **REVERT**, −0.894 → **−1.162** |
 
@@ -18,6 +18,15 @@ iterations so the loop's own accept-or-revert step runs.
 classifier reported: the binding path runs through `tv80_mcode`, a parameterised
 microcode decoder, and every proposal attacks its `case` tail one way or
 another.
+
+> **Correction, 2026-09-13.** Run 1's `UNRESOLVED` was not a solver verdict. The
+> sequential gate built its miter on this project's own RV32I port list, elaboration
+> failed on a missing port `halted`, and the gate reported that error as
+> `UNRESOLVED`. `experiments/invariant_obligation/` found it, registered three gate
+> defects before repairing any, re-gated this proposal, proved the parent invariant
+> it depends on, and proved the proposal under it: **PROVEN, and 0.421 ns worse**.
+> R77's count of 2 of 3 PROVEN in-loop is unchanged; runs 2 and 3 went through EQY
+> and were unaffected, and run 3 re-checks PROVEN at the instantiated `Mode = 1`.
 
 ## Scorecard
 

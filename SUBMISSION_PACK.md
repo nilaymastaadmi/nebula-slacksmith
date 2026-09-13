@@ -70,7 +70,7 @@ process.
   no flag; run 2 **proposed, proved (EQY), applied, re-measured and reverted** a
   `(* parallel_case *)` transform that synthesizes to a **byte-identical**
   netlist, 0.000 ns at every level; run 3 drew the same transform; run 1's FSM
-  re-encoding came back UNRESOLVED and was refused. Two harness defects that
+  re-encoding was reported UNRESOLVED and refused; **corrected 2026-09-13**, it was never gated (a gate defect built the miter on the RV32I interface), and re-gated correctly it is REFUTED, uncorroborated (`experiments/invariant_obligation/`). Two harness defects that
   stood between PROVEN and applied were predicted in writing from run 1 and
   confirmed by run 2 before being repaired. A do-nothing control on this
   560-cell design moves unbuffered slack by 0.424 ns, so the depth-side
@@ -307,7 +307,7 @@ Each with its nearest prior art, conceded where it narrows the claim.
 | deliverable | state |
 |---|---|
 | D1 timing analysis framework | **complete** |
-| D2 GenAI optimization engine | **complete with a named limit**: 17 proposals in three provenance tiers, one unattended end-to-end run. **No run has yet both chosen RTL unforced and produced a proven, timing-positive transform.** The router chooses RTL unforced on `i2c`; that run's proposal came back `UNRESOLVED`. The `i2c` proposal REPORT §7.2 once called "PROVEN by EQY, by hand" has **no artifact** (the run script wiped its scratch) and is withdrawn; `experiments/depth_i2c/` re-runs the design three times unattended with everything kept |
+| D2 GenAI optimization engine | **complete with a named limit**: 17 proposals in three provenance tiers, one unattended end-to-end run. **No run has yet both chosen RTL unforced and produced a proven, timing-positive transform.** The router chooses RTL unforced on `i2c`; that run's proposal was reported `UNRESOLVED`, which was almost certainly the same gate defect found on 13 Sept (same module, same branch, same code path; its artifacts were not kept, so this is inferred, not measured). The `i2c` proposal REPORT §7.2 once called "PROVEN by EQY, by hand" has **no artifact** (the run script wiped its scratch) and is withdrawn; `experiments/depth_i2c/` re-runs the design three times unattended with everything kept |
 | D3 critical path analysis | **complete** |
 | D4 optimized RTL | **complete**: one composed optimized RTL ships (`experiments/composed_rtl/`), proven; measured before wires, after the ABC lever and after `repair_design`. Its timing contribution after the physical flow is inside the flow's perturbation floor, and design-level closure comes from `repair_design`, not from RTL |
 | D5 timing, frequency, PPA | **complete.** Before/after for all three, including power at **+47.1%**, measured 2026-09-12 |

@@ -68,7 +68,7 @@ fate is in the replay below.
 
 | run | replay verdict | then |
 |---|---|---|
-| 1 | G1 PASS, G2 PASS, G3 PASS (state-remap), **G4 UNRESOLVED** at the 420 s budget, branch 4 | refused |
+| 1 | G1 PASS, G2 PASS, G3 PASS (state-remap), ~~G4 UNRESOLVED at the 420 s budget~~ **never gated**: elaboration error on the RV32I port list, reported as UNRESOLVED (corrected 2026-09-13, `experiments/invariant_obligation/`); re-gated on the right interface it is REFUTED, uncorroborated | refused |
 | 2 | **G4 PROVEN**, EQY | **applied**, re-measured **−0.396**, **reverted** on G5 |
 | 3 | **G4 PROVEN**, EQY; the spliced variant is byte-identical to run 2's | applied, re-measured −0.396, reverted |
 
