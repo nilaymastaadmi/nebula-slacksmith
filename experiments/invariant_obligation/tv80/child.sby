@@ -3,6 +3,8 @@ plain
 inv
 broken
 run3
+hint
+hint_broken
 
 [options]
 mode prove
@@ -15,6 +17,8 @@ plain: read_verilog -formal gold_mcode.v gate_mcode.v child_miter.sv
 inv: read_verilog -formal -DASSUME_INV gold_mcode.v gate_mcode.v child_miter.sv
 broken: read_verilog -formal -DASSUME_INV gold_mcode.v broken_mcode.v child_miter.sv
 run3: read_verilog -formal gold_mcode.v gate3_mcode.v child_miter.sv
+hint: read_verilog -formal -DASSUME_INV gold_mcode.v hint_mcode.v child_miter.sv
+hint_broken: read_verilog -formal -DASSUME_INV gold_mcode.v hint_broken_mcode.v child_miter.sv
 prep -top child_miter
 
 [files]
@@ -22,4 +26,6 @@ gold_mcode.v
 gate_mcode.v
 broken_mcode.v
 gate3_mcode.v
+hint_mcode.v
+hint_broken_mcode.v
 child_miter.sv
