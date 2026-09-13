@@ -121,22 +121,22 @@ bold value exceeds the recording terminal.
 
 <!-- BEGIN generated -->
 
-`demo/SCRIPT.md` sha256 `185b6f9df4b9eef2`, 10,445 bytes. 150 wpm. Recording terminal 165x40.
+`demo/SCRIPT.md` sha256 `0e1cb0a9570af191`, 10,449 bytes. 150 wpm. Recording terminal 165x40.
 
 | beat | words | floor | zoom | cols | lines | measured | screen |
 |---|---:|---:|:---:|---:|---:|---:|---|
 | Beat 0 | 47 | 19 s |  |  |  |  | Remotion title card |
 | Beat 1 | 45 | 18 s |  | 110 | 5 | 46.1 s | tools/bench_size.py |
 | Beat 2 | 72 | 29 s | yes | **204** | 15 | 832.8 s | the loop, then show_run.py |
-| Beat 3 | 115 | 46 s |  | 148 | 37 | 0.9 s | show_run.py on 3 committed logs |
+| Beat 3 | 116 | 46 s |  | 148 | 37 | 0.9 s | show_run.py on 3 committed logs |
 | Beat 4 | 127 | 51 s | yes | 89 | 30 | 11.4 s | prereg + git log, then the table |
 | Beat 5 | 121 | 48 s | yes | 83 | 7 | 0.3 s | lever table, post-repair, PPA |
 | Beat 6 | 59 | 24 s |  | 85 | 29 | 583.0 s | verdict_regression, classify_regression |
 | Beat 7 | 66 | 26 s | yes | 79 | 9 | 6.0 s | sdc_integrity/run.sh |
 | Beat 8 | 66 | 26 s |  | 162 | **57** | 0.0 s | SlackBench table |
-| **beats** | **718** | **287 s** | | | | | |
+| **beats** | **719** | **288 s** | | | | | |
 
-Title card 5.06 s probed, narrated from its first frame so only its 0.40 s fade out is silent; end card 5.06 s probed. **Floor runtime 292.7 s = 4:53**, window 3:00 to 5:00, 7.3 s slack to the cap.
+Title card 5.06 s probed, narrated from its first frame so only its 0.40 s fade out is silent; end card 5.06 s probed. **Floor runtime 293.1 s = 4:53**, window 3:00 to 5:00, 6.9 s slack to the cap.
 
 **Silent cut, measured** from `demo/takes/video/cut_manifest.json`. Beat 0 is narrated from the title card's first frame: its screen time is the card's fade in and hold together, and only the fade out is silent.
 
@@ -146,7 +146,7 @@ Title card 5.06 s probed, narrated from its first frame so only its 0.40 s fade 
 | title card, fade out | 0.400 s | | | |
 | Beat 1 (raw take, no zoom target) | 19.000 s | 18.0 s | +1.00 s | pass |
 | Beat 2 (Recordly export, zoomed) | 29.767 s | 28.8 s | +0.97 s | pass |
-| Beat 3 (raw take, no zoom target) | 46.600 s | 46.0 s | +0.60 s | pass |
+| Beat 3 (raw take, no zoom target) | 46.600 s | 46.4 s | +0.20 s | pass |
 | Beat 4 (Recordly export, zoomed) | 51.800 s | 50.8 s | +1.00 s | pass |
 | Beat 5 (Recordly export, zoomed) | 48.967 s | 48.4 s | +0.57 s | pass |
 | Beat 6 (raw take, no zoom target) | 24.200 s | 23.6 s | +0.60 s | pass |
@@ -400,10 +400,17 @@ with what the documents state for the same quantity, verdicts and labels include
 - **Spoken figures: all trace except one.** Beat 6's "sat in every log for three
   days" is in neither document; it came from `DEMO.md`. The commits give 51.5 hours:
   6.762 first appears in `fb572f5` (2026-08-31 23:26) and the fix is `bb165ad`
-  (2026-09-03 02:56). Proposed, not applied: "three days" becomes "two days" (word
-  for word), once REPORT section 9 carries the interval.
+  (2026-09-03 02:56).
 - **Document to document, not on screen:** REPORT section 1 says binding paths are
   59% to 91% fanout-attributable; SUBMISSION_PACK D3 says 58.9% to 98.95%.
+
+**Resolved 2026-09-13, main session `54ceb88`.** Beat 6 now says "two days", word for
+word; SUBMISSION_PACK carries the 51.5 h and `DEMO.md` line 256 already said two days.
+Beat 3 now opens "The first three transforms here", +1 word, so
+`tools/script_words.py` prints 719; Beat 3's floor rises to 46.4 s against its 46.6 s
+segment, so no re-take. The `clk_b` label is stated in SUBMISSION_PACK D5, with no screen
+or REPORT change, and PACK D3 now scopes 58.9% and 91.4% (targets) against 98.95% (the
+same path after O1).
 
 ## Verifications that came back clean
 
@@ -429,7 +436,7 @@ resolved in the narration, and finding 12's items are proposals for the main ses
 zoom. Phase 2 starts only when all of these hold:
 
 - the Beat 3 re-take is in the cut: done, `recording-1789314137904.mp4`;
-- `tools/script_words.py` prints 718: done;
+- `tools/script_words.py` prints 719: done (718 after finding 11, 719 after finding 12);
 - the cut measures at or under 300.0 s: done, 298.500 s;
 - the author has signed off the regenerated duration table above: **not yet**.
 

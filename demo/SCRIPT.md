@@ -89,9 +89,9 @@ does not have to guess. Tool names it will get wrong unless told:
 **COVERS:** deliverables 2 and 4
 **SCREEN:** `tools/show_run.py experiments/closed_loop/run_v3_final.jsonl`
 
-> All three transforms here are formally proven correct, and all three make
-> the number worse. The loop reverted each one by itself. This log predates
-> two fixes; its depth and P four verdicts are wrong.
+> The first three transforms here are formally proven correct, and all three
+> make the number worse. The loop reverted each one by itself. This log
+> predates two fixes; its depth and P four verdicts are wrong.
 >
 > The brief names four optimization classes. For most of this project our gate
 > rejected retiming and state re-encoding by construction. Now both go through
@@ -172,7 +172,7 @@ allows it.
 > Our gate once reported a solver timeout as a refutation. Worse, our path
 > classifier undercounted fanout across module boundaries. The giveaway, a six
 > point seven six two nanosecond cell at fanout one, sat in every log for
-> three days. That cell drives three hundred and eighty-seven loads. Both are
+> two days. That cell drives three hundred and eighty-seven loads. Both are
 > regression tests now. Every wrong log stays in the repository.
 
 ---
