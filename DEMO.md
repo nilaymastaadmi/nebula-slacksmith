@@ -253,7 +253,7 @@ ABC pair. Do not say "worse": amendment 2 made R38 VOID, not WRONG
 
 > The second is worse. Our path classifier undercounted fanout across module
 > boundaries. Its own docstring named the tell, "a 6.762 nanosecond cell at
-> fanout 1", and that exact number sat in every log we produced for three
+> fanout 1", and that exact number sat in every log we produced for two
 > days under a DEPTH verdict. The cell drives 387 loads.
 
     python3 tools/classify_regression.py

@@ -83,7 +83,9 @@ process.
 ### D3. Critical path and timing violation analysis
 - `tools/classify_path.py` scores what share of a path's delay comes from cells
   driving ≥32 loads, and routes the fix accordingly.
-- Binding paths measured 58.9% to 98.95% fanout-attributable. Worst single
+- Binding paths measured **58.9%** (batch 1's target) and **91.4%** (the
+  design-level AES path), the range REPORT §1 quotes; after the online
+  proposer's O1 the same path scored 98.95% (`experiments/online_proposer/NOTES.md`). Worst single
   cell: a `nor4_1` at **300 loads** carrying 21.029 of a 30.602 ns path.
 - Regression-checked against OpenSTA's own fanout column on 5 fixtures
   (`tools/classify_regression.py`).
@@ -103,6 +105,11 @@ process.
   group worse**.
 
 ### D5. Timing, frequency and PPA comparison
+- **One label to expect a question about.** `experiments/ppa/fmax/results/table.md`
+  prints the after-repair `clk_b` row's capture clock as `clk_b`; its **79.500 ns**
+  period is `clk_b_div3`'s, the clock REPORT §8 names. The number is right and
+  the label is the group name. The file is generated and is not hand-edited;
+  it is on screen in the video's beat 5.
 - `experiments/ppa/`, REPORT §8.
 - Physical results with placement parasitics: all three groups close,
   `clk_a` −36.723 → **+17.593**, `clk_b` −43.438 → **+12.367**,
@@ -258,7 +265,10 @@ Each with its nearest prior art, conceded where it narrows the claim.
   predicted zero depth violations and got six; the online proposer's O2 and O6
   both missed.
 - **§9 of the report is a list of the project's own errors**, including a
-  classifier that undercounted fanout and invalidated every DEPTH verdict, and
+  classifier that undercounted fanout and invalidated every DEPTH verdict (its
+  giveaway, a 6.762 ns cell at fanout 1, sat in the logs for **two days**: 51.5 h
+  from its first commit, `fb572f5` at 2026-08-31 23:26, to the fix, `bb165ad`
+  at 2026-09-03 02:56), and
   a gate that manufactured a refutation.
 - **Reproducibility verified by running**, not asserted: clean clone at a
   different path, 15 of 15 (`experiments/reproducibility/`); `demo_check.sh`
