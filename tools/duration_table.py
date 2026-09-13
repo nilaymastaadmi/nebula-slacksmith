@@ -51,6 +51,9 @@ BEGIN, END = "<!-- BEGIN generated -->", "<!-- END generated -->"
 # width was already wrong once, and the runtime target is a judgement call.
 WPM = 150
 WINDOW_LO, WINDOW_HI = 180.0, 300.0   # the organisers' 3:00 to 5:00
+# Beat 0 is narrated from the title card's first frame, so the only silent part
+# of that card is its fade out: 12 frames at 30 fps (demo/remotion/src/Fade.tsx).
+TITLE_FADE_OUT = 12 / 30
 WIDTH, HEIGHT = 165, 40               # recording terminal, columns and rows
 
 # What each beat shows, for the take sheet. The commands themselves live in
@@ -182,12 +185,13 @@ def build(args):
     title = probe_seconds(os.path.join(OUT, "title.mp4"))
     end = probe_seconds(os.path.join(OUT, "end.mp4"))
     cards = None if title is None or end is None else title + end
+    silent = None if cards is None else TITLE_FADE_OUT + end
     digest = hashlib.sha256(io.open(SCRIPT, "rb").read()).hexdigest()[:16]
     return {
         "rows": rows, "narration": narration, "title": title, "end": end,
-        "cards": cards, "digest": digest, "bytes": os.path.getsize(SCRIPT),
+        "cards": cards, "silent": silent, "digest": digest, "bytes": os.path.getsize(SCRIPT),
         "zooms": zooms, "beats": beats,
-        "floor": None if cards is None else narration + cards,
+        "floor": None if cards is None else narration + silent,
     }
 
 
@@ -212,7 +216,8 @@ def markdown(d, args):
     if d["cards"] is None:
         L.append("Cards not probed, so no total. Render them and re-run.")
     else:
-        L.append(f"Title card {d['title']:.2f} s probed, end card "
+        L.append(f"Title card {d['title']:.2f} s probed, narrated from its first frame "
+                 f"so only its {TITLE_FADE_OUT:.2f} s fade out is silent; end card "
                  f"{d['end']:.2f} s probed. "
                  f"**Floor runtime {d['floor']:.1f} s = {mmss(d['floor'])}**, "
                  f"window {mmss(WINDOW_LO)} to {mmss(WINDOW_HI)}, "
@@ -243,19 +248,28 @@ def cut_markdown(d):
     man = json.load(io.open(man_path, encoding="utf-8"))
     floors = {r["beat"]: r["floor"] for r in d["rows"]}
     L = ["", "**Silent cut, measured** from `demo/takes/video/cut_manifest.json`. "
-         "Screen time for Beat 0 is the held title card only, excluding its fade in and out.", "",
+         "Beat 0 is narrated from the title card's first frame: its screen time is the card's fade in "
+         "and hold together, and only the fade out is silent.", "",
          "| segment | measured | narration floor | spare | check |",
          "|---|---:|---:|---:|:---:|"]
+    rows = []   # Beat 0 spans two segments, the card's own fade in and a held still
     for label, name, secs, _cum in man["rows"]:
+        if name.startswith(("00a", "00b")):
+            if rows and rows[-1][1] == "00a":
+                secs += rows.pop()[2]
+            rows.append(("Beat 0 narration over the title card, from its first frame", "00a", secs))
+        else:
+            rows.append((label, name, secs))
+    for label, name, secs in rows:
         beat = None
-        if name.startswith("00b"):
+        if name == "00a":
             beat = "Beat 0"
         elif name[:2].isdigit() and name[:2] not in ("00", "99"):
             beat = f"Beat {int(name[:2])}"
         if beat:
             fl = floors[beat]
             ok = "pass" if secs + 1e-6 >= fl else "**FAIL**"
-            L.append(f"| {label} | {secs:.3f} s | {fl:.1f} s | {secs - fl:+.2f} s | {ok} |")
+            L.append(f"| {label} | {secs:.3f} s | {fl:.1f} s | {round(secs - fl, 3) + 0.0:+.2f} s | {ok} |")
         else:
             L.append(f"| {label} | {secs:.3f} s | | | |")
     total = man["cut"]
@@ -332,13 +346,13 @@ def main():
     print(f"  slack to cap    {WINDOW_HI - d['floor']:>7.1f} s")
 
     ceiling = WINDOW_HI / 60 * args.wpm
-    corrected = (WINDOW_HI - d["cards"]) / 60 * args.wpm
+    corrected = (WINDOW_HI - d["silent"]) / 60 * args.wpm
     print(f"\n  tools/script_words.py ceiling   {ceiling:.0f} words"
           f" = {WINDOW_HI:.0f} s narration"
           f" = {WINDOW_HI + d['cards']:.0f} s with cards "
           f"({mmss(WINDOW_HI + d['cards'])})")
-    print(f"  ceiling the {d['cards']:.0f} s of cards leave   {corrected:.0f} words"
-          f" = {WINDOW_HI - d['cards']:.0f} s narration = {WINDOW_HI:.0f} s "
+    print(f"  ceiling the {d['silent']:.1f} s of silent card leave   {corrected:.0f} words"
+          f" = {WINDOW_HI - d['silent']:.0f} s narration = {WINDOW_HI:.0f} s "
           f"with cards ({mmss(WINDOW_HI)})")
     if ceiling > corrected:
         print(f"  -> script_words.py would pass a script "

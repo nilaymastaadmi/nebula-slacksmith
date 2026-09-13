@@ -1,79 +1,80 @@
 {
  "rows": [
   [
-   "title card, fade in and hold",
-   "00a_title_in.mp4",
+   "Beat 0 narration, title card fading in",
+   "00a_beat0_title_in.mp4",
    4.6,
    4.6
   ],
   [
-   "Beat 0 narration over the title card",
+   "Beat 0 narration, title card held",
    "00b_beat0_hold.mp4",
-   18.8,
-   23.4
+   14.2,
+   18.799999999999997
   ],
   [
    "title card, fade out",
    "00c_title_out.mp4",
    0.4,
-   23.799999999999997
+   19.199999999999996
   ],
   [
    "Beat 1 (raw take, no zoom target)",
    "01_beat1.mp4",
    19.0,
-   42.8
+   38.199999999999996
   ],
   [
    "Beat 2 (Recordly export, zoomed)",
    "02_beat2.mp4",
    29.766667,
-   72.566667
+   67.966667
   ],
   [
    "Beat 3 (raw take, no zoom target)",
    "03_beat3.mp4",
-   40.2,
-   112.766667
+   46.6,
+   114.566667
   ],
   [
    "Beat 4 (Recordly export, zoomed)",
    "04_beat4.mp4",
    51.8,
-   164.566667
+   166.366667
   ],
   [
    "Beat 5 (Recordly export, zoomed)",
    "05_beat5.mp4",
    48.966667,
-   213.533334
+   215.333334
   ],
   [
    "Beat 6 (raw take, no zoom target)",
    "06_beat6.mp4",
    24.2,
-   237.73333399999999
+   239.533334
   ],
   [
    "Beat 7 (Recordly export, zoomed)",
    "07_beat7.mp4",
    26.966667,
-   264.700001
+   266.500001
   ],
   [
    "Beat 8 (raw take, no zoom target)",
    "08_beat8.mp4",
    27.0,
-   291.700001
+   293.500001
   ],
   [
    "end card",
    "99_end.mp4",
    5.0,
-   296.700001
+   298.500001
   ]
  ],
- "sum": 296.700001,
- "cut": 296.7,
- "beat0_hold": 18.8
+ "sum": 298.500001,
+ "cut": 298.5,
+ "beat0_hold": 14.200000000000001,
+ "beat0_narration": 18.8
 }

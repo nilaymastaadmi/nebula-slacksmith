@@ -1,7 +1,7 @@
 beat	source_raw	zoom_start_s	zoom_end_s	depth	focus	target
 2	recording-1789293329470.mp4	15.0	31.5	1.8x	manual, top-left	CLASSIFY fanout share 0.9139 and 21.029 ns nor4_1 fanout=300
 4	recording-1789293458887.mp4	36.8	53.8	1.8x	manual, top-left	RESULT.md: 20000 MISSED, EQY 46 seconds; then NOTES trace a = ae19f605
-5	recording-1789293545038.mp4	5.0	18.4	1.8x	manual, top-left	lever table: OpenROAD repair_design +55.805 no yes
+5	recording-1789293545038.mp4	5.0	18.4	1.8x	manual, cx 0.27931 cy 0.425926 (top edge at pixel 160, below the +4.925 row)	lever table: +17.557 and OpenROAD repair_design +55.805 rows only; exported alone, spliced at frame 597
 5	recording-1789293545038.mp4	20.4	40.0	1.8x	manual, top-left	repair_composed vs repair_gold; ABC pair +0.000
 5	recording-1789293545038.mp4	41.8	51.8	1.8x	manual, top-left	Improvement factor 2.799 / 0.844 = 3.32x
 7	recording-1789293708628.mp4	7.5	29.0	1.8x	manual, top-left	baseline_honest -0.319 vs mcp_whole_clk_e 4.860; cell count identical

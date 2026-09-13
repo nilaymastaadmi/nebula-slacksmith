@@ -91,7 +91,7 @@ does not have to guess. Tool names it will get wrong unless told:
 
 > All three transforms here are formally proven correct, and all three make
 > the number worse. The loop reverted each one by itself. This log predates
-> our fanout fix; its depth verdicts are wrong.
+> two fixes; its depth and P four verdicts are wrong.
 >
 > The brief names four optimization classes. For most of this project our gate
 > rejected retiming and state re-encoding by construction. Now both go through
@@ -100,6 +100,8 @@ does not have to guess. Tool names it will get wrong unless told:
 > On that ninety-one percent fanout path, the model ran unattended, lever
 > forced by hand, and proposed a fanout split. Our gate proved it. Measured
 > outside the loop: one point four one four nanoseconds, and no group paid.
+> Where the router picked R T L itself, on two designs, no proven transform
+> helped.
 
 ---
 
