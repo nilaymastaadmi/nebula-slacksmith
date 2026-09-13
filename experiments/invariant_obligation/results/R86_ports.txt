@@ -1,0 +1,17 @@
+inputs   MATCH
+         table:   key:256,keylen:1,init:1,round:4,new_sboxw:32
+         derived: key:256,keylen:1,init:1,round:4,new_sboxw:32
+outputs  MATCH
+         table:   round_key:128,ready:1,sboxw:32
+         derived: round_key:128,ready:1,sboxw:32
+clock    MATCH
+         table:   clk
+         derived: clk
+reset    MATCH
+         table:   reset_n
+         derived: reset_n
+
+R86 CONFIRMED: derived ports equal the trusted table exactly
+
+tv80_mcode, for the record: 6 inputs, 46 outputs, clock=None, reset=None
+  inputs: IR:8,ISet:2,MCycle:7,F:8,NMICycle:1,IntCycle:1
