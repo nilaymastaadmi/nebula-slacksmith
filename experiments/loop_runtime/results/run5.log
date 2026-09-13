@@ -1,0 +1,15 @@
+G0 sdc: bench_top_v2.sdc sha256 3164f5796363d98c 196 lines, timing exceptions {'set_false_path': 1}
+dont_use flags: 72
+engine: sta   clocks: clk_a, clk_b, clk_e
+
+=== iteration 1 ===
+measure: clk_a=1.333  clk_b=-4.957  clk_e=-4.957
+classify clk_b: FANOUT_DOMINATED (fanout share 0.9139) -> physical
+apply: physical lever (abc buffer/upsize/dnsize)
+
+=== iteration 2 ===
+measure: clk_a=12.784  clk_b=12.6  clk_e=20.394
+ALL REPORTED GROUPS MEET. stopping.
+
+wrote /home/toshn/slacksmith_work/loop_runtime/run5/SUMMARY.md
+wrote /home/toshn/slacksmith_work/loop_runtime/run5/decisions.jsonl

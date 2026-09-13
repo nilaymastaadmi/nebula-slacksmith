@@ -1,0 +1,4 @@
+runs 5, closed 5 of 5
+wall s: median 112.7, min 83.9, max 152.7
+cpu s (user+sys): median 112.8, min 84.1, max 152.1
+load1 before: 0.83, 0.98, 1.00, 1.00, 1.04; nproc 16

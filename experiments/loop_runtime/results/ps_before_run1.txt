@@ -1,0 +1,6 @@
+%CPU     ELAPSED COMMAND
+ 7.7       00:14 systemd
+ 5.8       00:12 unattended-upgr
+ 4.5       00:12 wsl-pro-service
+ 4.1       00:06 systemd
+ 2.9       00:12 rsyslogd
