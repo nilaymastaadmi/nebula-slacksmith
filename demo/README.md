@@ -25,7 +25,7 @@ drift from the runs it claims to show. Change a log, rebuild, the page changes.
 **It replays committed logs. It does not run the flow.** Clicking a run does
 not synthesize anything; the numbers were produced by
 `tools/slacksmith.py` when that run happened and are read back here. The live
-compute is beat 2 of `DEMO.md`, which takes about a minute and is real.
+compute is beat 2 of `DEMO.md`, which takes 83.9 to 152.7 s (`experiments/loop_runtime/`) and is real.
 
 The default run selected on load is v2, the one that goes well. The other four
 include the run that reverts three formally proven transforms and the run kept

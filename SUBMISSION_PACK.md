@@ -1,4 +1,4 @@
-# SlackSmith: submission pack, state as of 2026-09-12
+# SlackSmith: submission pack, state as of 2026-09-13
 
 Nebula (Astera Labs @ BITS Pilani Goa), Track A: *Constraint Optimization
 through RTL Enhancement Using Generative AI*.
@@ -21,7 +21,7 @@ process.
 | item | state |
 |---|---|
 | `REPORT.md` | **A4, 15 mm margins, 9.5 pt body at 1.22 leading, 8 pt tables. Measured in a browser, never estimated.** Re-measure after every edit and quote no number from any document, this one included: the figure moved 12.34 -> 15.60 -> under-cap across one day. Compression did 15.6 -> ~12.7 with **no measured result dropped**, removing duplication rather than evidence; margins and leading did the rest, and every setting is disclosed in a footer on the report itself|
-| Demo video | **does not exist.** `DEMO.md` is the 9-beat shot list and `demo/SCRIPT.md` the verbatim narration; `tools/demo_check.sh` runs every command in both and reports **15 pass, 0 fail**, measured 2026-09-11 |
+| Demo video | **silent cut locked at 296.7 s, voice pending** (`demo/PHASE1_CUT.md`). `DEMO.md` is the 9-beat shot list and `demo/SCRIPT.md` the verbatim narration; `tools/demo_check.sh` runs every command in `DEMO.md` and reports **22 pass, 0 fail**, measured 2026-09-13. It held 15 and skipped beat 5 until review 5 found that on the same day |
 | Repository | runs from a clean clone at any path, verified three times (`experiments/reproducibility/`) |
 | Interactive demo | `demo/explorer.html`, generated from committed logs, published |
 | `claude` CLI auth | **working.** Token minted 2026-09-11 and held outside the repository in `~/.slacksmith_token`; `tools/preflight.sh` fails if a credential-shaped string ever reaches a tracked file |
@@ -125,7 +125,7 @@ process.
   `buffer -N 16` alone meets **2 of 3** groups where `buffer; upsize; dnsize`
   (the default `--lever-policy blunt`) meets **1 of 3**, the sizing pass
   trading a met `clk_a` for 3.6% area. `upsize; dnsize` alone meets `clk_b`
-  for **+1.31% area and +1.4% power** with no cell added. Registered
+  for **+1.39% area and +1.4% power** with no cell added. Registered
   predictions R64 to R69 and R83: four confirmed, three missed.
 
 ### D6. Formal equivalence verification report
@@ -262,9 +262,12 @@ Each with its nearest prior art, conceded where it narrows the claim.
   a gate that manufactured a refutation.
 - **Reproducibility verified by running**, not asserted: clean clone at a
   different path, 15 of 15 (`experiments/reproducibility/`); `demo_check.sh`
-  re-run 2026-09-12 from WSL by the fourth review, **15 pass, 0 fail**.
+  re-run 2026-09-12 from WSL by the fourth review, **15 pass, 0 fail**; **22 pass, 0
+  fail** on 2026-09-13 after beat 5 and the parameter guard were added.
 - **The tally is generated**: `tools/tally_predictions.py`, quoted in REPORT
-  §9 and re-run after every registration. REPORT §9 carried a stale hand-written
+  §9 and re-run after every registration. **It was itself wrong until
+  2026-09-13** (every id mention counted); it now self-tests on 13 real lines,
+  including every one that broke it, and reads 35 missed of 105 decided, 127 registered. REPORT §9 carried a stale hand-written
   tally until the fourth review found it.
 
 ---
@@ -272,7 +275,7 @@ Each with its nearest prior art, conceded where it narrows the claim.
 ## 5. Known-open items
 
 1. **`REPORT.md` fits at 9.5 pt, not at 10.5 pt.** Measured, not estimated. Compression took it from 15.6 to 14.0 pages with no measured result dropped; type size took it the rest of the way, and the setting is stated in a footer on the report itself. A judge who expects 11 pt will find this the densest entry in the pile.
-2. **The demo video does not exist.** Shot list and verification script do.
+2. **The demo video is a silent cut; the voice is pending.** Picture locked at 296.7 s (`demo/PHASE1_CUT.md`).
 3. **The unattended backend is N = 1.** One run, one design, one sample
    (`experiments/cli_backend/`). Everything else in this project that says
    "closed loop" means a model in the loop with a human-mediated handoff.
@@ -299,6 +302,27 @@ Each with its nearest prior art, conceded where it narrows the claim.
 9. **One prediction registration this project wrote was flawed** (composed_rtl
    amendment 2, R50: the perturbation spread included the netlist under test).
    Scored as written, flaw disclosed beside the score.
+10. **Gate defect 3: a parameterised module is proven at its header defaults.**
+    Every obligation branch elaborates the module on its own, at its header
+    defaults, so a module the design instantiates with a `#(` override was proven
+    about a different circuit, the one gate defect whose failure is a false PROVEN.
+    **The gate now refuses it**: `CANNOT (parameter override at instantiation)`,
+    checked inside `demo_check.sh` by `tools/param_guard_regression.sh`
+    (`tv80_mcode` reads CANNOT; `rv32i_core` and `aes_key_mem` declare no
+    parameters and are untouched, so no benchmark verdict changes). **The repair,
+    threading instantiated parameters into every branch, is not done**: until it
+    is, parameterised external IP gets CANNOT rather than a proof.
+11. **The loop's default lever is not its best half.** `--lever-policy blunt`
+    applies `buffer; upsize; dnsize` as one step; zero-parasitic, `buffer` alone
+    meets 2 of 3 groups where the pair meets 1 of 3 (`experiments/closure_cost/`).
+    `--lever-policy verdict` exists and `run_v3_fixed` uses it. **The default is
+    unchanged before submission**, and `DEMO.md` beat 2 runs it.
+12. **The loop's wall clock is about two minutes, not the 46.7 s first
+    published.** Five runs: 83.9 to 152.7 s, median 112.7 s, CPU time equal to wall
+    time (`experiments/loop_runtime/`). 46.7 s was one run of a program 29 commits
+    older and is below the whole range.
+13. **The organisers' open-source-key recommendation is not met for the primary
+    result**, which was produced with Claude Opus 5 (§5d).
 
 ---
 
@@ -307,15 +331,15 @@ Each with its nearest prior art, conceded where it narrows the claim.
 | deliverable | state |
 |---|---|
 | D1 timing analysis framework | **complete** |
-| D2 GenAI optimization engine | **complete with a named limit**: 17 proposals in three provenance tiers, one unattended end-to-end run. **No run has yet both chosen RTL unforced and produced a proven, timing-positive transform.** The router chooses RTL unforced on `i2c`; that run's proposal was reported `UNRESOLVED`, which was almost certainly the same gate defect found on 13 Sept (same module, same branch, same code path; its artifacts were not kept, so this is inferred, not measured). The `i2c` proposal REPORT §7.2 once called "PROVEN by EQY, by hand" has **no artifact** (the run script wiped its scratch) and is withdrawn; `experiments/depth_i2c/` re-runs the design three times unattended with everything kept |
+| D2 GenAI optimization engine | **partial.** All four named classes are proposed and routed; 17 proposals in three provenance tiers, one unattended end-to-end run. **No run has both chosen RTL unforced and produced a proven, timing-positive transform, after 17 proposals and three designs**, and the engine has never proposed a pipeline cut that proved. The router chooses RTL unforced on `i2c`; that run's proposal was reported `UNRESOLVED`, which was almost certainly the same gate defect found on 13 Sept (same module, same branch, same code path; its artifacts were not kept, so this is inferred, not measured). The `i2c` proposal REPORT §7.2 once called "PROVEN by EQY, by hand" has **no artifact** (the run script wiped its scratch) and is withdrawn; `experiments/depth_i2c/` re-runs the design three times unattended with everything kept |
 | D3 critical path analysis | **complete** |
-| D4 optimized RTL | **complete**: one composed optimized RTL ships (`experiments/composed_rtl/`), proven; measured before wires, after the ABC lever and after `repair_design`. Its timing contribution after the physical flow is inside the flow's perturbation floor, and design-level closure comes from `repair_design`, not from RTL |
+| D4 optimized RTL | **partial**: one composed optimized RTL ships (`experiments/composed_rtl/`), proven; measured before wires, after the ABC lever and after `repair_design`. Its timing contribution after the physical flow is inside the flow's perturbation floor, and design-level closure comes from `repair_design`, not from RTL |
 | D5 timing, frequency, PPA | **complete.** Before/after for all three, including power at **+47.1%**, measured 2026-09-12 |
 | D6 formal equivalence | **complete.** Five branches, null control, void check. Open: the ABC buffering lever is unproven, and P5's control does not close |
 | D7 interactive demo | **complete.** `demo/explorer.html`, rebuild-checked |
-| **Demo video** | **PENDING.** Script, shot list, build prompt and recording checklist exist; nothing is recorded |
+| **Demo video** | **PENDING: picture locked, voice pending.** Silent cut 296.7 s (`demo/PHASE1_CUT.md`); Sarvam narration not yet added |
 
-**Pending, in priority order:** the video; one unforced run that proposes, proves *and* **improves**. That is **still open after two designs**: `experiments/depth_i2c/` and `experiments/depth_tv80/` both route RTL unforced 3 of 3 and both prove and revert, gains 0.000, 0.000 and −0.268. The survival table's depth cell was attempted on a design large enough to show a gain (tv80, 3,447 cells, 0.152 ns floor) and **is empty there too**. Composition and the marginal gain after buffering: **done**, `experiments/composed_rtl/`. Closure cost: **done**, `experiments/closure_cost/`.
+**Pending, in priority order:** the video; one unforced run that proposes, proves *and* **improves**. That is **still open after two designs**: `experiments/depth_i2c/` and `experiments/depth_tv80/` both route RTL unforced 3 of 3, and four proven transforms across them bought 0.000, 0.000, −0.268 and −0.421. The survival table's depth cell was attempted on a design large enough to show a gain (tv80, 3,447 cells, 0.152 ns floor) and **is empty there too**. Composition and the marginal gain after buffering: **done**, `experiments/composed_rtl/`. Closure cost: **done**, `experiments/closure_cost/`.
 
 ## 5c. Overfitting, and testing beyond our own design
 
@@ -365,7 +389,9 @@ advance as the follow-up, it returned valid JSON in 160 s and failed G1**: no
 port list, reset on the rising edge of an active-low signal. **The wall is the
 engineering, not the envelope.** Across two open-weight models and three runs, no
 proposal reached the formal gate. So: portability exercised twice, capability
-**not demonstrated at 7B on CPU**. Nothing here speaks for 32B or 70B open-weight
+**not demonstrated at 7B on CPU**, and **the organisers' open-source-key
+recommendation is not met for the primary result**, which was produced with
+Claude Opus 5. Nothing here speaks for 32B or 70B open-weight
 models served over an API, and the prompt was tuned against Claude Opus 5. **No API key is committed
 anywhere**: the token lives in `~/.slacksmith_token` outside the repository and
 `tools/preflight.sh` fails if a credential-shaped string reaches a tracked file.
@@ -373,7 +399,8 @@ anywhere**: the token lives in `~/.slacksmith_token` outside the repository and
 ## 5e. The speed-up the organisers asked for, and what we will say instead
 
 They asked entrants to show how AI agents speed up a previously manual
-optimisation workflow. **REPORT §1.1 refuses to state a ratio**, because no
+optimisation workflow. **REPORT §1.1 refuses to state a ratio and quotes the
+count below instead**, because no
 engineer was ever timed doing the work, and a web search on 2026-09-12 found no
 published per-obligation authoring time to borrow. Dividing by a number taken
 from a verification-effort survey would be a category error with a citation

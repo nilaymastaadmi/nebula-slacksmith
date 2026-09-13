@@ -4,9 +4,11 @@ A shot list, not a storyboard. Every command below is real, runs on this
 repository, and the expected output is what it actually printed. Target
 runtime **5 minutes**. Record the terminal; no slides needed except beat 0.
 
-Total live compute in the demo is about **50 seconds** (beat 2). Everything
-else is either instant or replayed from a committed log, so nothing has to be
-waited on with the camera running.
+Live compute in the demo is beat 2's loop, **83.9 to 152.7 s** across five runs
+(`experiments/loop_runtime/`), plus beat 1's Yosys cross-check and beat 6's
+verdict regression (`demo/PHASE1_CUT.md`, finding 8). All three are pre-run and
+played back; everything else is instant or replayed from a committed log, so
+nothing has to be waited on with the camera running.
 
 ---
 
@@ -64,7 +66,12 @@ prints a different number. Quote the one on screen.
       --clock clk_a --clock clk_b --clock clk_e \
       --workdir ~/demo_run --engine sta
 
-Actual output, 2 iterations, **48 to 50 s across two runs on 2026-09-03**,
+It runs the default `--lever-policy blunt`, which applies `buffer; upsize;
+dnsize` as one step; `experiments/closure_cost/` measured `buffer` alone meeting
+more groups, and the default is unchanged before submission.
+
+Actual output, 2 iterations, **83.9 to 152.7 s across five runs on 2026-09-13**
+(`experiments/loop_runtime/`; 48 to 50 s on 2026-09-03),
 exactly as the command prints it:
 
     === iteration 1 ===
@@ -199,7 +206,7 @@ to a seventeenth (REPORT §1).
 Then the one that is worse for us than any of those. One flag on the
 synthesis command, no buffering, no RTL, no placement:
 
-    grep -E "^(A|C) " experiments/flatten_control/results/summary.tsv | cut -f1,5,7
+    grep -P "^(A|C)\t" experiments/flatten_control/results/summary.tsv | cut -f1,5,6
 
 > Synthesizing flat instead of hierarchically moves `clk_a` by **+22.4 ns**.
 > Across the module boundary the mapper can see that our own wrapper ties
