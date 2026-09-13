@@ -432,7 +432,20 @@ def main():
     gate = os.path.join(wd, "gate.v")
     if p.get("variant_file"):
         # Batch 2 proposals are complete rewritten modules, not splices.
-        gate_src = io.open(os.path.join(a.repo, p["variant_file"]), encoding="utf-8").read()
+        vpath = os.path.join(a.repo, p["variant_file"])
+        if not os.path.exists(vpath):
+            # Nine committed proposals record variant_file relative to the
+            # scratch directory they were written in (../../../../../../home/
+            # ...), which resolves from the author's working tree and from no
+            # clone at any other depth. Found 2026-09-13 by the fresh-clone
+            # check. The frozen JSON is not edited; the committed copy beside
+            # it, same file name, is used and the substitution is recorded.
+            beside = os.path.join(os.path.dirname(a.proposal),
+                                  os.path.basename(p["variant_file"]))
+            if os.path.exists(beside):
+                res["variant_file_resolved"] = beside
+                vpath = beside
+        gate_src = io.open(vpath, encoding="utf-8").read()
     else:
         gate_src = splice(src, p)
     def rename(text, suffix):
