@@ -242,3 +242,53 @@ design that would actually ship, and R91 is scoped to the gold design only.*
 
 Timing (step 6, R93) runs after R96, in the same batch, and is scored only if R96
 holds.
+
+---
+
+## Amendment 3, 2026-09-13: test the hypothesis instead of leaving it as one
+
+R93 missed: the transform is proven correct under the invariant and is **0.421 ns
+worse** unbuffered. `NOTES.md` records a mechanism as a hypothesis: the prover was
+given the invariant and the synthesiser was not, so Yosys builds a full decode for
+a `case` whose `2'b11` arm is unreachable and has no way to know it.
+
+That is testable in one synthesis run, and a hypothesis this cheap to test should
+not ship untested. Registered before the variant is built.
+
+### The variant
+
+Run 1's transform with **one change**: `(* full_case, parallel_case *)` on its
+`case ({MCycle[6], MCycle[5]})`. Those two attributes tell synthesis the arms are
+exhaustive and mutually exclusive, which is the invariant expressed in the only
+vocabulary a synthesiser reads. Nothing else in the file changes.
+
+**`full_case` changes synthesis semantics**: it lets the tool treat the uncovered
+`2'b11` as a don't-care. That is only safe because R90 and R96 prove `2'b11` is
+unreachable, so the hinted variant is **re-proven under the same invariant** rather
+than inheriting R91.
+
+### Predictions
+
+**R97.** The hinted variant is **PROVEN** under the same invariant, and a
+null control built the same way as R92 (Inc_PC forced to 0 in the `2'b01` arm) is
+still REFUTED. *Prior: strong. The attributes affect synthesis, and under the
+invariant `2'b11` never occurs.*
+
+**R98.** The hinted variant's unbuffered slack beats the **unhinted** transform's
+`−1.315` by more than the 0.152 ns floor, so better than **−1.163**. *Prior:
+moderate. This is the hypothesis itself.*
+
+**R99.** The hinted variant's unbuffered slack beats **gold's** `−0.894` by more
+than the floor, so better than **−0.742**. *Prior: weak. This is the depth cell.
+R98 can hold while R99 misses, which would mean the hint recovers the transform's
+own loss and nothing more.*
+
+### What each outcome means, declared now
+
+- **R98 holds, R99 holds:** the depth cell has its first entry, and the finding is
+  that a transform correct only under an invariant pays off only when the
+  synthesiser is also given the invariant.
+- **R98 holds, R99 misses:** the mechanism is confirmed and the transform is still
+  not an optimisation. Reported as exactly that.
+- **R98 misses:** the hypothesis is wrong, the regression has some other cause, and
+  `NOTES.md`'s mechanism paragraph is withdrawn rather than left standing.
