@@ -18,8 +18,11 @@ committed with `fa3bc6e`), every prediction written before the step it scores.
 | R94 | run 3 is PROVEN at the instantiated `Mode = 1` | **CONFIRMED** |
 | R95 | run 1 at `Mode = 1` with no invariant is not PROVEN | **CONFIRMED**: FAIL on `eq_TStates` |
 | R96 | the invariant also proves with the transform in place | **CONFIRMED**, both properties |
+| R97 | the synthesis-hinted variant is PROVEN under the invariant; its null control still fails | **CONFIRMED** |
+| R98 | the hinted variant beats the unhinted transform by more than the floor | **WRONG**: identical, to the byte |
+| R99 | the hinted variant beats gold by more than the floor | **WRONG** |
 
-**Ten confirmed, one wrong.**
+**Eleven confirmed, three wrong.**
 
 ## What was proven, end to end
 
@@ -69,22 +72,43 @@ not claimed.
 most principled one: formally proven, aimed at the path's actual depth, and
 requiring an obligation class the project did not have yesterday.
 
-## Why, as a hypothesis and not a finding
+## The mechanism I proposed, withdrawn, and why the test did not test it
 
-The model's reasoning was that bits 5 and 6 are mutually exclusive, so two
-sequential `if` blocks can collapse into one parallel `case`. **The prover was
-told the invariant. The synthesiser was not.** Yosys sees a `case` on two bits
-with an empty `default`, has no reason to treat `2'b11` as unreachable, and builds
-a full decode. The transform's intended saving lives entirely in the don't-care
-that only the formal tool knows about.
+After R93 this file offered a mechanism: the prover was given the invariant and
+the synthesiser was not. Amendment 3 registered a test and declared in advance
+that if R98 missed, this paragraph would be withdrawn. **R98 missed and it is
+withdrawn.** There is no evidence for the mechanism in this repository.
 
-**Not measured.** The test is cheap and specific: hand synthesis the same fact,
-with `(* full_case, parallel_case *)` on the `case` or an explicit don't-care on
-`2'b11`, and time it again. If that recovers a gain, the finding becomes
-**"a transform that is correct only under an invariant can be optimised only by a
-tool that is also given the invariant"**, which is a statement about the gap
-between verification and synthesis in every LLM RTL flow, not about this model.
-It is stated here as a hypothesis because it has not been run.
+**But the declared inference, "the hypothesis is wrong", does not follow from the
+data, and I am correcting my own pre-declared reading rather than letting it
+stand.** The hinted variant's netlists are **byte-identical** to the unhinted
+transform's, in both columns:
+
+    run1 transform          A=50d7ddf5c664f7a3  B=a3f3cc95e3c6a4bf
+    run1 + full/parallel    A=50d7ddf5c664f7a3  B=a3f3cc95e3c6a4bf
+
+Same slack in every column, same 3,422 and 3,511 cells, same area. **The
+attributes did not change what synthesis did at all**, so this experiment never
+handed the synthesiser the invariant. It did not test the hypothesis.
+
+The reason is structural and it is a defect in my test design, not in the tool:
+
+- the transform's `case` already has a `default : ;` arm, which explicitly
+  defines `2'b11` as "assign nothing". `full_case` exists to fill in uncovered
+  values; there were none left to fill.
+- its arms are the distinct constants `2'b01` and `2'b10`, which cannot overlap,
+  so `parallel_case` had nothing to parallelise.
+
+So the hint was a no-op by construction. I should have seen that from the source
+before registering it, and did not.
+
+**The test that would decide it is not run.** It would replace `default : ;` with
+explicit don't-care assignments to the arms' outputs, which is the invariant in a
+form synthesis does act on. Running a second variant after the first came back
+empty is exactly the subject-shopping this project's rules forbid, and the plan
+says not to run more samples than the registration names. **The mechanism stays
+untested, which is weaker than confirmed and also weaker than refuted, and that
+is the state reported.**
 
 ## What changes in the submission
 
@@ -93,6 +117,8 @@ It is stated here as a hypothesis because it has not been run.
   previously published verdict (R87).
 - **Added:** the invariant-carrying obligation, demonstrated once, end to end,
   with its null control.
+- **Withdrawn:** the verification-synthesis mechanism offered for R93. Its test
+  was a no-op by construction (byte-identical netlists), so it is untested.
 - **Unchanged:** no RTL transform on a depth-dominated design has yet produced a
   timing gain. Four proven transforms across two designs: 0.000, 0.000, −0.268,
   and now −0.421.

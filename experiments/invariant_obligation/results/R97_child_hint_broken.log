@@ -1,0 +1,39 @@
+SBY  9:57:23 [child_hint_broken] Removing directory '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/invariant_obligation/tv80/child_hint_broken'.
+SBY  9:57:23 [child_hint_broken] Copy '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/invariant_obligation/tv80/gold_mcode.v' to '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/invariant_obligation/tv80/child_hint_broken/src/gold_mcode.v'.
+SBY  9:57:23 [child_hint_broken] Copy '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/invariant_obligation/tv80/gate_mcode.v' to '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/invariant_obligation/tv80/child_hint_broken/src/gate_mcode.v'.
+SBY  9:57:23 [child_hint_broken] Copy '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/invariant_obligation/tv80/broken_mcode.v' to '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/invariant_obligation/tv80/child_hint_broken/src/broken_mcode.v'.
+SBY  9:57:23 [child_hint_broken] Copy '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/invariant_obligation/tv80/gate3_mcode.v' to '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/invariant_obligation/tv80/child_hint_broken/src/gate3_mcode.v'.
+SBY  9:57:23 [child_hint_broken] Copy '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/invariant_obligation/tv80/hint_mcode.v' to '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/invariant_obligation/tv80/child_hint_broken/src/hint_mcode.v'.
+SBY  9:57:23 [child_hint_broken] Copy '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/invariant_obligation/tv80/hint_broken_mcode.v' to '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/invariant_obligation/tv80/child_hint_broken/src/hint_broken_mcode.v'.
+SBY  9:57:23 [child_hint_broken] Copy '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/invariant_obligation/tv80/child_miter.sv' to '/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/invariant_obligation/tv80/child_hint_broken/src/child_miter.sv'.
+SBY  9:57:23 [child_hint_broken] engine_0: smtbmc yices
+SBY  9:57:23 [child_hint_broken] base: starting process "cd child_hint_broken/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  9:57:27 [child_hint_broken] base: finished (returncode=0)
+SBY  9:57:27 [child_hint_broken] prep: starting process "cd child_hint_broken/model; yosys -ql design_prep.log design_prep.ys"
+SBY  9:57:27 [child_hint_broken] prep: finished (returncode=0)
+SBY  9:57:27 [child_hint_broken] smt2: starting process "cd child_hint_broken/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  9:57:27 [child_hint_broken] smt2: finished (returncode=0)
+SBY  9:57:27 [child_hint_broken] engine_0.basecase: starting process "cd child_hint_broken; yosys-smtbmc -s yices --presat --unroll --noprogress -t 20  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY  9:57:27 [child_hint_broken] engine_0.induction: starting process "cd child_hint_broken; yosys-smtbmc -s yices --presat --unroll -i --noprogress -t 20  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
+SBY  9:57:27 [child_hint_broken] engine_0.basecase: ##   0:00:00  Solver: yices
+SBY  9:57:27 [child_hint_broken] engine_0.induction: ##   0:00:00  Solver: yices
+SBY  9:57:28 [child_hint_broken] engine_0.basecase: ##   0:00:00  Checking assumptions in step 0..
+SBY  9:57:28 [child_hint_broken] engine_0.basecase: ##   0:00:00  Checking assertions in step 0..
+SBY  9:57:28 [child_hint_broken] engine_0.induction: ##   0:00:00  Trying induction in step 20..
+SBY  9:57:28 [child_hint_broken] engine_0.basecase: ##   0:00:00  BMC failed!
+SBY  9:57:28 [child_hint_broken] engine_0.basecase: ##   0:00:00  Assert failed in child_miter: eq_Inc_PC
+SBY  9:57:28 [child_hint_broken] engine_0.basecase: ##   0:00:00  Writing trace to VCD file: engine_0/trace.vcd
+SBY  9:57:28 [child_hint_broken] engine_0.basecase: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_tb.v
+SBY  9:57:28 [child_hint_broken] engine_0.basecase: ##   0:00:00  Writing trace to constraints file: engine_0/trace.smtc
+SBY  9:57:28 [child_hint_broken] engine_0.basecase: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace.yw
+SBY  9:57:28 [child_hint_broken] engine_0.basecase: ##   0:00:00  Status: failed
+SBY  9:57:28 [child_hint_broken] engine_0.basecase: finished (returncode=1)
+SBY  9:57:28 [child_hint_broken] engine_0.basecase: Status returned by engine for basecase: FAIL
+SBY  9:57:28 [child_hint_broken] engine_0.induction: terminating process
+SBY  9:57:28 [child_hint_broken] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:05 (5)
+SBY  9:57:28 [child_hint_broken] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:04 (4)
+SBY  9:57:28 [child_hint_broken] summary: engine_0 (smtbmc yices) returned FAIL for basecase
+SBY  9:57:28 [child_hint_broken] summary: counterexample trace [basecase]: child_hint_broken/engine_0/trace.vcd
+SBY  9:57:28 [child_hint_broken] summary:   failed assertion child_miter.eq_Inc_PC at child_miter.sv:164.9-164.49
+SBY  9:57:28 [child_hint_broken] DONE (FAIL, rc=2)
+SBY  9:57:28 The following tasks failed: ['hint_broken']

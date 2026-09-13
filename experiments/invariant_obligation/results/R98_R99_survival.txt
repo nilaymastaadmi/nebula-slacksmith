@@ -1,0 +1,14 @@
+=== gold_run2 (R60) ===
+gold_run2			-6.072	-2.021	29173	35159		
+
+=== survival table ===
+variant                                        A_unbuffered  B_abc_lever  C_before_repair  C_after_repair  area_before  area_after  cells_A  cells_B  
+gold                                           -0.894        -0.296       -6.072           -2.021          29173        35159       3447     3533     
+ctrl_rename                                    -0.894        -0.296       -6.072           -2.021          29173        35159       3447     3533     
+ctrl_reorder                                   -0.894        -0.296       -6.072           -2.021          29173        35159       3447     3533     
+ctrl_flip                                      -1.046        -0.269       -6.276           -1.646          29100        35259       3429     3520     
+run2_O1_casez_parallel_case_hint               -0.894        -0.296       -6.072           -2.021          29173        35159       3447     3533     
+run3_O1_flatten_mcycle_tail_override_priority  -1.162        -0.473       -6.935           -1.639          29018        34986       3420     3508     
+run1_O1_onehot_mcycle_tail_case_merge          -1.315        -0.447       -6.710           -1.783          29039        35052       3422     3511     
+run1_hinted_full_parallel_case                 -1.315        -0.447       -6.710           -1.783          29039        35052       3422     3511     
+gold_run2                                                                 -6.072           -2.021          29173        35159                         
