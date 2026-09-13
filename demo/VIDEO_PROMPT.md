@@ -96,7 +96,16 @@ python3 tools/script_words.py     # per-beat seconds at 150 wpm
 - Every beat's screen time is **at least** the seconds that tool prints for it,
   or the narration will not fit without speeding it up.
 - Every ZOOM TARGET is on screen long enough to read.
-- No frame shows a number that is not in `REPORT.md` or `SUBMISSION_PACK.md`.
+- **No frame shows an invented number, and no frame shows a number that
+  contradicts `REPORT.md` or `SUBMISSION_PACK.md`**, meaning the same quantity at
+  a different value. A real terminal prints raw output those documents do not
+  carry (iteration slacks, per-row table cells, fixture counts, cycle counts),
+  and that is expected: absence is not the risk, contradiction is. A screen
+  showing a value the report has **retracted** must be flagged in that beat's
+  narration or not shown. Every **spoken** number and every **ZOOM TARGET** must
+  appear in one of the two documents. (Amended 2026-09-13: the literal reading,
+  every on-screen number in the documents, failed 61 of 125 raw terminal values
+  and is unsatisfiable by a real terminal.)
 
 **Phase 1 ends with a locked silent cut and a per-beat duration table.** Hand
 that table over and get it signed off. Do not start phase 2 without it.
@@ -150,9 +159,10 @@ was wrong at step 6 and gets shortened there.
 
 ## Rules that hold in both phases
 
-- **Do not invent a number.** Every figure spoken or shown appears in
-  `REPORT.md` or `SUBMISSION_PACK.md` and is checked by
-  `tools/check_report_numbers.py`. If a number in `demo/SCRIPT.md` looks wrong,
+- **Do not invent a number.** Every figure spoken, and every ZOOM TARGET,
+  appears in `REPORT.md` or `SUBMISSION_PACK.md`, which
+  `tools/check_report_numbers.py` checks. Figures merely visible in raw terminal
+  output must not contradict those documents (phase 1, step 4). If a number in `demo/SCRIPT.md` looks wrong,
   **report it, do not fix it silently.**
 - **Do not extend the runtime.** Anything added comes out of something else, and
   `tools/script_words.py` is the arbiter, not a header.
