@@ -56,39 +56,82 @@ SKIP_LINE = re.compile(r"^\s*(#|>)")
 
 def score_file(path):
     """Return OrderedDict id -> (verdict, line number, line text)."""
+    with io.open(path, encoding="utf-8", errors="replace") as fh:
+        return score_lines(fh)
+
+
+def score_lines(lines):
+    """Score an iterable of lines; see score_file."""
     out = OrderedDict()
     seen = OrderedDict()
-    with io.open(path, encoding="utf-8", errors="replace") as fh:
-        for n, line in enumerate(fh, 1):
-            ids = ["%s%s" % (m.group(1), m.group(2)) for m in ID.finditer(line)]
-            if not ids:
-                continue
-            for i in ids:
-                seen.setdefault(i, n)
-            if SKIP_LINE.match(line):
-                continue
-            verdict = None
-            for name, pat in VERDICTS:
-                if pat.search(line):
-                    verdict = name
-                    break
-            if verdict is None:
-                continue
-            # A line naming several ids scores the FIRST one only. Lines like
-            # "R28 and R29 are VOID" are the exception and are handled by
-            # scoring every id on the line when the line names no other verb.
-            targets = ids if len(ids) <= 2 else ids[:1]
-            for i in targets:
-                out[i] = (verdict, n, line.strip()[:100])
+    for n, line in enumerate(lines, 1):
+        ids = ["%s%s" % (m.group(1), m.group(2)) for m in ID.finditer(line)]
+        if not ids:
+            continue
+        for i in ids:
+            seen.setdefault(i, n)
+        if SKIP_LINE.match(line):
+            continue
+        verdict = None
+        for name, pat in VERDICTS:
+            if pat.search(line):
+                verdict = name
+                break
+        if verdict is None:
+            continue
+        # A line naming several ids scores the FIRST one only. Lines like
+        # "R28 and R29 are VOID" are the exception and are handled by
+        # scoring every id on the line when the line names no other verb.
+        targets = ids if len(ids) <= 2 else ids[:1]
+        for i in targets:
+            out[i] = (verdict, n, line.strip()[:100])
     for i, n in seen.items():
         out.setdefault(i, ("UNSCORED", n, ""))
     return out
 
 
+# Regression fixtures, from review 5 (2026-09-13). Each is a real line from
+# this repository and the verdicts it must produce, and nothing else. The
+# first two are the defects that review found: a prose sentence scored as a
+# verdict, and a cross-reference counted as a registration.
+SELF_TEST = [
+    # experiments/invariant_obligation/NOTES.md line 39: prose, not a score.
+    ("5. **The assumption is not vacuous (R92).** A variant with one assignment wrong",
+     {}),
+    # experiments/closure_cost/PREREGISTRATION.md line 4: references only.
+    ("Predictions **R64 to R69 and R83**; R1 to R63 are in the earlier registrations, "
+     "and R70 to R82 are reserved by `PROMPT_FINAL_2026-09-12.md` for the blocks that follow this one.",
+     {}),
+    # the scorecard row for R92; R91 is mentioned in the verdict cell, not scored.
+    ("| R92 | a broken child is still REFUTED under the same invariant | **CONFIRMED**, so R91 stands |",
+     {"R92": "CONFIRMED"}),
+    ("**R93. WRONG.** The proven transform is 0.421 ns worse.", {"R93": "WRONG"}),
+    ("**R28 and R29 are VOID** under the amendment.", {"R28": "VOID", "R29": "VOID"}),
+    ("| **R64** | A4 adds less than half the area | CONFIRMED |", {"R64": "CONFIRMED"}),
+]
+
+
+def self_test():
+    bad = 0
+    for line, want in SELF_TEST:
+        scored = score_lines([line + "\n"])
+        got = {i: v for i, (v, _n, _t) in scored.items() if v != "UNSCORED"}
+        registered = set(scored)
+        ok = got == want and registered == set(want)
+        bad += 0 if ok else 1
+        print("%s  %s\n      want %s\n      got  verdicts %s, registered %s"
+              % ("PASS" if ok else "FAIL", line[:80], want, got, sorted(registered)))
+    print("self-test: %d of %d fixtures pass" % (len(SELF_TEST) - bad, len(SELF_TEST)))
+    return 1 if bad else 0
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--detail", action="store_true")
+    ap.add_argument("--self-test", action="store_true")
     a = ap.parse_args()
+    if a.self_test:
+        return self_test()
 
     # Registrations declare the predictions; several experiments score them in
     # NOTES.md instead (g7_in_loop's L1 to L4, for one). Reading only the
