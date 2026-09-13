@@ -8,14 +8,14 @@ the five zero-parasitic arms and will be extended, not rewritten.**
 
 | arm | abc script | clk_a | clk_b | clk_e | groups met | cells | buffer-like | area (u²) | area vs A0 | power (W) | power vs A0 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| **A0** | plain `-liberty` | −13.167 | −18.957 | −25.957 | **0 of 3** | 28,844 | 196 | 288,816 | — | 0.282 | — |
-| **A0b** | `_HEAD` only | −13.167 | −18.957 | −25.957 | **0 of 3** | 28,844 | 196 | 288,816 | +0.00% | 0.282 | +0.0% |
-| **A1** | `upsize; dnsize` | −9.270 | **+0.282** | −6.718 | **1 of 3** | 28,844 | 196 | 292,588 | **+1.31%** | 0.286 | +1.4% |
-| **A2** | `buffer -N 16` | **+1.750** | **+5.556** | −1.444 | **2 of 3** | 30,264 | 1,611 | 310,381 | **+7.47%** | 0.299 | +6.0% |
-| **A3** | both (**the loop's lever**) | −1.716 | **+5.600** | −0.606 | **1 of 3** | 30,264 | 1,615 | 299,346 | **+3.65%** | 0.291 | +3.2% |
+| **A0** | plain `-liberty` | −13.167 | −18.957 | −25.957 | **0 of 3** | 46,255 | 247 | 448,840 | baseline | 0.282 | baseline |
+| **A0b** | `_HEAD` only | −13.167 | −18.957 | −25.957 | **0 of 3** | 46,255 | 247 | 448,840 | +0.00% | 0.282 | +0.0% |
+| **A1** | `upsize; dnsize` | −9.270 | **+0.282** | −6.718 | **1 of 3** | 46,255 | 247 | 455,101 | **+1.39%** | 0.286 | +1.4% |
+| **A2** | `buffer -N 16` | **+1.750** | **+5.556** | −1.444 | **2 of 3** | 48,616 | 2,600 | 484,325 | **+7.91%** | 0.299 | +6.0% |
+| **A3** | both (**the loop's lever**) | −1.716 | **+5.600** | −0.606 | **1 of 3** | 48,616 | 2,606 | 466,933 | **+4.03%** | 0.291 | +3.2% |
 
-Area is summed from the liberty's own `area :` values over each netlist, with
-**0 unpriced cells**, because `report_design_area` is an OpenROAD command and
+Area is summed from the liberty's own `area :` values over **every instance** of
+each netlist (`area_hier.py`), with **0 unpriced cells**, because `report_design_area` is an OpenROAD command and
 OpenSTA rejects it (§ below). Power is vector-free at default activity, one
 model for every arm, relative and not a signoff number.
 
@@ -32,7 +32,7 @@ A3 adds over A2, which is `upsize; dnsize`:
 | `clk_b` | **+0.044 ns** |
 | `clk_e` | **+0.838 ns** |
 | `clk_a` | **−3.466 ns**, and that is the difference between meeting and not |
-| area | **−11,035 u², −3.6%** |
+| area | **−17,392 u², −3.6%** |
 | power | **−0.008 W, −2.7%** |
 
 So sizing after buffering is an **area-for-timing trade that nobody in this
@@ -41,7 +41,7 @@ project decided to make**. It saves 3.6% area and gives up a met clock group.
 classifier pick the component; the default is `blunt`, which is A3.
 
 **And sizing alone is the cheapest closure in the table.** A1 meets `clk_b` for
-**+1.31% area and +1.4% power**, with **the same 28,844 cells and the same 196
+**+1.39% area and +1.4% power**, with **the same 46,255 cells and the same 247
 buffer-like cells as the untouched netlist**: it closes a group by changing
 drive strengths, not by adding anything.
 
@@ -55,11 +55,11 @@ A3's deltas against A0 are clean, which is what the arm was for. It also
 demonstrates the `-script` argument is honoured rather than silently dropped,
 because A1, A2 and A3 do differ.
 
-**R69. CONFIRMED.** A1 adds **+1.31%** area, under the predicted 3%.
+**R69. CONFIRMED.** A1 adds **+1.39%** area, under the predicted 3% (first published as +1.31%; see the correction below).
 
 **R68. WRONG in this regime.** Power was predicted to rank the arms in the same
 order as buffer count. It does not. **A3 carries more buffer-like cells than A2
-(1,615 against 1,611) and less power (0.291 W against 0.299 W)**, because
+(2,606 against 2,600) and less power (0.291 W against 0.299 W)**, because
 `dnsize` shrinks cells that buffering had grown. **Power tracks area, not buffer
 count**, in every row of this table. Scored WRONG on the zero-parasitic arms;
 the physical arms are scored separately, as registered.
@@ -76,10 +76,26 @@ which is what OpenROAD sums as well. No arm and no timing number changed.
 
 A second defect, in this file's own first draft: the buffer-count regex
 `sky130_fd_sc_hd__(buf|clkbuf|bufinv|inv)_` reported **0** buffer-like cells in
-the untouched netlist. It cannot match `clkinv_*`, which is what those 196 cells
+the untouched netlist. It cannot match `clkinv_*`, which is what those cells
 are. The corrected count comes from `area_from_liberty.py`. A count of zero in a
-28,844-cell netlist should have been read as a broken regex immediately and was
+netlist this size should have been read as a broken regex immediately and was
 not.
+
+**A third, found by review 5 on 2026-09-13, and it was in the corrected tool.**
+`area_from_liberty.py` sums cell lines in the netlist **text**. A hierarchical
+netlist writes each module once, and `bench_top` instantiates `aes_load` twice
+(`u_aes_b`, `u_aes_e`), so every cell count, buffer count and area in the table
+above was first published for one AES instance and not two: 28,844 and 30,264
+cells, 196, 1,611 and 1,615 buffer-like, 288,816 to 310,381 u², **+1.31%, +7.47%
+and +3.65%**. `area_hier.py` walks the hierarchy and counts each instance. Two
+independent figures check it: A0 comes out at **448,840 u²**, the area OpenROAD's
+`report_design_area` gives the same gold netlist below, and A2 and A3 at
+**48,616 cells**, what `tools/bench_size.py` counts on the flattened buffered
+netlist. The table now carries the per-instance numbers. **No slack and no power
+figure changes**, because OpenSTA links the hierarchy; the ranking of arms by
+area is unchanged; R69 stays CONFIRMED at +1.39%. The relative saving of sizing
+after buffering stays 3.6% of A2's area. Raw output:
+`results/area_zero_parasitic_per_instance.txt`.
 
 ---
 

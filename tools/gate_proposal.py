@@ -92,6 +92,50 @@ def derive_ports(yosys, rtl, module):
     return ins, outs, clk, rst
 
 
+def _strip_comments(text):
+    """Remove comments, keeping every newline so reported line numbers hold."""
+    text = re.sub(r"/\*.*?\*/", lambda m: "\n" * m.group(0).count("\n"), text, flags=re.S)
+    return re.sub(r"//[^\n]*", "", text)
+
+
+def param_override(rtl, module):
+    """Where `module` is instantiated with its parameters overridden, or None.
+
+    Added 2026-09-13 after review 5 (gate defect 3). Every obligation below
+    elaborates the target with `prep -top` / `hierarchy -top`, which uses the
+    module's HEADER DEFAULTS. A module the design instantiates with a `#(`
+    override is then proven about a circuit the design does not contain:
+    tv80_mcode's header default is Mode = 0, and the design passes Mode = 1
+    down through tv80_core (experiments/invariant_obligation/, defect 3). That is the one gate defect whose failure is a false
+    PROVEN, so until parameters are threaded into every branch the gate
+    refuses. The search covers the target file, its directory and the parent
+    directory, non-recursively; a missed parent elsewhere is possible, and a
+    commented-out match is removed first. Refusing on a false match is the
+    safe direction.
+    """
+    src = _strip_comments(open(rtl, encoding="utf-8", errors="replace").read())
+    m = re.search(r"^\s*module\s+" + re.escape(module) + r"\b(.*?)^\s*endmodule\b",
+                  src, re.M | re.S)
+    if m is None or not re.search(r"(?<!local)\bparameter\b", m.group(1)):
+        return None
+    here = os.path.dirname(os.path.abspath(rtl))
+    files = []
+    for d in (here, os.path.dirname(here)):
+        for ext in ("*.v", "*.sv", "*.vh", "*.svh"):
+            files.extend(sorted(glob.glob(os.path.join(d, ext))))
+    inst = re.compile(r"^[ \t]*" + re.escape(module) + r"\s*#\s*\(", re.M)
+    for f in files:
+        try:
+            text = _strip_comments(open(f, encoding="utf-8", errors="replace").read())
+        except OSError:
+            continue
+        hit = inst.search(text) or re.search(r"^[ \t]*defparam\b", text, re.M)
+        if hit:
+            line = text.count("\n", 0, hit.start()) + 1
+            return "%s:%d" % (os.path.relpath(f), line)
+    return None
+
+
 def splice(src, p):
     a, b = p["anchor_start"], p["anchor_end"]
     i = src.find(a)
@@ -447,6 +491,15 @@ def main():
         print(json.dumps(res, indent=2)); return
 
     # ---- G4 formal
+    # Refuse before building any obligation if the design overrides the
+    # target's parameters: every branch below elaborates header defaults.
+    where = param_override(a.rtl, mod)
+    if where:
+        res["G4"] = ("CANNOT (parameter override at instantiation, %s; the gate "
+                     "elaborates header defaults)" % where)
+        print(json.dumps(res, indent=2))
+        return
+
     # Branch selection follows the DECLARED tier, which is the whole point of
     # the typed library. For k=0 with dff_delta==0 the two designs have a 1:1
     # flop correspondence, so the obligation is COMBINATIONAL equivalence and

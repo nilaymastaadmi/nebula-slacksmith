@@ -1,0 +1,7 @@
+| netlist | cells, per instance | buffer-like | area (u^2) | cells, text | unpriced |
+|---|---|---|---|---|---|
+| `cc_A0/A0_mapped.v` | 46255 | 247 | 448840 | 28844 | 0 |
+| `cc_A0b/A0b_mapped.v` | 46255 | 247 | 448840 | 28844 | 0 |
+| `cc_A1/A1_mapped.v` | 46255 | 247 | 455101 | 28844 | 0 |
+| `cc_A2/A2_mapped.v` | 48616 | 2600 | 484325 | 30264 | 0 |
+| `cc_A3/A3_mapped.v` | 48616 | 2606 | 466933 | 30264 | 0 |

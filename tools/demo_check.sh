@@ -61,7 +61,7 @@ fi
 cat $D/b1_cmp.txt
 chk "beat 1 count agrees with yosys flatten" $D/b1_cmp.txt "CROSSCHECK OK"
 
-echo "=== beat 2: the closed loop, live (this is the 60 s of compute)"
+echo "=== beat 2: the closed loop, live (83.9 to 152.7 s over five runs, experiments/loop_runtime/)"
 /usr/bin/time -f "%e s" python3 -u tools/slacksmith.py \
   --sdc sdc/bench_top_v2.sdc \
   --liberty $LIBERTY \
@@ -81,6 +81,8 @@ chk "beat 3 run_v3_fixed"  $D/b3_run_v3_fixed.txt "G5 TOTAL" "REVERT    size" "p
 chk "beat 3 run_v3_flat"   $D/b3_run_v3_flat.txt "clk_a=11.158" "CONFIRM   size" "physical_exhausted"
 
 echo "=== beat 4: registration precedes proposals precedes results"
+cat experiments/llm_proposer/PREREGISTRATION.md | head -30 > $D/b4c.txt 2>&1
+chk "beat 4 registration file opens with its claim" $D/b4c.txt "before any proposer code or any proposal exists"
 git log --diff-filter=A --format='%ad %h %s' --date=short -- \
   experiments/llm_proposer/PREREGISTRATION.md \
   experiments/llm_proposer/proposals/ > $D/b4.txt 2>&1
@@ -99,10 +101,31 @@ print("ORDER OK" if reg is not None and props is not None and reg <= props
 PY
 chk "beat 4 registration ordering" $D/b4.txt "ORDER OK"
 
+# Beat 5 had no section here until review 5 (2026-09-13) found it, while
+# REPORT section 10 and DEMO.md both said this script runs every command in
+# DEMO.md. Its flatten command printed nothing as written (a space where the
+# file has a tab), which is exactly what this script exists to catch.
+echo "=== beat 5: flatten control, composed RTL after the physical flow, PPA"
+grep -P "^(A|C)\t" experiments/flatten_control/results/summary.tsv | cut -f1,5,6 > $D/b5f.txt 2>&1
+cat $D/b5f.txt
+chk "beat 5 flatten moves clk_a from -13.167 to +9.279" $D/b5f.txt $'A\tclk_a\t-13.167' $'C\tclk_a\t9.279'
+cat experiments/composed_rtl/results/post_repair_summary.txt > $D/b5p.txt 2>&1
+chk "beat 5 composed vs gold after repair" $D/b5p.txt "repair_gold" "clk_b=5.283" "repair_composed" "clk_b=5.046"
+cat experiments/composed_rtl/results/abc_buffered_pair.txt > $D/b5a.txt 2>&1
+chk "beat 5 ABC pair is +0.000 on clk_b" $D/b5a.txt "+0.000"
+cat experiments/ppa/fmax/results/table.md > $D/b5t.txt 2>&1
+chk "beat 5 PPA factor" $D/b5t.txt "3.32x" "1.184x"
+
 echo "=== beat 6: the standing verdict regression"
 bash tools/verdict_regression.sh > $D/b6.txt 2>&1
 tail -6 $D/b6.txt
 chk "beat 6 verdict regression" $D/b6.txt "P4" "A2"
+
+echo "=== gate defect 3 guard (not a beat): parameter overrides are refused"
+bash tools/param_guard_regression.sh > $D/pg.txt 2>&1
+cat $D/pg.txt
+chk "tv80_mcode with a #( override reads CANNOT" $D/pg.txt "CANNOT (parameter override at instantiation"
+chk "benchmark modules untouched by the guard" $D/pg.txt "rv32i_core: None" "aes_key_mem: None"
 
 export D
 echo "=== beat 7: the cheat no equivalence checker can catch"

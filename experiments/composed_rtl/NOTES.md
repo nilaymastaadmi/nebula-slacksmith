@@ -262,7 +262,10 @@ composed both time `clk_b` at **+5.600**: delta **0.000**. The unbuffered
 After the mapping-level buffering lever, the composed RTL is worth **0.000
 ns** on `clk_b`. After the full physical flow it is worth **−0.237 ns against
 a five-netlist perturbation spread of 0.24 ns**, with every transform-bearing
-netlist at or below gold and the do-nothing edit at −0.006. The unbuffered
+netlist at most 0.004 ns above gold (A4, +0.004 in the table above; this line
+said "at or below" until 2026-09-13, caught while adding beat 5 to
+`tools/demo_check.sh`) and the do-nothing
+edit at −0.006. The unbuffered
 +5.165 and the with-parasitics +18.792 survive neither lever. "Genuinely,
 measurably slightly worse", written above on the strength of one control, is
 **withdrawn**; what N = 5 supports is *no timing benefit survives, and the
