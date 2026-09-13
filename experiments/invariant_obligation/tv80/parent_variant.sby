@@ -1,0 +1,22 @@
+[tasks]
+excl
+onehot
+
+[options]
+mode prove
+depth 24
+
+[engines]
+smtbmc yices
+
+[script]
+excl: read_verilog -formal O1_tv80_mcode.v parent_inv.sv
+onehot: read_verilog -formal -DONEHOT O1_tv80_mcode.v parent_inv.sv
+chparam -set Mode 1 tv80s
+prep -top tv80s
+async2sync
+setundef -anyseq
+
+[files]
+../../depth_tv80/results/run1/online_variants/O1_tv80_mcode.v
+parent_inv.sv

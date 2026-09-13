@@ -206,3 +206,39 @@ question of the decoder that is actually in the design.
 The invariant obligation (R90 to R92) is built at `Mode = 1` from the start,
 because an invariant-carrying proof about the wrong elaboration would be the
 same defect with more steps.
+
+---
+
+## Amendment 2, 2026-09-13: every proof landed as registered; one soundness gap closed before timing
+
+Results so far, scored in `NOTES.md`: R88, R89, R90, R91, R92, R94 and R95 all
+confirmed. The counterexamples say more than the verdicts:
+
+- **Without the invariant (R95)**, the solver's only way to tell gold from the
+  transform was `MCycle = 7'b1100000`: **bit 6 and bit 5 both set**. That is
+  exactly the input the parent invariant proves unreachable, and exactly the
+  condition the model named in its rationale.
+- **Under the invariant, the deliberately broken variant (R92)** was still caught,
+  at `MCycle = 7'b0101001`, which satisfies the assumption. So the assumption is
+  not vacuous.
+
+### The gap, stated before it is measured
+
+R90 proved the invariant on **gold** `tv80_core`, which contains **gold**
+`tv80_mcode`. But `tv80_mcode`'s outputs feed back into `mcycle`'s next state:
+`MCycles` drives `last_mcycle`, which gates the update. With the transform in
+place, `mcycle` is updated from the **transformed** decoder's outputs.
+
+The argument that this is still sound is standard assume-guarantee induction: if
+the invariant holds at step n, R91 makes the two decoders' outputs identical at
+step n, so the next state matches the gold design, which R90 shows preserves the
+invariant. **That is an argument. This project does not accept an argument where a
+measurement is available, and here one is cheap.**
+
+**R96.** The same invariant, both the two-bit exclusion and full one-hot, proves by
+k-induction on `tv80s` built with the **transformed** `tv80_mcode` in place, at
+`Mode = 1`. *Prior: strong. If it misses, R91's assumption does not hold in the
+design that would actually ship, and R91 is scoped to the gold design only.*
+
+Timing (step 6, R93) runs after R96, in the same batch, and is scored only if R96
+holds.

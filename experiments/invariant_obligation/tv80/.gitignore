@@ -1,0 +1,6 @@
+# SymbiYosys work directories, 4 to 5 MB of solver models each. The logs and
+# the counterexample traces that matter are copied into ../results/.
+/child/
+/child_*/
+/parent/
+/parent_*/
