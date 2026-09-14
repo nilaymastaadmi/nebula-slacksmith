@@ -21,7 +21,7 @@ process.
 | item | state |
 |---|---|
 | `REPORT.md` | **A4, 15 mm margins, 9.5 pt body at 1.22 leading, 8 pt tables. Measured in a browser, never estimated.** Re-measure after every edit and quote no number from any document, this one included: the figure moved 12.34 -> 15.60 -> under-cap across one day. Compression did 15.6 -> ~12.7 with **no measured result dropped**, removing duplication rather than evidence; margins and leading did the rest, and every setting is disclosed in a footer on the report itself|
-| Demo video | **silent cut locked, voice pending.** Its length is the generated table in `demo/PHASE1_CUT.md`; the final length is written here once the voiced cut exists, not before, because the voice can move it. `DEMO.md` is the 9-beat shot list and `demo/SCRIPT.md` the verbatim narration; `tools/demo_check.sh` runs every command in `DEMO.md` and reports **23 pass, 0 fail**, measured 2026-09-14. It held 15 and skipped beat 5 until review 5 found it; the 23rd, added after review 6, checks the parameter guard on an included header |
+| Demo video | **done: 298.500 s, narrated**, measured by `ffprobe` on 2026-09-14 (H.264 video and AAC audio, both 298.500 s). A synthetic Sarvam voice (`bulbul:v3`, 12 calls) under the locked picture, whose video stream is byte-identical to the signed-off silent cut (`demo/PHASE2_VOICE.md`). The file is outside the repository, at `%USERPROFILE%\Videos\slacksmith-demo\slacksmith_demo.mp4`, and is submitted alongside it. `DEMO.md` is the 9-beat shot list and `demo/SCRIPT.md` the verbatim narration; `tools/demo_check.sh` runs every command in `DEMO.md` and reports **23 pass, 0 fail**, measured 2026-09-14. It held 15 and skipped beat 5 until review 5 found it; the 23rd, added after review 6, checks the parameter guard on an included header |
 | Repository | runs from a clean clone at any path, verified three times (`experiments/reproducibility/`) |
 | Interactive demo | `demo/explorer.html`, generated from committed logs, published |
 | `claude` CLI auth | **working.** Token minted 2026-09-11 and held outside the repository in `~/.slacksmith_token`; `tools/preflight.sh` fails if a credential-shaped string ever reaches a tracked file |
@@ -284,7 +284,7 @@ Each with its nearest prior art, conceded where it narrows the claim.
 ## 5. Known-open items
 
 1. **`REPORT.md` fits at 9.5 pt, not at 10.5 pt.** Measured, not estimated. Compression took it from 15.6 to 14.0 pages with no measured result dropped; type size took it the rest of the way, and the setting is stated in a footer on the report itself. A judge who expects 11 pt will find this the densest entry in the pile.
-2. **The demo video is a silent cut; the voice is pending.** Picture locked; its length is in `demo/PHASE1_CUT.md`'s generated table until the voiced cut is final.
+2. **The demo video's narration is a synthetic voice**, Sarvam `bulbul:v3`, not a recorded person; three beats were re-synthesised at pace 1.08 to 1.13 to fit their screens (`demo/PHASE2_VOICE.md`). The video is 298.500 s, 1.5 s inside the 5-minute cap.
 3. **The unattended backend is N = 1.** One run, one design, one sample
    (`experiments/cli_backend/`). Everything else in this project that says
    "closed loop" means a model in the loop with a human-mediated handoff.
@@ -358,9 +358,9 @@ Each with its nearest prior art, conceded where it narrows the claim.
 | D5 timing, frequency, PPA | **complete.** Before/after for all three, including power at **+47.1%**, measured 2026-09-12 |
 | D6 formal equivalence | **complete.** Five branches, null control, void check. Open: the ABC buffering lever is unproven, and P5's control does not close |
 | D7 interactive demo | **complete.** `demo/explorer.html`, rebuild-checked |
-| **Demo video** | **PENDING: picture locked, voice pending.** Silent cut, length in `demo/PHASE1_CUT.md`; Sarvam narration not yet added |
+| **Demo video** | **complete.** 298.500 s with Sarvam narration under the locked picture (`demo/PHASE2_VOICE.md`) |
 
-**Pending, in priority order:** the video; one unforced run that proposes, proves *and* **improves**. That is **still open after two designs**: `experiments/depth_i2c/` and `experiments/depth_tv80/` both route RTL unforced 3 of 3, and four proven transforms across them bought 0.000, 0.000, −0.268 and −0.421. The survival table's depth cell was attempted on a design large enough to show a gain (tv80, 3,447 cells, 0.152 ns floor) and **is empty there too**. Composition and the marginal gain after buffering: **done**, `experiments/composed_rtl/`. Closure cost: **done**, `experiments/closure_cost/`.
+**Pending, in priority order:** a hosted open-weight run (item 13); one unforced run that proposes, proves *and* **improves**. That is **still open after two designs**: `experiments/depth_i2c/` and `experiments/depth_tv80/` both route RTL unforced 3 of 3, and four proven transforms across them bought 0.000, 0.000, −0.268 and −0.421. The survival table's depth cell was attempted on a design large enough to show a gain (tv80, 3,447 cells, 0.152 ns floor) and **is empty there too**. Composition and the marginal gain after buffering: **done**, `experiments/composed_rtl/`. Closure cost: **done**, `experiments/closure_cost/`.
 
 ## 5c. Overfitting, and testing beyond our own design
 
