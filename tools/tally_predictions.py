@@ -213,6 +213,10 @@ SELF_TEST = [
     # experiments/invariant_obligation/PREREGISTRATION.md line 112.
     ("**R88.** Re-gated plainly on the correct interface, the tv80 proposal is **not",
      {"R88": None}),
+    # 2026-09-14: the id sequence passes R99, so three-digit ids must register
+    # and score like two-digit ones.
+    ("**R100.** The hosted model's reply parses as a proposal object.", {"R100": None}),
+    ("**R101. WRONG.** It died at G1.", {"R101": "WRONG"}),
 ]
 
 
