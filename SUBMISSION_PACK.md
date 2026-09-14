@@ -276,7 +276,7 @@ Each with its nearest prior art, conceded where it narrows the claim.
   fail** on 2026-09-13 after beat 5 and the parameter guard were added; **23 pass, 0 fail** on 2026-09-14 with the included-header guard fixture.
 - **The tally is generated**: `tools/tally_predictions.py`, quoted in REPORT
   §9 and re-run after every registration. **It was itself wrong until
-  2026-09-13** (every id mention counted); it now self-tests on 16 real lines, including every one that broke it (review 6 found it still missed the word CORRECT, which left H1 and H2 unscored), and reads 35 missed of 107 decided, 136 registered, 12 unscored (4 of them `open_weight_3` arm B, not yet run). **It reads lettered ids only**, which appear in 15 of the 24 registered experiments; the other nine, SlackBench, the transfer study and batch 1 among them, are outside those counts. REPORT §9 carried a stale hand-written
+  2026-09-13** (every id mention counted); it now self-tests on 16 real lines, including every one that broke it (review 6 found it still missed the word CORRECT, which left H1 and H2 unscored), and reads 35 missed of 107 decided, 136 registered, 8 unscored. **It reads lettered ids only**, which appear in 15 of the 24 registered experiments; the other nine, SlackBench, the transfer study and batch 1 among them, are outside those counts. REPORT §9 carried a stale hand-written
   tally until the fourth review found it.
 
 ---
@@ -343,7 +343,8 @@ Each with its nearest prior art, conceded where it narrows the claim.
     run is still to do.** The one attempt, Gemma 4 31B on a free OpenRouter pool on
     2026-09-14, was rate-limited on all three tries and is VOID, with no reply
     (`experiments/open_weight_3/`, arm A). The local replay with the whole request
-    in context (arm B) runs after the video is assembled.
+    in context (arm B) saw all 5,113 tokens and replied in 3,025 s, past the loop's
+    fixed 1,800 s wait, so it is VOID too; its reply is committed and was not gated.
 
 ---
 

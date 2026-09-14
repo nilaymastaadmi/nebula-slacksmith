@@ -1,0 +1,5 @@
+shim: watching /home/toshn/slacksmith_work/open_weight_3_local/handoff for REQUEST_*.md
+shim: model qwen2.5-coder:7b at http://localhost:11434, default sampling, one sample, json_mode=True, num_ctx=16384
+shim: request O1, 18554 chars -> qwen2.5-coder:7b
+shim: qwen2.5-coder:7b replied in 3025.3 s, 11808 chars
+shim: answered 1 request(s), exiting
