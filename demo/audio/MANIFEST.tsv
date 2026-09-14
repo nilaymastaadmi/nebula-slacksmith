@@ -1,0 +1,10 @@
+file	words	script_words	expected_s	picture_s	flag	audio_s	fits
+beat0.txt	47	47	18.8	18.800			
+beat1.txt	45	45	18.0	19.000			
+beat2.txt	72	72	28.8	29.767			
+beat3.txt	116	116	46.4	46.600			
+beat4.txt	127	127	50.8	51.800			
+beat5.txt	121	121	48.4	48.967			
+beat6.txt	59	59	23.6	24.200			
+beat7.txt	66	66	26.4	26.967			
+beat8.txt	66	66	26.4	27.000			

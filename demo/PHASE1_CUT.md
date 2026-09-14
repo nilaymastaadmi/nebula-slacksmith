@@ -429,7 +429,7 @@ same path after O1).
   the flow's own noise", and the ABC
   pair shows `+0.000` on `clk_b`.
 
-## Phase 2 does not start yet
+## Phase 2 gate, met 2026-09-14
 
 No audio was generated. No Sarvam call was made. Findings 2, 9, 10 and 11 are
 resolved in the narration, and finding 12's items are proposals for the main session; finding 11 also re-took Beat 3 and re-cut Beat 5's first
@@ -438,6 +438,6 @@ zoom. Phase 2 starts only when all of these hold:
 - the Beat 3 re-take is in the cut: done, `recording-1789314137904.mp4`;
 - `tools/script_words.py` prints 719: done (718 after finding 11, 719 after finding 12);
 - the cut measures at or under 300.0 s: done, 298.500 s;
-- the author has signed off the regenerated duration table above: **not yet**.
+- the author has signed off the regenerated duration table above: **signed off 2026-09-14**.
 
 Then Beat 4 first, alone, and the hex witness is not spoken.

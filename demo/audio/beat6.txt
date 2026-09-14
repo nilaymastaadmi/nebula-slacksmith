@@ -1,0 +1,1 @@
+Our gate once reported a solver timeout as a refutation. Worse, our path classifier undercounted fanout across module boundaries. The giveaway, a six point seven six two nanosecond cell at fanout one, sat in every log for two days. That cell drives three hundred and eighty-seven loads. Both are regression tests now. Every wrong log stays in the repository.

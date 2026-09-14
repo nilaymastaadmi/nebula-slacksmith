@@ -1,0 +1,1 @@
+Forty-eight thousand six hundred and sixteen standard cells in five asynchronous clock domains, each generating its own clock in R T L, odd ratios included. Every multi-bit crossing has a gray-code FIFO. There's an R V thirty-two I core and two A E S cores.

@@ -1,0 +1,1 @@
+We couldn't find a published agentic R T L optimizer that changes latency and discharges a formal obligation for it. So we made transforms typed: the declared type picks the proof obligation, which makes latency-changing transforms checkable. Then we measured whether the generative A I half works.

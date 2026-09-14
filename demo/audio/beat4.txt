@@ -1,0 +1,7 @@
+Proposal P four rewrote the A L U's shift arms as a single ternary. It passes every precondition and saves two hundred and eight cells, and it's wrong. A conditional operator takes its signedness from both branches, so pairing a signed branch with an unsigned one quietly turns an arithmetic right shift into a logical one. The instruction breaks for every negative operand.
+
+The file it edited has a six-line comment warning about exactly this, ten lines above the code it changed.
+
+Formal verification caught it in forty-six seconds with a concrete counterexample. The design's own firmware missed it. So did twenty thousand random instruction words.
+
+Catching it came down to stimulus, not severity. Those simulation gates are what agentic R T L tools ship with today.

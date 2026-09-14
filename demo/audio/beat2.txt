@@ -1,0 +1,3 @@
+One command, two iterations, replayed from file, and nobody steering it. Physical lever only. The generative half runs unattended in a separate run.
+
+It didn't guess. Ninety-one percent of that path's delay is in cells driving thirty-two or more loads, and the worst cell burns twenty-one nanoseconds driving three hundred loads. Buffering is built to fix a net's load and R T L isn't, so it went physical without spending a proposal.
