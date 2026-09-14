@@ -49,7 +49,7 @@ HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Prediction ids used across this project's registrations: R (general), C (cli
 # backend), U (unforced), L (G7 in the loop), H (hypotheses).
-ID = re.compile(r"\b([RCULH])(\d{1,2})\b")
+ID = re.compile(r"\b([RCULH])(\d{1,3})\b")
 
 # Verdict vocabulary, longest first so "CONFIRMED in direction" is not read as
 # a plain CONFIRMED by a shorter pattern. The direction-qualified form is its
@@ -70,10 +70,10 @@ SKIP_LINE = re.compile(r"^\s*(#|>)")
 # The id group that opens a line, after list numbering and markdown
 # punctuation: one id, or several joined by "," "and" "&" "/". "R64 to R69" is
 # a range reference and yields only R64.
-_ONE = r"\**`?[RCULH]\d{1,2}\b`?\**"
+_ONE = r"\**`?[RCULH]\d{1,3}\b`?\**"
 LEAD = re.compile(r"^\s*(?:\d+\.\s+)?[#>\-\*\|\s(]*(?P<ids>" + _ONE
                   + r"(?:\s*(?:,|and|&|/)\s*" + _ONE + r")*)")
-ID_ONLY = re.compile(r"[RCULH]\d{1,2}\b")
+ID_ONLY = re.compile(r"[RCULH]\d{1,3}\b")
 # The three characters before a mention, plus a space: does the mention open a
 # sentence? ". R22", "; R57", "**R98".
 SENTENCE_ID = re.compile(r".*(?:[.;]\s|\*\*|[.;]\*\*)\s?$")
