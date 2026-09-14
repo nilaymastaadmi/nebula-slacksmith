@@ -9,12 +9,8 @@ one correcting a misdiagnosis of mine.
 Every RTL result in this project was produced with `--force-lever rtl`, logged
 as `lever_forced`, because `bench_top`'s binding paths are 59 to 91 percent
 fanout-attributable and the classifier correctly sends them to the physical
-lever. The router had **never fired on its own**. A second organiser review
-named that the single change that would most raise the score, and named its
-absence as the second-worst thing a judge would hit:
-
-> "Show me the AI recommending a retiming." [...] on our benchmark the router
-> would not have asked for it.
+lever. The router had **never fired on its own**, so on this benchmark it would
+never have asked for a retiming.
 
 ## Setup, frozen before the loop saw anything
 

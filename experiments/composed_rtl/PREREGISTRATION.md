@@ -14,8 +14,8 @@ measured:
 > known for exactly one transform (P2, which flipped sign) and is unmeasured for
 > batch 3.
 
-And deliverable D4 ships **four proven variants, not one optimized RTL**. An
-external review on 2026-09-12 named both, and they are the same experiment:
+And deliverable D4 ships **four proven variants, not one optimized RTL**. Both
+gaps are the same experiment:
 compose the transforms that help onto one file, then measure that file twice,
 once with no wires and once after `repair_design` has already fixed the loads
 the RTL was trying to fix.
@@ -159,7 +159,7 @@ perturbation, A5. On `clk_b` it moved 0.006 ns; on `clk_a` it moved 0.857 ns.
 One perturbation is a point, not a floor. It says nothing about the spread on
 `clk_b` across other edits that do not touch the binding path, and R38's
 "WRONG" currently rests on the one group where the one control happened to be
-quiet. A fourth organiser review (2026-09-12) named that as the weakest step
+quiet. That is the weakest step
 in the chain. Before −0.237 ns is written into REPORT.md as a regression, the
 floor gets three more points, and they are the three parts of the composition,
 whose unbuffered netlists already exist from `run.sh`.

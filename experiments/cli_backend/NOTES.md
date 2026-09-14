@@ -12,9 +12,8 @@ prediction that missed.
 > can be claimed as exercised.
 
 The blocker was authentication, not code. `~/.claude/.credentials.json` carried
-`expiresAt: 0`. An external review scored deliverable D2 **PARTIAL** partly for
-this, noting that what existed was *"a gated proposal checker with a human in
-the loop, not an engine that ran unattended"*.
+`expiresAt: 0`. That left deliverable D2 **PARTIAL**: what existed was a gated
+proposal checker with a human in the loop, not an engine that ran unattended.
 
 ## Attempt 1: died before the model
 

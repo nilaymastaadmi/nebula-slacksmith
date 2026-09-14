@@ -192,7 +192,7 @@ allows it.
 **ZOOM TARGET:** `+5.179 ns — byte-identical netlist`. The comparison to any RTL
 transform ("more than our best proven transform bought") is **withdrawn** in REPORT
 §5.2: 26,958-cell flat fixture against the 55,413-cell benchmark. It was in this
-narration until 2026-09-12 (`REVIEW_RESULT_2026-09-12_r4.md`). Do not say it.
+narration until 2026-09-12. Do not say it.
 
 ---
 

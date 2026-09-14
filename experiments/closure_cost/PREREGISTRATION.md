@@ -1,7 +1,7 @@
 # Pre-registration: what closure costs, arm by arm
 
 Registered 2026-09-12, before any arm was run. Scored in `NOTES.md` here.
-Predictions **R64 to R69 and R83**; R1 to R63 are in the earlier registrations, and R70 to R82 are reserved by `PROMPT_FINAL_2026-09-12.md` for the blocks that follow this one.
+Predictions **R64 to R69 and R83**; R1 to R63 are in the earlier registrations, and R70 to R82 are reserved for the experiments that follow this one.
 
 ## Why
 

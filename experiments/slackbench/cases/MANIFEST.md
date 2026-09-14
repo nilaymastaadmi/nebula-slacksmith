@@ -68,7 +68,7 @@ Neither is a functional bug, and that is the whole point.
 
 **CDC-1** removes one flop from a two-flop synchronizer. Functionally that is
 a latency change of one cycle and a checker will report exactly that. A
-reviewer reading "latency reduced by 1" may well accept it as intended. The
+human reading "latency reduced by 1" may well accept it as intended. The
 actual defect is that an asynchronous input now has no metastability guard,
 which is invisible to every functional method because metastability is not a
 function.

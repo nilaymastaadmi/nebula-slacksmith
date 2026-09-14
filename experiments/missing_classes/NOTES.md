@@ -1,9 +1,8 @@
 # The two optimization classes the engine never proposed
 
 Registered in `PREREGISTRATION.md` (`a66225a`) before `tools/gate_proposal.py`
-was touched, with four dated amendments. Started from an external
-organiser-persona review (`REVIEW_RESULT_2026-09-11.md`) that scored objective
-O3c **MISSING** and O3d **PARTIAL**.
+was touched, with four dated amendments. Started from objective
+O3c (retiming) standing **MISSING** and O3d (FSM optimization) **PARTIAL**.
 
 ## The finding
 

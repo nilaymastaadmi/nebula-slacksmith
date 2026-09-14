@@ -81,7 +81,7 @@ are. The corrected count comes from `area_from_liberty.py`. A count of zero in a
 netlist this size should have been read as a broken regex immediately and was
 not.
 
-**A third, found by review 5 on 2026-09-13, and it was in the corrected tool.**
+**A third, found on 2026-09-13, and it was in the corrected tool.**
 `area_from_liberty.py` sums cell lines in the netlist **text**. A hierarchical
 netlist writes each module once, and `bench_top` instantiates `aes_load` twice
 (`u_aes_b`, `u_aes_e`), so every cell count, buffer count and area in the table

@@ -4,8 +4,7 @@
 Why this exists. `area_from_liberty.py` sums every cell line in the netlist
 text. A hierarchical netlist writes each module once, and `bench_top`
 instantiates `aes_key_mem`'s parent twice (`u_aes_b`, `u_aes_e`), so the text
-sum counts one AES instance and misses the other. Review 5 (2026-09-13) found
-it: the zero-parasitic arms' 28,844 and 30,264 cells are text counts, and
+sum counts one AES instance and misses the other. Found on 2026-09-13: the zero-parasitic arms' 28,844 and 30,264 cells are text counts, and
 beat 1 of the demo already shows the same text count missing 18,352 cells.
 
 This walks the hierarchy from the top module and multiplies each module's

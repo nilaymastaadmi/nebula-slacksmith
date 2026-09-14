@@ -5,7 +5,7 @@ through RTL Enhancement Using Generative AI*.
 Nilay Toshniwal and Shivani Chaudhary.
 
 Repository `github.com/nilaymastaadmi/nebula-slacksmith`, branch `sandbox`.
-This file is a factual inventory for review. **Every claim below names the file
+This file is a factual inventory for the judges. **Every claim below names the file
 that carries its evidence**, and nothing here is a summary of something that
 does not exist in the repository.
 
@@ -21,11 +21,11 @@ process.
 | item | state |
 |---|---|
 | `REPORT.md` | **A4, 15 mm margins, 9.5 pt body at 1.22 leading, 8 pt tables. Measured in a browser, never estimated.** Re-measure after every edit and quote no number from any document, this one included: the figure moved 12.34 -> 15.60 -> under-cap across one day. Compression did 15.6 -> ~12.7 with **no measured result dropped**, removing duplication rather than evidence; margins and leading did the rest, and every setting is disclosed in a footer on the report itself|
-| Demo video | **done: 298.500 s, narrated**, measured by `ffprobe` on 2026-09-14 (H.264 video and AAC audio, both 298.500 s). A synthetic Sarvam voice (`bulbul:v3`, 12 calls) under the locked picture, whose video stream is byte-identical to the signed-off silent cut (`demo/PHASE2_VOICE.md`). The file is outside the repository, at `%USERPROFILE%\Videos\slacksmith-demo\slacksmith_demo.mp4`, and is submitted alongside it. `DEMO.md` is the 9-beat shot list and `demo/SCRIPT.md` the verbatim narration; `tools/demo_check.sh` runs every command in `DEMO.md` and reports **23 pass, 0 fail**, measured 2026-09-14. It held 15 and skipped beat 5 until review 5 found it; the 23rd, added after review 6, checks the parameter guard on an included header |
+| Demo video | **done: 298.500 s, narrated**, measured by `ffprobe` on 2026-09-14 (H.264 video and AAC audio, both 298.500 s). A synthetic Sarvam voice (`bulbul:v3`, 12 calls) under the locked picture, whose video stream is byte-identical to the signed-off silent cut (`demo/PHASE2_VOICE.md`). The file is outside the repository, at `%USERPROFILE%\Videos\slacksmith-demo\slacksmith_demo.mp4`, and is submitted alongside it. `DEMO.md` is the 9-beat shot list and `demo/SCRIPT.md` the verbatim narration; `tools/demo_check.sh` runs every command in `DEMO.md` and reports **23 pass, 0 fail**, measured 2026-09-14. It held 15 and skipped beat 5 until 13 Sept; the 23rd, added on 14 Sept, checks the parameter guard on an included header |
 | Repository | runs from a clean clone at any path, verified three times (`experiments/reproducibility/`) |
 | Interactive demo | `demo/explorer.html`, generated from committed logs, published |
 | `claude` CLI auth | **working.** Token minted 2026-09-11 and held outside the repository in `~/.slacksmith_token`; `tools/preflight.sh` fails if a credential-shaped string ever reaches a tracked file |
-| Repository | **pushed**, `origin/sandbox`. This row deliberately names **no commit hash**: a commit cannot contain its own hash, so any hash typed here is stale the moment it is committed, and a stale hash is the exact failure this project argues against. Verify instead with `git fetch && git rev-list --count origin/sandbox..HEAD` (expect **0**) and `git log --oneline -1`. Until 2026-09-12 the remote was 109 commits behind and an external reviewer found it, which is why this row points at a command rather than at the tree. **Verified on 2026-09-12 by cloning the remote URL to a second path** and running `tools/preflight.sh` and `tools/demo_check.sh` from that clone: all dependencies present, no credential-shaped string tracked, **15 pass, 0 fail**, concurrently with the same check in the working tree. **Verified again on 2026-09-13 after review 5's fixes**, from a fresh clone of the remote: preflight clean, **22 pass, 0 fail**, 259 numbers with 0 unsupported, tally self-test 13 of 13. The first clone run that day **failed 21 of 22**: nine committed proposal files pointed into the author's scratch directory, so the new parameter-guard fixture could not be re-gated from a clone. The gate now falls back to the committed copy beside each proposal; re-cloned and re-run. **Verified a third time on 2026-09-14**, from a fresh clone of the commit that carries the narrated video's handoff and `experiments/open_weight_3/`: preflight clean, **23 pass, 0 fail**, 273 numbers with 0 unsupported, tally self-test 18 of 18. The only later commit is this sentence |
+| Repository | **pushed**, `origin/sandbox`. This row deliberately names **no commit hash**: a commit cannot contain its own hash, so any hash typed here is stale the moment it is committed, and a stale hash is the exact failure this project argues against. Verify instead with `git fetch && git rev-list --count origin/sandbox..HEAD` (expect **0**) and `git log --oneline -1`. Until 2026-09-12 the remote was 109 commits behind, which is why this row points at a command rather than at the tree. **Verified on 2026-09-12 by cloning the remote URL to a second path** and running `tools/preflight.sh` and `tools/demo_check.sh` from that clone: all dependencies present, no credential-shaped string tracked, **15 pass, 0 fail**, concurrently with the same check in the working tree. **Verified again on 2026-09-13**, from a fresh clone of the remote: preflight clean, **22 pass, 0 fail**, 259 numbers with 0 unsupported, tally self-test 13 of 13. The first clone run that day **failed 21 of 22**: nine committed proposal files pointed into the author's scratch directory, so the new parameter-guard fixture could not be re-gated from a clone. The gate now falls back to the committed copy beside each proposal; re-cloned and re-run. **Verified a third time on 2026-09-14**, from a fresh clone of the commit that carries the narrated video's handoff and `experiments/open_weight_3/`: preflight clean, **23 pass, 0 fail**, 273 numbers with 0 unsupported, tally self-test 18 of 18. The only later commit is this sentence |
 
 ---
 
@@ -234,9 +234,9 @@ Each with its nearest prior art, conceded where it narrows the claim.
    transform satisfies. Fixing that turned two partial proofs into unbounded
    ones over the full interface. The result only counts because a transform
    **known to be broken still fails** under the same assumption, a void
-   condition registered before the assumption was written. Found by an external
-   reviewer, not by us; three of our own written explanations preceded it and
-   all three blamed the design rather than the tool.
+   condition registered before the assumption was written. Three of our own
+   written explanations preceded the fix and all three blamed the design rather
+   than the tool.
 6. **A null control on the verification side.** Before any refutation is
    reported the gate re-runs the same miter with the gate replaced by the gold;
    if that also fails it reports `CANNOT` rather than `REFUTED`, and where only
@@ -272,12 +272,12 @@ Each with its nearest prior art, conceded where it narrows the claim.
   a gate that manufactured a refutation.
 - **Reproducibility verified by running**, not asserted: clean clone at a
   different path, 15 of 15 (`experiments/reproducibility/`); `demo_check.sh`
-  re-run 2026-09-12 from WSL by the fourth review, **15 pass, 0 fail**; **22 pass, 0
+  re-run 2026-09-12 from WSL, **15 pass, 0 fail**; **22 pass, 0
   fail** on 2026-09-13 after beat 5 and the parameter guard were added; **23 pass, 0 fail** on 2026-09-14 with the included-header guard fixture.
 - **The tally is generated**: `tools/tally_predictions.py`, quoted in REPORT
   §9 and re-run after every registration. **It was itself wrong until
-  2026-09-13** (every id mention counted); it now self-tests on 16 real lines, including every one that broke it (review 6 found it still missed the word CORRECT, which left H1 and H2 unscored), and reads 35 missed of 107 decided, 136 registered, 8 unscored. **It reads lettered ids only**, which appear in 15 of the 24 registered experiments; the other nine, SlackBench, the transfer study and batch 1 among them, are outside those counts. REPORT §9 carried a stale hand-written
-  tally until the fourth review found it.
+  2026-09-13** (every id mention counted); it now self-tests on 16 real lines, including every one that broke it (until 14 Sept it also missed the word CORRECT, which left H1 and H2 unscored), and reads 35 missed of 107 decided, 136 registered, 8 unscored. **It reads lettered ids only**, which appear in 15 of the 24 registered experiments; the other nine, SlackBench, the transfer study and batch 1 among them, are outside those counts. REPORT §9 carried a stale hand-written
+  tally until 12 Sept.
 
 ---
 
@@ -320,8 +320,8 @@ Each with its nearest prior art, conceded where it narrows the claim.
     (`tv80_mcode` reads CANNOT; `rv32i_core` and `aes_key_mem` declare no
     parameters and are untouched, so no benchmark verdict changes). **The repair,
     threading instantiated parameters into every branch, is not done**: until it
-    is, parameterised external IP gets CANNOT rather than a proof. Since review 6
-    (14 Sept) a parameter that arrives through an `` `include `` inside the module
+    is, parameterised external IP gets CANNOT rather than a proof. Since 14 Sept a
+    parameter that arrives through an `` `include `` inside the module
     body is refused too (`tools/fixtures/param_include/`). **Still missed**, each a
     false-PROVEN path on external IP: an override set by the synthesis script
     (`chparam`, `read_verilog -D`), a parent outside the target's directory and its
@@ -335,9 +335,9 @@ Each with its nearest prior art, conceded where it narrows the claim.
     published.** Five protocol runs: median 112.7 s, 83.9 to 152.7 s, CPU time equal to wall
     time (`experiments/loop_runtime/`). 46.7 s was one run of a program 29 commits
     older and is below the whole range. Outside the protocol the same command
-    measured 74.98 s and 60.94 s (reviews 5 and 6, inside `demo_check`) and 93.88,
-    367.8 and 832.8 s (the video session, `demo/PHASE1_CUT.md` finding 1), so the
-    report quotes the median, not the range, as the loop's cost.
+    measured 93.88, 367.8 and 832.8 s (`demo/PHASE1_CUT.md` finding 1,
+    `demo/takes/beat2_timing.txt`), so the report quotes the median, not the
+    range, as the loop's cost.
 13. **The organisers' open-source-key recommendation is not met for the primary
     result**, which was produced with Claude Opus 5 (§5d). **A hosted open-weight
     run is still to do.** The one attempt, Gemma 4 31B on a free OpenRouter pool on

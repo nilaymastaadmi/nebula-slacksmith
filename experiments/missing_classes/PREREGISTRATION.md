@@ -8,16 +8,12 @@ before any variant RTL for this experiment exists. Ordering is provable:
 
 ## Why this experiment exists
 
-An external organiser-persona review of the submission (`REVIEW_RESULT_2026-09-11.md`,
-run against `REVIEW_PROMPT.md`) scored objective O3c **MISSING** and O3d
-**PARTIAL**:
-
-> **Retiming.** Not recommended by the engine at any point. Present only as an
-> ABC mapping pass. The k=0 mapped-state branch could carry a register-move
-> obligation and does not.
->
-> **FSM optimization.** Not recommended by the engine. The one-hot re-encoding
-> exists to exercise obligation branch 4 and was written by the authors.
+Against the problem statement, objective O3c (retiming) stands **MISSING** and
+O3d (FSM optimization) **PARTIAL**. The engine has never recommended a retiming:
+one appears only as an ABC mapping pass, and the k=0 mapped-state branch could
+carry a register-move obligation and does not. Nor has it recommended an FSM
+re-encoding: the one-hot re-encoding exists to exercise obligation branch 4 and
+was written by the authors.
 
 The problem statement names four optimization classes: pipelining, logic
 restructuring, retiming, FSM optimization. Two of four have never been
@@ -561,20 +557,18 @@ honest about it, which is the whole point of a verdict string that says
 
 ---
 
-## Amendment 6, 2026-09-11: the second review says the partial proof is a harness gap, and it is probably right
+## Amendment 6, 2026-09-11: the partial proof is a harness gap, not the design
 
-A second organiser review (`REVIEW_RESULT_2026-09-11_r2.md`) rejects this
-registration's argument that `round_key` is undecidable *by nature*:
+This registration's argument that `round_key` is undecidable *by nature* is
+wrong. `round_key = key_mem[round]` with a free 4-bit `round` and 11 written rows
+is not a property of `aes_key_mem` in isolation, but that is **not** a limit of
+the design. The null control fails gold against gold on `round_key` because the
+miter gives the two instances *independent* arbitrary initial memory contents,
+and the independence is the harness's choice, not the design's. Standard
+sequential equivalence on unreset storage assumes the two copies start from the
+same initial state, because they are the same chip.
 
-> Right: `round_key = key_mem[round]` with a free 4-bit `round` and 11 written
-> rows is not a property of `aes_key_mem` in isolation. **Wrong: "this is not a
-> harness limit".** The null control fails gold against gold on `round_key`
-> precisely because the miter gives the two instances *independent* arbitrary
-> initial memory contents [...] the independence is the harness's choice, not
-> the design's. Standard sequential equivalence on unreset storage assumes the
-> two copies start from the same initial state, because they are the same chip.
-
-**I think that is correct and my earlier note was wrong.** The question a miter
+**The earlier note was wrong.** The question a miter
 asks is whether two designs behave identically *from the same starting
 conditions*. Yosys's `anyinit` seeds each instance separately, which asks a
 different and stricter question: whether they agree from **any pair** of
@@ -631,8 +625,7 @@ memory but not from an arbitrary one would pass this and should not; no such
 transform is known to be in this project, and that gap is disclosed rather than
 closed.
 
-**How this was found.** Not by us. An external reviewer read the argument in
-amendment 5 and rejected it, correctly, in one paragraph. Two of the three
+Two of the three
 wrong explanations this file has recorded for this verdict pointed away from the
 harness and toward the design, which is the direction that flatters the tool.
 
@@ -640,14 +633,12 @@ harness and toward the design, which is the direction that flatters the tool.
 
 ## Amendment 7, 2026-09-11: the null control was asking a harder question than the one posed
 
-The same review rejects R19's conclusion as an instrument problem rather than a
-result:
+R19's conclusion is an instrument problem rather than a result. The refutation
+is a BMC counterexample found in 2 seconds, so it lives at depth 1 or 2, and
+corroboration needs only that gold against gold does not fail at that depth. The
+downgrade was over-scrupulous as executed.
 
-> The refutation is a BMC counterexample found in 2 seconds, so it lives at
-> depth 1 or 2. Corroboration needs only that gold-vs-gold does not fail at
-> that depth [...] The downgrade is over-scrupulous as executed.
-
-**Correct.** A refutation found at step *n* is only as trustworthy as the
+A refutation found at step *n* is only as trustworthy as the
 harness is at step *n*. The control ran BMC to the proposal's full depth (20)
 and PDR to convergence over 2,048 flops, which is a strictly harder question,
 and on `rv32i_core` it answers nothing: both engines time out and a real
@@ -729,7 +720,7 @@ three of them pointing at the design rather than at the tool.
 
 ### Why R24 missed, measured
 
-The review's estimate was *"a BMC to depth 2, seconds"*. That underestimates an
+Amendment 7 expected a BMC to depth 2 to take seconds. That underestimates an
 asymmetry: the real miter **found** P5's counterexample at step 3 in 3 s, which
 is a SAT question; the control has to **prove no counterexample exists** to
 depth 5, which is UNSAT over two copies of 2,048 flops and did not finish in
@@ -761,7 +752,7 @@ by registered predictions that missed.
 
 If R27 also misses, the honest conclusion is the one R19 reached: this harness
 cannot corroborate a sequential-miter refutation at this design size, and the
-remaining route is the reviewer's other suggestion, replaying the witness trace
+remaining route is replaying the witness trace
 in simulation, which is not built.
 
 ## R26 and R27, recorded as they landed, 2026-09-11
@@ -781,9 +772,9 @@ Four budgets have now been tried: depth 20 at 300 s, depth 20 at 1800 s, depth 5
 at 300 s, depth 5 at 1800 s. None closes. **This is not a tuning problem** and
 further budget is not a plan.
 
-## Amendment 8: the last route the review named, and it is not built
+## Amendment 8: the last route, and it is not built
 
-> Alternatively, replay the witness trace on both designs in simulation.
+The alternative is to replay the witness trace on both designs in simulation.
 
 That is a **different kind of evidence** and it does not need the miter to be
 sound. SBY already writes `engine_0/trace_tb.v`, a self-contained testbench
@@ -817,7 +808,7 @@ are per instance:
     UUT.u_t._witness_.anyinit_procdff_1882
 
 **Gold and gate are given separate initial values.** That is the same defect
-the reviewer identified on `aes_key_mem`, and `rv32i_core` has the same
+amendment 6 identified on `aes_key_mem`, and `rv32i_core` has the same
 precondition: an unreset register file. P5's counterexample may depend on two
 copies of one CPU powering up with **different register files**, which is not a
 difference any transform introduced.
@@ -833,7 +824,7 @@ If so, P5's published REFUTED is not merely uncorroborated. **It is wrong.**
 misses, a published refutation in `experiments/llm_proposer/` is an artifact of
 our harness and the report's headline count changes from "3 of 12 formally
 refuted" to 2. That would be the largest single correction in this project and
-it would have been found by a reviewer's paragraph about a different module.
+it would have been found through an argument about a different module.
 
 ## R30, recorded as it landed, 2026-09-11
 

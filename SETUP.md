@@ -90,7 +90,7 @@ regenerates them. Their **results are committed** under each experiment's
 `results/` and `NOTES.md`, so the record is checkable even where the run is
 expensive to repeat.
 
-This is stated rather than hidden. A reviewer should know which claims they can
+This is stated rather than hidden. A reader should know which claims they can
 re-derive in two minutes and which would cost them an afternoon of synthesis.
 
 ## Logs keep their absolute paths

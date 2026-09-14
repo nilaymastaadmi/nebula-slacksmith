@@ -1,4 +1,4 @@
-// Fixture for tools/param_guard_regression.sh (review 6, 2026-09-14). W is
+// Fixture for tools/param_guard_regression.sh (2026-09-14). W is
 // declared in pi_params.vh, so no parameter declaration appears in this module
 // body, and pi_top.v overrides it. The guard must refuse this module.
 module pi_child (a, y);

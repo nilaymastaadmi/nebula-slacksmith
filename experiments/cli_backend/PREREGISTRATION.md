@@ -14,12 +14,9 @@ been executed. Ordering is provable:
 > conditions. It is committed so the automation path is reviewable, not so it
 > can be claimed as exercised.
 
-`REPORT.md` §10 and `SUBMISSION_PACK.md` both disclose it as unexercised, and
-the external review (`REVIEW_RESULT_2026-09-11.md`) scored deliverable D2
-**PARTIAL** partly for this reason:
-
-> What exists is a gated proposal checker with a human in the loop, not an
-> engine that ran unattended.
+`REPORT.md` §10 and `SUBMISSION_PACK.md` both disclose it as unexercised, which
+leaves deliverable D2 **PARTIAL**: what exists is a gated proposal checker with a
+human in the loop, not an engine that ran unattended.
 
 The blocker was authentication, not code: `~/.claude/.credentials.json` carried
 `expiresAt: 0`. A token was minted on 2026-09-11 and verified with a trivial

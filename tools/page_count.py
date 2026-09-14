@@ -6,7 +6,7 @@ by dividing the rendered sheet's continuous pixel height by one page's text
 height. That number is not a page count. It assumes content flows across page
 boundaries without penalty, and it does not: a table or a heading that will not
 fit is pushed whole to the next page, so a document measuring 11.85 "pages"
-continuous printed as **13**. An external reviewer found that by printing it,
+continuous printed as **13**. That was found by printing it,
 which is the only way to find it.
 
 The lesson is the project's own: a proxy that has never been checked against

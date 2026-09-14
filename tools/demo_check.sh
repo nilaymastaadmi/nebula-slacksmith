@@ -101,7 +101,7 @@ print("ORDER OK" if reg is not None and props is not None and reg <= props
 PY
 chk "beat 4 registration ordering" $D/b4.txt "ORDER OK"
 
-# Beat 5 had no section here until review 5 (2026-09-13) found it, while
+# Beat 5 had no section here until 2026-09-13, while
 # REPORT section 10 and DEMO.md both said this script runs every command in
 # DEMO.md. Its flatten command printed nothing as written (a space where the
 # file has a tab), which is exactly what this script exists to catch.

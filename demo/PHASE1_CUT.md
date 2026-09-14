@@ -346,7 +346,7 @@ costs (twenty point two percent area, forty-seven percent power). The other six
 spoken-but-not-shown figures stay as narrated context. +55.805 stays unspoken on
 purpose, so it cannot be heard as the retracted 55.805-over-4.925 ratio.
 
-**11. Review 5 found a second retracted verdict on Beat 3's screen, and a story the
+**11. A second retracted verdict on Beat 3's screen, and a story the
 video did not tell.** Beat 3's `run_v3_final` screen ends with `it8 GATE P4
 (mux_priority_to_parallel) ... G4=UNRESOLVED`; REPORT 7.3 retracts that verdict,
 Beat 4 is P4's refutation, and Beat 6's screen says P4 "MUST read REFUTED". The

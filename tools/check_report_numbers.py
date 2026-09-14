@@ -2,7 +2,7 @@
 """Check that every distinctive number in REPORT.md appears somewhere in the
 evidence, and flag the ones that do not.
 
-Why this exists. On 2026-09-11 an external reviewer found three numbers where
+Why this exists. On 2026-09-11 three numbers were found where
 REPORT.md and SUBMISSION_PACK.md disagreed. Compressing the report the same day
 surfaced two more that disagreed with their own experiment notes: §7.5 said "6
 of 16 findings are noise" when that directory's own NOTES had already corrected
@@ -41,8 +41,8 @@ BORING = {
 }
 
 # Where evidence is allowed to live. The report and the pack are the CLAIMS;
-# they cannot corroborate each other, which is exactly the failure mode the
-# reviewer found.
+# they cannot corroborate each other, which is exactly the failure mode found
+# on 2026-09-11.
 EVIDENCE_DIRS = ["experiments", "tools", "rtl", "sdc", "docs", "demo"]
 
 

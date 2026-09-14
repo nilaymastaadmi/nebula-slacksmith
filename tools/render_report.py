@@ -17,8 +17,7 @@ registered experiment to satisfy a formatting constraint. The settings
 are stated in a footer line on the report itself rather than left for a
 reader to infer.
 The 10.39 above is a historical measurement of a 6,244-word revision and was
-read as current by an external reviewer on 2026-09-11, who then reported the
-repository as contradicting itself. Measured 2026-09-11 at 8,073 source words:
+read as current on 2026-09-11, so the repository contradicted itself. Measured 2026-09-11 at 8,073 source words:
 **12.36 pages, over the 12-page cap.** A figure baked into a comment ages into
 a false claim, which is the same failure mode as the hard-coded paths this
 project already fixed once.

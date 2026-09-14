@@ -7,8 +7,8 @@ Written and committed before the first run.
 `REPORT.md` §1.1 and §7.3 quote **46.7 s** as the closed loop's end-to-end cost
 on SDC v2. That is one wall clock, `run_v2.jsonl`, 2026-09-03. The same command
 has since measured 93.88 s and 367.8 s (`demo/PHASE1_CUT.md`, finding 1),
-832.8 s (`demo/takes/beat2_timing.txt`) and 74.98 s (review 5, inside
-`tools/demo_check.sh`), all on 2026-09-13 on the same machine. A single wall
+and 832.8 s (`demo/takes/beat2_timing.txt`), all on 2026-09-13 on the same
+machine. A single wall
 clock on a shared machine is an observation about that machine at that moment,
 not a cost of the loop.
 

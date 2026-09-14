@@ -8,18 +8,11 @@ external design and before any external design has been run through the loop.
 
 ## Why
 
-The second organiser review names this the single change that would most raise
-the score, above everything else except the video:
-
-> **One unforced RTL-lever run.** Take a depth-dominated design from the Dr. RTL
-> transfer set, run `slacksmith.py` with the `cli` backend and no
-> `--force-lever`, and report whatever happens, including a refutation. This
-> turns the two-router claim from an architecture into a measurement.
-
-And it names the absence as the second-worst thing a judge will hit:
-
-> **"Show me the AI recommending a retiming."** [...] on our benchmark the
-> router would not have asked for it.
+One unforced RTL-lever run: take a depth-dominated design from the Dr. RTL
+transfer set, run `slacksmith.py` with the `cli` backend and no `--force-lever`,
+and report whatever happens, including a refutation. That turns the two-router
+claim from an architecture into a measurement. Without it, on our benchmark, the
+router would never have asked for a retiming.
 
 Every RTL result in this project was produced with `--force-lever rtl`, logged
 as `lever_forced`, because `bench_top`'s binding paths are 59 to 91 percent

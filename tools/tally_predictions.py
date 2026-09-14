@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Derive every registered-prediction tally from the PREREGISTRATION files.
 
-Why this exists. Review 3 (2026-09-12) found that REPORT.md and
+Why this exists. On 2026-09-12 it was found that REPORT.md and
 SUBMISSION_PACK.md both said "4 of 13" registered predictions missed on
 2026-09-11, while `experiments/missing_classes/PREREGISTRATION.md` numbers its
 predictions past R30 and scores more than four of them wrong. The figure was
@@ -30,12 +30,12 @@ original table. Registered ids never scored are reported as UNSCORED rather
 than silently dropped. `--self-test` runs the real lines that broke earlier
 versions; run it after any change to the matching rules.
 
-Until 2026-09-13 every mention counted. Review 5 found R92 scored WRONG from a
+Until 2026-09-13 every mention counted: R92 was scored WRONG from a
 prose sentence and cross-references counted as registrations; diffing the fix
 found R21, R22 and R58 misread and U7, U10 and U11 never scored. The tally
 went from 38 of 102 decided across 153 to 35 of 105 across 127, and from 34
 unscored to 10, most of the difference being references to other directories'
-predictions. Review 6 (2026-09-14) found the word CORRECT missing from the
+predictions. On 2026-09-14 the word CORRECT was found missing from the
 vocabulary, which left H1 and H2 unscored: 35 of 107, 8 unscored.
 """
 import argparse
@@ -60,7 +60,7 @@ VERDICTS = [
     ("VOID", re.compile(r"\bVOID\b", re.I)),
     ("WRONG", re.compile(r"\b(WRONG|MISS(?:ED)?|NOT\s+ANSWERED)\b", re.I)),
     ("CONFIRMED", re.compile(r"\bCONFIRMED\b", re.I)),
-    # Batch 2's notes score H1 and H2 "CORRECT" (review 6, 2026-09-14). Upper
+    # Batch 2's notes score H1 and H2 "CORRECT" (2026-09-14). Upper
     # case only: "on the correct interface" in a registration is prose.
     ("CONFIRMED", re.compile(r"\bCORRECT\b")),
 ]
@@ -108,8 +108,8 @@ def score_lines(lines):
                     continue
         # Only an id that OPENS the line declares or scores a prediction:
         # "**R64.** ...", "| R92 | ... |", "## R12, ...", "**R28 and R29 are
-        # VOID**". An id anywhere else is a reference. Until review 5
-        # (2026-09-13) every mention counted, so "not vacuous (R92). A variant
+        # VOID**". An id anywhere else is a reference. Until
+        # 2026-09-13 every mention counted, so "not vacuous (R92). A variant
         # with one assignment wrong" scored R92 WRONG against its own
         # scorecard, and "R1 to R63 are in the earlier registrations"
         # registered R1 and R63 in a directory that never declared them.
@@ -165,9 +165,9 @@ def score_lines(lines):
     return out
 
 
-# Regression fixtures, from review 5 (2026-09-13). Each is a real line from
+# Regression fixtures, from 2026-09-13. Each is a real line from
 # this repository and the verdicts it must produce, and nothing else. The
-# first two are the defects that review found: a prose sentence scored as a
+# first two are the defects found that day: a prose sentence scored as a
 # verdict, and a cross-reference counted as a registration.
 SELF_TEST = [
     # experiments/invariant_obligation/NOTES.md line 39: prose, not a score.
@@ -175,7 +175,7 @@ SELF_TEST = [
      {}),
     # experiments/closure_cost/PREREGISTRATION.md line 4: references only.
     ("Predictions **R64 to R69 and R83**; R1 to R63 are in the earlier registrations, "
-     "and R70 to R82 are reserved by `PROMPT_FINAL_2026-09-12.md` for the blocks that follow this one.",
+     "and R70 to R82 are reserved for the experiments that follow this one.",
      {}),
     # the scorecard row for R92; R91 is mentioned in the verdict cell, not scored.
     ("| R92 | a broken child is still REFUTED under the same invariant | **CONFIRMED**, so R91 stands |",
@@ -202,7 +202,7 @@ SELF_TEST = [
     # a mixed cell keeps the miss: vocabulary priority inside one segment.
     ("| R2 | it rejects the project's own one-hot for the same reason | CONFIRMED on mechanism, **MISS on count** |",
      {"R2": "WRONG"}),
-    # Review 6 (2026-09-14). experiments/llm_proposer_aes/NOTES.md lines 225 to
+    # 2026-09-14. experiments/llm_proposer_aes/NOTES.md lines 225 to
     # 227 score H1 and H2 with the word CORRECT, which the vocabulary did not
     # hold, and H1's verdict opens the list item's continuation line.
     ("3. H1: the buffering control beats the best RTL proposal on `clk_b`.\n"

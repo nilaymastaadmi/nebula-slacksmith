@@ -101,7 +101,7 @@ def _strip_comments(text):
 def param_override(rtl, module):
     """Where `module` is instantiated with its parameters overridden, or None.
 
-    Added 2026-09-13 after review 5 (gate defect 3). Every obligation below
+    Added 2026-09-13 (gate defect 3). Every obligation below
     elaborates the target with `prep -top` / `hierarchy -top`, which uses the
     module's HEADER DEFAULTS. A module the design instantiates with a `#(`
     override is then proven about a circuit the design does not contain:
@@ -117,7 +117,7 @@ def param_override(rtl, module):
     m = re.search(r"^\s*module\s+" + re.escape(module) + r"\b(.*?)^\s*endmodule\b",
                   src, re.M | re.S)
     # A parameter can also arrive through an `include inside the module body,
-    # where the word never appears in this file (review 6, 2026-09-14): treat
+    # where the word never appears in this file (2026-09-14): treat
     # the include as a declaration and let the override search decide.
     if m is None or not re.search(r"(?<!local)\bparameter\b|`include\b", m.group(1)):
         return None

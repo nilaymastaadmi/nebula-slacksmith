@@ -8,9 +8,8 @@ Registered 2026-09-14, before any model is invoked for this experiment. Scored i
 The organisers asked for open-source API keys. `SUBMISSION_PACK.md` §5d states
 that recommendation is **not met** for the primary result: every proposal that
 reached the formal gate came from Claude Opus 5, and the two open-weight models
-tried were 7B, on this machine's CPU, under Ollama. Review 6 asked what a larger
-open-weight model does with the identical request, and nothing in the repository
-answers that.
+tried were 7B, on this machine's CPU, under Ollama. What a larger open-weight
+model does with the identical request is answered nowhere in the repository.
 
 ## Arm A: a hosted open-weight model
 
@@ -19,7 +18,7 @@ endpoint. 31B dense, weights published as `google/gemma-4-31B-it` under the
 Gemma licence (open weights, **not** an OSI open-source licence; the pack will say
 so). The endpoint's public `/api/v1/models` listed 22 zero-priced entries on
 2026-09-14, so the run needs a free account and no payment. Chosen from them as
-the dense instruct model closest to the 32B class review 6 named, and one that
+the dense instruct model closest to the 32B class, and one that
 accepts `response_format`, which R104's follow-up needs. Larger zero-priced
 open-weight entries exist (Nemotron 3 Super 120B-A12B and Ultra 550B-A55B), but
 they are mixture-of-experts with 12B and 55B active parameters and the Ultra

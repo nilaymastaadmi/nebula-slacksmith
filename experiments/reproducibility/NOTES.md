@@ -92,7 +92,7 @@ no longer hard-code the repo path, but they read intermediate netlists from
 `$HOME/flatexp/`, `$HOME/or_repair/` and `$HOME/bufexp/`, which are earlier
 stages' outputs and hundreds of megabytes. Their **results** are committed;
 their **runs** would need the chain re-run from the start. `SETUP.md` says
-which is which, because a reviewer should know that up front rather than
+which is which, because a reader should know that up front rather than
 discover it.
 
 **Three clones.** `ab453d5` and `9d1e780` at 12 of 12, then `c8dbe7a` at

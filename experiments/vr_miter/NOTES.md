@@ -176,7 +176,7 @@ completed real-RTL transforms, closer in scope to a new benchmark component
 than an incremental cut. Not attempted here rather than force it under time
 pressure with an incomplete design. Recorded as scoped and understood, not
 silently open: the next real-RTL branch-3 attempt should design the skid
-buffer as its own reviewed step before any proof is attempted, exactly as
+buffer as its own checked step before any proof is attempted, exactly as
 this project has done for every transform that touched a genuinely new
 mechanism.
 
