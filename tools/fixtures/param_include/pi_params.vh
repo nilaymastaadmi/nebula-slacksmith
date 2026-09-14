@@ -1,0 +1,1 @@
+parameter W = 8;

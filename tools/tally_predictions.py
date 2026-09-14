@@ -180,13 +180,24 @@ SELF_TEST = [
     # a mixed cell keeps the miss: vocabulary priority inside one segment.
     ("| R2 | it rejects the project's own one-hot for the same reason | CONFIRMED on mechanism, **MISS on count** |",
      {"R2": "WRONG"}),
+    # Review 6 (2026-09-14). experiments/llm_proposer_aes/NOTES.md lines 225 to
+    # 227 score H1 and H2 with the word CORRECT, which the vocabulary did not
+    # hold, and H1's verdict opens the list item's continuation line.
+    ("3. H1: the buffering control beats the best RTL proposal on `clk_b`.\n"
+     "   **CORRECT**, +17.557 vs +4.925.", {"H1": "CONFIRMED"}),
+    ("4. H2: no proposal cuts max fanout by more than 20%. **CORRECT**, 0.0% for",
+     {"H2": "CONFIRMED"}),
+    # ...and a lower-case "correct" is prose, not a verdict:
+    # experiments/invariant_obligation/PREREGISTRATION.md line 112.
+    ("**R88.** Re-gated plainly on the correct interface, the tv80 proposal is **not",
+     {"R88": None}),
 ]
 
 
 def self_test():
     bad = 0
     for line, want in SELF_TEST:
-        scored = score_lines([line + "\n"])
+        scored = score_lines([part + "\n" for part in line.split("\n")])
         got = {i: v for i, (v, _n, _t) in scored.items() if v != "UNSCORED"}
         registered = set(scored)
         # a None verdict means "registered, not scored on this line"

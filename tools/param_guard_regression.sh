@@ -22,3 +22,13 @@ from gate_proposal import param_override
 for rtl, mod in (("rtl/rv32i_core.v", "rv32i_core"), ("rtl/aes/aes_key_mem.v", "aes_key_mem")):
     print("%s: %s" % (mod, param_override(rtl, mod)))
 PY
+
+echo "--- parameters from an included header (expect a pi_top.v hit for pi_child, None for pi_lone) ---"
+python3 - <<'PY'
+import sys
+sys.path.insert(0, "tools")
+from gate_proposal import param_override
+d = "tools/fixtures/param_include/"
+for mod in ("pi_child", "pi_lone"):
+    print("%s: %s" % (mod, param_override(d + mod + ".v", mod)))
+PY

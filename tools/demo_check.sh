@@ -126,6 +126,8 @@ bash tools/param_guard_regression.sh > $D/pg.txt 2>&1
 cat $D/pg.txt
 chk "tv80_mcode with a #( override reads CANNOT" $D/pg.txt "CANNOT (parameter override at instantiation"
 chk "benchmark modules untouched by the guard" $D/pg.txt "rv32i_core: None" "aes_key_mem: None"
+chk "parameters from an included header are refused too" $D/pg.txt \
+  "pi_child: tools/fixtures/param_include/pi_top.v" "pi_lone: None"
 
 export D
 echo "=== beat 7: the cheat no equivalence checker can catch"
