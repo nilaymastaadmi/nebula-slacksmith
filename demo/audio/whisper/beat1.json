@@ -1,0 +1,417 @@
+{
+	"systeminfo": "WHISPER : COREML = 0 | OPENVINO = 0 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | OPENMP = 1 | REPACK = 1 | ",
+	"model": {
+		"type": "base",
+		"multilingual": false,
+		"vocab": 51864,
+		"audio": {
+			"ctx": 1500,
+			"state": 512,
+			"head": 8,
+			"layer": 6
+		},
+		"text": {
+			"ctx": 448,
+			"state": 512,
+			"head": 8,
+			"layer": 6
+		},
+		"mels": 80,
+		"ftype": 1
+	},
+	"params": {
+		"model": "C:\\Users\\toshn\\AppData\\Local\\Temp\\whisper\\ggml-base.en.bin",
+		"language": "en",
+		"translate": false
+	},
+	"result": {
+		"language": "en"
+	},
+	"transcription": [
+		{
+			"timestamps": {
+				"from": "00:00:00,000",
+				"to": "00:00:00,240"
+			},
+			"offsets": {
+				"from": 0,
+				"to": 240
+			},
+			"text": ""
+		},
+		{
+			"timestamps": {
+				"from": "00:00:00,240",
+				"to": "00:00:01,970"
+			},
+			"offsets": {
+				"from": 240,
+				"to": 1970
+			},
+			"text": " 48,616"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:01,970",
+				"to": "00:00:02,900"
+			},
+			"offsets": {
+				"from": 1970,
+				"to": 2900
+			},
+			"text": " standard"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:02,900",
+				"to": "00:00:03,590"
+			},
+			"offsets": {
+				"from": 2900,
+				"to": 3590
+			},
+			"text": " cells"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:03,590",
+				"to": "00:00:03,650"
+			},
+			"offsets": {
+				"from": 3590,
+				"to": 3650
+			},
+			"text": " in"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:03,650",
+				"to": "00:00:03,880"
+			},
+			"offsets": {
+				"from": 3650,
+				"to": 3880
+			},
+			"text": " 5"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:03,880",
+				"to": "00:00:04,810"
+			},
+			"offsets": {
+				"from": 3880,
+				"to": 4810
+			},
+			"text": " asynchronous"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:04,810",
+				"to": "00:00:05,170"
+			},
+			"offsets": {
+				"from": 4810,
+				"to": 5170
+			},
+			"text": " clock"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:05,170",
+				"to": "00:00:05,930"
+			},
+			"offsets": {
+				"from": 5170,
+				"to": 5930
+			},
+			"text": " domains,"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:05,930",
+				"to": "00:00:06,060"
+			},
+			"offsets": {
+				"from": 5930,
+				"to": 6060
+			},
+			"text": " each"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:06,060",
+				"to": "00:00:06,640"
+			},
+			"offsets": {
+				"from": 6060,
+				"to": 6640
+			},
+			"text": " generating"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:06,640",
+				"to": "00:00:06,990"
+			},
+			"offsets": {
+				"from": 6640,
+				"to": 6990
+			},
+			"text": " its"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:06,990",
+				"to": "00:00:07,060"
+			},
+			"offsets": {
+				"from": 6990,
+				"to": 7060
+			},
+			"text": " own"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:07,060",
+				"to": "00:00:07,510"
+			},
+			"offsets": {
+				"from": 7060,
+				"to": 7510
+			},
+			"text": " clock"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:07,510",
+				"to": "00:00:07,580"
+			},
+			"offsets": {
+				"from": 7510,
+				"to": 7580
+			},
+			"text": " in"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:07,580",
+				"to": "00:00:08,150"
+			},
+			"offsets": {
+				"from": 7580,
+				"to": 8150
+			},
+			"text": " RTL,"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:08,150",
+				"to": "00:00:08,500"
+			},
+			"offsets": {
+				"from": 8150,
+				"to": 8500
+			},
+			"text": " odd"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:08,500",
+				"to": "00:00:09,200"
+			},
+			"offsets": {
+				"from": 8500,
+				"to": 9200
+			},
+			"text": " ratios"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:09,200",
+				"to": "00:00:10,500"
+			},
+			"offsets": {
+				"from": 9200,
+				"to": 10500
+			},
+			"text": " included."
+		},
+		{
+			"timestamps": {
+				"from": "00:00:10,500",
+				"to": "00:00:10,840"
+			},
+			"offsets": {
+				"from": 10500,
+				"to": 10840
+			},
+			"text": " Every"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:10,840",
+				"to": "00:00:11,380"
+			},
+			"offsets": {
+				"from": 10840,
+				"to": 11380
+			},
+			"text": " multibit"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:11,380",
+				"to": "00:00:11,910"
+			},
+			"offsets": {
+				"from": 11380,
+				"to": 11910
+			},
+			"text": " crossing"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:11,910",
+				"to": "00:00:12,110"
+			},
+			"offsets": {
+				"from": 11910,
+				"to": 12110
+			},
+			"text": " has"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:12,110",
+				"to": "00:00:12,170"
+			},
+			"offsets": {
+				"from": 12110,
+				"to": 12170
+			},
+			"text": " a"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:12,170",
+				"to": "00:00:12,440"
+			},
+			"offsets": {
+				"from": 12170,
+				"to": 12440
+			},
+			"text": " gray"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:12,440",
+				"to": "00:00:12,770"
+			},
+			"offsets": {
+				"from": 12440,
+				"to": 12770
+			},
+			"text": " code"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:12,770",
+				"to": "00:00:13,220"
+			},
+			"offsets": {
+				"from": 12770,
+				"to": 13220
+			},
+			"text": " FIFO."
+		},
+		{
+			"timestamps": {
+				"from": "00:00:13,220",
+				"to": "00:00:13,870"
+			},
+			"offsets": {
+				"from": 13220,
+				"to": 13870
+			},
+			"text": " There's"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:13,870",
+				"to": "00:00:14,100"
+			},
+			"offsets": {
+				"from": 13870,
+				"to": 14100
+			},
+			"text": " an"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:14,100",
+				"to": "00:00:14,880"
+			},
+			"offsets": {
+				"from": 14100,
+				"to": 14880
+			},
+			"text": " RV32i"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:14,880",
+				"to": "00:00:15,310"
+			},
+			"offsets": {
+				"from": 14880,
+				"to": 15310
+			},
+			"text": " core"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:15,310",
+				"to": "00:00:15,530"
+			},
+			"offsets": {
+				"from": 15310,
+				"to": 15530
+			},
+			"text": " and"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:15,530",
+				"to": "00:00:15,850"
+			},
+			"offsets": {
+				"from": 15530,
+				"to": 15850
+			},
+			"text": " two"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:15,850",
+				"to": "00:00:16,090"
+			},
+			"offsets": {
+				"from": 15850,
+				"to": 16090
+			},
+			"text": " AES"
+		},
+		{
+			"timestamps": {
+				"from": "00:00:16,090",
+				"to": "00:00:16,640"
+			},
+			"offsets": {
+				"from": 16090,
+				"to": 16640
+			},
+			"text": " cores."
+		}
+	]
+}
