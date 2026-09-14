@@ -114,7 +114,7 @@ Or the tool on its own:
       --clock clk_a --clock clk_b --clock clk_e \
       --workdir ~/run --engine sta
 
-Closes the benchmark in **2 iterations**, in 83.9 to 152.7 s of wall clock across five runs (`experiments/loop_runtime/`), and writes every
+Closes the benchmark in **2 iterations**, in a median **112.7 s** on one core (five protocol runs, 83.9 to 152.7 s; 47 to 833 s outside the protocol; `experiments/loop_runtime/`), and writes every
 routing decision with its evidence to `decisions.jsonl`.
 
 Tool paths come from environment variables with defaults (`OSS_CAD_BIN`,

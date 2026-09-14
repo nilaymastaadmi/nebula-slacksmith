@@ -21,7 +21,7 @@ process.
 | item | state |
 |---|---|
 | `REPORT.md` | **A4, 15 mm margins, 9.5 pt body at 1.22 leading, 8 pt tables. Measured in a browser, never estimated.** Re-measure after every edit and quote no number from any document, this one included: the figure moved 12.34 -> 15.60 -> under-cap across one day. Compression did 15.6 -> ~12.7 with **no measured result dropped**, removing duplication rather than evidence; margins and leading did the rest, and every setting is disclosed in a footer on the report itself|
-| Demo video | **silent cut locked at 296.7 s, voice pending** (`demo/PHASE1_CUT.md`). `DEMO.md` is the 9-beat shot list and `demo/SCRIPT.md` the verbatim narration; `tools/demo_check.sh` runs every command in `DEMO.md` and reports **22 pass, 0 fail**, measured 2026-09-13. It held 15 and skipped beat 5 until review 5 found that on the same day |
+| Demo video | **silent cut locked, voice pending.** Its length is the generated table in `demo/PHASE1_CUT.md`; the final length is written here once the voiced cut exists, not before, because the voice can move it. `DEMO.md` is the 9-beat shot list and `demo/SCRIPT.md` the verbatim narration; `tools/demo_check.sh` runs every command in `DEMO.md` and reports **23 pass, 0 fail**, measured 2026-09-14. It held 15 and skipped beat 5 until review 5 found it; the 23rd, added after review 6, checks the parameter guard on an included header |
 | Repository | runs from a clean clone at any path, verified three times (`experiments/reproducibility/`) |
 | Interactive demo | `demo/explorer.html`, generated from committed logs, published |
 | `claude` CLI auth | **working.** Token minted 2026-09-11 and held outside the repository in `~/.slacksmith_token`; `tools/preflight.sh` fails if a credential-shaped string ever reaches a tracked file |
@@ -255,7 +255,7 @@ Each with its nearest prior art, conceded where it narrows the claim.
 
 ## 4. Thought process: what is on the record
 
-- **20 registration files** across 15 experiment directories, each committed
+- **28 registration files** across 23 experiment directories (`find experiments -name 'PREREGISTRATION*.md'`), each committed
   before the code or the results they govern, with git as the ordering proof.
 - **Dated amendments**, never silent edits. Where ground truth was wrong on
   publication (SlackBench CDC-1) it is disclosed as an amendment rather than
@@ -273,11 +273,10 @@ Each with its nearest prior art, conceded where it narrows the claim.
 - **Reproducibility verified by running**, not asserted: clean clone at a
   different path, 15 of 15 (`experiments/reproducibility/`); `demo_check.sh`
   re-run 2026-09-12 from WSL by the fourth review, **15 pass, 0 fail**; **22 pass, 0
-  fail** on 2026-09-13 after beat 5 and the parameter guard were added.
+  fail** on 2026-09-13 after beat 5 and the parameter guard were added; **23 pass, 0 fail** on 2026-09-14 with the included-header guard fixture.
 - **The tally is generated**: `tools/tally_predictions.py`, quoted in REPORT
   §9 and re-run after every registration. **It was itself wrong until
-  2026-09-13** (every id mention counted); it now self-tests on 13 real lines,
-  including every one that broke it, and reads 35 missed of 105 decided, 127 registered. REPORT §9 carried a stale hand-written
+  2026-09-13** (every id mention counted); it now self-tests on 16 real lines, including every one that broke it (review 6 found it still missed the word CORRECT, which left H1 and H2 unscored), and reads 35 missed of 107 decided, 127 registered, 8 unscored. **It reads lettered ids only**, which appear in 14 of the 23 registered experiments; the other nine, SlackBench, the transfer study and batch 1 among them, are outside those counts. REPORT §9 carried a stale hand-written
   tally until the fourth review found it.
 
 ---
@@ -285,7 +284,7 @@ Each with its nearest prior art, conceded where it narrows the claim.
 ## 5. Known-open items
 
 1. **`REPORT.md` fits at 9.5 pt, not at 10.5 pt.** Measured, not estimated. Compression took it from 15.6 to 14.0 pages with no measured result dropped; type size took it the rest of the way, and the setting is stated in a footer on the report itself. A judge who expects 11 pt will find this the densest entry in the pile.
-2. **The demo video is a silent cut; the voice is pending.** Picture locked at 296.7 s (`demo/PHASE1_CUT.md`).
+2. **The demo video is a silent cut; the voice is pending.** Picture locked; its length is in `demo/PHASE1_CUT.md`'s generated table until the voiced cut is final.
 3. **The unattended backend is N = 1.** One run, one design, one sample
    (`experiments/cli_backend/`). Everything else in this project that says
    "closed loop" means a model in the loop with a human-mediated handoff.
@@ -321,16 +320,24 @@ Each with its nearest prior art, conceded where it narrows the claim.
     (`tv80_mcode` reads CANNOT; `rv32i_core` and `aes_key_mem` declare no
     parameters and are untouched, so no benchmark verdict changes). **The repair,
     threading instantiated parameters into every branch, is not done**: until it
-    is, parameterised external IP gets CANNOT rather than a proof.
+    is, parameterised external IP gets CANNOT rather than a proof. Since review 6
+    (14 Sept) a parameter that arrives through an `` `include `` inside the module
+    body is refused too (`tools/fixtures/param_include/`). **Still missed**, each a
+    false-PROVEN path on external IP: an override set by the synthesis script
+    (`chparam`, `read_verilog -D`), a parent outside the target's directory and its
+    parent, and an instantiation or `defparam` that does not open its line.
 11. **The loop's default lever is not its best half.** `--lever-policy blunt`
     applies `buffer; upsize; dnsize` as one step; zero-parasitic, `buffer` alone
     meets 2 of 3 groups where the pair meets 1 of 3 (`experiments/closure_cost/`).
     `--lever-policy verdict` exists and `run_v3_fixed` uses it. **The default is
     unchanged before submission**, and `DEMO.md` beat 2 runs it.
 12. **The loop's wall clock is about two minutes, not the 46.7 s first
-    published.** Five runs: 83.9 to 152.7 s, median 112.7 s, CPU time equal to wall
+    published.** Five protocol runs: median 112.7 s, 83.9 to 152.7 s, CPU time equal to wall
     time (`experiments/loop_runtime/`). 46.7 s was one run of a program 29 commits
-    older and is below the whole range.
+    older and is below the whole range. Outside the protocol the same command
+    measured 74.98 s and 60.94 s (reviews 5 and 6, inside `demo_check`) and 93.88,
+    367.8 and 832.8 s (the video session, `demo/PHASE1_CUT.md` finding 1), so the
+    report quotes the median, not the range, as the loop's cost.
 13. **The organisers' open-source-key recommendation is not met for the primary
     result**, which was produced with Claude Opus 5 (§5d).
 
@@ -347,7 +354,7 @@ Each with its nearest prior art, conceded where it narrows the claim.
 | D5 timing, frequency, PPA | **complete.** Before/after for all three, including power at **+47.1%**, measured 2026-09-12 |
 | D6 formal equivalence | **complete.** Five branches, null control, void check. Open: the ABC buffering lever is unproven, and P5's control does not close |
 | D7 interactive demo | **complete.** `demo/explorer.html`, rebuild-checked |
-| **Demo video** | **PENDING: picture locked, voice pending.** Silent cut 296.7 s (`demo/PHASE1_CUT.md`); Sarvam narration not yet added |
+| **Demo video** | **PENDING: picture locked, voice pending.** Silent cut, length in `demo/PHASE1_CUT.md`; Sarvam narration not yet added |
 
 **Pending, in priority order:** the video; one unforced run that proposes, proves *and* **improves**. That is **still open after two designs**: `experiments/depth_i2c/` and `experiments/depth_tv80/` both route RTL unforced 3 of 3, and four proven transforms across them bought 0.000, 0.000, −0.268 and −0.421. The survival table's depth cell was attempted on a design large enough to show a gain (tv80, 3,447 cells, 0.152 ns floor) and **is empty there too**. Composition and the marginal gain after buffering: **done**, `experiments/composed_rtl/`. Closure cost: **done**, `experiments/closure_cost/`.
 
@@ -445,7 +452,7 @@ worse than no ratio.
     git clone https://github.com/nilaymastaadmi/nebula-slacksmith
     cd nebula-slacksmith
     bash tools/preflight.sh      # names any missing dependency
-    bash tools/demo_check.sh     # 15 assertions across the claims above
+    bash tools/demo_check.sh     # 23 assertions across the claims above
 
 `SETUP.md` lists the tool versions the results were measured with, and states
 which claims re-derive in minutes and which cost an afternoon of synthesis.

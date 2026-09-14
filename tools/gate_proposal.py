@@ -116,7 +116,10 @@ def param_override(rtl, module):
     src = _strip_comments(open(rtl, encoding="utf-8", errors="replace").read())
     m = re.search(r"^\s*module\s+" + re.escape(module) + r"\b(.*?)^\s*endmodule\b",
                   src, re.M | re.S)
-    if m is None or not re.search(r"(?<!local)\bparameter\b", m.group(1)):
+    # A parameter can also arrive through an `include inside the module body,
+    # where the word never appears in this file (review 6, 2026-09-14): treat
+    # the include as a declaration and let the override search decide.
+    if m is None or not re.search(r"(?<!local)\bparameter\b|`include\b", m.group(1)):
         return None
     here = os.path.dirname(os.path.abspath(rtl))
     files = []

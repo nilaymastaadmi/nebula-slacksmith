@@ -61,7 +61,7 @@ fi
 cat $D/b1_cmp.txt
 chk "beat 1 count agrees with yosys flatten" $D/b1_cmp.txt "CROSSCHECK OK"
 
-echo "=== beat 2: the closed loop, live (83.9 to 152.7 s over five runs, experiments/loop_runtime/)"
+echo "=== beat 2: the closed loop, live (about two minutes on one core, REPORT 1.1)"
 /usr/bin/time -f "%e s" python3 -u tools/slacksmith.py \
   --sdc sdc/bench_top_v2.sdc \
   --liberty $LIBERTY \

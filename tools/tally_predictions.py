@@ -35,7 +35,8 @@ prose sentence and cross-references counted as registrations; diffing the fix
 found R21, R22 and R58 misread and U7, U10 and U11 never scored. The tally
 went from 38 of 102 decided across 153 to 35 of 105 across 127, and from 34
 unscored to 10, most of the difference being references to other directories'
-predictions.
+predictions. Review 6 (2026-09-14) found the word CORRECT missing from the
+vocabulary, which left H1 and H2 unscored: 35 of 107, 8 unscored.
 """
 import argparse
 import io
@@ -59,6 +60,9 @@ VERDICTS = [
     ("VOID", re.compile(r"\bVOID\b", re.I)),
     ("WRONG", re.compile(r"\b(WRONG|MISS(?:ED)?|NOT\s+ANSWERED)\b", re.I)),
     ("CONFIRMED", re.compile(r"\bCONFIRMED\b", re.I)),
+    # Batch 2's notes score H1 and H2 "CORRECT" (review 6, 2026-09-14). Upper
+    # case only: "on the correct interface" in a registration is prose.
+    ("CONFIRMED", re.compile(r"\bCORRECT\b")),
 ]
 
 SKIP_LINE = re.compile(r"^\s*(#|>)")
@@ -73,6 +77,10 @@ ID_ONLY = re.compile(r"[RCULH]\d{1,2}\b")
 # The three characters before a mention, plus a space: does the mention open a
 # sentence? ". R22", "; R57", "**R98".
 SENTENCE_ID = re.compile(r".*(?:[.;]\s|\*\*|[.;]\*\*)\s?$")
+# A numbered or decorated item whose verdict opens its indented continuation
+# line in bold: "3. H1: the buffering control beats ...\n   **CORRECT**, ...".
+NUMBERED = re.compile(r"^\s*\d+\.\s")
+CONT = re.compile(r"^\s{2,}\*\*([^*\n]{1,30})\*\*")
 
 
 def score_file(path):
@@ -85,7 +93,19 @@ def score_lines(lines):
     """Score an iterable of lines; see score_file."""
     out = OrderedDict()
     seen = OrderedDict()
+    pending = None
     for n, line in enumerate(lines, 1):
+        if pending is not None:
+            ids_p, n_p = pending
+            pending = None
+            cont = CONT.match(line)
+            if cont and not LEAD.match(line):
+                v = next((nm for nm, pat in VERDICTS if pat.search(cont.group(1))), None)
+                if v is not None:
+                    for i in ids_p:
+                        seen.setdefault(i, n_p)
+                        out[i] = (v, n, line.strip()[:100])
+                    continue
         # Only an id that OPENS the line declares or scores a prediction:
         # "**R64.** ...", "| R92 | ... |", "## R12, ...", "**R28 and R29 are
         # VOID**". An id anywhere else is a reference. Until review 5
@@ -129,6 +149,8 @@ def score_lines(lines):
                         break
             if verdict is None and ids is not groups[0][0]:
                 continue  # a sentence-opening mention with no verdict is a reference
+            if verdict is None and not skip and (decorated or NUMBERED.match(line)):
+                pending = (ids, n)
             if verdict is None and not decorated:
                 # A bare id opening a line with no verdict is a wrapped
                 # reference: depth_i2c's registration line 71 is "R38 there

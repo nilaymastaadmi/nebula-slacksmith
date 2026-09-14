@@ -30,8 +30,26 @@ Protocol committed first (`0850521`). Five sequential runs of `DEMO.md` beat 2,
   since, so the two timings are not of the same program. That is a candidate
   explanation, not a finding.
 
+## Outside the protocol
+
+The same command, timed on this machine on other occasions. None is part of
+the registered five, and none was controlled for load.
+
+| wall s | when | source |
+|---|---|---|
+| 46.7 | committed 2026-09-01 | `experiments/closed_loop/run_v2.jsonl`, a program 29 commits older |
+| 93.88, 367.8 | 2026-09-13 | `demo/PHASE1_CUT.md` finding 1 |
+| 832.8 | 2026-09-13 | `demo/takes/beat2_timing.txt` |
+| 74.98 | 2026-09-13 | review 5, inside `demo_check`, `REVIEW_RESULT_2026-09-13_r5.md` |
+| 60.94 | 2026-09-13 | review 6, inside `demo_check`, `REVIEW_RESULT_2026-09-13_r6.md` |
+
+Three of these (46.7, 74.98 and 60.94 s) are below the protocol's 83.9 s, so **83.9 to 152.7 s is the
+spread of one ten-minute window, not the bounds of what the loop takes.** The
+report quotes the median and gives 47 to 833 s as the out-of-protocol spread.
+
 ## What the report may say
 
-The loop's cost on this machine is **about two minutes, 84 to 153 s across five
-runs (median 113 s)**, dominated by synthesis on one core. One wall clock is not
-quoted as the cost.
+The loop's cost on this machine is **a median of 112.7 s on one core** across the
+five protocol runs, dominated by synthesis. The protocol's 83.9 to 152.7 s and the
+out-of-protocol 47 to 833 s are both stated as spreads; neither is quoted as the
+cost, and no single wall clock is.

@@ -4,8 +4,8 @@ A shot list, not a storyboard. Every command below is real, runs on this
 repository, and the expected output is what it actually printed. Target
 runtime **5 minutes**. Record the terminal; no slides needed except beat 0.
 
-Live compute in the demo is beat 2's loop, **83.9 to 152.7 s** across five runs
-(`experiments/loop_runtime/`), plus beat 1's Yosys cross-check and beat 6's
+Live compute in the demo is beat 2's loop, a median **112.7 s** over five protocol
+runs and 47 to 833 s outside it (`experiments/loop_runtime/`), plus beat 1's Yosys cross-check and beat 6's
 verdict regression (`demo/PHASE1_CUT.md`, finding 8). All three are pre-run and
 played back; everything else is instant or replayed from a committed log, so
 nothing has to be waited on with the camera running.
@@ -70,8 +70,8 @@ It runs the default `--lever-policy blunt`, which applies `buffer; upsize;
 dnsize` as one step; `experiments/closure_cost/` measured `buffer` alone meeting
 more groups, and the default is unchanged before submission.
 
-Actual output, 2 iterations, **83.9 to 152.7 s across five runs on 2026-09-13**
-(`experiments/loop_runtime/`; 48 to 50 s on 2026-09-03),
+Actual output, 2 iterations, a median **112.7 s over five protocol runs on 2026-09-13**
+(`experiments/loop_runtime/`, which lists every other timing, 47 to 833 s),
 exactly as the command prints it:
 
     === iteration 1 ===

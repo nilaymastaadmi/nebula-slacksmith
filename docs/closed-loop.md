@@ -69,7 +69,7 @@ measures. It does not generate.**
     it2  MEASURE   clk_a=12.784  clk_b=12.6  clk_e=20.394
     it2  STOP      all_met
 
-**2 iterations**, 46.7 s in this run and 83.9 to 152.7 s across five runs of the current code (`experiments/loop_runtime/`), and it reproduces the standalone experiments'
+**2 iterations**, 46.7 s in this run and a median **112.7 s** on one core (five protocol runs, 83.9 to 152.7 s; 47 to 833 s outside the protocol; `experiments/loop_runtime/`) for the current code, and it reproduces the standalone experiments'
 numbers exactly. The RTL lever never fires because there is nothing left for
 it to do, which is the correct behaviour and also why a second target was
 needed to exercise the other branch.
