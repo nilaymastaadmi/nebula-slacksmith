@@ -403,10 +403,11 @@ confirmed, 3 wrong, 1 void. **Run again with a code-specialised model**
 (`experiments/open_weight_2/`, Qwen2.5-Coder-7B, registered first): the identical
 failure, 1,335 s and invalid JSON. **With Ollama's JSON mode, registered in
 advance as the follow-up, it returned valid JSON in 160 s and failed G1**: no
-port list, reset on the rising edge of an active-low signal. **The wall is the
-engineering, not the envelope.** Across two open-weight models and three runs, no
-proposal reached the formal gate. So: portability exercised twice, capability
-**not demonstrated at 7B on CPU**, and **the organisers' open-source-key
+port list, reset on the rising edge of an active-low signal. Across two open-weight models and three runs, no proposal reached the formal gate,
+**but all three were cut short**: Ollama's default context evaluated **2,050 of the request's 5,113 tokens**, so each model saw 40% of the task (measured 2026-09-14,
+`experiments/open_weight_3/context_check/`). **The earlier reading, "the wall is the
+engineering, not the envelope", is withdrawn.** So: portability exercised twice, capability
+**not demonstrated at 7B on CPU, on a truncated prompt**, and **the organisers' open-source-key
 recommendation is not met for the primary result**, which was produced with
 Claude Opus 5. Nothing here speaks for 32B or 70B open-weight
 models served over an API, and the prompt was tuned against Claude Opus 5. **No API key is committed

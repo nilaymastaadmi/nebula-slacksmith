@@ -1,0 +1,15 @@
+{
+  "request_chars": 18554,
+  "default_options": {
+    "prompt_eval_count": 2050,
+    "wall_s": 175.0
+  },
+  "num_ctx_16384": {
+    "prompt_eval_count": 5113,
+    "wall_s": 705.8
+  },
+  "modelfile_parameters": null,
+  "model_context_length": {
+    "qwen2.context_length": 32768
+  }
+}

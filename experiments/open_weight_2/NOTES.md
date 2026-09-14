@@ -59,7 +59,15 @@ reason it is a result rather than a rescue.
 
 ## What two models and three runs establish
 
-**The wall is the engineering, not the envelope.** That was the open question
+**Correction, 2026-09-14: both runs saw 40% of their request.** Both `META_O1.json` files record
+`prompt_eval_count` 2,050 for an 18,554-character request. Sent again to the same model,
+Ollama's default options evaluate 2,050 tokens and `num_ctx` 16384 evaluates 5,113
+(`experiments/open_weight_3/context_check/`). The scores below stand, because they
+score what happened; every reading that the model could not do the task is
+withdrawn, because it was never given the whole task. The replay is
+`experiments/open_weight_3/`, arm B.
+
+**Withdrawn, see the correction above.** The wall is the engineering, not the envelope. That was the open question
 after run 1 of `experiments/open_weight/`, where a failure to emit valid JSON
 hid whatever the model had actually designed. Constraining decoding answers it:
 the envelope closes in 160 seconds and the content still cannot hold a module

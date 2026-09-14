@@ -59,6 +59,15 @@ the question it was registered for.
 
 ## What this actually establishes
 
+**Correction, 2026-09-14: this run saw 40% of its request.** `META_O1.json` records
+`prompt_eval_count` 2,050 for an 18,554-character request. Sent again to the same model,
+Ollama's default options evaluate 2,050 tokens and `num_ctx` 16384 evaluates 5,113
+(`experiments/open_weight_3/context_check/`). The scores below stand, because they
+score what happened; every reading that the model could not do the task is
+withdrawn, because it was never given the whole task. The replay is
+`experiments/open_weight_3/`, arm B.
+
+
 The organisers asked entrants to use open source API keys for their models. This
 answers with something stronger and worse: a genuinely open-weight model, no key
 and no vendor, run against the identical task, the identical SDC and the identical
