@@ -1,6 +1,6 @@
 # Loop runtime: results
 
-Protocol committed first (`0850521`). Five sequential runs of `DEMO.md` beat 2,
+Protocol committed first (`61aebed`). Five sequential runs of `DEMO.md` beat 2,
 2026-09-13, 14:52 to 15:02 UTC, fresh work directory each, none dropped.
 
 | run | wall s | CPU s (user+sys) | load1 before | closes |
@@ -25,7 +25,7 @@ Protocol committed first (`0850521`). Five sequential runs of `DEMO.md` beat 2,
   they vary together. What does vary is not measured here: Windows-side
   contention for the VM's cores, and CPU frequency or thermal state.
 - **46.7 s is below this whole range** and is not explained by this
-  measurement. It is `run_v2.jsonl`, committed 2026-09-01 in `4d5eaa8`, and
+  measurement. It is `run_v2.jsonl`, committed 2026-09-01 in `45d07c4`, and
   `tools/slacksmith.py`, `classify_path.py` and `remeasure.py` have 29 commits
   since, so the two timings are not of the same program. That is a candidate
   explanation, not a finding.

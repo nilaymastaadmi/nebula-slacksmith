@@ -423,7 +423,7 @@
 <p><strong>Before the LLM experiment, four hand-built mutants of a known-correct transform, with a control every method passes.</strong> Two of the three invalid mutants escaped a realistic simulation gate: the classic pipelining bug (stage 2 adding the current operand to a product one cycle old) and one wrong on roughly one input in a million that survived 20,000 random vectors; formal refuted both instantly. §7 reproduces this on a real proposal; §7.4 turns it into a suite.</p>
 <h2>7. The GenAI engine, and the experiment we pre-registered</h2>
 <p>The model receives the OpenSTA critical-path report, the target RTL and the typed transform schema, and emits a declared transform type plus replacement source. The declaration selects the obligation; <code>tools/gate_proposal.py</code> runs five gates in order: <strong>parse, elaborate, precondition, formal, timing.</strong></p>
-<p>To measure this honestly we <strong>pre-registered the experiment before writing any proposer code</strong>, and git proves the ordering (<code>4ee45c2</code> precedes <code>7e3ab9b</code> precedes the results). The registration fixed N = 6, fixed the gates, and fixed the anti-tuning rule: <em>all six proposals committed before any gate ran, none editable afterwards, all six reported regardless of outcome.</em></p>
+<p>To measure this honestly we <strong>pre-registered the experiment before writing any proposer code</strong>, and git proves the ordering (<code>04fa59c</code> precedes <code>115fc03</code> precedes the results). The registration fixed N = 6, fixed the gates, and fixed the anti-tuning rule: <em>all six proposals committed before any gate ran, none editable afterwards, all six reported regardless of outcome.</em></p>
 <table>
 <thead>
 <tr>
@@ -513,7 +513,7 @@
 <p>We ran the directed probe specifically so the two misses could not be mistaken for a phantom defect: the bug is fully visible to simulation (gold <code>ffffffff</code>, gate <code>0fffffff</code>). Both misses are stimulus weakness. The shipped firmware loop contains no shift instruction at all, so it can never reach the bug. <strong>The verdict tracks stimulus quality, not bug severity.</strong></p>
 <p>P5 shows the k-padded obligation doing its job in the other direction: refuted in 1 second because <code>alu_out</code> feeds the register file and PC, so a declared k = 1 shift is not what the transform actually does.</p>
 <h3>7.1 Batch 2, registered separately, on the AES key memory</h3>
-<p>Batch 1's registration required any second batch to be registered separately with its N added to the trial count (<code>02ead73</code> precedes <code>3b17e5d</code> precedes every result). <strong>Trial count: 16.</strong> Batch 2 targets <code>aes_key_mem</code>, which holds the worst path on <code>clk_b</code> and <code>clk_e</code>; <code>u_aes_b</code> and <code>u_aes_e</code> are two instances of one module, so every edit is measured twice.</p>
+<p>Batch 1's registration required any second batch to be registered separately with its N added to the trial count (<code>dbcd7d3</code> precedes <code>004695c</code> precedes every result). <strong>Trial count: 16.</strong> Batch 2 targets <code>aes_key_mem</code>, which holds the worst path on <code>clk_b</code> and <code>clk_e</code>; <code>u_aes_b</code> and <code>u_aes_e</code> are two instances of one module, so every edit is measured twice.</p>
 <table>
 <thead>
 <tr>

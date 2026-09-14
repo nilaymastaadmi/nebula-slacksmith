@@ -1,6 +1,6 @@
 # The depth cell, second attempt: tv80
 
-Registered in `PREREGISTRATION.md` (`93e4294`), floor measured before the
+Registered in `PREREGISTRATION.md` (`9a5753d`), floor measured before the
 predictions were written, two amendments registered before each repair.
 
 ## The three runs

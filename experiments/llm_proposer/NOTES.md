@@ -1,7 +1,7 @@
 # LLM-proposed transforms through the SlackSmith gate: 6 of 6 results
 
 Run 2026-08-31. Protocol fixed in advance in `PREREGISTRATION.md` (commit
-`4ee45c2`); proposals frozen before any gate ran (commit `7e3ab9b`). Git
+`04fa59c`); proposals frozen before any gate ran (commit `115fc03`). Git
 proves that ordering:
 
     git log --diff-filter=A --format='%ad %h %s' --date=short -- \

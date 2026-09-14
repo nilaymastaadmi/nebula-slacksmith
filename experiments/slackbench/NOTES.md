@@ -17,7 +17,7 @@
 > checkers added, and the reachability result". The XPROP addendum is scored
 > separately in `NOTES_xprop.md` and belongs to no Tier B number.
 
-Registered at `5c88521`, amended at `0b7e3fe`, cases committed at `c9786f2`
+Registered at `17f0619`, amended at `1b30d1d`, cases committed at `532f4dc`
 **before any checker ran on them**. Harness `run_bench.py`, raw output in
 `results/raw.tsv`.
 

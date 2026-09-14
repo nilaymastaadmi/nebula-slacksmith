@@ -112,4 +112,4 @@ The extra prediction was registered as R70 and renumbered to **R83** minutes
 later, without being run. R70 to R82 are reserved by the final-push plan for the
 speed-up, open-weight and depth-cell blocks, and two experiments answering to
 one id is how a scorecard silently loses a result. Nothing else changed: the
-prediction, its prior and its arm are as first written in `b614b2c`.
+prediction, its prior and its arm are as first written in `6fd2e17`.

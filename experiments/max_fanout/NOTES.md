@@ -1,6 +1,6 @@
 # Giving repair_design a fanout limit: it enforced it, and timing got worse
 
-Registered in `PREREGISTRATION.md` (commit `cc9b364`) before any SDC with
+Registered in `PREREGISTRATION.md` (commit `66eb3dd`) before any SDC with
 `set_max_fanout` existed. Run 2026-09-03, `run.sh`, logs and repaired
 netlists in `results/`, scored by `score.py`.
 

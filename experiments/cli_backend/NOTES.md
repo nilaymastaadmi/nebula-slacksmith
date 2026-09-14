@@ -1,6 +1,6 @@
 # The unattended run
 
-Registered in `PREREGISTRATION.md` (`0872109`) **before `propose_cli` had ever
+Registered in `PREREGISTRATION.md` (`886f80b`) **before `propose_cli` had ever
 been executed**, with two amendments recording an environmental failure and the
 prediction that missed.
 

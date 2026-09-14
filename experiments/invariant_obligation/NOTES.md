@@ -1,7 +1,7 @@
 # Invariant-carrying obligations: results
 
-Registered in `PREREGISTRATION.md` (`42bab91`, amendments `c4478d2` and the one
-committed with `fa3bc6e`), every prediction written before the step it scores.
+Registered in `PREREGISTRATION.md` (`48d9463`, amendments `d27ae50` and the one
+committed with `50d424e`), every prediction written before the step it scores.
 
 ## Scorecard
 

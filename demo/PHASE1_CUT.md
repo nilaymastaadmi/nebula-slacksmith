@@ -310,8 +310,8 @@ screens found one contradiction, and this audit had missed it because it compare
 numbers, not verdicts: beat 3's `run_v3_final` prints `clk_a: DEPTH_DOMINATED
 (fanout share 0.0, 17.13 ns over 33 cells)`, while REPORT 7.2 and 9 carry that path
 as MIXED and beat 6's own screen shows it at MIXED 0.4277. Checked here before
-applying: the log was committed 2026-09-01 (`fd08ea1`) and the cross-module fanout
-fix landed 2026-09-03 (`bb165ad`). No re-record: Beat 3 is one screen, so the flag is
+applying: the log was committed 2026-09-01 (`dc9bfc5`) and the cross-module fanout
+fix landed 2026-09-03 (`dbb3240`). No re-record: Beat 3 is one screen, so the flag is
 spoken while the stale verdict is visible. "Proven means correct, not useful, so the
 tool measures both separately." is now "This log predates our fanout fix; its depth
 verdicts are wrong.", 11 words for 11; the first sentence already says all three
@@ -375,7 +375,7 @@ before the zoom (mean difference 0.000) and at the splice (0.03 to 0.12); frames
 neighbours differ; Beat 5's segment length is unchanged at 48.967 s.
 
 **12. Contradiction check by eye, all eight beats, against REPORT.md and
-SUBMISSION_PACK.md at `f4e58fc`.** `demo/takes/video/onscreen_numbers_audit.txt` is
+SUBMISSION_PACK.md at `d64e2e8`.** `demo/takes/video/onscreen_numbers_audit.txt` is
 regenerated: 125 distinct numbers on screen, 61 in neither document (5.600 is
 REPORT's 5.6; `1.184` now matches REPORT section 8). None of the files the screens
 show changed after the takes were recorded. Each screen value was then compared
@@ -399,12 +399,12 @@ with what the documents state for the same quantity, verdicts and labels include
   3.32x zoom region and not spoken.
 - **Spoken figures: all trace except one.** Beat 6's "sat in every log for three
   days" is in neither document; it came from `DEMO.md`. The commits give 51.5 hours:
-  6.762 first appears in `fb572f5` (2026-08-31 23:26) and the fix is `bb165ad`
+  6.762 first appears in `ed0d912` (2026-08-31 23:26) and the fix is `dbb3240`
   (2026-09-03 02:56).
 - **Document to document, not on screen:** REPORT section 1 says binding paths are
   59% to 91% fanout-attributable; SUBMISSION_PACK D3 says 58.9% to 98.95%.
 
-**Resolved 2026-09-13, main session `54ceb88`.** Beat 6 now says "two days", word for
+**Resolved 2026-09-13, main session `38fd3f4`.** Beat 6 now says "two days", word for
 word; SUBMISSION_PACK carries the 51.5 h and `DEMO.md` line 256 already said two days.
 Beat 3 now opens "The first three transforms here", +1 word, so
 `tools/script_words.py` prints 719; Beat 3's floor rises to 46.4 s against its 46.6 s

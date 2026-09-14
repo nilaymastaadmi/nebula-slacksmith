@@ -1,6 +1,6 @@
 # Flatten before ABC: results
 
-Registered in `PREREGISTRATION.md` (commit `f523c44`) before any arm was
+Registered in `PREREGISTRATION.md` (commit `4873dc7`) before any arm was
 synthesized. Run 2026-09-03, `run.py`, 5 arms, 5 min 48 s wall, log in
 `results/run.log`, per-arm reports with OpenSTA's fanout column in
 `results/`. Scored by `score.py`.

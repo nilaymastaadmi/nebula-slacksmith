@@ -1,7 +1,7 @@
 # Composed RTL: results
 
-Registered in `PREREGISTRATION.md` (commit `ab2279d`) before anything here was
-synthesized. Scripts committed in `94b7a21`. This file is the scorecard.
+Registered in `PREREGISTRATION.md` (commit `3b20e00`) before anything here was
+synthesized. Scripts committed in `9cb3b9f`. This file is the scorecard.
 
 ## Null control, run first
 
@@ -206,7 +206,7 @@ way.
 
 ## Amendment 2 result: four more perturbation points, and R38 is VOID
 
-Registered before running (`PREREGISTRATION.md` amendment 2, commit `8872a26`).
+Registered before running (`PREREGISTRATION.md` amendment 2, commit `86691c1`).
 `noise_floor2.sh` and `abc_pair.py`, raw logs in `results/repair_*.txt`,
 `results/post_repair_summary.txt` and `results/abc_buffered_pair.txt`.
 

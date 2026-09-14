@@ -1,7 +1,7 @@
 # Batch 2: AES key-memory transforms, 6 of 6 results
 
 Run 2026-08-31. Protocol fixed in advance in `PREREGISTRATION.md` (commit
-`02ead73`); proposals frozen before any gate ran (commit `3b17e5d`). Git
+`dbcd7d3`); proposals frozen before any gate ran (commit `004695c`). Git
 proves that ordering:
 
     git log --diff-filter=A --format='%ad %h %s' --date=short -- \

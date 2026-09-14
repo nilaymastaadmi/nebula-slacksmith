@@ -1,7 +1,7 @@
 # Depth-dominated survival: results
 
-Registered in `PREREGISTRATION.md` (commit `8872a26`) before any run; amendment
-1 (commit `2c45c2d`) registered after run 1 and before any re-gating. This
+Registered in `PREREGISTRATION.md` (commit `86691c1`) before any run; amendment
+1 (commit `ea9604e`) registered after run 1 and before any re-gating. This
 file is the scorecard. Raw material: `results/runN/` (request, verbatim reply,
 variant, gate logs, decision log), `results/runN/replay/` (the replay through
 the repaired loop), `results/survival.tsv` (phase 2), and `score.py`, which

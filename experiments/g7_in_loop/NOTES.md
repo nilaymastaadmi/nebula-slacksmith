@@ -1,6 +1,6 @@
 # G7 in the loop: results
 
-Registered in `PREREGISTRATION.md` before the variant RTL existed (`6ab986a`).
+Registered in `PREREGISTRATION.md` before the variant RTL existed (`7d5c775`).
 
 ## Scorecard: 3 of 4, and the miss is the interesting one
 

@@ -1,6 +1,6 @@
 # repair_design on the flat netlist
 
-Registered in `PREREGISTRATION.md` (commit `f680618`) before OpenROAD saw a
+Registered in `PREREGISTRATION.md` (commit `b621c73`) before OpenROAD saw a
 flat netlist. Run 2026-09-03, `run.sh`, logs and repaired netlists in
 `results/`, scored by `score.py`.
 

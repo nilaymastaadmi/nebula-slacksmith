@@ -1,6 +1,6 @@
 # SlackSmith's instrument on Dr. RTL's benchmark: phase 1 results
 
-Run 2026-09-02. Registered in `PREREGISTRATION.md` (commit `57a5eeb`) before
+Run 2026-09-02. Registered in `PREREGISTRATION.md` (commit `51d4690`) before
 any design was timed; three dated amendments follow it and are part of the
 record. The scored run is **run 4** (`results/`), which reproduces run 1
 (`results_run1_as_registered/`) **exactly: 15 identical rows, 0 differing**.

@@ -1,6 +1,6 @@
 # Open-weight run: results
 
-Registered in `PREREGISTRATION.md` (commit `621e810`), scripts in `5332895`,
+Registered in `PREREGISTRATION.md` (commit `939e0a4`), scripts in `e1cf12e`,
 both before the model was invoked. Model: **Qwen2.5-7B-Instruct, Apache-2.0,
 Ollama 0.34.0, localhost only, no API key of any kind.**
 

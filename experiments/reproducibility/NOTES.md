@@ -1,6 +1,6 @@
 # Reproducibility: the claim we had not checked
 
-**Date:** 2026-09-05. **Commit under test:** `ab453d5`.
+**Date:** 2026-09-05. **Commit under test:** `ab8762e`.
 
 `REPORT.md` §10 said "cold-clone reproduction was verified per directory."
 It had not been. Nothing in this repository had ever been cloned and run
@@ -95,7 +95,7 @@ their **runs** would need the chain re-run from the start. `SETUP.md` says
 which is which, because a reader should know that up front rather than
 discover it.
 
-**Three clones.** `ab453d5` and `9d1e780` at 12 of 12, then `c8dbe7a` at
+**Three clones.** `ab8762e` and `8735db1` at 12 of 12, then `bf67843` at
 **15 of 15** once the interactive demo added three assertions of its own
 (`results/clean_clone_2026-09-05*.log`). The third run also confirms
 `EXPLORER FRESH`: the committed `demo/explorer.html` is byte-identical to one

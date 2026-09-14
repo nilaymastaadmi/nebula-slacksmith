@@ -145,7 +145,7 @@ it bounds a claim this report currently makes on N=1 benchmark.
 
 ## Amendment 2026-09-02, after run 1, before run 2
 
-Run 1 (commit `534bc35`, preserved unchanged in `results_run1_as_registered/`)
+Run 1 (commit `590d31c`, preserved unchanged in `results_run1_as_registered/`)
 timed 15 of 20 designs. The other 5 were recorded as NO_PATH and that label
 was **wrong**: OpenSTA could not read those netlists at all. Two causes, both
 flow compatibility, neither a property of the designs:
@@ -312,7 +312,7 @@ Predictions:
 Written after the defect was found on this project's own benchmark and
 **before** `reclassify.sh` has finished on these 20 designs. The phase-1
 verdicts in `results/` were produced by `tools/classify_path.py` as of
-commit `694375d`. That version charged a submodule port connection only when
+commit `359efc1`. That version charged a submodule port connection only when
 its text equalled a net name exactly, so a whole-bus connection
 (`.sboxw(tmp_sboxw)`) or a concatenation (`.imem_data({imem_data[2], ...})`)
 was charged nothing. On the closed-loop v3 runs it read a 387-load net as

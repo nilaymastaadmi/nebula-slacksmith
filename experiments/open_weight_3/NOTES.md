@@ -1,6 +1,6 @@
 # open_weight_3: results
 
-Registered in `PREREGISTRATION.md` (`490cb44`) before either arm ran.
+Registered in `PREREGISTRATION.md` (`2b8e5e9`) before either arm ran.
 
 ## Arm A: hosted Gemma 4 31B, VOID
 

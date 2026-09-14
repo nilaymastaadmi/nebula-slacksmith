@@ -1,6 +1,6 @@
 # The two optimization classes the engine never proposed
 
-Registered in `PREREGISTRATION.md` (`a66225a`) before `tools/gate_proposal.py`
+Registered in `PREREGISTRATION.md` (`ec62edd`) before `tools/gate_proposal.py`
 was touched, with four dated amendments. Started from objective
 O3c (retiming) standing **MISSING** and O3d (FSM optimization) **PARTIAL**.
 

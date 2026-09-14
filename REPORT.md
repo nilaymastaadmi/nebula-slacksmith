@@ -186,7 +186,7 @@ A k-padded obligation is *wrong* for an elastic interface: pointed at a valid/re
 
 The model receives the OpenSTA critical-path report, the target RTL and the typed transform schema, and emits a declared transform type plus replacement source. The declaration selects the obligation; `tools/gate_proposal.py` runs five gates in order: **parse, elaborate, precondition, formal, timing.**
 
-To measure this honestly we **pre-registered the experiment before writing any proposer code**, and git proves the ordering (`4ee45c2` precedes `7e3ab9b` precedes the results). The registration fixed N = 6, fixed the gates, and fixed the anti-tuning rule: *all six proposals committed before any gate ran, none editable afterwards, all six reported regardless of outcome.*
+To measure this honestly we **pre-registered the experiment before writing any proposer code**, and git proves the ordering (`04fa59c` precedes `115fc03` precedes the results). The registration fixed N = 6, fixed the gates, and fixed the anti-tuning rule: *all six proposals committed before any gate ran, none editable afterwards, all six reported regardless of outcome.*
 
 | | transform | declared | parse | elab | precond | **formal** | timing (clk_a) |
 |---|---|---|---|---|---|---|---|
@@ -223,7 +223,7 @@ P5 shows the k-padded obligation doing its job in the other direction: refuted i
 
 ### 7.1 Batch 2, registered separately, on the AES key memory
 
-Batch 1's registration required any second batch to be registered separately with its N added to the trial count (`02ead73` precedes `3b17e5d` precedes every result). **Trial count: 16.** Batch 2 targets `aes_key_mem`, which holds the worst path on `clk_b` and `clk_e`; `u_aes_b` and `u_aes_e` are two instances of one module, so every edit is measured twice.
+Batch 1's registration required any second batch to be registered separately with its N added to the trial count (`dbcd7d3` precedes `004695c` precedes every result). **Trial count: 16.** Batch 2 targets `aes_key_mem`, which holds the worst path on `clk_b` and `clk_e`; `u_aes_b` and `u_aes_e` are two instances of one module, so every edit is measured twice.
 
 | | transform | declared | precond | **formal** | clk_b | clk_e |
 |---|---|---|---|---|---|---|

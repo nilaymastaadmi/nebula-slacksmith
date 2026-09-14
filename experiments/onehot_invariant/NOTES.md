@@ -6,7 +6,7 @@ Run 2026-08-31. Yosys 0.67+94, SBY 0.67-4, z3, abc pdr, via tools/run_proof.py.
 
 The 2026-08-31 audit found claim-to-evidence drift in the composition chain between the
 first two transforms. Three places (mux_priority_to_parallel/NOTES.md, the header of
-rtl/domain_b_onehot_parallel.v, and commit 5c4ea19's message) said fsm_reencode "proved
+rtl/domain_b_onehot_parallel.v, and commit 043fe9b's message) said fsm_reencode "proved
 state_r is genuinely one-hot for all time". It did not. That proof established
 decoded-state correspondence through decode_state(), a priority encoder that maps many
 multi-hot states onto the same output as legal one-hot states, so it structurally cannot
@@ -39,7 +39,7 @@ this one is a single-design invariant.
 The mux_priority scoped proof's one-hot assumptions are now backed by a discharged,
 unbounded proof for both the assumed designs, not by a construction argument. The three
 drifted wordings are corrected in the same commit as this file. The commit message of
-5c4ea19 cannot be edited; this file is its correction of record.
+043fe9b cannot be edited; this file is its correction of record.
 
 ## Reproduce
 

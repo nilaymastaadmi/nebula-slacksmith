@@ -1,6 +1,6 @@
 # What closure costs, arm by arm
 
-Registered in `PREREGISTRATION.md` (`b614b2c`), scripts in `6132e8c`, both
+Registered in `PREREGISTRATION.md` (`6fd2e17`), scripts in `fe911f1`, both
 before any arm ran. **Physical arms A4 to A6 are still running; this file covers
 the five zero-parasitic arms and will be extended, not rewritten.**
 

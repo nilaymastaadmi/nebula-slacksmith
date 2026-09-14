@@ -1,6 +1,6 @@
 # Open-weight run 2: a code-specialised model, and the same wall
 
-Registered in `PREREGISTRATION.md` (`0f5c46d`), scripts in `9f1650f`, both
+Registered in `PREREGISTRATION.md` (`b135ef6`), scripts in `9f5e808`, both
 before the model was invoked. **Qwen2.5-Coder-7B-Instruct, Apache-2.0, Ollama
 0.34.0, localhost only, no API key.** Same machine as run 1: Intel Iris Xe
 integrated graphics, 16 GB RAM, CPU inference.
