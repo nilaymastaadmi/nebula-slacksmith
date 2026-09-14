@@ -5,8 +5,9 @@ in `demo/PHASE1_CUT.md`. Every number below is read back from a tool or a file.
 
 **Final video: `%USERPROFILE%\Videos\slacksmith-demo\slacksmith_demo.mp4`**, 298.500 s,
 1920x1080 30 fps H.264 (the silent cut's video stream, byte-identical: pts, size
-and flags match on all 8,955 packets) plus mono 48 kHz AAC narration. Kept out of
-the repository, like the silent cut.
+and flags match on all 8,955 packets) plus mono 48 kHz AAC narration. Committed at the
+repository root as `slacksmith_demo.mp4` on 2026-09-14; the silent cut stays out of the
+repository.
 
 ## How it was made, in the order `demo/VIDEO_PROMPT.md` sets
 

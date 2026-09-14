@@ -27,3 +27,7 @@
 *.zip   binary
 *.png   binary
 *.pdf   binary
+
+# Media, never touch.
+*.mp4   binary
+*.wav   binary

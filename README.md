@@ -1,192 +1,134 @@
 # SlackSmith
 
-**Latency-changing RTL optimization with automatically generated proof obligations.**
+**A GenAI RTL optimization loop that proves each RTL change correct, then measures whether it helps.**
 
-Entry for *Nebula*, Astera Labs @ BITS Pilani Goa. Track A (Digital):
-*Constraint Optimization through RTL Enhancement Using Generative AI*.
+Nebula, Astera Labs @ BITS Pilani Goa. Track A (Digital): *Constraint Optimization
+through RTL Enhancement Using Generative AI*. Nilay Toshniwal and Shivani Chaudhary.
 
-Nilay Toshniwal and Shivani Chaudhary.
-Full write-up: **[REPORT.md](REPORT.md)**. Demo shot list: **[DEMO.md](DEMO.md)**.
+## The submission
 
----
-
-## The idea
-
-Transforms are **typed**. The model does not emit free-text Verilog and hope; it
-declares a transform type, and that declaration mechanically selects the proof
-obligation:
-
-| declared | obligation | discharged by |
-|---|---|---|
-| k = 0, state-preserving | combinational / sequential equivalence | EQY, `abc dsec` |
-| k > 0, rigid interface | k-padded miter | SymbiYosys, BMC + PDR |
-| k > 0, elastic interface | stream equivalence | SymbiYosys + `cover` |
-| k = 0, re-encoded state | mapped-state equivalence | SymbiYosys + bijection |
-
-All four branches are proven on real RTL. Latency-changing transforms become
-checkable, which is what the published systems avoid.
-
-## What we actually measured, which is the point
-
-We built both halves and then measured the half everyone assumes works. An LLM
-pointed at a timing report fails **two** different ways.
-
-**1. It proposes things that are wrong.** Two pre-registered batches, N = 12,
-every proposal frozen before any gate ran (git proves the ordering). 3 formally
-refuted, 1 rejected at precondition, 1 unresolved. The best one:
-
-| checker on proposal P4 | verdict |
+| | file |
 |---|---|
-| EQY formal | **CAUGHT** in 46 s, counterexample `a=ae19f605, shamt=7` |
-| the design's own shipped firmware, 400 cycles | **MISSED** |
-| 20,000 random instruction words | **MISSED** |
-| directed SRAI on a negative operand | CAUGHT |
+| **Report**, 12 pages | [`REPORT.pdf`](REPORT.pdf) (source [`REPORT.md`](REPORT.md)) |
+| **Demo video**, 4 min 58 s, narrated | [`slacksmith_demo.mp4`](slacksmith_demo.mp4) |
+| **Deliverable inventory**, every claim with its evidence file | [`SUBMISSION_PACK.md`](SUBMISSION_PACK.md) |
+| **Interactive demo**, one offline page generated from the logs | [`demo/explorer.html`](demo/explorer.html) |
+| Shot list and the command behind every beat of the video | [`DEMO.md`](DEMO.md) |
+| Setup, tool versions, and which claims take minutes or an afternoon to re-derive | [`SETUP.md`](SETUP.md) |
 
-P4 saves 208 cells, passes every precondition, and breaks SRA for every
-negative operand. The file it edits carries a comment warning about exactly
-that defect, ten lines above the code it changed.
+## What the loop does
 
-**2. It aims correct transforms at the wrong variable.** The binding paths on
-this benchmark are **59% to 91% fanout-attributable delay**, and no RTL rewrite
-shortens a net's load delay:
+One command runs the steps an engineer otherwise does by hand, and records every
+decision with the evidence it used:
 
-| lever, same clock group, same SDC | clk_b gain | changes RTL? | parasitics? |
+1. **G0, constraint integrity.** Fingerprint the SDC and count its timing exceptions,
+   so a constraint edit cannot pass as a timing gain.
+2. **Synthesize and time** with Yosys and OpenSTA.
+3. **Classify the binding path** by fanout-attributable delay, and route the fix:
+   physical (buffering, sizing, `repair_design`) or RTL.
+4. **Propose.** An LLM emits a *declared transform type* plus replacement RTL.
+5. **Generate and discharge the proof obligation from the declared type**:
+
+   | declared | obligation | discharged by |
+   |---|---|---|
+   | k = 0, state-preserving | combinational / sequential equivalence | EQY, `yosys-abc dsec` |
+   | k > 0, rigid interface | k-padded miter | SymbiYosys, BMC + PDR |
+   | k > 0, elastic interface | stream equivalence | SymbiYosys + `cover` |
+   | k = 0, re-encoded state | mapped-state equivalence | SymbiYosys, sequential miter |
+   | k = 0, register moved | retiming | SymbiYosys, sequential miter |
+
+6. **Re-time, then accept or revert**, with a null control run before any refutation
+   is reported.
+
+## Deliverables
+
+| # | deliverable | status | evidence |
 |---|---|---|---|
-| best LLM RTL transform, batch 1 | +0.485 | yes | no |
-| best LLM RTL transform, batch 2 | +4.925 | yes | no |
-| ABC buffering control | +17.557 | no | no |
-| **OpenROAD `repair_design`** | **+55.805** | **no** | **yes** |
+| 1 | RTL timing analysis framework | full | `tools/slacksmith.py`, `tools/remeasure.py`, three versioned SDCs, G0 |
+| 2 | GenAI-based RTL optimization engine | **partial** | 17 proposals in three provenance tiers, all four named classes routed; no run has both chosen RTL unaided and produced a proven, timing-positive transform |
+| 3 | Critical path and timing violation analysis | full | `tools/classify_path.py`, regression-checked against OpenSTA's fanout column |
+| 4 | Optimized RTL implementation | **partial** | `experiments/composed_rtl/aes_key_mem_composed.v`, proven; its gain does not survive the physical flow |
+| 5 | Timing, frequency and PPA comparison | full | report §8, `experiments/ppa/`, `experiments/closure_cost/` |
+| 6 | Formal equivalence verification report | full | five obligation branches, G6 and G7, `experiments/slackbench/` |
+| 7 | Interactive demo | full | `demo/explorer.html` and the narrated video |
 
-So SlackSmith routes **twice**: the fix by measured path pathology, the proof
-obligation by declared transform type.
+The benchmark, `bench_top`, is **55,413 standard cells** with five independent
+asynchronous clock domains, a generated clock per domain including /3 and /5
+dividers, gray-code FIFOs on every multi-bit crossing and two-flop synchronizers
+on every single-bit one (`rtl/`, report §4).
 
-**3. And we tested that on designs we did not write.** The 20 human-written
-designs published with Dr. RTL (ICCAD 2026), pre-registered, same flow, same
-unchanged thresholds: 15 in scope, **5 FANOUT / 3 MIXED / 7 DEPTH** after a
-classifier correction (2026-09-03, 1 verdict changed), byte-identical across
-two independent runs. The physical lever closed **5 of 5** fanout-dominated
-designs outright and 4 of 7 depth-dominated ones, with a 6.2x higher median
-gain on the former. Three of five registered predictions were wrong,
-including the primary one, and the write-up says exactly how.
-`experiments/drrtl_transfer/`.
+## What we measured
 
-**4. The tool's own log caught its worst bug.** The classifier had been
-undercounting fanout across module boundaries; a 6.762 ns cell it recorded
-at fanout 1 drives 387 loads. Every DEPTH verdict it gave on this benchmark's
-post-buffering paths was wrong, the fix is regression-checked against
-OpenSTA's own fanout column, and the wrong logs are kept.
-`tools/classify_regression.py`, `docs/closed-loop.md`.
+- **The model proposes transforms that are wrong.** Of 12 proposals frozen before
+  any check ran, **3 were formally refuted**. One of them passes every
+  precondition, cuts 208 cells, and survives the design's own firmware and 20,000
+  random instruction vectors; the formal gate caught it in **46 seconds** with a
+  concrete counterexample.
+- **Correct transforms were aimed at the wrong variable.** The binding paths were
+  **59% to 91% fanout-attributable delay**. Like for like on one group, a proven
+  FSM re-encoding buys **+3.185 ns** while the physical lever takes the same group
+  from **−18.957 to +5.6**: about one eighth.
+- **Nothing the RTL half bought survived the physical flow.** Three proven
+  transforms composed into one file are worth **+5.165 ns** before wires, **0.000**
+  after buffering, and **−0.237 ns** after `repair_design`, inside a 0.24 ns floor.
+  On two external designs where the router chose RTL unaided, four proven
+  transforms bought **0.000, 0.000, −0.268 and −0.421 ns**.
+- **Closure has a price, measured.** `repair_design` closes all three violating
+  groups with placement parasitics at **+20.2% area** and **+47.1% power**.
+- **One constraint line is worth +5.179 ns on a byte-identical netlist**, and every
+  equivalence checker we own correctly calls the two designs equivalent. That is what G0
+  exists to catch.
+- **SlackBench grades the checker, not the design**: 8 sealed transform pairs with
+  ground truth committed first, our own gate scored among them.
 
-**5. The flow was the biggest lever.** Flattening before ABC moves `clk_a`
-by +22.4 ns with no buffering at all; flat plus buffering closes 2 of 3
-groups under SDC v3 and leaves `clk_e` at −0.319. Every earlier number is a
-hierarchical-flow number and is labelled so. `experiments/flatten_control/`.
-
-**6. Two gates nothing else in this class has.** **G0, constraint
-integrity**: one `set_multicycle_path` line takes a group from −0.319
-VIOLATED to +4.860 MET on a byte-identical netlist, which is more than our
-best proven RTL transform bought and which **no equivalence checker can
-catch**, because the two designs are the same file. The loop now hashes the
-SDC, counts its timing exceptions, and can refuse. **G6, physical
-equivalence**: `repair_design`'s output is proven equivalent to its input,
-5,832 compare points in 38 seconds, after four failed attempts whose causes
-are all named. A physical step whose logic we cannot vouch for now stops the
-loop. `experiments/sdc_integrity/`, `tools/lec_check.py`.
-
-**7. We built the exam and published our own score on it.** SlackBench is a
-suite of RTL transform pairs with declared ground truth, built to defeat
-specific checker abstractions, used to grade **verification methodologies**
-rather than designs or testbenches. The literature search found nothing like
-it. Our own checker gets two of eight wrong, which was registered in advance,
-because a suite its author aces is evidence the suite was rigged.
-`experiments/slackbench/`.
+The negative results are the point. Proof and profit are independent questions,
+and the report measures both.
 
 ## Run it
 
-    git clone <repo> && cd slacksmith-benchmark
-    bash tools/preflight.sh      # names any missing dependency and where to get it
-    bash tools/demo_check.sh     # all 8 demo beats, 12 assertions
+```
+git clone https://github.com/nilaymastaadmi/nebula-slacksmith
+cd nebula-slacksmith
+bash tools/preflight.sh      # names any missing dependency and where to get it
+bash tools/demo_check.sh     # runs every command in DEMO.md: 23 assertions
+```
 
-Or the tool on its own:
+The loop on its own:
 
-    python3 tools/slacksmith.py \
-      --sdc sdc/bench_top_v2.sdc \
-      --clock clk_a --clock clk_b --clock clk_e \
-      --workdir ~/run --engine sta
+```
+python3 tools/slacksmith.py \
+  --sdc sdc/bench_top_v2.sdc \
+  --clock clk_a --clock clk_b --clock clk_e \
+  --workdir ~/run --engine sta
+```
 
-Closes the benchmark in **2 iterations**, in a median **112.7 s** on one core (five protocol runs, 83.9 to 152.7 s; 47 to 833 s outside the protocol; `experiments/loop_runtime/`), and writes every
-routing decision with its evidence to `decisions.jsonl`.
-
-Tool paths come from environment variables with defaults (`OSS_CAD_BIN`,
-`STA_BIN`, `LIBERTY`, `OPENROAD_BIN`). **[SETUP.md](SETUP.md)** lists them, the
-versions the committed results were measured with, and specifically which
-claims you can re-derive in minutes and which would cost you an afternoon of
-synthesis. Clone rather than downloading a zip: one demo assertion checks that
-the pre-registration commit precedes the results commit, which needs history.
-
-## The interactive demo
-
-    python3 demo/build.py && open demo/explorer.html
-
-One self-contained page, no server and no network. Step through any of five
-committed runs and see the evidence the classifier decided on, the solver's
-counterexample for each refuted transform, the SlackBench matrix with our own
-checker labelled and its two wrong cells visible, and the SDC line worth
-+5.179 ns on a byte-identical netlist. It is **generated from the logs**, so it
-cannot drift from them. See [demo/README.md](demo/README.md).
-
-## The benchmark
-
-`bench_top`, **55,413 standard cells**. Five asynchronous domains, each with
-its own async reset and its own in-RTL generated clock including odd /3 and /5
-dividers. Gray-code async FIFOs on every multi-bit crossing, two-flop
-synchronizers on every single-bit one. An RV32I core and two AES-128 cores.
-The SDC is written once and frozen; no `set_multicycle_path` anywhere, because
-a multicycle exception manufactures slack without changing the design.
+It closes SDC v2 in 2 iterations, a median **112.7 s** on one core
+(`experiments/loop_runtime/`), and writes every routing decision with its
+evidence to `decisions.jsonl`. Clone rather than download a zip: one assertion
+checks that each pre-registration was committed before its results, which needs
+the git history.
 
 ## Layout
 
 ```
-REPORT.md                  the submission. tools/render_report.py measures its page count
-DEMO.md                    shot list for the demo video
+REPORT.md, REPORT.pdf      the report
+slacksmith_demo.mp4        the demo video
+SUBMISSION_PACK.md         deliverables, objectives and known-open items, each with its evidence
+DEMO.md                    the video's shot list; tools/demo_check.sh runs every command in it
+SETUP.md                   dependencies, versions, cost of re-deriving each claim
 rtl/                       bench_top and its five domains; rtl/aes is vendored, BSD-2
 sdc/                       v1 frozen, v2 closure targets, v3 generated by make_v3.py
-tools/  slacksmith.py      the closed loop
-        classify_path.py   routes the fix by fanout-attributable delay share
-        gate_proposal.py   routes the obligation by declared type, runs G1 to G4
-        remeasure.py       synthesis + STA, with the null control that has 0.000 noise
-        verdict_regression.sh  P4 must read REFUTED, A2 must read UNRESOLVED
-docs/   measurement-methodology.md   four findings that changed how we report numbers
-        path-classification.md       the classifier, its 5-case validation, its 2 limits
-        closed-loop.md               the loop, and the bugs running it exposed
-experiments/               every number above, with the command that produced it
+tools/                     the loop, the classifier, the obligation gate, G0, G6, G7, checks
+experiments/               every result, each with its registration, sources, logs and NOTES
+docs/                      measurement methodology, path classification, the closed loop
+demo/                      the interactive explorer and the video's sources
 ```
 
-## What we got wrong
+## Limits
 
-Kept deliberately, because a submission that cannot show its corrections is
-not measuring anything. Full list in REPORT.md §9. The two worth naming here:
-
-**Our own gate reported a solver timeout as a refutation.** EQY prints the same
-line for a counterexample and for running out of depth, and we matched on the
-string. Caught only because a partition failed while all 128 partitions feeding
-it had passed. `tools/verdict_regression.sh` now pins both directions.
-
-**Every number we published before 2026-09-01 was zero-parasitic.** With
-placement parasitics the `clk_a` baseline we reported as "+1.333, meets" is
-**−36.723**. The baseline-versus-variant comparisons survive, because both
-sides always used one consistent model. The absolute closure claims did not.
-
-## Honest limits
-
-- The proposer is offline. The loop selects, gates and measures proposals
-  frozen before any gate ran. It does not generate them, because the
-  anti-tuning rule in both pre-registrations forbids generating a proposal
-  after seeing a gate result.
-- `repair_design`'s equivalence is **not** verified. Three attempts failed for
-  tooling reasons and none produced a counterexample, which is not the same as
-  passing. See `experiments/openroad_repair/NOTES.md`.
-- The classifier's thresholds were chosen after looking at this benchmark.
-  They are not validated on any held-out design.
-- N = 12 proposals, one proposer model. These are outcomes, not rates with
-  confidence intervals.
+Stated in full in report §9 and §10 and in `SUBMISSION_PACK.md` §5. In short: 17
+proposals from one proposer model (Claude Opus 5), so outcomes, not rates;
+unattended operation is N = 1; the physical flow reaches CTS and global routing,
+not signoff; equivalence is not proven for the ABC buffering lever; modules
+instantiated with parameter overrides are refused rather than proven; and the
+organisers' open-source-model recommendation is not met for the main result.
