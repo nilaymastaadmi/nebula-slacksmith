@@ -66,6 +66,19 @@ def main():
     ap.add_argument("--html", default=HTML)
     a = ap.parse_args()
 
+    # Render first, every time. Until 2026-09-14 this printed whatever
+    # REPORT.html was committed, and REPORT.html had not been regenerated since
+    # 2026-09-13 15:37: every "12 pages" measured after that date was a stale
+    # render, and the edited report was in fact 13. A page count of a file
+    # other than the one being submitted is the same failure as the pixel
+    # estimate this tool replaced.
+    if a.html == HTML:
+        r = subprocess.run([sys.executable, os.path.join(HERE, "tools", "render_report.py")],
+                           capture_output=True, text=True)
+        if r.returncode != 0:
+            print("render_report.py failed:")
+            print(r.stdout + r.stderr)
+            return 2
     if not os.path.isfile(a.html):
         print("no %s; run tools/render_report.py first" % a.html)
         return 2
