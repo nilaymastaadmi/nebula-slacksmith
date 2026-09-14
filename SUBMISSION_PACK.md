@@ -255,7 +255,7 @@ Each with its nearest prior art, conceded where it narrows the claim.
 
 ## 4. Thought process: what is on the record
 
-- **28 registration files** across 23 experiment directories (`find experiments -name 'PREREGISTRATION*.md'`), each committed
+- **29 registration files** across 24 experiment directories (`find experiments -name 'PREREGISTRATION*.md'`), each committed
   before the code or the results they govern, with git as the ordering proof.
 - **Dated amendments**, never silent edits. Where ground truth was wrong on
   publication (SlackBench CDC-1) it is disclosed as an amendment rather than
@@ -276,7 +276,7 @@ Each with its nearest prior art, conceded where it narrows the claim.
   fail** on 2026-09-13 after beat 5 and the parameter guard were added; **23 pass, 0 fail** on 2026-09-14 with the included-header guard fixture.
 - **The tally is generated**: `tools/tally_predictions.py`, quoted in REPORT
   §9 and re-run after every registration. **It was itself wrong until
-  2026-09-13** (every id mention counted); it now self-tests on 16 real lines, including every one that broke it (review 6 found it still missed the word CORRECT, which left H1 and H2 unscored), and reads 35 missed of 107 decided, 127 registered, 8 unscored. **It reads lettered ids only**, which appear in 14 of the 23 registered experiments; the other nine, SlackBench, the transfer study and batch 1 among them, are outside those counts. REPORT §9 carried a stale hand-written
+  2026-09-13** (every id mention counted); it now self-tests on 16 real lines, including every one that broke it (review 6 found it still missed the word CORRECT, which left H1 and H2 unscored), and reads 35 missed of 107 decided, 136 registered, 12 unscored (4 of them `open_weight_3` arm B, not yet run). **It reads lettered ids only**, which appear in 15 of the 24 registered experiments; the other nine, SlackBench, the transfer study and batch 1 among them, are outside those counts. REPORT §9 carried a stale hand-written
   tally until the fourth review found it.
 
 ---
@@ -339,7 +339,11 @@ Each with its nearest prior art, conceded where it narrows the claim.
     367.8 and 832.8 s (the video session, `demo/PHASE1_CUT.md` finding 1), so the
     report quotes the median, not the range, as the loop's cost.
 13. **The organisers' open-source-key recommendation is not met for the primary
-    result**, which was produced with Claude Opus 5 (§5d).
+    result**, which was produced with Claude Opus 5 (§5d). **A hosted open-weight
+    run is still to do.** The one attempt, Gemma 4 31B on a free OpenRouter pool on
+    2026-09-14, was rate-limited on all three tries and is VOID, with no reply
+    (`experiments/open_weight_3/`, arm A). The local replay with the whole request
+    in context (arm B) runs after the video is assembled.
 
 ---
 
@@ -409,7 +413,7 @@ port list, reset on the rising edge of an active-low signal. Across two open-wei
 engineering, not the envelope", is withdrawn.** So: portability exercised twice, capability
 **not demonstrated at 7B on CPU, on a truncated prompt**, and **the organisers' open-source-key
 recommendation is not met for the primary result**, which was produced with
-Claude Opus 5. Nothing here speaks for 32B or 70B open-weight
+Claude Opus 5. One hosted 31B attempt was rate-limited and void (item 13). Nothing here speaks for 32B or 70B open-weight
 models served over an API, and the prompt was tuned against Claude Opus 5. **No API key is committed
 anywhere**: the token lives in `~/.slacksmith_token` outside the repository and
 `tools/preflight.sh` fails if a credential-shaped string reaches a tracked file.
