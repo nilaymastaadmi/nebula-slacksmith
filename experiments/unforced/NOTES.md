@@ -129,7 +129,9 @@ as one-hot-except-idle, so every `case` arm is a wide equality compare.
 proposal, `UNRESOLVED`. A second proposal, `parallel_case_onehot_decode` from
 run 4, **is PROVEN by EQY** when the gate is run by hand, but that was a
 by-hand gate run during a repair, not a loop result, and it is reported as
-such rather than promoted.
+such rather than promoted. **Withdrawn 2026-09-12:** that by-hand run left no
+artifact, so it is not counted anywhere; `experiments/depth_i2c/` re-ran the design
+with everything kept.
 
 **And the variance is the point.** Same model, same prompt, same design, three
 different transforms and at least two different gate outcomes. The report's

@@ -20,8 +20,9 @@ Every decision, the evidence behind it and its outcome are appended to
 
 **1. Route the fix by measured path pathology.** `tools/classify_path.py`
 scores what share of a path's delay comes from cells driving 32 or more loads.
-A fanout-dominated path goes to a physical lever, because no RTL rewrite
-shortens a net's load delay. A depth-dominated path goes to the RTL proposer.
+A fanout-dominated path goes to a physical lever, because buffering is built to
+fix a net's load and a rewrite is not. (An earlier draft said no RTL rewrite
+shortens a net's load delay; that absolute is retracted in REPORT §1.) A depth-dominated path goes to the RTL proposer.
 
 **2. Route the proof obligation by declared transform type.** k=0 gets
 combinational equivalence, k>0 rigid gets a k-padded miter, elastic gets
@@ -50,6 +51,10 @@ sum over reported groups of min(worst slack, 0) strictly improved". Run 4
 below is why that second bar exists.
 
 ## Honest limit on the phrase "closed loop"
+
+**Superseded 2026-09-05; kept as written for the record.** The loop has since generated
+proposals online through the `handoff` backend and unattended through `cli` (REPORT
+§7.3, §7.7). What follows describes the loop as it stood before that.
 
 **The proposer is offline.** This loop does not call a model. It selects from
 directories of proposals that were frozen before any gate ran, per the two

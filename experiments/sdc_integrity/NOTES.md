@@ -22,6 +22,10 @@ varies is what the SDC says. Timing is our own OpenSTA under
 this project's best formally-proven RTL transform (+4.925) and it required
 changing nothing at all.
 
+**Withdrawn 2026-09-12 (REPORT §5.2):** the comparison to +4.925 is not like for
+like. The +5.179 is measured on this 26,958-cell flat netlist and the +4.925 on the
+55,413-cell hierarchical benchmark, so the two are not quoted against each other.
+
 ## The two things this shows
 
 **1. Equivalence checking cannot see it, by construction.** Every checker we

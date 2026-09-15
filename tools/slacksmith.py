@@ -14,8 +14,8 @@ WHY THERE ARE TWO ROUTERS, AND WHY THAT IS THE POINT
 
   1. Route the FIX by measured path pathology. tools/classify_path.py scores
      what share of a path's delay comes from cells driving many loads. A
-     fanout-dominated path goes to a physical lever; no RTL rewrite shortens a
-     net's load delay. A depth-dominated path goes to the RTL proposer. On this
+     fanout-dominated path goes to a physical lever, which is built to fix a
+     net's load (the absolute that no RTL rewrite can is retracted, REPORT §1). A depth-dominated path goes to the RTL proposer. On this
      benchmark the binding paths measured 59% to 91% fanout-attributable, and
      the physical lever beat the best formally-proven RTL transform by 3.6x
      (mapping level) and 11.3x (with placement parasitics).
@@ -37,9 +37,8 @@ WHERE RTL TRANSFORMS COME FROM: --proposer.
            The loop halts, writes a request, and resumes when a response file
            appears.
 
-  cli      The same, automated through `claude -p`. COMMITTED UNEXERCISED: the
-           OAuth session on the development machine is expired, and reporting
-           it as working is a void condition in the registration.
+  cli      The same, automated through `claude -p`. Exercised 2026-09-11
+           (experiments/cli_backend/) and on six runs on external designs since.
 
 The earlier claim here was that generating mid-run would break the anti-tuning
 rule. It does not. Pre-registration forbids the EXPERIMENTER changing the
@@ -113,7 +112,8 @@ def sdc_fingerprint(path):
     none of them can see the constraints. experiments/sdc_integrity/ measured
     what that gap is worth: one `set_multicycle_path 2 -setup -from clk_e -to
     clk_e` takes clk_e from -0.319 VIOLATED to +4.860 MET on a byte-identical
-    netlist, which is more than this project's best proven RTL transform. No
+    netlist (a comparison to an RTL transform once made here is withdrawn,
+    REPORT §5.2: different netlist, different regime). No
     equivalence checker can catch that, because the two designs are the same
     file. A slack number means nothing without the constraints it was measured
     under, so the loop records them and can be told to refuse a mismatch.

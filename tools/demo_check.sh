@@ -67,10 +67,24 @@ echo "=== beat 2: the closed loop, live (about two minutes on one core, REPORT 1
   --liberty $LIBERTY \
   --sta-bin $STA_BIN \
   --clock clk_a --clock clk_b --clock clk_e \
+  --expect-sdc-sha 3164f5796363d98c \
   --workdir $W --engine sta > $D/b2.txt 2>&1
 tail -12 $D/b2.txt
 chk "beat 2 loop closes v2 in 2 iterations" $D/b2.txt \
   "clk_b=-4.957" "FANOUT_DOMINATED" "ALL REPORTED GROUPS MEET"
+
+# G0 refusal, checked rather than asserted: the same registered digest against
+# a copy of the SDC with one multicycle line appended, the edit experiments/
+# sdc_integrity/ measured as worth +5.179 ns. The loop must stop before timing.
+echo "=== G0 refuses a changed SDC (not a beat)"
+cp sdc/bench_top_v2.sdc $D/tampered_v2.sdc
+echo 'set_multicycle_path 2 -setup -from [get_clocks clk_e] -to [get_clocks clk_e]' >> $D/tampered_v2.sdc
+python3 -u tools/slacksmith.py --sdc $D/tampered_v2.sdc --expect-sdc-sha 3164f5796363d98c \
+  --liberty $LIBERTY --sta-bin $STA_BIN --clock clk_e \
+  --workdir $W.g0 --engine sta > $D/g0.txt 2>&1
+echo "exit code $?" >> $D/g0.txt
+tail -2 $D/g0.txt
+chk "G0 refuses a changed SDC given the registered digest" $D/g0.txt "Refusing to report slack" "exit code 1"
 
 echo "=== beat 3: replay three committed logs"
 for f in run_v3_final run_v3_fixed run_v3_flat; do

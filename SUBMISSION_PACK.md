@@ -25,7 +25,7 @@ process.
 | Repository | runs from a clean clone at any path, verified three times (`experiments/reproducibility/`) |
 | Interactive demo | `demo/explorer.html`, generated from committed logs, published |
 | `claude` CLI auth | **working.** Token minted 2026-09-11 and held outside the repository in `~/.slacksmith_token`; `tools/preflight.sh` fails if a credential-shaped string ever reaches a tracked file |
-| Repository | **pushed**, `origin/main`. **Commit history was rewritten on 2026-09-14** to normalise the author identity and commit-message wording and to remove internal working notes: every commit hash changed, and every commit date, order and file change outside those notes did not. Hashes cited in this repository were remapped in the same pass. **The demo video predates the rewrite**: beat 4's screen shows `4ee45c22` for the pre-registration and `7e3ab9b4` for the proposals, which are now `04fa59c4` and `115fc03f`, with the same dates and the same order. This row deliberately names **no commit hash**: a commit cannot contain its own hash, so any hash typed here is stale the moment it is committed, and a stale hash is the exact failure this project argues against. Verify instead with `git fetch && git rev-list --count origin/main..HEAD` (expect **0**) and `git log --oneline -1`. Until 2026-09-12 the remote was 109 commits behind, which is why this row points at a command rather than at the tree. **Verified on 2026-09-12 by cloning the remote URL to a second path** and running `tools/preflight.sh` and `tools/demo_check.sh` from that clone: all dependencies present, no credential-shaped string tracked, **15 pass, 0 fail**, concurrently with the same check in the working tree. **Verified again on 2026-09-13**, from a fresh clone of the remote: preflight clean, **22 pass, 0 fail**, 259 numbers with 0 unsupported, tally self-test 13 of 13. The first clone run that day **failed 21 of 22**: nine committed proposal files pointed into the author's scratch directory, so the new parameter-guard fixture could not be re-gated from a clone. The gate now falls back to the committed copy beside each proposal; re-cloned and re-run. **Verified a third time on 2026-09-14**, from a fresh clone of the commit that carries the narrated video's handoff and `experiments/open_weight_3/`: preflight clean, **23 pass, 0 fail**, 273 numbers with 0 unsupported, tally self-test 18 of 18. The only later commit is this sentence |
+| Repository | **pushed**, `origin/main`. **Commit history was rewritten on 2026-09-14** to normalise the author identity and commit-message wording and to remove internal working notes: every commit hash changed, and every commit date, order and file change outside those notes did not. Hashes cited in this repository were remapped in the same pass. **The demo video predates the rewrite**: beat 4's screen shows `4ee45c22` for the pre-registration and `7e3ab9b4` for the proposals, which are now `04fa59c4` and `115fc03f`, with the same dates and the same order. This row deliberately names **no commit hash**: a commit cannot contain its own hash, so any hash typed here is stale the moment it is committed, and a stale hash is the exact failure this project argues against. Verify instead with `git fetch && git rev-list --count origin/main..HEAD` (expect **0**) and `git log --oneline -1`. Until 2026-09-12 the remote was 109 commits behind, which is why this row points at a command rather than at the tree. **Verified on 2026-09-12 by cloning the remote URL to a second path** and running `tools/preflight.sh` and `tools/demo_check.sh` from that clone: all dependencies present, no credential-shaped string tracked, **15 pass, 0 fail**, concurrently with the same check in the working tree. **Verified again on 2026-09-13**, from a fresh clone of the remote: preflight clean, **22 pass, 0 fail**, 259 numbers with 0 unsupported, tally self-test 13 of 13. The first clone run that day **failed 21 of 22**: nine committed proposal files pointed into the author's scratch directory, so the new parameter-guard fixture could not be re-gated from a clone. The gate now falls back to the committed copy beside each proposal; re-cloned and re-run. **Verified again on 2026-09-15** from a fresh clone of the public repository; the log is committed at `experiments/reproducibility/results/` with the commit it checked |
 
 ---
 
@@ -37,7 +37,9 @@ process.
 - Reports worst slack per clock group, per-group path reports, cell-level
   incremental delay and fanout.
 - **G0, constraint integrity:** the SDC is SHA-256 fingerprinted and its timing
-  exceptions are counted before any number is trusted (`sdc_fingerprint()`).
+  exceptions are counted before any number is reported (`sdc_fingerprint()`);
+  given the registered digest with `--expect-sdc-sha`, as the demo command is,
+  the loop refuses a changed file, and `demo_check.sh` checks that it does.
   Motivated by a measured result: one `set_multicycle_path` line moves `clk_e`
   from −0.319 VIOLATED to +4.860 MET on a **byte-identical 26,958-cell
   netlist** (`experiments/sdc_integrity/`, +5.179 ns).
@@ -45,7 +47,7 @@ process.
 ### D2. GenAI-based RTL optimization engine
 - `tools/proposer.py`, three backends: `frozen` (committed proposals),
   `handoff` (generates against live state, loop halts for the model),
-  `cli` (automated via `claude -p`, **exercised 2026-09-11, N = 1**, run preserved at `experiments/cli_backend/results/run1/`).
+  `cli` (automated via `claude -p`, **exercised 2026-09-11 and 7 runs to date**: 1 on the benchmark, preserved at `experiments/cli_backend/results/run1/`, and 3 each on `i2c` and `tv80`).
 - `tools/gate_proposal.py` routes the proof obligation from the declared
   transform type.
 - Proposals: 12 frozen across two pre-registered batches
@@ -75,7 +77,7 @@ process.
   confirmed by run 2 before being repaired. A do-nothing control on this
   560-cell design moves unbuffered slack by 0.424 ns, so the depth-side
   survival cell stays **empty**, and the pack says so.
-- **Unattended result (N = 1):** `fanout_replication_round_key_update`, PROVEN
+- **Unattended result on the benchmark (1 of the 7 unattended runs):** `fanout_replication_round_key_update`, PROVEN
   by EQY over all outputs, **+1.414 ns `clk_b`, +1.414 `clk_e`, +1.967 `clk_a`**,
   no group paying for it. 456 s end to end. It is the only batch-3 transform
   that improved every group.
@@ -136,9 +138,11 @@ process.
   predictions R64 to R69 and R83: four confirmed, three missed.
 
 ### D6. Formal equivalence verification report
-- **Five** obligation branches, all exercised on benchmark RTL: combinational
-  (EQY), k-padded miter (SymbiYosys BMC+PDR), stream equivalence, mapped-state,
-  and **retiming** (sequential miter, no flop correspondence). Branches 4 and 5
+- **Five** obligation branches proven: combinational (EQY), k-padded miter
+  (SymbiYosys BMC+PDR), mapped-state and **retiming** (sequential miter, no flop
+  correspondence) on benchmark RTL, each routed by `tools/gate_proposal.py`; and
+  stream equivalence, proven by a hand-built miter on `sync_fifo`, which is not in
+  `bench_top` and **has no route in the gate yet**. Branches 4 and 5
   were added 2026-09-11 after `experiments/missing_classes/` measured that the
   router could not express either, which is why the engine had never proposed an
   FSM re-encoding or a retiming.
@@ -171,7 +175,7 @@ process.
 | ... **retiming** | `retime_write_decode_forward` (O1), obligation branch 5 | **The gate could not express a retiming until 2026-09-11.** G3 required `k=0 -> flop delta 0`, and a retiming is k=0 with the flop count changed. Root-caused and fixed in `experiments/missing_classes/`; O1 is **PROVEN** (unbounded, PDR) and **costs 4.616 ns** on its own group, a registered prediction that held. `dretime` also exists as an ABC mapping pass, which is not the same thing |
 | ... **FSM optimization** | `experiments/fsm_reencode/` (hand-built), and `fsm_output_coded_state_assignment` (O2) through the gate | Branch 4 was **advertised to the proposer and not implemented**: any re-encoding changes the flop count, so G3 rejected it before the declared branch was read. The project's own one-hot returns `FAIL(declared k=0 but flop count changed by +12)` through the unmodified gate and `PROVEN` through the fixed one. O2 is **PROVEN** (unbounded, PDR) and buys **+3.185 ns**, the largest RTL gain on this group in the project |
 | Evaluate timing, area, performance | D5 | area measured, +20.2% and +1.45% |
-| Formally verify equivalence | D6 | five branches plus G6 and G7 |
+| Formally verify equivalence | D6 | five branches proven, four routed by the gate, plus G6 and G7 |
 
 ### Benchmark specification
 
@@ -257,6 +261,9 @@ Each with its nearest prior art, conceded where it narrows the claim.
 
 - **29 registration files** across 24 experiment directories (`find experiments -name 'PREREGISTRATION*.md'`), each committed
   before the code or the results they govern, with git as the ordering proof.
+  One was never run: batch 3, `experiments/llm_proposer_v3/` (counterexample
+  feedback), registered 2026-09-02, its frozen inputs carrying the classifier
+  defect REPORT §9 describes. Git proves commit order, not authoring order.
 - **Dated amendments**, never silent edits. Where ground truth was wrong on
   publication (SlackBench CDC-1) it is disclosed as an amendment rather than
   corrected quietly.
@@ -285,13 +292,17 @@ Each with its nearest prior art, conceded where it narrows the claim.
 
 1. **`REPORT.md` fits at 9.5 pt, not at 10.5 pt.** Measured, not estimated. Compression took it from 15.6 to 14.0 pages with no measured result dropped; type size took it the rest of the way, and the setting is stated in a footer on the report itself. A judge who expects 11 pt will find this the densest entry in the pile.
 2. **The demo video's narration is a synthetic voice**, Sarvam `bulbul:v3`, not a recorded person; three beats were re-synthesised at pace 1.08 to 1.13 to fit their screens (`demo/PHASE2_VOICE.md`). The video is 298.500 s, 1.5 s inside the 5-minute cap.
-3. **The unattended backend is N = 1.** One run, one design, one sample
-   (`experiments/cli_backend/`). Everything else in this project that says
+3. **The unattended backend has run 7 times, one sample each**: once on the
+   benchmark (`experiments/cli_backend/`) and three times on each of two external
+   designs (`experiments/depth_i2c/`, `experiments/depth_tv80/`). These are the only
+   blind proposals; the 12 frozen and 4 handoff proposals were written through the
+   session driving this project. Everything else in this project that says
    "closed loop" means a model in the loop with a human-mediated handoff.
 4. **The router never selects the RTL lever on THIS benchmark**, because its
    binding paths are 59 to 91 percent fanout-attributable and the physical
-   lever is the correct answer to them. Every in-loop RTL result here used
-   `--force-lever rtl`, logged as `lever_forced`. **It does select RTL unforced
+   lever is the correct answer to them. The closed-loop runs reached RTL only
+   through the classifier's since-corrected DEPTH verdicts, and every later
+   in-loop RTL result here used `--force-lever rtl`, logged as `lever_forced`. **It does select RTL unforced
    on a depth-dominated external design** (`experiments/unforced/`, `i2c` from
    the Dr. RTL set). That run also exposed **six defects in this project's own
    tooling**, none affecting a published result and none of which this
@@ -345,6 +356,13 @@ Each with its nearest prior art, conceded where it narrows the claim.
     (`experiments/open_weight_3/`, arm A). The local replay with the whole request
     in context (arm B) saw all 5,113 tokens and replied in 3,025 s, past the loop's
     fixed 1,800 s wait, so it is VOID too; its reply is committed and was not gated.
+14. **Stream equivalence has no route in the gate.** Branch 3 is proven by a
+    hand-built miter on `sync_fifo`, which is not in `bench_top`; a proposal
+    declaring an elastic latency change cannot yet be gated automatically.
+15. **SlackBench's own circularity rule was not applied to the published matrix.**
+    Excluding the two cases whose ground truth the induction checker helped
+    establish, its row is 5 correct and 1 wrong over 6 cases, not 6 and 2 over
+    8 (`experiments/slackbench/NOTES.md`, amendment 3). Both are published.
 
 ---
 
@@ -353,7 +371,7 @@ Each with its nearest prior art, conceded where it narrows the claim.
 | deliverable | state |
 |---|---|
 | D1 timing analysis framework | **complete** |
-| D2 GenAI optimization engine | **partial.** All four named classes are proposed and routed; 17 proposals in three provenance tiers, one unattended end-to-end run. **No run has both chosen RTL unforced and produced a proven, timing-positive transform, after 17 proposals and three designs**, and the engine has never proposed a pipeline cut that proved. The router chooses RTL unforced on `i2c`; that run's proposal was reported `UNRESOLVED`, which was almost certainly the same gate defect found on 13 Sept (same module, same branch, same code path; its artifacts were not kept, so this is inferred, not measured). The `i2c` proposal REPORT §7.2 once called "PROVEN by EQY, by hand" has **no artifact** (the run script wiped its scratch) and is withdrawn; `experiments/depth_i2c/` re-runs the design three times unattended with everything kept |
+| D2 GenAI optimization engine | **partial.** All four named classes are proposed and routed; 23 proposals in three provenance tiers, seven unattended runs. **No run has both chosen RTL unforced and produced a proven, timing-positive transform, after 23 proposals and three designs**, and the engine has never proposed a pipeline cut that proved. The router chooses RTL unforced on `i2c`; that run's proposal was reported `UNRESOLVED`, which was almost certainly the same gate defect found on 13 Sept (same module, same branch, same code path; its artifacts were not kept, so this is inferred, not measured). The `i2c` proposal REPORT §7.2 once called "PROVEN by EQY, by hand" has **no artifact** (the run script wiped its scratch) and is withdrawn; `experiments/depth_i2c/` re-runs the design three times unattended with everything kept |
 | D3 critical path analysis | **complete** |
 | D4 optimized RTL | **partial**: one composed optimized RTL ships (`experiments/composed_rtl/`), proven; measured before wires, after the ABC lever and after `repair_design`. Its timing contribution after the physical flow is inside the flow's perturbation floor, and design-level closure comes from `repair_design`, not from RTL |
 | D5 timing, frequency, PPA | **complete.** Before/after for all three, including power at **+47.1%**, measured 2026-09-12 |

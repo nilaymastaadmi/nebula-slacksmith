@@ -247,3 +247,20 @@ evidence the predictions were doing work.
 - Superseded: "EQY is not among the checkers run" and "two of four obligation
   branches" no longer hold. EQY runs, and the reachability engine removes the
   need for the hand-supplied bijection on these cases.
+
+## Amendment 3, 2026-09-15: the circularity rule, applied as registered
+
+`PREREGISTRATION.md` says a case whose EQUIVALENT ground truth was established by a
+checker is marked `CIRCULAR` and "excluded from that checker's row". `results/raw.tsv`
+marks two cases circular, both for the induction miter `miter_k`: CONTROL-2 and
+LATENCY-1. The published matrix scored them anyway. Recomputed from `raw.tsv`, no
+checker re-run:
+
+| `miter_k` row | cases | correct | wrong | CANNOT |
+|---|---|---|---|---|
+| as published, all cases | 8 | 6 | 2 | 0 |
+| with the registered exclusion | 6 | 5 | 1 | 0 |
+
+The excluded CONTROL-2 was one of the induction checker's two wrong answers, so the
+rule as written makes our own checker look better by one case. Both rows are
+published; the matrix is not re-drawn, and no other checker carries a circular case.

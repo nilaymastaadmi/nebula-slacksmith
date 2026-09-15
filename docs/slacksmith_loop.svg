@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 222" width="680" height="222" font-family="Georgia, 'Times New Roman', serif">
+  <defs>
+    <marker id="a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#333"/>
+    </marker>
+    <style>
+      .step { fill:#ffffff; stroke:#333; stroke-width:1; }
+      .gate { fill:#e6e6e6; stroke:#333; stroke-width:1; }
+      .t  { font-size:10px; font-weight:bold; fill:#111; text-anchor:middle; }
+      .s  { font-size:8.5px; fill:#222; text-anchor:middle; }
+      .l  { font-size:8.5px; font-style:italic; fill:#333; }
+      .w  { stroke:#333; stroke-width:1.1; fill:none; marker-end:url(#a); }
+      .d  { stroke:#333; stroke-width:1.1; fill:none; stroke-dasharray:4 3; marker-end:url(#a); }
+    </style>
+  </defs>
+
+  <!-- next-iteration loop -->
+  <path class="d" d="M618,24 L618,10 L190,10 L190,24"/>
+  <text class="l" x="330" y="8">next iteration</text>
+
+  <!-- row 1: fingerprint, measure, classify -->
+  <rect class="gate" x="4" y="24" width="118" height="42" rx="3"/>
+  <text class="t" x="63" y="40">G0 constraints</text>
+  <text class="s" x="63" y="53">SDC SHA-256, exceptions</text>
+  <text class="s" x="63" y="63">refuse on a changed file</text>
+
+  <rect class="step" x="134" y="24" width="112" height="42" rx="3"/>
+  <text class="t" x="190" y="40">Synthesize + STA</text>
+  <text class="s" x="190" y="53">Yosys, OpenSTA,</text>
+  <text class="s" x="190" y="63">every clock group</text>
+
+  <rect class="step" x="258" y="24" width="140" height="42" rx="3"/>
+  <text class="t" x="328" y="40">Classify binding path</text>
+  <text class="s" x="328" y="53">delay share in cells</text>
+  <text class="s" x="328" y="63">driving 32 or more loads</text>
+
+  <path class="w" d="M122,45 L134,45"/>
+  <path class="w" d="M246,45 L258,45"/>
+
+  <!-- row 2: physical lever -->
+  <path class="w" d="M358,66 L358,92"/>
+  <text class="l" x="364" y="84">fanout-dominated</text>
+  <rect class="step" x="296" y="92" width="130" height="42" rx="3"/>
+  <text class="t" x="361" y="108">Physical lever</text>
+  <text class="s" x="361" y="121">ABC buffer and size,</text>
+  <text class="s" x="361" y="131">OpenROAD repair_design</text>
+  <rect class="gate" x="438" y="92" width="106" height="42" rx="3"/>
+  <text class="t" x="491" y="108">G6 netlist LEC</text>
+  <text class="s" x="491" y="121">repaired netlist</text>
+  <text class="s" x="491" y="131">against its input</text>
+  <path class="w" d="M426,113 L438,113"/>
+  <path class="w" d="M544,113 L560,113"/>
+
+  <!-- row 3: RTL lever -->
+  <path class="w" d="M290,66 L290,150 L63,150 L63,162"/>
+  <text class="l" x="92" y="146">depth-dominated, or lever forced</text>
+  <rect class="step" x="4" y="162" width="118" height="54" rx="3"/>
+  <text class="t" x="63" y="178">LLM proposes</text>
+  <text class="s" x="63" y="191">a typed transform:</text>
+  <text class="s" x="63" y="201">declared latency k</text>
+  <text class="s" x="63" y="211">and obligation branch</text>
+
+  <rect class="gate" x="134" y="162" width="96" height="54" rx="3"/>
+  <text class="t" x="182" y="178">G1 to G3</text>
+  <text class="s" x="182" y="191">parse, elaborate,</text>
+  <text class="s" x="182" y="201">flop count matches</text>
+  <text class="s" x="182" y="211">declared type</text>
+
+  <rect class="gate" x="242" y="162" width="200" height="54" rx="3"/>
+  <text class="t" x="342" y="178">G4 proof obligation from the type</text>
+  <text class="s" x="342" y="191">EQY, k-padded miter, mapped-state</text>
+  <text class="s" x="342" y="201">or retiming miter (BMC + PDR);</text>
+  <text class="s" x="342" y="211">a null control before any refutation</text>
+
+  <rect class="gate" x="454" y="162" width="90" height="54" rx="3"/>
+  <text class="t" x="499" y="178">G7 CDC</text>
+  <text class="s" x="499" y="191">synchronizer depth,</text>
+  <text class="s" x="499" y="201">Hamming safety</text>
+
+  <path class="w" d="M122,189 L134,189"/>
+  <path class="w" d="M230,189 L242,189"/>
+  <path class="w" d="M442,189 L454,189"/>
+  <path class="w" d="M544,189 L560,189"/>
+
+  <!-- G5 accept or revert, spans the rows -->
+  <rect class="gate" x="560" y="24" width="116" height="192" rx="3"/>
+  <text class="t" x="618" y="96">G5 re-time</text>
+  <text class="s" x="618" y="112">all clock groups</text>
+  <text class="s" x="618" y="132">keep the step only</text>
+  <text class="s" x="618" y="142">if slack improves,</text>
+  <text class="s" x="618" y="152">otherwise revert it</text>
+
+  <!-- legend -->
+  <rect class="gate" x="4" y="92" width="10" height="10"/>
+  <text class="l" x="18" y="101">gate: a failure stops or reverts the step</text>
+</svg>

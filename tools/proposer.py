@@ -21,9 +21,8 @@ Three backends, selected with --proposer:
             the registered run uses.
 
   cli       Shell out to `claude -p`. Full automation, no human in the loop.
-            WRITTEN BUT UNTESTED: the OAuth session on the machine this was
-            developed on is expired, and the registration lists reporting it
-            as exercised among the void conditions.
+            Exercised 2026-09-11 (experiments/cli_backend/) and on six runs on
+            external designs since (experiments/depth_i2c/, depth_tv80/).
 
 WHAT THE PROPOSER IS NOT GIVEN, deliberately: any counterexample, and any G4
 verdict. Feeding refutations back is batch 3, which was registered and then

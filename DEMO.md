@@ -64,7 +64,12 @@ prints a different number. Quote the one on screen.
       --liberty ~/sta_work/sky130hd_tt.lib \
       --sta-bin ~/tools/OpenSTA/build/sta \
       --clock clk_a --clock clk_b --clock clk_e \
+      --expect-sdc-sha 3164f5796363d98c \
       --workdir ~/demo_run --engine sta
+
+`--expect-sdc-sha` was added on 2026-09-15, after the video was recorded: with it,
+G0 refuses to run under any SDC other than the registered one, and
+`tools/demo_check.sh` checks that refusal on a deliberately changed copy.
 
 It runs the default `--lever-policy blunt`, which applies `buffer; upsize;
 dnsize` as one step; `experiments/closure_cost/` measured `buffer` alone meeting

@@ -9,9 +9,9 @@ is honest about the parts they do not fix.
 ## Quick start
 
 ```
-git clone <repo> && cd slacksmith-benchmark
+git clone https://github.com/nilaymastaadmi/nebula-slacksmith && cd nebula-slacksmith
 bash tools/preflight.sh      # names every missing dependency and where to get it
-bash tools/demo_check.sh     # runs all 8 demo beats, 12 assertions, ~2 min
+bash tools/demo_check.sh     # runs every command in DEMO.md, 24 assertions, 5 to 12 min
 ```
 
 Clone it, do not download a zip. Beat 4 checks that the pre-registration commit
@@ -71,7 +71,8 @@ decimal places on both. Output in `experiments/reproducibility/NOTES.md`.
 **Reproducible now:** everything `tools/demo_check.sh` runs. That is the closed
 loop on v2 (live compute), the three replayed v3 logs, the registration
 ordering, the verdict regression, the SDC-integrity result, the SlackBench
-exam, and the classifier regression. 12 assertions.
+exam, the classifier regression, the parameter guard and G0's refusal of a changed
+SDC. 24 assertions.
 
 The SDC-integrity netlist (flat arm E, 26,958 cells) is now committed at
 `experiments/sdc_integrity/flat_E_mapped.v.gz`, 387 KB, sha256 `80686092…`.

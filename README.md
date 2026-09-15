@@ -21,6 +21,8 @@ through RTL Enhancement Using Generative AI*. Nilay Toshniwal and Shivani Chaudh
 One command runs the steps an engineer otherwise does by hand, and records every
 decision with the evidence it used:
 
+![The SlackSmith loop](docs/slacksmith_loop.svg)
+
 1. **G0, constraint integrity.** Fingerprint the SDC and count its timing exceptions,
    so a constraint edit cannot pass as a timing gain.
 2. **Synthesize and time** with Yosys and OpenSTA.
@@ -33,7 +35,7 @@ decision with the evidence it used:
    |---|---|---|
    | k = 0, state-preserving | combinational / sequential equivalence | EQY, `yosys-abc dsec` |
    | k > 0, rigid interface | k-padded miter | SymbiYosys, BMC + PDR |
-   | k > 0, elastic interface | stream equivalence | SymbiYosys + `cover` |
+   | k > 0, elastic interface | stream equivalence (proven by hand; no gate route yet) | SymbiYosys + `cover` |
    | k = 0, re-encoded state | mapped-state equivalence | SymbiYosys, sequential miter |
    | k = 0, register moved | retiming | SymbiYosys, sequential miter |
 
@@ -45,14 +47,15 @@ decision with the evidence it used:
 | # | deliverable | status | evidence |
 |---|---|---|---|
 | 1 | RTL timing analysis framework | full | `tools/slacksmith.py`, `tools/remeasure.py`, three versioned SDCs, G0 |
-| 2 | GenAI-based RTL optimization engine | **partial** | 17 proposals in three provenance tiers, all four named classes routed; no run has both chosen RTL unaided and produced a proven, timing-positive transform |
+| 2 | GenAI-based RTL optimization engine | **partial** | 23 proposals in three provenance tiers, 7 of them unattended, all four named classes routed; no run has both chosen RTL unaided and produced a proven, timing-positive transform |
 | 3 | Critical path and timing violation analysis | full | `tools/classify_path.py`, regression-checked against OpenSTA's fanout column |
 | 4 | Optimized RTL implementation | **partial** | `experiments/composed_rtl/aes_key_mem_composed.v`, proven; its gain does not survive the physical flow |
 | 5 | Timing, frequency and PPA comparison | full | report §8, `experiments/ppa/`, `experiments/closure_cost/` |
-| 6 | Formal equivalence verification report | full | five obligation branches, G6 and G7, `experiments/slackbench/` |
+| 6 | Formal equivalence verification report | full | five obligation branches proven, four routed by the gate; G6 and G7; `experiments/slackbench/` |
 | 7 | Interactive demo | full | `demo/explorer.html` and the narrated video |
 
-The benchmark, `bench_top`, is **55,413 standard cells** with five independent
+The benchmark, `bench_top`, is **55,413 standard cells** hierarchical (48,616 once
+flattened, the count the video shows) with five independent
 asynchronous clock domains, a generated clock per domain including /3 and /5
 dividers, gray-code FIFOs on every multi-bit crossing and two-flop synchronizers
 on every single-bit one (`rtl/`, report §4).
@@ -74,7 +77,8 @@ on every single-bit one (`rtl/`, report §4).
   On two external designs where the router chose RTL unaided, four proven
   transforms bought **0.000, 0.000, −0.268 and −0.421 ns**.
 - **Closure has a price, measured.** `repair_design` closes all three violating
-  groups with placement parasitics at **+20.2% area** and **+47.1% power**.
+  groups with placement parasitics at **+20.2% area**, and **+47.1% power** measured
+  zero-parasitic.
 - **One constraint line is worth +5.179 ns on a byte-identical netlist**, and every
   equivalence checker we own correctly calls the two designs equivalent. That is what G0
   exists to catch.
@@ -90,7 +94,7 @@ and the report measures both.
 git clone https://github.com/nilaymastaadmi/nebula-slacksmith
 cd nebula-slacksmith
 bash tools/preflight.sh      # names any missing dependency and where to get it
-bash tools/demo_check.sh     # runs every command in DEMO.md: 23 assertions
+bash tools/demo_check.sh     # runs every command in DEMO.md: 24 assertions
 ```
 
 The loop on its own:
@@ -106,7 +110,9 @@ It closes SDC v2 in 2 iterations, a median **112.7 s** on one core
 (`experiments/loop_runtime/`), and writes every routing decision with its
 evidence to `decisions.jsonl`. Clone rather than download a zip: one assertion
 checks that each pre-registration was committed before its results, which needs
-the git history.
+the git history. The history was rewritten on 2026-09-14 to normalise authorship and
+messages, with dates and order unchanged, so the video's beat 4 shows the earlier
+hashes `4ee45c22` and `7e3ab9b4`, now `04fa59c4` and `115fc03f`.
 
 ## Layout
 
@@ -126,9 +132,9 @@ demo/                      the interactive explorer and the video's sources
 
 ## Limits
 
-Stated in full in report §9 and §10 and in `SUBMISSION_PACK.md` §5. In short: 17
+Stated in full in report §9 and §10 and in `SUBMISSION_PACK.md` §5. In short: 23
 proposals from one proposer model (Claude Opus 5), so outcomes, not rates;
-unattended operation is N = 1; the physical flow reaches CTS and global routing,
+7 unattended runs, one sample each; the physical flow reaches CTS and global routing,
 not signoff; equivalence is not proven for the ABC buffering lever; modules
 instantiated with parameter overrides are refused rather than proven; and the
 organisers' open-source-model recommendation is not met for the main result.

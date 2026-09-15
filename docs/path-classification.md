@@ -12,8 +12,10 @@ best moved the touched group by 0.485 ns. The obvious reading is "LLM RTL
 proposals do not help timing". The measured reading is different, and better.
 
 That path is **58.9% fanout-attributable**: most of its delay sits in cells
-driving 32 or more loads. Restructuring logic does not shorten a net's load
-delay. The proposals were aimed at the wrong variable.
+driving 32 or more loads. Buffering, not restructuring, is built to shorten a
+net's load delay, so those proposals were aimed at the wrong variable. (The
+stronger wording once here, that restructuring cannot shorten it, is retracted in
+REPORT §1: two proven transforms later moved a 91.4% path.)
 
 The design-level AES path was worse still, at **91.4%**, with 21.029 ns in a
 single `nor4_1` driving **300 loads** inside `aes_key_mem`, a 15-entry by
