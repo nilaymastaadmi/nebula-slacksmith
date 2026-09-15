@@ -1,0 +1,31 @@
+{
+  "partition": {
+    "index": 48,
+    "name": "tv80_mcode_gold.DDD.2",
+    "inbits": {
+      "IR": [
+        5
+      ]
+    },
+    "outbits": {
+      "DDD": [
+        2
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.tv80_mcode_gold.DDD.2",
+    "internal": {},
+    "unused": {},
+    "cellcount": 1,
+    "bitcount": 2
+  },
+  "gate_module": {
+    "name": "gold.tv80_mcode_gold.DDD.2",
+    "internal": {},
+    "unused": {},
+    "cellcount": 1,
+    "bitcount": 2
+  }
+}

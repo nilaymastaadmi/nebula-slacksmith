@@ -1,0 +1,20 @@
+# run 6 re-check, 2026-09-15T08:39:57Z. Sanity checks, not registered predictions.
+--- 1. the committed run 6 transform, gated again with --param Mode=1 (expect PROVEN)
+  "G1": "PASS",
+  "G2": "PASS",
+  "G3": "PASS",
+  "G4": "PROVEN"
+--- 2. the same transform with one IncDec_16 constant changed (expect REFUTED)
+  "G1": "PASS",
+  "G2": "PASS",
+  "G3": "PASS",
+  "G4": "PROVEN"
+--- 3. the committed transform differs from gold only in tv80_mcode (checked in Python on the two files)
+    finding: the changed constant sits under 'if (Mode == 3 && MCycle[1])', unreachable at Mode = 1,
+    so PROVEN at Mode = 1 is the correct verdict for mutation 2.
+--- 4. mutation 2 gated at Mode = 3, where that branch is live (expect REFUTED)
+  "G3": "PASS",
+  "G4": "REFUTED (1 partition(s) with a counterexample, 56 total)"
+--- 5. the default IncDec_16 changed, gated at Mode = 1 (expect REFUTED)
+  "G3": "PASS",
+  "G4": "REFUTED (1 partition(s) with a counterexample, 56 total)"

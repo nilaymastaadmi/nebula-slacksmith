@@ -1,0 +1,60 @@
+{
+  "partition": {
+    "index": 19,
+    "name": "tv80_mcode_gold.LDZ",
+    "inbits": {
+      "DDD": [
+        0
+      ],
+      "DPAIR": [
+        0,
+        1
+      ],
+      "IR": [
+        6,
+        7
+      ],
+      "ISet": [
+        0,
+        1
+      ],
+      "IntCycle": [
+        0
+      ],
+      "MCycle": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "NMICycle": [
+        0
+      ],
+      "SSS": [
+        0,
+        1,
+        2
+      ]
+    },
+    "outbits": {
+      "LDZ": [
+        0
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.tv80_mcode_gold.LDZ",
+    "internal": {},
+    "unused": {},
+    "cellcount": 176,
+    "bitcount": 192
+  },
+  "gate_module": {
+    "name": "gold.tv80_mcode_gold.LDZ",
+    "internal": {},
+    "unused": {},
+    "cellcount": 176,
+    "bitcount": 192
+  }
+}

@@ -1,0 +1,238 @@
+{
+  "partition": {
+    "index": 56,
+    "name": "tv80_mcode_gold",
+    "inbits": {
+      "F": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "IR": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "ISet": [
+        0,
+        1
+      ],
+      "IntCycle": [
+        0
+      ],
+      "MCycle": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "NMICycle": [
+        0
+      ]
+    },
+    "outbits": {
+      "ALU_Op": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "Arith16": [
+        0
+      ],
+      "Call": [
+        0
+      ],
+      "ExchangeAF": [
+        0
+      ],
+      "ExchangeDH": [
+        0
+      ],
+      "ExchangeRS": [
+        0
+      ],
+      "ExchangeRp": [
+        0
+      ],
+      "Halt": [
+        0
+      ],
+      "IMode": [
+        0,
+        1
+      ],
+      "IORQ": [
+        0
+      ],
+      "I_BC": [
+        0
+      ],
+      "I_BT": [
+        0
+      ],
+      "I_BTR": [
+        0
+      ],
+      "I_CCF": [
+        0
+      ],
+      "I_CPL": [
+        0
+      ],
+      "I_DJNZ": [
+        0
+      ],
+      "I_INRC": [
+        0
+      ],
+      "I_RETN": [
+        0
+      ],
+      "I_RLD": [
+        0
+      ],
+      "I_RRD": [
+        0
+      ],
+      "I_SCF": [
+        0
+      ],
+      "IncDec_16": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "Inc_PC": [
+        0
+      ],
+      "Inc_WZ": [
+        0
+      ],
+      "Jump": [
+        0
+      ],
+      "JumpE": [
+        0
+      ],
+      "JumpXY": [
+        0
+      ],
+      "LDSPHL": [
+        0
+      ],
+      "LDW": [
+        0
+      ],
+      "LDZ": [
+        0
+      ],
+      "MCycles": [
+        0,
+        1,
+        2
+      ],
+      "NoRead": [
+        0
+      ],
+      "Prefix": [
+        0,
+        1
+      ],
+      "PreserveC": [
+        0
+      ],
+      "Read_To_Acc": [
+        0
+      ],
+      "Read_To_Reg": [
+        0
+      ],
+      "RstP": [
+        0
+      ],
+      "Save_ALU": [
+        0
+      ],
+      "SetDI": [
+        0
+      ],
+      "SetEI": [
+        0
+      ],
+      "Set_Addr_To": [
+        0,
+        1,
+        2
+      ],
+      "Set_BusA_To": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "Set_BusB_To": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "Special_LD": [
+        0,
+        1,
+        2
+      ],
+      "TStates": [
+        0,
+        1,
+        2
+      ],
+      "Write": [
+        0
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.tv80_mcode_gold",
+    "internal": {},
+    "unused": {
+      "F": [
+        1,
+        3,
+        4,
+        5
+      ]
+    },
+    "cellcount": 961,
+    "bitcount": 1510
+  },
+  "gate_module": {
+    "name": "gold.tv80_mcode_gold",
+    "internal": {},
+    "unused": {
+      "F": [
+        1,
+        3,
+        4,
+        5
+      ]
+    },
+    "cellcount": 961,
+    "bitcount": 1510
+  }
+}

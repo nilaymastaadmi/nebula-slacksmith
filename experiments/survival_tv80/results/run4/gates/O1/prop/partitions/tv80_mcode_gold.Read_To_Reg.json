@@ -1,0 +1,56 @@
+{
+  "partition": {
+    "index": 13,
+    "name": "tv80_mcode_gold.Read_To_Reg",
+    "inbits": {
+      "DDD": [
+        0
+      ],
+      "DPAIR": [
+        0,
+        1
+      ],
+      "IR": [
+        6,
+        7
+      ],
+      "ISet": [
+        0,
+        1
+      ],
+      "MCycle": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6
+      ],
+      "SSS": [
+        0,
+        1,
+        2
+      ]
+    },
+    "outbits": {
+      "Read_To_Reg": [
+        0
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.tv80_mcode_gold.Read_To_Reg",
+    "internal": {},
+    "unused": {},
+    "cellcount": 444,
+    "bitcount": 460
+  },
+  "gate_module": {
+    "name": "gold.tv80_mcode_gold.Read_To_Reg",
+    "internal": {},
+    "unused": {},
+    "cellcount": 444,
+    "bitcount": 460
+  }
+}

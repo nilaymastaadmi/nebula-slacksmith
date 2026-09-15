@@ -1,0 +1,62 @@
+{
+  "partition": {
+    "index": 1,
+    "name": "tv80_mcode_gold.TStates",
+    "inbits": {
+      "DDD": [
+        0
+      ],
+      "DPAIR": [
+        0,
+        1
+      ],
+      "IR": [
+        6,
+        7
+      ],
+      "ISet": [
+        0,
+        1
+      ],
+      "IntCycle": [
+        0
+      ],
+      "MCycle": [
+        0,
+        1,
+        2,
+        5
+      ],
+      "NMICycle": [
+        0
+      ],
+      "SSS": [
+        0,
+        1,
+        2
+      ]
+    },
+    "outbits": {
+      "TStates": [
+        0,
+        1,
+        2
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.tv80_mcode_gold.TStates",
+    "internal": {},
+    "unused": {},
+    "cellcount": 414,
+    "bitcount": 442
+  },
+  "gate_module": {
+    "name": "gold.tv80_mcode_gold.TStates",
+    "internal": {},
+    "unused": {},
+    "cellcount": 414,
+    "bitcount": 440
+  }
+}

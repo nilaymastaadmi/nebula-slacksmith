@@ -1,0 +1,49 @@
+{
+  "partition": {
+    "index": 16,
+    "name": "tv80_mcode_gold.Prefix",
+    "inbits": {
+      "DDD": [
+        0
+      ],
+      "DPAIR": [
+        0,
+        1
+      ],
+      "IR": [
+        6,
+        7
+      ],
+      "ISet": [
+        0,
+        1
+      ],
+      "SSS": [
+        0,
+        1,
+        2
+      ]
+    },
+    "outbits": {
+      "Prefix": [
+        0,
+        1
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.tv80_mcode_gold.Prefix",
+    "internal": {},
+    "unused": {},
+    "cellcount": 131,
+    "bitcount": 143
+  },
+  "gate_module": {
+    "name": "gold.tv80_mcode_gold.Prefix",
+    "internal": {},
+    "unused": {},
+    "cellcount": 131,
+    "bitcount": 143
+  }
+}
