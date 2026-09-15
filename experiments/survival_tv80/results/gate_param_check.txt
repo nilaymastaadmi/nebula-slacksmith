@@ -1,0 +1,29 @@
+# tools/gate_proposal.py --param, checked before any survival run (2026-09-15, 06:36 to 06:38 UTC)
+# commands: gate_proposal.py on the committed depth_tv80 run 1 and run 3 proposals, --rtl experiments/depth_tv80/rtl/tv80.v --module tv80_mcode --depth 20 --timeout 420
+06:36:53
+--- run3_with_param
+  "G3": "PASS",
+  "params": [
+  "param_override_at": "experiments/depth_tv80/rtl/tv80.v:388",
+  "G4": "PROVEN"
+chparam -set Mode 1 tv80_mcode_gold
+chparam -set Mode 1 tv80_mcode_gold
+06:37:21
+--- run3_no_param
+  "G3": "PASS",
+  "G4": "CANNOT (parameter override at instantiation, experiments/depth_tv80/rtl/tv80.v:388; the gate elaborates header defaults)"
+06:37:28
+--- run1_with_param
+  "G3": "PASS(state-remap: k=0, flop delta unconstrained)",
+  "params": [
+  "param_override_at": "experiments/depth_tv80/rtl/tv80.v:388",
+  "G4": "REFUTED (null control inconclusive: the control did not close, so this refutation is not corroborated)"
+    tv80_mcode_gold #(.Mode(1)) u_g (
+    tv80_mcode_gate #(.Mode(1)) u_t (
+06:37:51
+# tools/param_guard_regression.sh, unchanged
+  "G4": "CANNOT (parameter override at instantiation, experiments/depth_tv80/rtl/tv80.v:388; the gate elaborates header defaults)"
+rv32i_core: None
+aes_key_mem: None
+pi_child: tools/fixtures/param_include/pi_top.v:3
+pi_lone: None

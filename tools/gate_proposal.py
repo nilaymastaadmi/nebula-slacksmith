@@ -308,6 +308,18 @@ def null_control(a, wd, mod, nc, res, outs=None, tag="nullctl", depth=None):
         return True
     return None
 
+# NAME=VALUE pairs from --param, applied to both instances of every obligation.
+# Added 2026-09-15 (experiments/survival_tv80/): the refusal below is right when
+# the instantiated parameters are unknown, and wrong once they are supplied.
+GATE_PARAMS = []
+
+
+def _param_override_str():
+    if not GATE_PARAMS:
+        return ""
+    return "#(" + ", ".join(".%s(%s)" % tuple(kv.split("=", 1)) for kv in GATE_PARAMS) + ") "
+
+
 def build_miter(p, def_id, mod, clk, rst, outs, ins, k, dut_clk=True, dut_rst=True):
     """The miter text. One implementation, used by the gate and by its
     null control, so the two cannot drift apart. The control always calls
@@ -353,11 +365,11 @@ module miter_prop (
 );
 {chr(10).join(decl)}
 
-    {mod}_gold u_g (
+    {mod}_gold {_param_override_str()}u_g (
         {dut_cr}{in_conn},
 {chr(10).join(inst_g)[:-1]}
     );
-    {mod}_gate u_t (
+    {mod}_gate {_param_override_str()}u_t (
         {dut_cr}{in_conn},
 {chr(10).join(inst_t)[:-1]}
     );
@@ -402,6 +414,9 @@ def main():
     # Batch 2 (experiments/llm_proposer_aes) targets a different module with
     # a different port list. Every default below is the batch-1 rv32i_core
     # setting, so batch 1 reproduces unchanged.
+    ap.add_argument("--param", action="append", default=[],
+                    help="NAME=VALUE applied to gold and gate in every obligation; "
+                         "lifts the parameter-override refusal only when supplied")
     ap.add_argument("--module", default="rv32i_core")
     ap.add_argument("--clk", default="clk")
     ap.add_argument("--rst", default="rst_n")
@@ -509,8 +524,12 @@ def main():
     # ---- G4 formal
     # Refuse before building any obligation if the design overrides the
     # target's parameters: every branch below elaborates header defaults.
+    GATE_PARAMS[:] = a.param
     where = param_override(a.rtl, mod)
-    if where:
+    if where and a.param:
+        res["params"] = list(a.param)
+        res["param_override_at"] = where
+    elif where:
         res["G4"] = ("CANNOT (parameter override at instantiation, %s; the gate "
                      "elaborates header defaults)" % where)
         print(json.dumps(res, indent=2))
@@ -525,12 +544,14 @@ def main():
     # rather than the transform.
     if k == 0 and branch not in STATE_REMAP_BRANCHES:
         eqy_cfg = os.path.join(wd, "prop.eqy")
+        chp = "".join("chparam -set %s %s %s_gold\n" % (kv.split("=", 1)[0], kv.split("=", 1)[1], mod)
+                      for kv in a.param)
         svf = sv_flag(gold)
         open(eqy_cfg, "w", encoding="utf-8").write(
-            "[gold]\nread_verilog" + svf + " gold.v\nprep -top " + mod + "_gold\n\n"
-            "[gate]\nread_verilog" + svf + " gate.v\nrename " + mod + "_gate " + mod + "_gold\n"
-            "prep -top " + mod + "_gold\n\n"
-            "[strategy sat]\nuse sat\ndepth 5\n")
+            "[gold]\nread_verilog" + svf + " gold.v\n" + chp + "prep -top " + mod + "_gold\n\n"
+            + "[gate]\nread_verilog" + svf + " gate.v\nrename " + mod + "_gate " + mod + "_gold\n"
+            + chp + "prep -top " + mod + "_gold\n\n"
+            + "[strategy sat]\nuse sat\ndepth 5\n")
         eqy = os.environ.get("OSS_CAD_BIN", os.path.expanduser("~/tools/oss-cad-suite/bin")) + "/eqy"
         r = sh([eqy, "-f", "prop.eqy"], cwd=wd, timeout=a.timeout)
         out = r.stdout + r.stderr

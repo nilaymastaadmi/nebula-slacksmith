@@ -306,6 +306,8 @@ def gate(a, prop, workdir, tag):
         cmd += ["--outputs", outs]
     if ins:
         cmd += ["--inputs", ins]
+    for kv in a.gate_param:
+        cmd += ["--param", kv]
     r = sh(cmd)
     try:
         return json.loads(r.stdout[r.stdout.index("{"):])
@@ -423,6 +425,8 @@ def main():
                          "keep asking until something passes")
     ap.add_argument("--max-iters", type=int, default=6)
     ap.add_argument("--gate-timeout", type=int, default=420)
+    ap.add_argument("--gate-param", action="append", default=[],
+                    help="NAME=VALUE passed to the gate as --param (experiments/survival_tv80/)")
     ap.add_argument("--lever-policy", choices=["blunt", "verdict"], default="blunt",
                     help="blunt: buffer+size at once (every run before 2026-09-03); "
                          "verdict: the classifier picks the component")
