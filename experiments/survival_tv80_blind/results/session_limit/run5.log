@@ -1,0 +1,15 @@
+G0 sdc: tv80.sdc sha256 de9c16af1484a577 11 lines, timing exceptions none
+rtl files: 1 from experiments/depth_tv80/rtl_files.txt (top tv80s)
+dont_use flags: 72
+engine: sta   clocks: clk
+
+=== iteration 1 ===
+measure: clk=-0.894
+classify clk: DEPTH_DOMINATED (fanout share 0.1602) -> rtl
+  unmangled parameterised module $paramod$1a08092a55a4361642517ba6d8d0502484bd6d82\tv80_mcode -> tv80_mcode
+  binding module tv80_mcode found in tv80.v (filename does not match module name)
+  online proposer returned nothing usable: no JSON object in the reply
+
+wrote /home/toshn/slacksmith_work/survival_tv80_blind/run5/SUMMARY.md
+wrote /home/toshn/slacksmith_work/survival_tv80_blind/run5/decisions.jsonl
+exit: 0

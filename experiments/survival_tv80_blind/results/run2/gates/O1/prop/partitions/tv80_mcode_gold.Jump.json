@@ -1,0 +1,67 @@
+{
+  "partition": {
+    "index": 26,
+    "name": "tv80_mcode_gold.Jump",
+    "inbits": {
+      "DDD": [
+        0
+      ],
+      "DPAIR": [
+        0,
+        1
+      ],
+      "F": [
+        0,
+        2,
+        6,
+        7
+      ],
+      "IR": [
+        6,
+        7
+      ],
+      "ISet": [
+        0,
+        1
+      ],
+      "IntCycle": [
+        0
+      ],
+      "MCycle": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "NMICycle": [
+        0
+      ],
+      "SSS": [
+        0,
+        1,
+        2
+      ]
+    },
+    "outbits": {
+      "Jump": [
+        0
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.tv80_mcode_gold.Jump",
+    "internal": {},
+    "unused": {},
+    "cellcount": 180,
+    "bitcount": 201
+  },
+  "gate_module": {
+    "name": "gold.tv80_mcode_gold.Jump",
+    "internal": {},
+    "unused": {},
+    "cellcount": 180,
+    "bitcount": 201
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "partition": {
+    "index": 12,
+    "name": "tv80_mcode_gold.SSS.1",
+    "inbits": {
+      "IR": [
+        1
+      ]
+    },
+    "outbits": {
+      "SSS": [
+        1
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.tv80_mcode_gold.SSS.1",
+    "internal": {},
+    "unused": {},
+    "cellcount": 1,
+    "bitcount": 2
+  },
+  "gate_module": {
+    "name": "gold.tv80_mcode_gold.SSS.1",
+    "internal": {},
+    "unused": {},
+    "cellcount": 1,
+    "bitcount": 2
+  }
+}

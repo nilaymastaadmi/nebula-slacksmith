@@ -61,3 +61,25 @@ by more than **0.750 ns**. *Prior: weak.*
 "The run 3 and run 5 sessions read that experiment's registration" is wrong: it was
 **runs 2 and 5**, each once, found by mapping session start times to run start times
 (`experiments/survival_tv80/results/agent_tool_use.txt`). Nothing else here changed.
+
+## Amendment 1, 2026-09-15 about 10:40 UTC, after runs 1 to 6 and before any rerun
+
+**Runs 3, 4, 5 and 6 never reached the model.** Each ended within 10 s, and each
+captured reply is the same 54-byte account message: "You've hit your session limit ·
+resets 10:30am (UTC)". That failure does not depend on anything the model would have
+written. It is the class `experiments/cli_backend/` retried as its attempt 1.
+
+- Runs 3 to 6 are kept unchanged under `results/session_limit/` and reported.
+- Each is **rerun once**, with `run.sh`'s exact command, by `rerun.sh`, into
+  `results/run3` to `results/run6`. If a rerun's reply is the session-limit message
+  again, the reruns stop there and the rest are reported as not completed. No second
+  rerun. The stop rule stands: no rerun starts after 19:30 IST.
+- Scoring states both counts: runs started, and runs that reached the model.
+- **Seen before this amendment, and unchanged by it:** run 1 returned nothing the loop
+  could read; run 2 was PROVEN and reverted by G5 at −1.649 unbuffered. Neither has been
+  through `measure.sh` yet.
+- **Disclosed, not changed:** run 1's reply hit the CLI's single-message output cap
+  (stop reason `max_tokens` at 64,000 output tokens, 105,810 characters of text across
+  continuations), and `claude -p` printed only the last continuation, so the loop found
+  no JSON. The reruns keep that property. It is a limit of the blind arm as registered,
+  and the tool-using arm did not meet it because its reasoning was spread over many turns.

@@ -1,0 +1,10 @@
+# SlackSmith closed-loop run
+
+engine `sta`, sdc `tv80.sdc`, 2 iterations, 518.8s
+
+| iteration | clk |
+|---|---|
+| 1 | -0.894 |
+| 2 | -1.649 |
+
+Full decision log with the evidence for every routing choice: `decisions.jsonl`.
