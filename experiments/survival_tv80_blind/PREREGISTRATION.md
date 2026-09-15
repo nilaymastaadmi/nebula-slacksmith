@@ -55,3 +55,9 @@ by more than **0.750 ns**. *Prior: weak.*
 
 **R116.** At least one PROVEN transform beats gold after repair by more than **0.375 ns**.
 *Prior: weak.*
+
+## Correction, 2026-09-15, during run 1, predictions untouched
+
+"The run 3 and run 5 sessions read that experiment's registration" is wrong: it was
+**runs 2 and 5**, each once, found by mapping session start times to run start times
+(`experiments/survival_tv80/results/agent_tool_use.txt`). Nothing else here changed.

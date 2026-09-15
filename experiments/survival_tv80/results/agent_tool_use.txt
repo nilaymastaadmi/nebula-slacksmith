@@ -1,0 +1,45 @@
+# survival_tv80: what the unattended proposer sessions did, and run 6 confinement
+# generated 2026-09-15T08:54:04Z from Claude Code session transcripts (counts only)
+--- run start times (from the run logs)
+################ run 1 of 6, 06:40:13 UTC ################
+################ run 2 of 6, 07:10:22 UTC ################
+################ run 3 of 6, 07:24:48 UTC ################
+################ run 4 of 6, 07:37:44 UTC ################
+################ run 5 of 6, 07:49:32 UTC ################
+################ run 6 of 6, 08:13:55 UTC ################
+--- run 6 confinement: modules declared in the proposal file, and lines changed against gold's tv80_mcode
+modules in proposal file: ['tv80s', 'tv80_core', 'tv80_alu', 'tv80_reg', 'tv80_mcode']
+tv80_mcode lines: gold 2626, proposal 2694; removed 51, added 119
+--- per session, 2026-09-15 06:39 to 08:52 UTC, project dir of the repository
+session start 2026-09-15T06:39:22  tool calls   0  results 0  registration 0  synthesis 0  timing 0  equivalence 0
+session start 2026-09-15T06:40:24  tool calls  95  results 8  registration 0  synthesis 21  timing 15  equivalence 5
+session start 2026-09-15T07:10:33  tool calls  23  results 3  registration 1  synthesis 5  timing 0  equivalence 0
+session start 2026-09-15T07:24:59  tool calls   1  results 0  registration 0  synthesis 0  timing 0  equivalence 0
+session start 2026-09-15T07:37:56  tool calls   2  results 0  registration 0  synthesis 0  timing 0  equivalence 0
+session start 2026-09-15T07:49:44  tool calls  48  results 13  registration 1  synthesis 8  timing 9  equivalence 3
+session start 2026-09-15T08:14:11  tool calls  61  results 12  registration 0  synthesis 8  timing 3  equivalence 2
+--- run 6 confinement, every module: identical to gold or not (whitespace-normalised)
+  tv80_alu     identical
+  tv80_core    identical
+  tv80_mcode   differs
+  tv80_reg     identical
+  tv80s        identical
+--- which files the PREREGISTRATION-matching tool calls touched (runs 2 and 5 sessions)
+  session start 2026-09-15T07:10:33: Bash /mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/survival_tv80/PREREGISTRATION.md
+  session start 2026-09-15T07:49:44: Bash experiments/survival_tv80/PREREGISTRATION.md
+--- write targets per session: Write/Edit file paths, and Bash commands that redirect, copy, move, delete or edit in place
+  session start 2026-09-15T06:39:22: 0 write targets, 0 outside .trace_scratch or /tmp; git state commands 0
+  session start 2026-09-15T06:40:24: 12 write targets, 3 outside .trace_scratch or /tmp; git state commands 0
+        1  bash:(celltype,
+        1  bash:2121
+        1  bash:2121'
+  session start 2026-09-15T07:10:33: 2 write targets, 0 outside .trace_scratch or /tmp; git state commands 0
+  session start 2026-09-15T07:24:59: 0 write targets, 0 outside .trace_scratch or /tmp; git state commands 0
+  session start 2026-09-15T07:37:56: 0 write targets, 0 outside .trace_scratch or /tmp; git state commands 0
+  session start 2026-09-15T07:49:44: 9 write targets, 0 outside .trace_scratch or /tmp; git state commands 0
+  session start 2026-09-15T08:14:11: 4 write targets, 0 outside .trace_scratch or /tmp; git state commands 0
+--- tracked tree after the runs
+  (empty above means no tracked file modified)
+  last commit touching tools/: 2094112 2026-09-15T12:08:46+05:30
+  note: run 1's 3 targets outside .trace_scratch or /tmp are regex false positives, checked by printing their context:
+      '# net -> (celltype, cellname, inputs)', a Python comment, and awk -F: '$1>2121' (twice), a line filter on a read of tv80.v.

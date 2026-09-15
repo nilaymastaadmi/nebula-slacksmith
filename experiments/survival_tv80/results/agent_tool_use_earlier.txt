@@ -1,0 +1,57 @@
+# Claude Code sessions started in the repository directory under WSL before 2026-09-15 06:39 UTC
+# generated 2026-09-15T08:57:35Z; counts of tool calls from session transcripts, no transcript text
+# the loop's --proposer cli backend starts one such session per online proposal
+session start 2026-09-11T09:42:46  tool calls  20  results 0  registration 0  synthesis 7  timing 0  equivalence 0  tools {'Bash': 14, 'Read': 3, 'Edit': 2, 'Write': 1}
+session start 2026-09-11T16:11:27  tool calls  18  results 0  registration 0  synthesis 7  timing 2  equivalence 1  tools {'Bash': 16, 'Read': 1, 'Write': 1}
+session start 2026-09-11T16:25:31  tool calls   1  results 0  registration 0  synthesis 0  timing 0  equivalence 0  tools {'ToolSearch': 1}
+session start 2026-09-11T16:30:20  tool calls  45  results 3  registration 0  synthesis 10  timing 0  equivalence 6  tools {'Bash': 41, 'Read': 1, 'Write': 2, 'Edit': 1}
+session start 2026-09-11T16:41:13  tool calls   1  results 0  registration 0  synthesis 0  timing 0  equivalence 0  tools {'Bash': 1}
+session start 2026-09-12T09:23:14  tool calls   0  results 0  registration 0  synthesis 0  timing 0  equivalence 0  tools {}
+session start 2026-09-12T09:30:49  tool calls  31  results 11  registration 1  synthesis 8  timing 3  equivalence 2  tools {'Bash': 29, 'Read': 2}
+session start 2026-09-12T09:47:23  tool calls   0  results 0  registration 0  synthesis 0  timing 0  equivalence 0  tools {}
+session start 2026-09-12T09:52:21  tool calls  10  results 6  registration 1  synthesis 1  timing 0  equivalence 0  tools {'Bash': 9, 'Read': 1}
+session start 2026-09-12T11:57:00  tool calls  23  results 8  registration 0  synthesis 4  timing 0  equivalence 0  tools {'Bash': 20, 'Read': 3}
+session start 2026-09-12T12:11:56  tool calls   5  results 0  registration 0  synthesis 0  timing 0  equivalence 0  tools {'Bash': 5}
+session start 2026-09-12T12:19:48  tool calls  39  results 10  registration 0  synthesis 9  timing 4  equivalence 0  tools {'Bash': 33, 'Read': 5, 'Edit': 1}
+session start 2026-09-15T06:33:57  tool calls   0  results 0  registration 0  synthesis 0  timing 0  equivalence 0  tools {}
+--- write targets per session: Write/Edit file paths, and Bash commands that redirect, copy, move, delete or edit in place
+  session start 2026-09-11T09:42:46: 5 write targets, 5 outside .trace_scratch or /tmp; git state commands 0
+        1  .scratch_check.ys
+        2  .scratch_variant.v
+        1  bash:.scratch_check.ys
+        1  bash:.scratch_variant.v
+        1  bash:/home/toshn/yosys_check.log
+  session start 2026-09-11T16:11:27: 2 write targets, 2 outside .trace_scratch or /tmp; git state commands 0
+        1  bash:rtl/i2c_master_bit_ctrl.v
+        1  rtl/i2c_master_bit_ctrl.v
+  session start 2026-09-11T16:25:31: 0 write targets, 0 outside .trace_scratch or /tmp; git state commands 0
+  session start 2026-09-11T16:30:20: 5 write targets, 4 outside .trace_scratch or /tmp; git state commands 0
+        1  bash:"$OUT"
+        1  bash:experiments/_scratch_i2c_verify/gate.synth.log
+        1  experiments/_scratch_i2c_verify/check.eqy
+        2  experiments/_scratch_i2c_verify/gate.v
+  session start 2026-09-11T16:41:13: 0 write targets, 0 outside .trace_scratch or /tmp; git state commands 0
+  session start 2026-09-12T09:23:14: 0 write targets, 0 outside .trace_scratch or /tmp; git state commands 0
+  session start 2026-09-12T09:30:49: 5 write targets, 5 outside .trace_scratch or /tmp; git state commands 0
+        1  bash:experiments/depth_i2c/results/probe
+        1  bash:experiments/depth_i2c/results/probe/
+        2  bash:experiments/depth_i2c/results/probe/synth_generic.log
+        1  bash:i2c.v
+        2  bash:synth_generic.log
+  session start 2026-09-12T09:47:23: 0 write targets, 0 outside .trace_scratch or /tmp; git state commands 0
+  session start 2026-09-12T09:52:21: 2 write targets, 1 outside .trace_scratch or /tmp; git state commands 0
+        2  bash:detect
+  session start 2026-09-12T11:57:00: 0 write targets, 0 outside .trace_scratch or /tmp; git state commands 0
+  session start 2026-09-12T12:11:56: 0 write targets, 0 outside .trace_scratch or /tmp; git state commands 0
+  session start 2026-09-12T12:19:48: 7 write targets, 6 outside .trace_scratch or /tmp; git state commands 0
+        1  .scratch/orig_mcode.v
+        1  bash:.scratch
+        1  bash:.scratch/orig_mcode.v
+        1  bash:.scratch/pristine_mcode.v
+        1  bash:.scratch/run1_mcode.v
+        1  bash:.scratch/run2_mcode.v
+  session start 2026-09-15T06:33:57: 0 write targets, 0 outside .trace_scratch or /tmp; git state commands 0
+  note, checked by printing the tool inputs: the 2026-09-11T16:11 session wrote a NEW file at the repository-root rtl/i2c_master_bit_ctrl.v,
+      ran git status on it, and deleted it (rm ... && git status --porcelain ... && echo removed, clean). That path was never a design source:
+      the i2c design this project measures lives in experiments/depth_i2c/rtl/. None of the other targets above is tracked or in history
+      (git ls-files and git log --all, 2026-09-15). No session ran git checkout, restore, reset, stash, add, commit or push.
