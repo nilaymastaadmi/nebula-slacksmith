@@ -110,3 +110,11 @@ reading it, and bash parses scripts incrementally rather than up front. The
 script was valid before and after. A run that fails for a reason that has
 nothing to do with what it is testing still gets written down, because the
 alternative is a directory of results that only ever went well.
+
+## 2026-09-15: a fresh clone of the public repository
+
+`results/clean_clone_2026-09-15.log`. Cloned from
+`https://github.com/nilaymastaadmi/nebula-slacksmith` at `02efc6d`, the commit before
+this log was added, and run with the author's toolchain: preflight clean, including
+the secret scan; **`demo_check.sh` 24 pass, 0 fail**; tally self-test 18 of 18. The
+only later commit adds this log and this paragraph.

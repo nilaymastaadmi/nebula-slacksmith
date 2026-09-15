@@ -1,0 +1,42 @@
+# Fresh clone of https://github.com/nilaymastaadmi/nebula-slacksmith (branch main)
+# run 2026-09-15T05:57:13Z on the author's machine, WSL, toolchain per SETUP.md
+clone HEAD: 02efc6deeaecd614b53f696131e0f8a25d4db724 Final corrections before submission: loop figure, four gate-routed branches, 23 proposals, G0 enforced in the demo.
+commits: 304
+
+=== tools/preflight.sh
+secret scan (this repository is public)
+  ok      no credential-shaped strings tracked
+
+preflight: all present. run: bash tools/demo_check.sh
+
+=== tools/demo_check.sh
+  PASS  beat 1 bench_size.py
+  PASS  beat 1 count agrees with yosys flatten
+  PASS  beat 2 loop closes v2 in 2 iterations
+  PASS  G0 refuses a changed SDC given the registered digest
+  PASS  beat 3 run_v3_final
+  PASS  beat 3 run_v3_fixed
+  PASS  beat 3 run_v3_flat
+  PASS  beat 4 registration file opens with its claim
+  PASS  beat 4 registration ordering
+  PASS  beat 5 flatten moves clk_a from -13.167 to +9.279
+  PASS  beat 5 composed vs gold after repair
+  PASS  beat 5 ABC pair is +0.000 on clk_b
+  PASS  beat 5 PPA factor
+  PASS  beat 6 verdict regression
+  PASS  tv80_mcode with a #( override reads CANNOT
+  PASS  benchmark modules untouched by the guard
+  PASS  parameters from an included header are refused too
+  PASS  beat 7 one SDC line closes the group
+  PASS  beat 7 claim still true
+  PASS  beat 8 claims still true
+  PASS  demo builds from the logs
+  PASS  committed demo matches a rebuild
+  PASS  demo carries P4's counterexample
+  PASS  classifier regression
+=== demo check: 24 pass, 0 fail ===
+demo_check exit: 0
+
+=== tools/tally_predictions.py
+self-test: 18 of 18 fixtures pass
+107 decided, of which **35 missed** (33%); 21 void, 8 unscored.
