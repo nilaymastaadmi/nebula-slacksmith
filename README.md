@@ -140,7 +140,7 @@ demo/                      the interactive explorer and the video's sources
 
 ## Limits
 
-Stated in full in report §9 and §10 and in `SUBMISSION_PACK.md` §5. In short: 27
+Stated in full in report §9 and §10 and in `SUBMISSION_PACK.md` §5; report §10 ends with a ranked plan, each step paired with the limit it removes. In short: 27
 proposals from one proposer model (Claude Opus 5), so outcomes, not rates;
 13 unattended runs that are not independent, because the agent read earlier results,
 and one surviving gain, N = 1; the physical flow reaches CTS and global routing,
