@@ -38,7 +38,7 @@ Fingerprint the SDC (G0); synthesize and time; **classify the binding path** by 
 
 The difficulty is not proposing a rewrite but knowing whether it is correct. Insert a pipeline stage and the design is equivalent only under a latency offset the checker must be told about, so the profitable transforms are the ones the available checkers cannot express.
 
-**Scoped precisely, because the loose version is false.** Generation-mode agents write any latency they like. The accurate claim is that we found no published system that both *changes* latency and *discharges a formal obligation for it*. Dr. RTL (ICCAD 2026) preserves micro-architecture "including pipeline latency"; RTLScout gates on a Verilator testbench with `abc cec` secondary, and CEC structurally cannot see an added register.
+**Scoped precisely, because the loose version is false.** Generation-mode agents write any latency they like. The accurate claim is that we found no published **agentic RTL optimizer** that both *changes* latency and *discharges a formal obligation for it*; HLS and retiming flows pair latency changes with sequential equivalence checking, but not with a model's proposal. Dr. RTL (ICCAD 2026) preserves micro-architecture "including pipeline latency"; RTLScout gates on a Verilator testbench with `abc cec` secondary, and CEC structurally cannot see an added register.
 
 **Four neighbours narrow the claim, two of them badly.** **ASPEN** (MLCAD 2025) and **ROVER** (TCAD 2024) pair rewriting with combinational obligations, and ROVER's propose-then-EC-gate loop is **structurally our shape with the search replaced by a model**. **EquivFusion** (arXiv 2604.16571) already derives the obligation from a declared scope; our taxonomy is finer, five types against two, and that is honestly the whole difference. **ElasticMiter** (ASPLOS 2025) proves in Coq what our elastic branch checks, so "agreement modulo k cycles under back-pressure" is **not ours**. What remains: obligation types routed *automatically from a declared transform type* on an open-source stack, four of five in the gate today, and Dr. RTL's 14% sequential-equivalence failure rate is what happens when that routing is left implicit.
 
@@ -204,7 +204,7 @@ To measure this honestly we **pre-registered the experiment before writing any p
 
 ### P4: the proposal that was wrong in the way that matters
 
-P4 one-hot decoded `funct3` and OR-ed the masked arms. It parses, elaborates, passes preconditions and saves 208 cells. EQY refuted it in 46 seconds with the witness `a = ae19f605`, `shamt = 7`, isolating **one failing partition out of 447**: `alu_out`.
+P4 one-hot decoded `funct3` and OR-ed the masked arms. It parses, elaborates, passes preconditions and saves 208 cells. EQY refuted it in 46 seconds with the witness `a = ae19f605`, `shamt = 7`, isolating **one failing partition out of 447**: `alu_out` (`llm_proposer/results/P4_counterexample_eqy.log`).
 
 It had folded the shift arms into a ternary:
 
