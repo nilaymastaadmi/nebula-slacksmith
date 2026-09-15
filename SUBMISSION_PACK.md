@@ -1,4 +1,4 @@
-# SlackSmith: submission pack, state as of 2026-09-14
+# SlackSmith: submission pack, state as of 2026-09-15
 
 Nebula (Astera Labs @ BITS Pilani Goa), Track A: *Constraint Optimization
 through RTL Enhancement Using Generative AI*.
@@ -21,7 +21,7 @@ process.
 | item | state |
 |---|---|
 | `REPORT.md` | **A4, 15 mm margins, 9.5 pt body at 1.22 leading, 8 pt tables. Measured in a browser, never estimated.** Re-measure after every edit and quote no number from any document, this one included: the figure moved 12.34 -> 15.60 -> under-cap across one day. Compression did 15.6 -> ~12.7 with **no measured result dropped**, removing duplication rather than evidence; margins and leading did the rest, and every setting is disclosed in a footer on the report itself|
-| Demo video | **done: 298.500 s, narrated**, measured by `ffprobe` on 2026-09-14 (H.264 video and AAC audio, both 298.500 s). A synthetic Sarvam voice (`bulbul:v3`, 12 calls) under the locked picture, whose video stream is byte-identical to the signed-off silent cut (`demo/PHASE2_VOICE.md`). The file is committed at the repository root as `slacksmith_demo.mp4`, byte-identical to the assembled cut (SHA-256 checked). `DEMO.md` is the 9-beat shot list and `demo/SCRIPT.md` the verbatim narration; `tools/demo_check.sh` runs every command in `DEMO.md` and reports **23 pass, 0 fail**, measured 2026-09-14. It held 15 and skipped beat 5 until 13 Sept; the 23rd, added on 14 Sept, checks the parameter guard on an included header |
+| Demo video | **done: 298.500 s, narrated**, measured by `ffprobe` on 2026-09-14 (H.264 video and AAC audio, both 298.500 s). A synthetic Sarvam voice (`bulbul:v3`, 12 calls) under the locked picture, whose video stream is byte-identical to the signed-off silent cut (`demo/PHASE2_VOICE.md`). The file is committed at the repository root as `slacksmith_demo.mp4`, byte-identical to the assembled cut (SHA-256 checked). `DEMO.md` is the 9-beat shot list and `demo/SCRIPT.md` the verbatim narration; `tools/demo_check.sh` runs every command in `DEMO.md` and reports **24 pass, 0 fail**, measured 2026-09-15 on a fresh public clone. It held 15 and skipped beat 5 until 13 Sept; the 23rd, added on 14 Sept, checks the parameter guard on an included header, and the 24th that G0 refuses a changed SDC |
 | Repository | runs from a clean clone at any path, verified three times (`experiments/reproducibility/`) |
 | Interactive demo | `demo/explorer.html`, generated from committed logs, published |
 | `claude` CLI auth | **working.** Token minted 2026-09-11 and held outside the repository in `~/.slacksmith_token`; `tools/preflight.sh` fails if a credential-shaped string ever reaches a tracked file |
@@ -47,7 +47,7 @@ process.
 ### D2. GenAI-based RTL optimization engine
 - `tools/proposer.py`, three backends: `frozen` (committed proposals),
   `handoff` (generates against live state, loop halts for the model),
-  `cli` (automated via `claude -p`, **exercised 2026-09-11 and 7 runs to date**: 1 on the benchmark, preserved at `experiments/cli_backend/results/run1/`, and 3 each on `i2c` and `tv80`).
+  `cli` (automated via `claude -p`, **exercised 2026-09-11 and 13 runs to date**: 1 on the benchmark, preserved at `experiments/cli_backend/results/run1/`, 3 on `i2c` and 9 on `tv80`). It is the Claude Code agent with a shell in this repository, not a bare model call (§5 item 3).
 - `tools/gate_proposal.py` routes the proof obligation from the declared
   transform type.
 - Proposals: 12 frozen across two pre-registered batches
@@ -56,9 +56,9 @@ process.
   missing transform classes (`experiments/missing_classes/`), and **1 generated
   with no human in the loop** (`experiments/cli_backend/`). **17 total in three provenance tiers**: **12 frozen** (written against a timing report, committed before any check
   ran), **4 handoff** (written by a model *through the session driving this project*, so carrying its context:
-  `online_proposer` O1 and O2 and `missing_classes` O1 and O2), and **1 unattended** (`claude -p`, no human, no
-  context beyond the prompt). A blind proposer has never produced a retiming or an FSM re-encoding, because until
-  2026-09-11 the gate rejected both by construction.
+  `online_proposer` O1 and O2 and `missing_classes` O1 and O2), and **1 unattended** (`claude -p`, no human, and
+  **not blind**: an agent with a shell in this repository, §5 item 3). No unattended proposal has been a retiming or an
+  FSM re-encoding; until 2026-09-11 the gate rejected both by construction.
 - Handoff result: O1 PROVEN and kept (`clk_e` −25.957 → −24.079), O2 **PROVEN
   and 11.434 ns worse**, reverted at G5.
 - **Unforced routing:** on `i2c_master_top` (Dr. RTL set, 560 cells,
@@ -76,11 +76,19 @@ process.
   stood between PROVEN and applied were predicted in writing from run 1 and
   confirmed by run 2 before being repaired. A do-nothing control on this
   560-cell design moves unbuffered slack by 0.424 ns, so the depth-side
-  survival cell stays **empty**, and the pack says so.
-- **Unattended result on the benchmark (1 of the 7 unattended runs):** `fanout_replication_round_key_update`, PROVEN
+  survival cell stays **empty** on `i2c`, and the pack says so.
+- **Unattended result on the benchmark (1 of the 13 unattended runs):** `fanout_replication_round_key_update`, PROVEN
   by EQY over all outputs, **+1.414 ns `clk_b`, +1.414 `clk_e`, +1.967 `clk_a`**,
   no group paying for it. 456 s end to end. It is the only batch-3 transform
   that improved every group.
+- **Survival on tv80** (`experiments/survival_tv80/`, registered first, R109 to R112 all
+  confirmed): 6 more unattended runs, **6 of 6 routed RTL unforced, 4 of 6 PROVEN**. Run 6,
+  `isolate_incdec16_into_dedicated_process`, lands at **−1.175 ns after `repair_design`
+  against gold's −2.021: +0.846 ns, 2.26 times the 0.375 ns floor**, better in all four
+  columns and kept by G5. Its session was a tool-using agent (61 tool calls, §5 item 3).
+  **Blind rerun** (`experiments/survival_tv80_blind/`, tools removed, primary prediction WRONG):
+  of six runs that reached the model none passed two floors; the best, +0.444 ns, has the
+  null control's shape.
 
 ### D3. Critical path and timing violation analysis
 - `tools/classify_path.py` scores what share of a path's delay comes from cells
@@ -93,7 +101,11 @@ process.
   (`tools/classify_regression.py`).
 
 ### D4. Optimized RTL implementation
-- **One composed optimized RTL:** `experiments/composed_rtl/aes_key_mem_composed.v`,
+- **An optimized RTL that survives the physical flow, on tv80:**
+  `experiments/survival_tv80/results/run6/online_variants/O1_tv80_mcode.v`, PROVEN by EQY
+  at `Mode = 1`, **+0.846 ns after `repair_design`** (REPORT §7.8,
+  `experiments/survival_tv80/NOTES.md`), found by a tool-using agent (§5 item 3).
+- **One composed optimized RTL on the benchmark:** `experiments/composed_rtl/aes_key_mem_composed.v`,
   A4 + O2 + O1 merged three-way against the gold file by `compose.sh`
   (rebuild-checked), **PROVEN** on branch 4 by PDR under the zero-init assumption.
   `clk_b`: **+5.165 ns** zero-parasitic (54.2% of the sum of its parts),
@@ -280,10 +292,10 @@ Each with its nearest prior art, conceded where it narrows the claim.
 - **Reproducibility verified by running**, not asserted: clean clone at a
   different path, 15 of 15 (`experiments/reproducibility/`); `demo_check.sh`
   re-run 2026-09-12 from WSL, **15 pass, 0 fail**; **22 pass, 0
-  fail** on 2026-09-13 after beat 5 and the parameter guard were added; **23 pass, 0 fail** on 2026-09-14 with the included-header guard fixture.
+  fail** on 2026-09-13 after beat 5 and the parameter guard were added; **23 pass, 0 fail** on 2026-09-14 with the included-header guard fixture; **24 pass, 0 fail** from a fresh public clone on 2026-09-15 with the G0 refusal check (log in `experiments/reproducibility/results/`).
 - **The tally is generated**: `tools/tally_predictions.py`, quoted in REPORT
   §9 and re-run after every registration. **It was itself wrong until
-  2026-09-13** (every id mention counted); it now self-tests on 16 real lines, including every one that broke it (until 14 Sept it also missed the word CORRECT, which left H1 and H2 unscored), and reads 35 missed of 107 decided, 136 registered, 8 unscored. **It reads lettered ids only**, which appear in 15 of the 24 registered experiments; the other nine, SlackBench, the transfer study and batch 1 among them, are outside those counts. REPORT §9 carried a stale hand-written
+  2026-09-13** (every id mention counted); it now self-tests on 16 real lines, including every one that broke it (until 14 Sept it also missed the word CORRECT, which left H1 and H2 unscored), and reads 36 missed of 115 decided, 144 registered, 8 unscored. **It reads lettered ids only**, which appear in 17 of the 26 registered experiments; the other nine, SlackBench, the transfer study and batch 1 among them, are outside those counts. REPORT §9 carried a stale hand-written
   tally until 12 Sept.
 
 ---
@@ -292,12 +304,21 @@ Each with its nearest prior art, conceded where it narrows the claim.
 
 1. **`REPORT.md` fits at 9.5 pt, not at 10.5 pt.** Measured, not estimated. Compression took it from 15.6 to 14.0 pages with no measured result dropped; type size took it the rest of the way, and the setting is stated in a footer on the report itself. A judge who expects 11 pt will find this the densest entry in the pile.
 2. **The demo video's narration is a synthetic voice**, Sarvam `bulbul:v3`, not a recorded person; three beats were re-synthesised at pace 1.08 to 1.13 to fit their screens (`demo/PHASE2_VOICE.md`). The video is 298.500 s, 1.5 s inside the 5-minute cap.
-3. **The unattended backend has run 7 times, one sample each**: once on the
-   benchmark (`experiments/cli_backend/`) and three times on each of two external
-   designs (`experiments/depth_i2c/`, `experiments/depth_tv80/`). These are the only
-   blind proposals; the 12 frozen and 4 handoff proposals were written through the
-   session driving this project. Everything else in this project that says
-   "closed loop" means a model in the loop with a human-mediated handoff.
+3. **The unattended backend is an agent, and it was never blind.** `claude -p` starts
+   the Claude Code agent with its tools in this repository, and earlier versions of
+   this pack and the report called it "no context beyond the prompt". The transcripts
+   show **12 of 13 unattended runs making tool calls**
+   (`experiments/survival_tv80/results/agent_*.txt`): survival run 6 made 61, reading
+   earlier runs' results and running synthesis, timing and equivalence, and runs 2 and 5
+   read that experiment's registration. So the unattended runs are not independent, and
+   the one surviving gain describes an agent with this project's toolchain. No write
+   reached a tracked file, and the gate verdict and the measurement were redone after
+   the runs. The runs: 1 on the benchmark (`experiments/cli_backend/`), 3 on `i2c`
+   (`experiments/depth_i2c/`), 9 on `tv80` (`experiments/depth_tv80/`,
+   `experiments/survival_tv80/`). The only blind runs are `experiments/survival_tv80_blind/`
+   (tools removed): six reached the model, none repeated run 6's gain, and two replies were
+   lost to the CLI's single-message output cap. The 12 frozen and 4 handoff
+   proposals were written through the session driving this project.
 4. **The router never selects the RTL lever on THIS benchmark**, because its
    binding paths are 59 to 91 percent fanout-attributable and the physical
    lever is the correct answer to them. The closed-loop runs reached RTL only
@@ -329,9 +350,12 @@ Each with its nearest prior art, conceded where it narrows the claim.
     **The gate now refuses it**: `CANNOT (parameter override at instantiation)`,
     checked inside `demo_check.sh` by `tools/param_guard_regression.sh`
     (`tv80_mcode` reads CANNOT; `rv32i_core` and `aes_key_mem` declare no
-    parameters and are untouched, so no benchmark verdict changes). **The repair,
-    threading instantiated parameters into every branch, is not done**: until it
-    is, parameterised external IP gets CANNOT rather than a proof. Since 14 Sept a
+    parameters and are untouched, so no benchmark verdict changes). **Since 15 Sept `--param NAME=VALUE`** applies a
+    named value to both sides of the obligation (checked before use: `depth_tv80`
+    run 3 reads PROVEN with `--param Mode=1` and CANNOT without,
+    `experiments/survival_tv80/results/gate_param_check.txt`). **Discovering the
+    instantiated values automatically is not done**, so without the flag
+    parameterised external IP still gets CANNOT rather than a proof. Since 14 Sept a
     parameter that arrives through an `` `include `` inside the module
     body is refused too (`tools/fixtures/param_include/`). **Still missed**, each a
     false-PROVEN path on external IP: an override set by the synthesis script
@@ -371,15 +395,15 @@ Each with its nearest prior art, conceded where it narrows the claim.
 | deliverable | state |
 |---|---|
 | D1 timing analysis framework | **complete** |
-| D2 GenAI optimization engine | **partial.** All four named classes are proposed and routed; 23 proposals in three provenance tiers, seven unattended runs. **No run has both chosen RTL unforced and produced a proven, timing-positive transform, after 23 proposals and three designs**, and the engine has never proposed a pipeline cut that proved. The router chooses RTL unforced on `i2c`; that run's proposal was reported `UNRESOLVED`, which was almost certainly the same gate defect found on 13 Sept (same module, same branch, same code path; its artifacts were not kept, so this is inferred, not measured). The `i2c` proposal REPORT §7.2 once called "PROVEN by EQY, by hand" has **no artifact** (the run script wiped its scratch) and is withdrawn; `experiments/depth_i2c/` re-runs the design three times unattended with everything kept |
+| D2 GenAI optimization engine | **met on `tv80s`, proposer disclosed.** All four named classes are proposed and routed; 27 proposals in three provenance tiers, 13 unattended runs. **One unattended run chose RTL unforced and produced a proven transform worth +0.846 ns after `repair_design`** (`experiments/survival_tv80/`), and its proposer was an agent with a shell in this repository (§5 item 3). The engine has never proposed a pipeline cut that proved. The router chooses RTL unforced on `i2c`; that run's proposal was reported `UNRESOLVED`, which was almost certainly the same gate defect found on 13 Sept (same module, same branch, same code path; its artifacts were not kept, so this is inferred, not measured). The `i2c` proposal REPORT §7.2 once called "PROVEN by EQY, by hand" has **no artifact** (the run script wiped its scratch) and is withdrawn; `experiments/depth_i2c/` re-runs the design three times unattended with everything kept |
 | D3 critical path analysis | **complete** |
-| D4 optimized RTL | **partial**: one composed optimized RTL ships (`experiments/composed_rtl/`), proven; measured before wires, after the ABC lever and after `repair_design`. Its timing contribution after the physical flow is inside the flow's perturbation floor, and design-level closure comes from `repair_design`, not from RTL |
+| D4 optimized RTL | **met on `tv80s`**: `experiments/survival_tv80/results/run6/`, proven, +0.846 ns after `repair_design`. On the benchmark, one composed optimized RTL ships (`experiments/composed_rtl/`), proven; its timing contribution after the physical flow is inside the flow's perturbation floor, and the benchmark's closure comes from `repair_design`, not from RTL |
 | D5 timing, frequency, PPA | **complete.** Before/after for all three, including power at **+47.1%**, measured 2026-09-12 |
 | D6 formal equivalence | **complete.** Five branches, null control, void check. Open: the ABC buffering lever is unproven, and P5's control does not close |
 | D7 interactive demo | **complete.** `demo/explorer.html`, rebuild-checked |
-| **Demo video** | **complete.** 298.500 s with Sarvam narration under the locked picture (`demo/PHASE2_VOICE.md`) |
+| **Demo video** | **complete.** 298.500 s with Sarvam narration under the locked picture (`demo/PHASE2_VOICE.md`). Recorded before 15 Sept, so its account of the depth-dominated designs stops before the tv80 survival result (REPORT §7.8) |
 
-**Pending, in priority order:** a hosted open-weight run (item 13); one unforced run that proposes, proves *and* **improves**. That is **still open after two designs**: `experiments/depth_i2c/` and `experiments/depth_tv80/` both route RTL unforced 3 of 3, and four proven transforms across them bought 0.000, 0.000, −0.268 and −0.421. The survival table's depth cell was attempted on a design large enough to show a gain (tv80, 3,447 cells, 0.152 ns floor) and **is empty there too**. Composition and the marginal gain after buffering: **done**, `experiments/composed_rtl/`. Closure cost: **done**, `experiments/closure_cost/`.
+**Pending, in priority order:** a hosted open-weight run (item 13); a surviving gain from a proposer with no tools (none in six blind runs, `experiments/survival_tv80_blind/`). The unforced run that proposes, proves *and* **improves** is **done once**, on tv80 (`experiments/survival_tv80/`), after six runs across `experiments/depth_i2c/` and `experiments/depth_tv80/` bought 0.000, 0.000, −0.268 and −0.421. Composition and the marginal gain after buffering: **done**, `experiments/composed_rtl/`. Closure cost: **done**, `experiments/closure_cost/`.
 
 ## 5c. Overfitting, and testing beyond our own design
 

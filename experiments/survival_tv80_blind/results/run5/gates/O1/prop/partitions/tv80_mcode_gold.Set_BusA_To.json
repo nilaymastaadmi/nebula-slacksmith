@@ -1,0 +1,61 @@
+{
+  "partition": {
+    "index": 6,
+    "name": "tv80_mcode_gold.Set_BusA_To",
+    "inbits": {
+      "DDD": [
+        0
+      ],
+      "DPAIR": [
+        0,
+        1
+      ],
+      "IR": [
+        6,
+        7
+      ],
+      "ISet": [
+        0,
+        1
+      ],
+      "MCycle": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "SSS": [
+        0,
+        1,
+        2
+      ]
+    },
+    "outbits": {
+      "Set_BusA_To": [
+        0,
+        1,
+        2
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.tv80_mcode_gold.Set_BusA_To",
+    "internal": {},
+    "unused": {},
+    "cellcount": 263,
+    "bitcount": 362
+  },
+  "gate_module": {
+    "name": "gold.tv80_mcode_gold.Set_BusA_To",
+    "internal": {},
+    "unused": {
+      "MCycle": [
+        0
+      ]
+    },
+    "cellcount": 246,
+    "bitcount": 304
+  }
+}

@@ -1,0 +1,13 @@
+# survival_tv80_blind: every Claude Code session started in an empty temporary directory on 2026-09-15 (counts only, no transcript text)
+# generated 2026-09-15T11:14:21Z. The 08:47 session is the isolation check before registering; the rest are runs 1 to 6 and reruns 3 to 6, in start order.
+2026-09-15T08:47:58  assistant records 2  stop reasons {'end_turn': 2}  max output_tokens 418  tool calls 0  text chars 8
+2026-09-15T08:52:46  assistant records 4  stop reasons {'max_tokens': 2, 'end_turn': 2}  max output_tokens 64000  tool calls 0  text chars 105810
+2026-09-15T09:03:08  assistant records 2  stop reasons {'end_turn': 2}  max output_tokens 60777  tool calls 0  text chars 102324
+2026-09-15T09:11:48  assistant records 1  stop reasons {'stop_sequence': 1}  max output_tokens 0  tool calls 0  text chars 52
+2026-09-15T09:11:58  assistant records 1  stop reasons {'stop_sequence': 1}  max output_tokens 0  tool calls 0  text chars 52
+2026-09-15T09:12:07  assistant records 1  stop reasons {'stop_sequence': 1}  max output_tokens 0  tool calls 0  text chars 52
+2026-09-15T09:12:16  assistant records 1  stop reasons {'stop_sequence': 1}  max output_tokens 0  tool calls 0  text chars 52
+2026-09-15T10:38:02  assistant records 4  stop reasons {'max_tokens': 2, 'end_turn': 2}  max output_tokens 64000  tool calls 0  text chars 102315
+2026-09-15T10:50:43  assistant records 2  stop reasons {'end_turn': 2}  max output_tokens 59041  tool calls 0  text chars 105765
+2026-09-15T10:59:06  assistant records 6  stop reasons {'tool_use': 4, 'end_turn': 2}  max output_tokens 37115  tool calls 2  text chars 105373
+2026-09-15T11:05:19  assistant records 2  stop reasons {'end_turn': 2}  max output_tokens 44535  tool calls 0  text chars 105494

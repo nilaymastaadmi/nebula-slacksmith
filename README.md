@@ -47,9 +47,9 @@ decision with the evidence it used:
 | # | deliverable | status | evidence |
 |---|---|---|---|
 | 1 | RTL timing analysis framework | full | `tools/slacksmith.py`, `tools/remeasure.py`, three versioned SDCs, G0 |
-| 2 | GenAI-based RTL optimization engine | **partial** | 23 proposals in three provenance tiers, 7 of them unattended, all four named classes routed; no run has both chosen RTL unaided and produced a proven, timing-positive transform |
+| 2 | GenAI-based RTL optimization engine | **met on `tv80s`, proposer disclosed** | 27 proposals in three provenance tiers, 11 unattended, all four named classes routed. One unattended run chose RTL unaided and produced a proven transform that survives `repair_design` (+0.846 ns); its proposer was an agent with a shell in this repository (`experiments/survival_tv80/`) |
 | 3 | Critical path and timing violation analysis | full | `tools/classify_path.py`, regression-checked against OpenSTA's fanout column |
-| 4 | Optimized RTL implementation | **partial** | `experiments/composed_rtl/aes_key_mem_composed.v`, proven; its gain does not survive the physical flow |
+| 4 | Optimized RTL implementation | **met on `tv80s`** | `experiments/survival_tv80/results/run6/online_variants/`, proven, +0.846 ns after `repair_design`. The benchmark's `experiments/composed_rtl/aes_key_mem_composed.v` is proven too, and its gain does not survive the physical flow |
 | 5 | Timing, frequency and PPA comparison | full | report §8, `experiments/ppa/`, `experiments/closure_cost/` |
 | 6 | Formal equivalence verification report | full | five obligation branches proven, four routed by the gate; G6 and G7; `experiments/slackbench/` |
 | 7 | Interactive demo | full | `demo/explorer.html` and the narrated video |
@@ -71,11 +71,19 @@ on every single-bit one (`rtl/`, report §4).
   **59% to 91% fanout-attributable delay**. Like for like on one group, a proven
   FSM re-encoding buys **+3.185 ns** while the physical lever takes the same group
   from **−18.957 to +5.6**: about one eighth.
-- **Nothing the RTL half bought survived the physical flow.** Three proven
-  transforms composed into one file are worth **+5.165 ns** before wires, **0.000**
-  after buffering, and **−0.237 ns** after `repair_design`, inside a 0.24 ns floor.
-  On two external designs where the router chose RTL unaided, four proven
-  transforms bought **0.000, 0.000, −0.268 and −0.421 ns**.
+- **On the benchmark, nothing the RTL half bought survived the physical flow.** Three
+  proven transforms composed into one file are worth **+5.165 ns** before wires,
+  **0.000** after buffering, and **−0.237 ns** after `repair_design`, inside a 0.24 ns
+  floor. On two external designs where the router chose RTL unaided, the first four
+  proven transforms bought **0.000, 0.000, −0.268 and −0.421 ns**.
+- **Then one survived, and the proposer was an agent.** Six registered runs on `tv80s`:
+  a proven transform lands **+0.846 ns** better than gold after `repair_design`, 2.26
+  times the design's noise floor and better in all four columns. The unattended
+  `claude -p` proposer turned out to be the Claude Code agent with a shell in this
+  repository: that session read earlier results and ran synthesis, timing and
+  equivalence before replying. The gate verdict and the measurement were redone after
+  the runs, outside it. Six blind runs with the tools removed produced no surviving gain; the best proven one,
+  +0.444 ns, has the null control's shape (`experiments/survival_tv80_blind/`).
 - **Closure has a price, measured.** `repair_design` closes all three violating
   groups with placement parasitics at **+20.2% area**, and **+47.1% power** measured
   zero-parasitic.
@@ -118,7 +126,7 @@ hashes `4ee45c22` and `7e3ab9b4`, now `04fa59c4` and `115fc03f`.
 
 ```
 REPORT.md, REPORT.pdf      the report
-slacksmith_demo.mp4        the demo video
+slacksmith_demo.mp4        the demo video, recorded before the tv80 survival result (report §7.8)
 SUBMISSION_PACK.md         deliverables, objectives and known-open items, each with its evidence
 DEMO.md                    the video's shot list; tools/demo_check.sh runs every command in it
 SETUP.md                   dependencies, versions, cost of re-deriving each claim
@@ -132,9 +140,11 @@ demo/                      the interactive explorer and the video's sources
 
 ## Limits
 
-Stated in full in report §9 and §10 and in `SUBMISSION_PACK.md` §5. In short: 23
+Stated in full in report §9 and §10 and in `SUBMISSION_PACK.md` §5. In short: 27
 proposals from one proposer model (Claude Opus 5), so outcomes, not rates;
-7 unattended runs, one sample each; the physical flow reaches CTS and global routing,
+13 unattended runs that are not independent, because the agent read earlier results,
+and one surviving gain, N = 1; the physical flow reaches CTS and global routing,
 not signoff; equivalence is not proven for the ABC buffering lever; modules
-instantiated with parameter overrides are refused rather than proven; and the
+instantiated with parameter overrides are refused unless the value is passed with
+`--param`; and the
 organisers' open-source-model recommendation is not met for the main result.

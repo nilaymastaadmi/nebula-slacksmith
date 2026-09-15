@@ -1,0 +1,60 @@
+{
+  "partition": {
+    "index": 53,
+    "name": "tv80_mcode_gold.Call",
+    "inbits": {
+      "DDD": [
+        0
+      ],
+      "DPAIR": [
+        0,
+        1
+      ],
+      "IR": [
+        6,
+        7
+      ],
+      "ISet": [
+        0,
+        1
+      ],
+      "MCycle": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "SSS": [
+        0,
+        1,
+        2
+      ]
+    },
+    "outbits": {
+      "Call": [
+        0
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.tv80_mcode_gold.Call",
+    "internal": {},
+    "unused": {},
+    "cellcount": 135,
+    "bitcount": 149
+  },
+  "gate_module": {
+    "name": "gold.tv80_mcode_gold.Call",
+    "internal": {},
+    "unused": {
+      "MCycle": [
+        1,
+        2,
+        3
+      ]
+    },
+    "cellcount": 132,
+    "bitcount": 146
+  }
+}

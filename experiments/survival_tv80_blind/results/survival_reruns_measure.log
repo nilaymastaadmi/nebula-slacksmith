@@ -1,0 +1,35 @@
+ctrl_rename : 2 references renamed
+ctrl_reorder: moved 10386 chars of tv80_alu to the end, token count identical
+ctrl_flip   : 1 ternary rewritten as its complement
+variants: gold:/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/depth_tv80/rtl/tv80.v ctrl_rename:/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/depth_tv80/rtl_ctrl_rename/tv80.v ctrl_reorder:/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/depth_tv80/rtl_ctrl_reorder/tv80.v ctrl_flip:/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/depth_tv80/rtl_ctrl_flip/tv80.v run2_O1_casez_parallel_case_hint:/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/depth_tv80/results/run2/online_variants/O1_tv80_mcode.v
+run3_O1_flatten_mcycle_tail_override_priority:/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/depth_tv80/results/run3/online_variants/O1_tv80_mcode.v blind_run4_O1_parallel_case_opcode_decoder:/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/survival_tv80_blind/results/run4/online_variants/O1_tv80_mcode.v blind_run6_O1_parallel_case_opcode_decode:/mnt/c/Users/toshn/Projects/slacksmith-benchmark/experiments/survival_tv80_blind/results/run6/online_variants/O1_tv80_mcode.v
+=== gold ===
+gold	-0.894	-0.296	-6.072	-2.021	29173	35159	3447	3533	
+=== ctrl_rename ===
+ctrl_rename	-0.894	-0.296	-6.072	-2.021	29173	35159	3447	3533	
+=== ctrl_reorder ===
+ctrl_reorder	-0.894	-0.296	-6.072	-2.021	29173	35159	3447	3533	
+=== ctrl_flip ===
+ctrl_flip	-1.046	-0.269	-6.276	-1.646	29100	35259	3429	3520	
+=== run2_O1_casez_parallel_case_hint ===
+run2_O1_casez_parallel_case_hint	-0.894	-0.296	-6.072	-2.021	29173	35159	3447	3533	
+=== run3_O1_flatten_mcycle_tail_override_priority ===
+run3_O1_flatten_mcycle_tail_override_priority	-1.162	-0.473	-6.935	-1.639	29018	34986	3420	3508	
+=== blind_run4_O1_parallel_case_opcode_decoder ===
+blind_run4_O1_parallel_case_opcode_decoder	-0.894	-0.296	-6.072	-2.021	29173	35159	3447	3533	
+=== blind_run6_O1_parallel_case_opcode_decode ===
+blind_run6_O1_parallel_case_opcode_decode	-0.894	-0.296	-6.072	-2.021	29173	35159	3447	3533	
+=== gold_run2 (R60) ===
+gold_run2			-6.072	-2.021	29173	35159		
+
+=== survival table ===
+variant                                        A_unbuffered  B_abc_lever  C_before_repair  C_after_repair  area_before  area_after  cells_A  cells_B  
+gold                                           -0.894        -0.296       -6.072           -2.021          29173        35159       3447     3533     
+ctrl_rename                                    -0.894        -0.296       -6.072           -2.021          29173        35159       3447     3533     
+ctrl_reorder                                   -0.894        -0.296       -6.072           -2.021          29173        35159       3447     3533     
+ctrl_flip                                      -1.046        -0.269       -6.276           -1.646          29100        35259       3429     3520     
+run2_O1_casez_parallel_case_hint               -0.894        -0.296       -6.072           -2.021          29173        35159       3447     3533     
+run3_O1_flatten_mcycle_tail_override_priority  -1.162        -0.473       -6.935           -1.639          29018        34986       3420     3508     
+blind_run4_O1_parallel_case_opcode_decoder     -0.894        -0.296       -6.072           -2.021          29173        35159       3447     3533     
+blind_run6_O1_parallel_case_opcode_decode      -0.894        -0.296       -6.072           -2.021          29173        35159       3447     3533     
+gold_run2                                                                 -6.072           -2.021          29173        35159                         

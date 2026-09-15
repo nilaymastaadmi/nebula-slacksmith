@@ -1,0 +1,56 @@
+{
+  "partition": {
+    "index": 17,
+    "name": "tv80_mcode_gold.PreserveC",
+    "inbits": {
+      "DDD": [
+        0
+      ],
+      "DPAIR": [
+        0,
+        1
+      ],
+      "IR": [
+        6,
+        7
+      ],
+      "ISet": [
+        0,
+        1
+      ],
+      "MCycle": [
+        0,
+        1
+      ],
+      "SSS": [
+        0,
+        1,
+        2
+      ]
+    },
+    "outbits": {
+      "PreserveC": [
+        0
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.tv80_mcode_gold.PreserveC",
+    "internal": {},
+    "unused": {},
+    "cellcount": 146,
+    "bitcount": 158
+  },
+  "gate_module": {
+    "name": "gold.tv80_mcode_gold.PreserveC",
+    "internal": {},
+    "unused": {
+      "MCycle": [
+        0
+      ]
+    },
+    "cellcount": 145,
+    "bitcount": 157
+  }
+}

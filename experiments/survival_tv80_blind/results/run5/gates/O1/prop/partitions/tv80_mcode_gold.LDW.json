@@ -1,0 +1,56 @@
+{
+  "partition": {
+    "index": 22,
+    "name": "tv80_mcode_gold.LDW",
+    "inbits": {
+      "DDD": [
+        0
+      ],
+      "DPAIR": [
+        0,
+        1
+      ],
+      "IR": [
+        6,
+        7
+      ],
+      "ISet": [
+        0,
+        1
+      ],
+      "MCycle": [
+        1,
+        2
+      ],
+      "SSS": [
+        0,
+        1,
+        2
+      ]
+    },
+    "outbits": {
+      "LDW": [
+        0
+      ]
+    },
+    "crossbits": {}
+  },
+  "gold_module": {
+    "name": "gold.tv80_mcode_gold.LDW",
+    "internal": {},
+    "unused": {},
+    "cellcount": 152,
+    "bitcount": 164
+  },
+  "gate_module": {
+    "name": "gold.tv80_mcode_gold.LDW",
+    "internal": {},
+    "unused": {
+      "MCycle": [
+        1
+      ]
+    },
+    "cellcount": 151,
+    "bitcount": 163
+  }
+}
