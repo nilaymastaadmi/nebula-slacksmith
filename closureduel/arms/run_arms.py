@@ -304,6 +304,14 @@ def main():
         outf.flush()
 
     # Phase A: C0 twice per design, the period, and the classifier verdict.
+    # On resume, a design whose baseline row exists and whose C0 netlist on
+    # disk still hashes to the recorded value is reused, not re-synthesised.
+    prev = {}
+    if os.path.exists(a.out):
+        for line in open(a.out):
+            r = json.loads(line)
+            if r["kind"] == "design" and r.get("status") == "OK":
+                prev[r["design"]] = r
     base = {}
     for d in designs:
         top, clk, _rst, ext = cfg[d]
@@ -313,6 +321,11 @@ def main():
         wd = os.path.join(a.work, d, "C0_period")
         os.makedirs(wd, exist_ok=True)
         net = os.path.join(wd, "net.v")
+        p0 = prev.get(d)
+        if p0 and os.path.exists(net) and sha(net) == p0.get("c0_net_sha256"):
+            base[d] = dict(top=top, clk=clk, ext=ext, src=src, period=p0["period"], c0net=net)
+            print(f"{d}: reused baseline, period={p0['period']} (C0 netlist sha matches)", flush=True)
+            continue
         st, _, note = synth(src, ext, top, net, None)
         if st != "OK":
             emit({"schema": SCHEMA, "kind": "design", "design": d, "cand": "C0", "run": 0,
