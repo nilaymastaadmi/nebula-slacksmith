@@ -29,6 +29,10 @@ COPY closure-bench/ closure-bench/
 # the liberty is missing. A container that builds but cannot find yosys would
 # otherwise surface as every design reporting SYNTH_FAIL, which reads as a
 # result rather than as a broken image.
-RUN bash closure-bench/docker/stamp.sh | tee /opt/closure-bench/TOOLCHAIN.txt
+# Redirect, then cat, never `| tee`: RUN uses /bin/sh, which has no pipefail,
+# so a pipeline reports tee's exit status and a failing stamp passes the
+# build. The first build did exactly that and baked a 0-byte TOOLCHAIN.txt.
+RUN bash closure-bench/docker/stamp.sh > /opt/closure-bench/TOOLCHAIN.txt \
+ && cat /opt/closure-bench/TOOLCHAIN.txt
 
 ENTRYPOINT ["bash", "/opt/closure-bench/closure-bench/docker/smoke.sh"]

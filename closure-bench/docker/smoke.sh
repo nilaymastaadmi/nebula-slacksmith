@@ -58,8 +58,12 @@ fi
 echo "MAPPED_CELLS=$(grep -cE 'sky130_fd_sc_hd__' "$NET")"
 
 # --- STA: run_classify.sh sta_r2r(), unchanged ------------------------------
+LEF_TCL=""
+[ "$STA_KIND" = openroad-embedded ] && LEF_TCL="read_lef $TECH_LEF
+read_lef $SC_LEF"
 sta_r2r () {  # $1 period $2 out
   cat > "$2.tcl" <<EOF
+$LEF_TCL
 read_liberty $LIBERTY
 read_verilog $NET
 link_design $TOP
@@ -69,17 +73,31 @@ EOF
   "$STA" -no_init -no_splash -exit "$2.tcl" > "$2" 2>&1
   if grep -qE 'syntax error' "$2"; then echo READ_FAIL; return; fi
   if grep -qE 'report_checks command failed' "$2"; then return; fi
+  # Any other tool error is an instrument failure. The first container run
+  # hit "[ERROR ORD-2010]" and, with no branch for it, reported NO_PATH on a
+  # design whose register path the host had just measured.
+  if grep -qE '^\[ERROR|^Error' "$2"; then echo STA_ERROR; return; fi
+  local s
   # Dash FIRST inside the bracket; "[\-0-9.]" aborts POSIX grep.
-  grep -E "(-?[0-9.]+)[[:space:]]+slack \((MET|VIOLATED)\)" "$2" | tail -1 | awk '{print $1}'
+  s=$(grep -E "(-?[0-9.]+)[[:space:]]+slack \((MET|VIOLATED)\)" "$2" | tail -1 | awk '{print $1}')
+  # No error and no slack line is unexplained, so it is a broken instrument,
+  # never a design fact. NO_PATH is reserved for the one recognised cause.
+  [ -n "$s" ] && echo "$s" || echo STA_ERROR
 }
 
+_sta_fail () {  # $1 label $2 report
+  echo "RESULT=$1"; echo "--- $2 ---" >&2; tail -20 "$2" >&2; exit 3
+}
 S1=$(sta_r2r 1000 "$W/loose.rpt")
-[ "$S1" = "READ_FAIL" ] && { echo "RESULT=STA_READ_FAIL"; tail -20 "$W/loose.rpt" >&2; exit 1; }
+[ "$S1" = "READ_FAIL" ] && _sta_fail STA_READ_FAIL "$W/loose.rpt"
+[ "$S1" = "STA_ERROR" ] && _sta_fail STA_ERROR "$W/loose.rpt"
 [ -z "$S1" ] && { echo "RESULT=NO_PATH"; exit 1; }
 REQ=$("$PYTHON" -c "print(round(1000.0 - ($S1), 3))")
 PER=$("$PYTHON" -c "print(round(0.9 * ($REQ), 3))")
 SA=$(sta_r2r "$PER" "$W/tight.rpt")
-[ -n "$SA" ] && [ "$SA" != "READ_FAIL" ] || { echo "RESULT=STA_FAIL_TIGHT"; exit 1; }
+case "$SA" in
+  ""|READ_FAIL|STA_ERROR) _sta_fail "STA_FAIL_TIGHT" "$W/tight.rpt" ;;
+esac
 
 echo "REQUIRED_NS=$REQ"
 echo "PERIOD_NS=$PER"

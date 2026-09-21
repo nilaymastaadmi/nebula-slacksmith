@@ -19,6 +19,10 @@ echo
 echo "liberty:  $LIBERTY"
 echo "          sha256 $(sha256sum "$LIBERTY" | cut -d' ' -f1)"
 echo "          bytes  $(stat -c %s "$LIBERTY")"
+if [ -n "$TECH_LEF" ]; then
+  echo "tech lef: $TECH_LEF  sha256 $(sha256sum "$TECH_LEF" | cut -d' ' -f1)"
+  echo "cell lef: $SC_LEF  sha256 $(sha256sum "$SC_LEF" | cut -d' ' -f1)"
+fi
 
 # The dont_use exclusion must be non-empty. Same test as run_classify.sh:
 # at least 2 words, i.e. at least one "-dont_use <cell>" pair. A silently

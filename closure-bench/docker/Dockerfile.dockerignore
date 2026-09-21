@@ -1,0 +1,7 @@
+# BuildKit reads <Dockerfile>.dockerignore from beside the Dockerfile, so this
+# filters the repo-root build context without adding a file outside
+# closure-bench/. Exclude everything, then admit exactly what the image COPYs.
+*
+!tools/remeasure.py
+!closure-bench/
+closure-bench/**/__pycache__
