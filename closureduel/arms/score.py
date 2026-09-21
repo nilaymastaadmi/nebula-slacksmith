@@ -264,7 +264,26 @@ def main():
     c4_oracle = sum(1 for d in table if table[d]["arms"]["oracle_C2_C3"] and
                     table[d]["arms"]["C4"].get("wns", -1e9) >= table[d]["arms"]["oracle_C2_C3"]["wns"])
 
+    cec_by_design = collections.defaultdict(collections.Counter)
+    for k in cec.values():
+        cec_by_design[k["design"]][k["cec"]] += 1
+    seqc = [k for k in cec.values() if k["cand"].startswith("S:")]
+    sizing = [k for k in seqc if "buffer" not in k["cand"]]
+    cec_pattern = {
+        "not_proven_total": sum(1 for k in seqc if k["cec"] != "PROVEN"),
+        "not_proven_with_buffer": sum(1 for k in seqc if k["cec"] != "PROVEN" and "buffer" in k["cand"]),
+        "sizing_only_total": len(sizing),
+        "sizing_only_proven": sum(1 for k in sizing if k["cec"] == "PROVEN"),
+        "c1_not_proven": sorted((k["design"], k["cec"]) for k in cec.values()
+                                if k["cand"] == "C1" and k["cec"] != "PROVEN"),
+        "sleep_inflated": sum(1 for k in cec.values() if k.get("cec_s", 0) > 360),
+    }
+    ctl_path = os.path.join(RES, "cex_control.json")
+    cex_control = json.load(open(ctl_path)) if os.path.exists(ctl_path) else None
+
     summary = {"n_designs": n, "void": void, "closed": closed, "c5_closed_by_seed": c5_counts,
+               "cec_by_design": {d: dict(c) for d, c in cec_by_design.items()},
+               "cec_pattern": cec_pattern, "cex_control": cex_control,
                "cstar_closed": cstar, "c4_ge_c5_median": c4_vs_c5, "c4_matches_oracle": c4_oracle,
                "predictions": [{"id": p, "claim": c, "correct": bool(ok), "measured": m} for p, c, ok, m in preds],
                "table": table, "c5": {d: [s.get("cand") for s in v] for d, v in c5dist.items()},
@@ -319,7 +338,24 @@ def write_md(s, c5dist):
         L.append(f"| {d} | {t['tier']} | {t['verdict'].replace('_DOMINATED', '')} | {t['period']} | "
                  f"{cell(a['C0'])} | {cell(a['C1'])} | {cell(a['C2'])} | {cell(a['C3'])} | "
                  f"{cell(a['C4'])} | {a['C4']['route']} | {cell(a['C*'])} |")
-    L += ["", "## Failure classes, all candidates", ""]
+    L += ["", "## Equivalence checks, by design and outcome", "",
+          "| Design | PROVEN | NOT_PROVEN | TIMEOUT | other |", "|---|---|---|---|---|"]
+    for d, c in sorted(s["cec_by_design"].items()):
+        L.append(f"| {d} | {c.get('PROVEN', 0)} | {c.get('NOT_PROVEN', 0)} | {c.get('TIMEOUT', 0)} | "
+                 f"{sum(v for k, v in c.items() if k not in ('PROVEN', 'NOT_PROVEN', 'TIMEOUT'))} |")
+    e = s["cec_pattern"]
+    L += ["", f"Of {e['not_proven_total']} lever-sequence candidates not PROVEN, **{e['not_proven_with_buffer']} contain "
+          f"`buffer`**; of {e['sizing_only_total']} sizing-only candidates, {e['sizing_only_proven']} are PROVEN. "
+          f"C1 rows not PROVEN: {e['c1_not_proven']}.",
+          f"Rows whose recorded check time exceeds the 300 s cap by more than 60 s (wall clock inflated by a "
+          f"machine sleep, 2026-09-21): {e['sleep_inflated']}.", ""]
+    ctl = s.get("cex_control")
+    if ctl:
+        L += [f"Counterexample search control (`results/cex_control.json`): planted defect "
+              f"**{ctl['planted_defect']['cex']}** in {ctl['planted_defect']['cex_s']} s; unmodified netlist "
+              f"**{ctl['unmodified']['cex']}**. The all-candidate sweep was not run; see `PREREGISTRATION.md`, "
+              "amendment 1 outcome.", ""]
+    L += ["## Failure classes, all candidates", ""]
     cls = collections.Counter(o["cls"] for t in s["table"].values() for k, o in t["arms"].items()
                               if k in ("C1", "C2", "C3", "C4") and o)
     L += [f"- {k}: {v}" for k, v in sorted(cls.items())]
