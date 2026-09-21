@@ -206,3 +206,33 @@ which the two differ within 10 cycles of a common zero state), NONE_WITHIN_10
 
 **Prediction P12** (registered now, after seeing the pattern, so weaker than
 P1 to P11): no buffer-containing candidate yields a COUNTEREXAMPLE. High.
+
+### Amendment 1, outcome of its control (2026-09-22, still before any arm is scored)
+
+- **The search finds real defects.** On the planted DSP defect it returned
+  COUNTEREXAMPLE in 110 s (`results/cex_control.json`, and the log line
+  "Called with -verify and proof did fail!").
+- **It cannot clear a correct netlist at this size.** On the unmodified DSP
+  netlist (2.9k cells, proven equivalent by the CEC gate in 4 s) it hit the
+  600 s cap without finishing 10 cycles. So on the larger designs, where the
+  unproven candidates are, a NONE_WITHIN_10 is unreachable in budget, and the
+  `--all` sweep (about 100 candidates, up to 4 hours) would return mostly
+  INCONCLUSIVE. **It is not run.** The sensitivity table in amendment 1 is
+  therefore not produced; this is recorded, not quietly dropped.
+- **Direct diagnosis instead, on one case.** For `aes` with `buffer` alone, the
+  CEC gate compares 1,409 points and proves **1,408** (every `o_expanded_key`
+  bit). The single unproven point is `o_done`, and it fails in the induction
+  step ("Proof for induction step failed"), not in the base case: the checker
+  cannot pair the renamed counter state behind it, and induction then ranges
+  over counter states that are never reached. That is the false-alarm mode
+  the existing SlackBench exam already documented for induction, and it is
+  **evidence, not proof**, that this candidate is equivalent.
+- **A PDR proof was attempted and is not used.** Three versions of a
+  hand-built miter failed their controls (unreadable AIGER; a multi-output
+  property that flagged the known-equivalent pair; a miter that collapsed to
+  zero logic). None produced a verdict that counts. The next attempt should
+  reuse the PDR miter recipe already validated in `experiments/slackbench/`,
+  not a new one.
+
+**The registered verdict is unaffected by any of this**: a candidate that is
+not PROVEN is not legal, and the primary table scores it so.
