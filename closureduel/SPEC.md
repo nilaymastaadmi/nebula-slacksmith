@@ -26,7 +26,7 @@ other arm is reported in the same table and is secondary.
 | C1 | `repair_design` | OpenROAD's stock repair, stock settings |
 | C2 | buffer-only | the measured buffering lever alone |
 | C3 | sizing-only | the measured sizing lever alone |
-| C4 | classifier-routed | the FANOUT/DEPTH/MIXED classifier picks C2 or C3 per design; this arm carries the contribution |
+| C4 | classifier-routed | the committed routing policy: FANOUT or MIXED, buffering then sizing; DEPTH, sizing only; each step kept only if WNS improves (`PREREGISTRATION.md` is the binding definition); this arm carries the contribution |
 | C5 | random | transforms drawn at random from the same action space, at matched budget |
 
 The LLM agent arms A, B and C (2.1) come after the classical arms are complete,
@@ -354,4 +354,7 @@ verdict trustworthy; only more designs make the headline stronger.
 - **v0.4, 2026-09-21.** Adds 2.5, the power analysis, and the rule it sets for
   the agent arms' trial count (5 pilot trials, then the Bonferroni-row count at
   the measured SD, fixed before the rest run). Written before any agent arm
-  exists. Nothing earlier is changed.
+  exists. One correction to 2.0: its C4 row said the classifier "picks C2 or
+  C3", the continuation brief's wording; the binding definition, in
+  `PREREGISTRATION.md` since be12ef8, is the committed policy (FANOUT/MIXED
+  buffer then size, DEPTH size). Corrected before any C4 result was read.
