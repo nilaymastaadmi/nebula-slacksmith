@@ -2,7 +2,10 @@
 
 Phase 3 step 1: "verify by running one design end to end inside the container
 before writing anything else." Run 2026-09-21 on Docker 29.8.1 in WSL Ubuntu
-24.04, image `closure-bench:dev` built from
+24.04, image `closureduel:dev` (tagged `closure-bench:dev` at the first
+verification, before the rename; re-verified under the new tag the same day
+with identical numbers, and with the holdout refusal exercised on a second
+sealed design, `controller`) built from
 `openroad/orfs:26Q3-600-g3a964e13f@sha256:7fbb16f7...deee9`.
 
 ## Result

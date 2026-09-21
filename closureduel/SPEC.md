@@ -1,4 +1,4 @@
-# closure-bench specification v0.3
+# ClosureDuel specification v0.3
 
 Phase 2. Written 2026-09-21. **Frozen before any result is generated.**
 

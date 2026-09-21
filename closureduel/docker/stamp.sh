@@ -5,7 +5,7 @@ set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$(dirname "${BASH_SOURCE[0]}")/toolpaths.sh"
 
-echo "closure-bench toolchain, stamped $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+echo "ClosureDuel toolchain, stamped $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 echo "base image: openroad/orfs:26Q3-600-g3a964e13f"
 echo "base digest: sha256:7fbb16f7aaf3caa170ea308c1bd833defc7fdf1f5316303dce6a0e6eeb6deee9"
 echo

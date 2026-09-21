@@ -1,10 +1,10 @@
-# closure-bench toolchain image. Phase 3, step 1.
+# ClosureDuel toolchain image. Phase 3, step 1.
 #
 # Build from the REPO ROOT, because the harness imports tools/remeasure.py:
-#     docker build -f closure-bench/docker/Dockerfile -t closure-bench:dev .
+#     docker build -f closureduel/docker/Dockerfile -t closureduel:dev .
 #
 # Run the one-design smoke test. Designs are mounted, never baked in:
-#     docker run --rm -v "$HOME/Projects/Dr_RTL:/designs:ro" closure-bench:dev ticket_machine
+#     docker run --rm -v "$HOME/Projects/Dr_RTL:/designs:ro" closureduel:dev ticket_machine
 #
 # Pinned by tag AND digest. The tag names the OpenROAD-flow-scripts commit
 # (3a964e1, ORFS master on 2026-09-19); the digest makes the pin immutable
@@ -21,9 +21,9 @@ FROM openroad/orfs:26Q3-600-g3a964e13f@sha256:7fbb16f7aaf3caa170ea308c1bd833defc
 # 8d86c0e3d0a6260a3b20caa98412e81f496ad19a (the commit the holdout was sealed
 # against). See SPEC.md 2.3 and the data card.
 
-WORKDIR /opt/closure-bench
+WORKDIR /opt/closureduel
 COPY tools/remeasure.py tools/remeasure.py
-COPY closure-bench/ closure-bench/
+COPY closureduel/ closureduel/
 
 # Record the exact toolchain at build time, and FAIL THE BUILD if any tool or
 # the liberty is missing. A container that builds but cannot find yosys would
@@ -32,7 +32,7 @@ COPY closure-bench/ closure-bench/
 # Redirect, then cat, never `| tee`: RUN uses /bin/sh, which has no pipefail,
 # so a pipeline reports tee's exit status and a failing stamp passes the
 # build. The first build did exactly that and baked a 0-byte TOOLCHAIN.txt.
-RUN bash closure-bench/docker/stamp.sh > /opt/closure-bench/TOOLCHAIN.txt \
- && cat /opt/closure-bench/TOOLCHAIN.txt
+RUN bash closureduel/docker/stamp.sh > /opt/closureduel/TOOLCHAIN.txt \
+ && cat /opt/closureduel/TOOLCHAIN.txt
 
-ENTRYPOINT ["bash", "/opt/closure-bench/closure-bench/docker/smoke.sh"]
+ENTRYPOINT ["bash", "/opt/closureduel/closureduel/docker/smoke.sh"]

@@ -3,7 +3,7 @@
 # "verify by running one design end to end inside the container before
 # writing anything else."
 #
-#   docker run --rm -v "$HOME/Projects/Dr_RTL:/designs:ro" closure-bench:dev <design>
+#   docker run --rm -v "$HOME/Projects/Dr_RTL:/designs:ro" closureduel:dev <design>
 #
 # Mirrors experiments/drrtl_transfer/run_classify.sh (the committed, scored
 # flow) for synthesis and register-to-register STA, including every guard it
