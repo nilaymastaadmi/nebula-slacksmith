@@ -1,4 +1,4 @@
-# ClosureDuel specification v0.3
+# ClosureDuel specification v0.4
 
 Phase 2. Written 2026-09-21. **Frozen before any result is generated.**
 
@@ -295,6 +295,43 @@ otherwise re-source designs that carry a licence of their own (OpenCores
 originals such as `tv80` and `simple_spi` do, upstream); otherwise ship with
 the runtime-fetch design documented as the reason nothing is redistributed.
 
+---
+
+## 2.5 Power: how many agent trials per design
+
+Added in v0.4, before any agent arm exists. Computed by `power/power.py`;
+the numbers live in the generated `results/POWER.md` and `results/power.json`,
+and are not copied here, so they cannot drift.
+
+**Why the classical arms cannot size this.** They are deterministic (checked
+per candidate, `results/RESULTS_classical.md`, P10), so their run-to-run
+spread is zero. The trial count depends only on the agent's spread, which no
+paper in `PRIOR_ART.md` publishes.
+
+**The effect to detect** is SynAct's own, in SynAct's own metric: the WNS
+violation ratio `max(0, -WNS) / max(0, -WNS of the baseline)`, closure
+counting as zero; per design, CBTune's ratio minus SynAct's, from SynAct
+Table III (`power/synact_table.csv`, transcription checked against the paper's
+printed averages).
+
+**The method.** Exact two-sided one-sample noncentral-t power against a
+deterministic classical value, at 80% power, tabulated over the agent's
+unknown SD, at alpha 0.05 for one design and 0.005 (Bonferroni over 10
+designs). The code must reproduce published reference sample sizes before it
+emits anything. The table is anchored on C5 random's measured across-seed SD,
+which is a random policy's spread, not an agent's.
+
+**The rule it sets for the agent arms.** Run an agent's first 5 trials on
+every development design, measure its SD, read the trial count off the table
+at that SD for the median-sized effect, Bonferroni row, and run to that count.
+The count is fixed before the remaining trials run, and is not revised after.
+
+**What trials cannot buy.** The headline is a closure comparison across
+designs. Whatever the trial count, a two-sided exact sign test needs the agent
+to win on the number of designs `results/POWER.md` states (of 10 development
+designs, or of 15 with the holdout), ties removed. Trials make each per-design
+verdict trustworthy; only more designs make the headline stronger.
+
 ## Version history
 
 - **v0.1, 2026-09-21.** First draft. Frozen before any result exists.
@@ -314,3 +351,7 @@ the runtime-fetch design documented as the reason nothing is redistributed.
   "0.481 ns, 7.5x" to "0.581 ns, 6.2x". The metric, the legal-submission bar,
   the tiers and the holdout are unchanged. Section 2.5, the power analysis, is
   added when it is computed.
+- **v0.4, 2026-09-21.** Adds 2.5, the power analysis, and the rule it sets for
+  the agent arms' trial count (5 pilot trials, then the Bonferroni-row count at
+  the measured SD, fixed before the rest run). Written before any agent arm
+  exists. Nothing earlier is changed.
