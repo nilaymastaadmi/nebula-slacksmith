@@ -1,4 +1,4 @@
-# closure-bench specification v0.1
+# closure-bench specification v0.2
 
 Phase 2. Written 2026-09-21. **Frozen before any result is generated.**
 
@@ -193,29 +193,75 @@ v1.1 item, not v1.0. Licences get checked before anything is added.
 
 ## 2.4 Reproducibility contract - hard requirements
 
-1. **Pinned tool versions, recorded by exact build.** Yosys 0.67+94
-   (git sha1 `7defa5186-dirty`). OpenSTA and OpenROAD built from source;
-   OpenROAD at `f12e2f474102bfb875eeee57fb610d7d7de17770`. Yosys being a dirty
-   git build means an exact match from a release tarball is not achievable;
-   the container is the fix and is the only supported way to reproduce.
-2. **Pinned liberty and PDK, recorded by SHA256** in every run row.
-3. **Pinned model IDs and API versions** for every agent baseline.
-4. **Fixed seeds; temperature recorded per run.**
-5. **Every result row carries the harness commit hash** that produced it.
-6. **No absolute paths in any script.** Every path comes from an environment
+1. **Pinned tool versions, recorded by exact build.** The container is the
+   only supported way to reproduce, and it is pinned by tag and digest:
+   `openroad/orfs:26Q3-600-g3a964e13f@sha256:7fbb16f7aaf3caa170ea308c1bd833defc7fdf1f5316303dce6a0e6eeb6deee9`,
+   which names OpenROAD-flow-scripts commit `3a964e1` (master, 2026-09-19).
+   `docker/stamp.sh` records every tool version into `TOOLCHAIN.txt` at build
+   time and fails the build if a tool or the liberty is missing.
+
+   **The prior host toolchain is archival, not the benchmark toolchain.** Every
+   number in `experiments/` was measured on Yosys 0.67+94 (`7defa5186-dirty`)
+   and OpenROAD `f12e2f4`, which is **2022-03-26**, four and a half years old.
+   A 2026 benchmark cannot rest its classical `repair_design` baseline on a
+   2022 build: the baseline is re-measured in the container, and the host
+   numbers are reported as a flow-sensitivity column, never as benchmark
+   results. (The prior finding that `repair_design` takes no `-max_fanout`
+   flag is **not** a 2022 artifact: the current signature has no such flag
+   either, and fanout is repaired from the SDC's `set_max_fanout`.)
+2. **Pinned liberty and PDK, recorded by SHA256** in every run row. Host
+   reference: `sky130hd_tt.lib` sha256
+   `70a45bf9b5ea8f6a701dc34744b5c767b38e1af31b1d1f97309a97ec64603ecf`. The
+   container's copy is recorded at build time; whether the two are the same
+   file is a measured fact, not an assumption.
+3. **Pinned design source, and never redistributed.** Designs come from
+   `github.com/hkust-zhiyao/Dr_RTL` at commit
+   `8d86c0e3d0a6260a3b20caa98412e81f496ad19a`, the commit the holdout was
+   sealed against. Upstream has since moved to `62b95a5`, and the two commits
+   between touch only `CLAUDE.md` and `README.md`: `rtl_dataset/` and
+   `syn_flow/design_all.json` are identical, so the seal holds against current
+   upstream too. **Dr_RTL carries no licence** (no LICENSE file, GitHub reports
+   none, and 19 of 20 design files carry no licence text; `simple_spi` alone
+   keeps an OpenCores header). Unlicensed code is all-rights-reserved by
+   default, so designs are mounted at runtime and are never copied into the
+   repo or the image. **This is a release blocker for v1.0**: see the note at
+   the end of this section.
+4. **Pinned model IDs and API versions** for every agent baseline.
+5. **Fixed seeds; temperature recorded per run.**
+6. **Every result row carries the harness commit hash** that produced it.
+7. **No absolute paths in any script.** Every path comes from an environment
    variable with a default, following `tools/env.sh`. This repo shipped with
    `cd /mnt/c/Users/toshn/...` at the top of 30 shell scripts until
    2026-09-05; that is the failure being designed out.
-7. **Determinism test.** The same design, same seed, a non-LLM baseline: the
+8. **Determinism test.** The same design, same seed, a non-LLM baseline: the
    outputs must be byte-identical. This is achievable - it was demonstrated at
    commit `694375d`. It is an automated test, not a claim.
-8. **Every instrument is guarded.** Any command returning a count or a list is
+9. **Every instrument is guarded.** Any command returning a count or a list is
    paired with an independent existence check, and an empty result over
    known-present data halts as a broken instrument rather than reporting zero.
 
 ---
 
+### Release blocker: the design set has no licence
+
+v1.0 as specified ships a public repo, a public container and a leaderboard
+built on Dr. RTL's designs. None of those needs the designs to be
+redistributed, because they are fetched at runtime, so the harness itself is
+unaffected. But a benchmark whose entire design set is all-rights-reserved is
+fragile: a takedown request removes the benchmark. Resolve before v1.0, in
+this order of preference: ask the Dr. RTL authors (HKUST) to add a licence;
+otherwise re-source designs that carry a licence of their own (OpenCores
+originals such as `tv80` and `simple_spi` do, upstream); otherwise ship with
+the runtime-fetch design documented as the reason nothing is redistributed.
+
 ## Version history
 
 - **v0.1, 2026-09-21.** First draft. Frozen before any result exists.
   Holdout sealed at commit `c2f4186`.
+- **v0.2, 2026-09-21.** Amendment, made before any benchmark result exists.
+  Reason: the toolchain pins in 2.4 were placeholders naming the host build;
+  they now name the container image by tag and digest. Adds: the finding that
+  the host OpenROAD is from 2022 and is therefore archival; the host liberty
+  hash; the pinned Dr_RTL commit; the no-licence finding and the release
+  blocker it creates. Section 2.1 to 2.3, the metric, and the holdout are
+  unchanged.
