@@ -170,3 +170,39 @@ the head-to-head with the agent arms, at the trial count `SPEC.md` 2.5 derives.
 - Adding or dropping a design after any arm has run. A design that fails to
   synthesise or time is reported as failed, not replaced.
 - Reporting C\* as an arm.
+
+## Amendment 1, 2026-09-21: a counterexample search beside the CEC gate
+
+Written after 136 of 400 equivalence checks had returned and **before any arm
+was scored**. What had been seen, disclosed in full: on `aes`, all 25
+sequences containing `buffer` returned NOT_PROVEN with exactly 1 unproven
+point, and all 15 others (the 14 sizing-only sequences and C1) PROVEN; on
+`cpu_fsm`, the same 25 timed out at 300 s and the other 15 PROVEN;
+`communication` proved all 40; `router` was partial, with C1 NOT_PROVEN at 29
+points. The pattern tracks structure: sizing changes cell drive strengths and
+leaves the netlist's structure intact, so the checker's structural pass proves
+it; buffering changes structure and forces SAT through large cones. That
+suggests a limit of the checker rather than real inequivalence, **and it is not
+shown**.
+
+**The registered verdict is unchanged.** A candidate that is not PROVEN is not
+legal, and the primary results score it as CEC_FAIL (NOT_PROVEN) or
+CEC_UNRESOLVED (TIMEOUT). Nothing here relaxes the gate.
+
+**Added, and reported separately:** for every candidate whose check is not
+PROVEN, a bounded counterexample search on a miter of the C0 netlist and the
+candidate (liberty functional models, `flatten`, `miter -equiv
+-make_assert`, `async2sync`, `sat -verify -prove-asserts -set-init-zero
+-seq 10`, timeout 600 s). Outcomes: COUNTEREXAMPLE (a real input sequence on
+which the two differ within 10 cycles of a common zero state), NONE_WITHIN_10
+(no difference found; not a proof), or INCONCLUSIVE (timeout or error).
+
+- **The search must be shown finding a counterexample first**, on the planted
+  defect in `results/cec_gate_test.json`'s design. If it cannot find that one,
+  every NONE_WITHIN_10 it reports is uninformative and is labelled so.
+- **A sensitivity table** re-scores the arms treating NONE_WITHIN_10 as legal,
+  printed under a heading that says it is not the registered result. The
+  registered table stays the headline.
+
+**Prediction P12** (registered now, after seeing the pattern, so weaker than
+P1 to P11): no buffer-containing candidate yields a COUNTEREXAMPLE. High.
