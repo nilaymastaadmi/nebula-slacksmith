@@ -35,7 +35,7 @@ directory before writing code.
 | Work | Date | What it measures | Task | What it does NOT cover | Subsumes this? |
 |---|---|---|---|---|---|
 | **CLOSER-Bench** (arXiv:2607.16632) | Jul 2026 | Budgeted cross-stage design closure for hardware agents. Final quality, anytime progress (AUC over budget), tool cost, cross-stage recovery. Counts every simulator/synthesis/STA/PnR call, wall-clock, tokens, edit layer. | Stage-paired: spec→RTL, RTL→GDS, spec→GDS. Task B starts from a functionally correct but physically weak implementation that intentionally misses physical targets. | Still a **pilot report**. "Unequal trial counts and is therefore diagnostic rather than a model ranking." Central experiment is 3 trials per cell and is **unrun**. Bootstrap CIs explicitly deferred "until the final signoff oracle and repeated-trial matrix are frozen". No non-LLM classical baseline arm. | **Nearly.** Same open stack (Yosys, OpenROAD, Sky130, Verilator, KLayout). Already lists *run-to-run variance* in its metric set. Already has a run-status taxonomy (agent failure / timeout-with-patch / verifier failure / infrastructure failure), LEC against logic-changing edits, and an **unconstrained-path audit to prevent timing evasion** - which is the same idea as our G0 SDC-integrity gate. This is the landmine. |
-| **PostEDA-Bench** (arXiv:2605.06936, `pengjas/posteda-bench`) | May→Jul 2026 | Success rate on PPA convergence and DRC fixing. Machine-checkable evaluation. | 145 tasks across DRC-Essential, DRC-Reasoning, PPA-Mono, PPA-Multi. 8 commercial and open LLMs under multiple agent scaffolds. | Success rate only; no variance reporting found. PPA-Multi is a trade-off task, not specifically WNS closure. No classical-optimizer baseline. | No, but it owns "LLM agents on post-synthesis PPA convergence, benchmarked, with public code". |
+| **PostEDA-Bench** (arXiv:2605.06936, `pengjas/posteda-bench`) | May→Jul 2026 | Success rate on PPA convergence and DRC fixing. Machine-checkable evaluation. | 145 tasks across DRC-Essential, DRC-Reasoning, PPA-Mono, PPA-Multi. 8 commercial and open LLMs under multiple agent scaffolds. | Runs each cell 5 times at temperature 0 and reports the **mean** only. PPA-Multi is a trade-off task, not specifically WNS closure. **No LLM-free classical arm** (corrected 2026-09-21 from the full text; see note below the table): its only optimizer baseline is an adapted ORFS-Agent, Gaussian-process Bayesian optimization over 18 OpenROAD runs whose search space an LLM chooses. | No, but it owns "LLM agents on post-synthesis PPA convergence, benchmarked, with public code". |
 | **PDAgent-Bench** (arXiv:2606.17253) | Jun→Aug 2026 | Task-level and workflow-level agent performance across the physical-design stack. | 353 curated problems, conceptual questions plus real workflow execution. LLM **and** VLM agents. | Physical design, so mostly past synthesis. | No, but it occupies "standardized benchmark for agentic EDA workflows". |
 | **SynAct** (arXiv:2608.12751) | Aug 2026 | **WNS as the primary objective**, TNS/area/power secondary. Reduces average WNS to 27.03% of bootstrap synthesis. | Closed-loop LLM reasoning-acting agent issuing synthesis commands, reading live reports. 14 OpenCores designs. | Uses a **commercial** synthesis tool (AltiSyn), so not reproducible on an open stack. **Reports 5-run averages, not spread** - variance is absorbed, not published. Not a benchmark; an agent. | No, but it is the strongest evidence that the headline question is already being answered. Baselines are ChatLS (LLM) and **CBTune (classical BO tuner)**: SynAct beats the classical baseline 27.03% vs 66.67%. |
 | **Dr. RTL** (arXiv:2604.14989) | 2026 | RTL PPA optimization via closed-loop EDA interaction, distilling trajectories into a reusable skill library. 86% mean SEC pass. | Agentic RTL optimization on 20 human-written designs. | Publishes no failure-mode case studies. No reliability/variance reporting. Uses DC (commercial) + SEC. | No. It is the **design source** for this proposal, not a competitor benchmark. |
@@ -129,8 +129,28 @@ when they do, item 1 closes.
 
 The asset that is not replicable by them is the measured classical-baseline
 work already on disk in `slacksmith-final`: the FANOUT/DEPTH stratification
-(median gain 3.623 ns vs 0.481 ns, 7.5x), the buffer-vs-sizing split
-(buffer-only FANOUT +3.282, DEPTH -0.019, net harmful on 5 of 8 depth designs;
-sizing helps 7 of 8), and repair_design equivalence proven at 5,832 compare
-points in 38.10 s. That is a classical baseline characterised more finely than
+(combined lever median gain 3.623 ns FANOUT vs 0.581 ns DEPTH, 6.2x), the
+buffer-vs-sizing split (buffer-only FANOUT +3.282 closing 4 of 5, DEPTH median
+0.000 with 3 of 7 worse; sizing-only FANOUT +2.495 vs DEPTH +0.621, 4x), and
+repair_design equivalence proven at 5,832 compare points in 38.10 s.
+
+**Correction, 2026-09-21.** The first version of this paragraph quoted the
+lever split from before the classifier correction: "7.5x", "DEPTH -0.019, net
+harmful on 5 of 8 depth designs" and "sizing helps 7 of 8". The corrected
+grouping (tv80 moved DEPTH to MIXED) is in
+`experiments/drrtl_transfer/NOTES.md`, the re-scored table: 6.2x, DEPTH median
+0.000 worse on 3 of 7, sizing 4x rather than 5x. "5 of 8" was never in NOTES
+at all; the pre-correction figure there is "worse on 4 of 8". The phrase "net
+harmful on depth paths" does not survive the correction and is withdrawn.
+
+**Correction, 2026-09-21, PostEDA-Bench.** The first version of the table said
+"no classical-optimizer baseline" from the abstract alone. The full text
+(arXiv:2605.06936v3, appendix E.3 "Excluded baselines" and E.4) shows one
+optimizer arm, ORFS-Agent, which it calls "the closest published baseline for
+PPA optimization": Gaussian-process Bayesian optimization, with the search
+space chosen by one LLM call. So the precise claim, now checked against the
+full texts of all three open-stack works, is that **none of them has an
+LLM-free classical arm**. CLOSER-Bench's full text returns zero hits for
+classical, heuristic, Bayesian, autotuning, non-LLM, rule-based and
+`repair_design`. That is a classical baseline characterised more finely than
 any of the works above characterise theirs.

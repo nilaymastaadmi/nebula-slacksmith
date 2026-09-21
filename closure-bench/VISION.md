@@ -1,4 +1,4 @@
-# Vision: an open benchmark for agentic RTL timing closure
+# Vision: ClosureDuel, LLM agents against a classical optimizer on RTL timing closure
 
 Phase 0. Written 2026-09-21.
 
@@ -12,10 +12,91 @@ verdict required, not a blind one. Anyone reading this should treat question 3
 as shaped by the survey rather than independent of it. No prediction is
 registered here; predictions belong to Phase 5 and are still sealed.
 
-**Working name.** This lives on the `feat/closure-bench` branch of the
-SlackSmith repo and deliberately does **not** claim the name `SlackBench`,
-which is already public in this same repository for the verification-checker
-exam. Naming is settled after the Nebula outcome.
+---
+
+## Decision, 2026-09-21: from a benchmark to a head-to-head
+
+**This project stops being a benchmark and becomes the missing arm.** It is an
+open-stack, reproducible, properly powered head-to-head of LLM agents against a
+design-class-aware classical optimizer on RTL timing closure, run at the trial
+count CLOSER-Bench deferred.
+
+**Why.** `PRIOR_ART.md` returned "partially covered", and read honestly its own
+table makes "a new benchmark" indefensible. CLOSER-Bench (arXiv:2607.16632)
+runs on the same open stack, already lists run-to-run variance in its metric
+set, already has a run-status taxonomy, and already has an unconstrained-path
+audit equivalent to our G0 gate. The Noise Floor Audit (arXiv:2608.22331)
+pre-empts the methodological novelty claim. What the same table shows nobody
+has done:
+
+1. **CLOSER-Bench's central experiment is unrun.** Its text: unequal trial
+   counts, "diagnostic rather than a model ranking", 3 trials per cell planned,
+   bootstrap intervals deferred until the oracle and the repeated-trial matrix
+   are frozen.
+2. **None of the three open-stack works has an LLM-free classical arm.**
+   Checked against full texts on 2026-09-21, not abstracts: CLOSER-Bench has
+   zero hits for any classical, heuristic, Bayesian or `repair_design`
+   baseline; PostEDA-Bench's only optimizer arm is ORFS-Agent, Bayesian
+   optimization whose search space an LLM chooses; PDAgent-Bench benchmarks
+   agents only. SynAct does compare against a classical tuner (CBTune) and wins,
+   27.03% against 66.67% of bootstrap WNS violation, but on the commercial
+   AltiSyn, so nobody can reproduce or contest it.
+3. **We hold a classical optimizer nobody else has characterised.** From the
+   Dr. RTL transfer study, corrected grouping: the combined lever's median gain
+   is 3.623 ns on FANOUT against 0.581 ns on DEPTH (6.2x); buffer-only gains
+   +3.282 on FANOUT and closes 4 of 5, and does nothing for DEPTH (median
+   0.000, 3 of 7 worse); sizing-only helps both, FANOUT 4x more (+2.495 against
+   +0.621).
+
+It is also about a third of the work of a platform, it uses CLOSER-Bench and
+PostEDA-Bench as infrastructure rather than competing with them, and either
+outcome is a result: if the classical arm beats every agent at matched budget
+on an open stack, that contradicts SynAct's commercial-tool result, and if it
+does not, SynAct's result gains its first open reproduction.
+
+**This reverses an earlier call, and is recorded as such.** Earlier on
+2026-09-21 the owner chose "full v1.0 platform as written" over a narrower
+scope. The continuation brief the owner supplied the same day recommended this
+narrowing, and it is adopted here as the owner's decision.
+
+**Two corrections to that brief, made rather than absorbed:**
+
+- **Its lever numbers were pre-correction.** "DEPTH -0.019, net harmful on 5
+  of 8" and "sizing 5x" are superseded by the re-scored table in
+  `experiments/drrtl_transfer/NOTES.md` (quoted above). "Net harmful on depth
+  paths" does not survive and is withdrawn everywhere in this directory.
+- **Its power analysis rested on a false premise.** It asked for the trial
+  count to be computed from the classical arms' run-to-run spread. The
+  classical arms are deterministic: two container runs of the null flow were
+  byte-identical (`docker/VERIFIED.md`), and the transfer study's scored run 4
+  reproduced run 1 byte for byte. Their within-cell spread is zero, so it
+  cannot size anything. What it establishes instead is that each classical
+  cell needs exactly one trial and the whole repetition budget belongs to the
+  stochastic arms. The trial count is a function of the agents' spread, which
+  no one has measured; it is computed as a table over that spread, anchored by
+  the random arm's measured across-seed spread. Determinism is asserted per
+  arm by running it twice, not assumed from the null flow.
+
+**The holdout stays sealed.** The brief's Phase 4 said "each of the 15
+in-scope designs"; five of those are the sealed holdout, and the harness
+refuses them by design. Every run before the final one uses the 10
+development designs.
+
+**What this supersedes below.** Question 3 and question 4 are rewritten for
+the head-to-head. Question 1's first user (a researcher plugging an agent into
+a leaderboard) and question 6's leaderboard and "how to add an agent" guide are
+dropped; question 6's date stands, because the calendar and not the work sets
+it. A general-purpose benchmark platform and a public leaderboard are added to
+the out-of-scope list.
+
+### The name, and why it changed three times
+
+| Name | When | Why not |
+|---|---|---|
+| SlackBench | the original build prompt | already public in this repository for a different, pre-registered benchmark (the verification-checker exam) |
+| closure-bench | working name, 2026-09-21 | one character from CLOSER-Bench, the nearest competitor |
+| RepairFirst | proposed by the continuation brief | names the expected outcome, when either outcome is to be reported; and "repair" means bug repair in this literature (CLOSER-Bench's "RTL repair", FormalRTL, AutoVeriFix+, Veri-Sure) |
+| **ClosureDuel** | **chosen by the owner, 2026-09-21** | names the design, a head-to-head, not a result; 0 GitHub repos, 0 arXiv hits (probe verified against a control), 0 hits on the owner's disk |
 
 ---
 
@@ -66,44 +147,50 @@ run-to-run standard deviation across seeds.
 
 ## 3. What claim becomes checkable that was not checkable before?
 
-> On open-source synthesis and STA, at matched budget, the run-to-run standard
-> deviation of an LLM agent's WNS improvement exceeds its median advantage over
-> a random-transform baseline on a majority of designs - so the single-run and
-> mean-of-five rankings published in this literature are not reproducible
-> orderings.
+> On an open stack (Yosys, OpenSTA, OpenROAD, sky130hd) at matched budget, no
+> LLM agent configuration beats the classifier-routed classical lever on
+> closure rate by more than the agent's own run-to-run spread, measured at the
+> trial count a power analysis says is needed to see an effect of the size
+> SynAct reports.
 
-Someone can disagree with this. SynAct's authors would: they report a 5-run
-mean showing their agent at 27.03% of bootstrap WNS violation against 66.67%
-for a classical tuner, which is a wide enough gap that it plausibly survives
-its own spread. They do not publish the spread, so neither they nor anyone else
-currently knows.
+This is the claim under test, not the expected answer. Either outcome is
+reported under the same name, which is why the name does not encode one.
 
-The original candidate claim - that LLM agents do not beat a classical
-`repair_design` baseline - was dropped because `PRIOR_ART.md` found it is
-already contested and currently points the other way.
+Someone can disagree with it, and SynAct's authors would: they report a 5-run
+mean with their agent at 27.03% of bootstrap WNS violation against 66.67% for
+a classical tuner, a gap wide enough that it plausibly survives its spread.
+They do not publish the spread, and their tool is commercial, so neither they
+nor anyone else can currently check.
+
+*Superseded versions, kept so the history reads straight.* The build prompt's
+candidate ("agents do not beat `repair_design`") was dropped in Phase 1
+because it was already contested. The first narrowed version ("run-to-run SD
+exceeds the median advantage over a random baseline") survives as a secondary
+comparison: the random arm is one of the six classical arms.
 
 ## 4. The README's first screenful
 
-> **closure-bench** - does the agent actually close timing, and does it do it
-> twice?
+> **ClosureDuel** - LLM agents against a classical optimizer on RTL timing
+> closure, on an open stack, at a trial count that can actually tell them apart.
 >
-> A containerised benchmark for LLM agents on RTL timing closure. N designs,
-> five baselines, 10 seeds each, Yosys + OpenSTA + sky130hd, one command.
+> Six classical arms (including one that picks buffering or sizing per design
+> from the critical path's shape, and one that picks transforms at random) and
+> K LLM agent configurations, on N designs, same budget, Yosys + OpenSTA +
+> OpenROAD + sky130hd, one command.
 >
 > ```
-> docker run --rm ghcr.io/<owner>/closure-bench:v1 reproduce
+> docker run --rm ghcr.io/<owner>/closureduel:v1 reproduce
 > ```
 >
-> The headline is not which agent wins. It is that on W of N designs the
-> run-to-run spread of the best agent exceeds its own margin over a random
-> baseline at the same budget - which means the ordering you get depends on the
-> seed you drew.
+> Result: [classical arm] closed X of N; the best agent closed Y of N at
+> matched budget, with a run-to-run spread of Z across K trials. The trial
+> count came from a power analysis published before any agent ran.
 >
 > Every submission must synthesise, pass combinational equivalence checking
 > against the original, keep the module interface, and stay within 20% area.
 > Every result row carries the harness commit that produced it. Five of the
 > designs are a sealed holdout whose SHA256 hashes were published before any
-> agent ran.
+> arm ran.
 
 ## 5. Explicitly out of scope for v1.0
 
@@ -122,6 +209,9 @@ already contested and currently points the other way.
    interface is the legal-submission bar for v1.0. SEC is strictly better and
    is what Dr. RTL uses, but it would gate the harness on prover time we cannot
    bound. Stated as a known limit, not hidden.
+8. **A general-purpose benchmark platform or a public leaderboard.** Added by
+   the 2026-09-21 decision. CLOSER-Bench and PostEDA-Bench are the platforms;
+   this is one properly powered comparison that runs on the same stack.
 
 ## 6. What does v1.0 release day look like?
 

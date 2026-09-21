@@ -1,9 +1,47 @@
-# closure-bench specification v0.2
+# closure-bench specification v0.3
 
 Phase 2. Written 2026-09-21. **Frozen before any result is generated.**
 
 Version history lives at the bottom. Any change after the first result run is
 an amendment with a date and a reason, never a silent edit.
+
+---
+
+## 2.0 Scope, v0.3: a head-to-head, not a benchmark
+
+Amended 2026-09-21 before any arm has run; the reasoning is in `VISION.md`,
+"Decision, 2026-09-21".
+
+**The primary comparison** is closure rate (2.2) between the best LLM agent
+configuration and the classifier-routed classical arm, at matched budget, on
+the development designs, reported with each arm's run-to-run spread. Every
+other arm is reported in the same table and is secondary.
+
+**Arms.** Six classical arms, defined and pre-registered in
+`PREREGISTRATION.md` before any of their code exists:
+
+| # | Arm | What it is |
+|---|---|---|
+| C0 | null | no transform; the floor |
+| C1 | `repair_design` | OpenROAD's stock repair, stock settings |
+| C2 | buffer-only | the measured buffering lever alone |
+| C3 | sizing-only | the measured sizing lever alone |
+| C4 | classifier-routed | the FANOUT/DEPTH/MIXED classifier picks C2 or C3 per design; this arm carries the contribution |
+| C5 | random | transforms drawn at random from the same action space, at matched budget |
+
+The LLM agent arms A, B and C (2.1) come after the classical arms are complete,
+and not in the session that builds the classical arms.
+
+**Designs.** The 10 development designs only. The 5 sealed holdout designs
+(2.3) are touched once, in the final run, and the harness refuses them before
+then.
+
+**Trials per cell.** A classical cell gets exactly one trial, **after**
+determinism has been shown for that arm by running it twice on every design and
+getting byte-identical output; an arm that is not deterministic is treated as
+stochastic and is repeated like the agents. The random arm and the agent arms
+are stochastic. Their trial count comes from the power analysis in 2.5, which
+cannot use the classical arms' spread, because that spread is zero.
 
 ---
 
@@ -137,8 +175,11 @@ before this specification existed.
 ### Difficulty tiers
 
 From the corrected path classifier. The stratification is a real contribution,
-not decoration: measured median gain was 3.623 ns on FANOUT against 0.481 ns on
-DEPTH, a 7.5x split.
+not decoration: the combined lever's measured median gain was 3.623 ns on
+FANOUT against 0.581 ns on DEPTH, a 6.2x split, after the classifier
+correction. (v0.1 of this file said 0.481 ns and 7.5x, the pre-correction
+grouping; corrected in v0.3. Source: `experiments/drrtl_transfer/NOTES.md`,
+re-scored table.)
 
 | Tier | n | Designs |
 |---|---|---|
@@ -265,3 +306,11 @@ the runtime-fetch design documented as the reason nothing is redistributed.
   hash; the pinned Dr_RTL commit; the no-licence finding and the release
   blocker it creates. Section 2.1 to 2.3, the metric, and the holdout are
   unchanged.
+- **v0.3, 2026-09-21.** Amendment, made before any arm has run. Reason: the
+  project narrows from a benchmark platform to a head-to-head (`VISION.md`,
+  "Decision, 2026-09-21"). Adds 2.0 (primary comparison, six classical arms,
+  development designs only, one trial per classical cell conditional on a
+  shown determinism). Corrects 2.3's lever split from the pre-correction
+  "0.481 ns, 7.5x" to "0.581 ns, 6.2x". The metric, the legal-submission bar,
+  the tiers and the holdout are unchanged. Section 2.5, the power analysis, is
+  added when it is computed.
