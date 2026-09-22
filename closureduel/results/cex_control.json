@@ -1,0 +1,15 @@
+{
+  "planted_defect": {
+    "cex": "COUNTEREXAMPLE",
+    "cex_s": 110.2,
+    "rc": 1,
+    "tail": ""
+  },
+  "search_can_find": false,
+  "unmodified": {
+    "cex": "INCONCLUSIVE",
+    "cex_s": 1659.8,
+    "rc": 124,
+    "tail": ""
+  }
+}

@@ -1,0 +1,1384 @@
+{
+ "c4_ge_c5_median": true,
+ "c4_matches_oracle": 9,
+ "c5": {
+  "DSP": [
+   "S:buffer+upsize",
+   "S:upsize+dnsize",
+   "S:dnsize+upsize+dnsize",
+   "S:upsize",
+   "S:dnsize+buffer+upsize",
+   "S:upsize+dnsize",
+   "S:upsize+upsize+dnsize",
+   "S:buffer+upsize+upsize",
+   "S:buffer+dnsize+upsize",
+   "S:buffer+upsize+dnsize"
+  ],
+  "aes": [
+   "S:upsize+dnsize",
+   "S:dnsize+upsize",
+   "S:upsize+dnsize",
+   "S:dnsize+upsize+dnsize",
+   "S:upsize+dnsize",
+   "S:upsize+upsize+dnsize",
+   "S:upsize+upsize+dnsize",
+   "S:upsize+dnsize",
+   "S:upsize+dnsize",
+   "S:dnsize+dnsize"
+  ],
+  "communication": [
+   "S:buffer",
+   "S:upsize+buffer+upsize",
+   "S:dnsize+buffer",
+   "S:upsize+buffer+dnsize",
+   "S:buffer+upsize",
+   "S:buffer+upsize+upsize",
+   "S:buffer",
+   "S:dnsize+buffer+upsize",
+   "S:dnsize+upsize+buffer",
+   "S:dnsize+dnsize+buffer"
+  ],
+  "cpu_fsm": [
+   "S:upsize",
+   "S:upsize",
+   "S:dnsize+upsize",
+   "S:upsize",
+   "S:upsize+upsize",
+   "S:upsize",
+   "S:dnsize+upsize",
+   "S:upsize",
+   "S:dnsize+upsize+upsize",
+   "S:upsize"
+  ],
+  "cpu_pipe": [
+   "S:dnsize+upsize+upsize",
+   "S:dnsize+dnsize+upsize",
+   "S:dnsize+upsize",
+   "S:dnsize+upsize",
+   "S:dnsize+upsize",
+   "S:upsize",
+   "S:upsize",
+   "S:dnsize+upsize",
+   "S:upsize",
+   "S:upsize"
+  ],
+  "i2c": [
+   "S:upsize",
+   "S:upsize",
+   "S:upsize",
+   "S:upsize",
+   "S:upsize",
+   "S:dnsize+upsize",
+   "S:dnsize",
+   "S:dnsize+upsize",
+   "S:upsize",
+   "S:dnsize+upsize+upsize"
+  ],
+  "router": [
+   "S:dnsize+upsize+upsize",
+   "S:upsize+upsize",
+   "S:dnsize+upsize",
+   "S:upsize",
+   "S:upsize+dnsize",
+   "S:upsize",
+   "S:upsize+dnsize",
+   "S:upsize+dnsize",
+   "S:dnsize+upsize",
+   "S:dnsize+upsize+upsize"
+  ],
+  "ticket_machine": [
+   "S:buffer+upsize+upsize",
+   "S:buffer+upsize+upsize",
+   "S:buffer+upsize+dnsize",
+   "S:buffer+upsize",
+   "S:buffer+upsize+dnsize",
+   "S:buffer+upsize",
+   "S:upsize",
+   "S:upsize+buffer+dnsize",
+   "S:upsize+buffer+upsize",
+   "S:buffer+upsize"
+  ],
+  "tv80": [
+   "S:dnsize+upsize+dnsize",
+   "S:dnsize+dnsize+upsize",
+   "S:upsize+dnsize",
+   "S:upsize+dnsize",
+   "S:dnsize+upsize",
+   "S:upsize+upsize+upsize",
+   "S:dnsize+upsize",
+   "S:dnsize+upsize+upsize",
+   "S:upsize+upsize",
+   "S:dnsize+upsize+dnsize"
+  ],
+  "vending_machine": [
+   "C0 (no legal draw)",
+   "C0 (no legal draw)",
+   "C0 (no legal draw)",
+   "C0 (no legal draw)",
+   "C0 (no legal draw)",
+   "C0 (no legal draw)",
+   "C0 (no legal draw)",
+   "C0 (no legal draw)",
+   "C0 (no legal draw)",
+   "C0 (no legal draw)"
+  ]
+ },
+ "c5_closed_by_seed": [
+  5,
+  5,
+  5,
+  5,
+  5,
+  5,
+  4,
+  5,
+  5,
+  4
+ ],
+ "cec_by_design": {
+  "DSP": {
+   "PROVEN": 39,
+   "TIMEOUT": 1
+  },
+  "aes": {
+   "NOT_PROVEN": 25,
+   "PROVEN": 15
+  },
+  "communication": {
+   "PROVEN": 40
+  },
+  "cpu_fsm": {
+   "PROVEN": 15,
+   "TIMEOUT": 25
+  },
+  "cpu_pipe": {
+   "PROVEN": 14,
+   "TIMEOUT": 26
+  },
+  "i2c": {
+   "NOT_PROVEN": 26,
+   "PROVEN": 14
+  },
+  "router": {
+   "NOT_PROVEN": 1,
+   "PROVEN": 14,
+   "TIMEOUT": 25
+  },
+  "ticket_machine": {
+   "PROVEN": 40
+  },
+  "tv80": {
+   "PROVEN": 14,
+   "TIMEOUT": 26
+  },
+  "vending_machine": {
+   "TIMEOUT": 40
+  }
+ },
+ "cec_pattern": {
+  "c1_not_proven": [
+   [
+    "DSP",
+    "TIMEOUT"
+   ],
+   [
+    "cpu_pipe",
+    "TIMEOUT"
+   ],
+   [
+    "i2c",
+    "NOT_PROVEN"
+   ],
+   [
+    "router",
+    "NOT_PROVEN"
+   ],
+   [
+    "tv80",
+    "TIMEOUT"
+   ],
+   [
+    "vending_machine",
+    "TIMEOUT"
+   ]
+  ],
+  "not_proven_total": 189,
+  "not_proven_with_buffer": 175,
+  "sizing_only_proven": 126,
+  "sizing_only_total": 140,
+  "sleep_inflated": 24
+ },
+ "cex_control": {
+  "planted_defect": {
+   "cex": "COUNTEREXAMPLE",
+   "cex_s": 110.2,
+   "rc": 1,
+   "tail": ""
+  },
+  "search_can_find": false,
+  "unmodified": {
+   "cex": "INCONCLUSIVE",
+   "cex_s": 1659.8,
+   "rc": 124,
+   "tail": ""
+  }
+ },
+ "closed": {
+  "C0": 0,
+  "C1": 3,
+  "C2": 1,
+  "C3": 5,
+  "C4": 5
+ },
+ "cstar_closed": 5,
+ "failed_designs": [],
+ "gate_test": {
+  "control": {
+   "cec": "PROVEN",
+   "cec_s": 4.0,
+   "cec_unproven": 0
+  },
+  "design": "DSP",
+  "functional_defect": {
+   "cec": "NOT_PROVEN",
+   "cec_s": 154.7,
+   "cec_unproven": 13,
+   "lines_changed": 1,
+   "swap": "nand2_1->nor2_1"
+  },
+  "gate_can_fail": true,
+  "harness": "run_arms.cec / run_arms.netinfo",
+  "interface_defect": {
+   "renamed": "BCOut",
+   "signature_differs": true
+  }
+ },
+ "harness_commits": [
+  "1a85c4eab77b3f3e1c4fa329034091c1fb35bd2c",
+  "fa8f11f6f7836af93fa807c8019ae4fcfe6e3f70"
+ ],
+ "images": [
+  "sha256:e5854650ff5e47e905840bd15f173f8455aa752d421e73a87271d6dba6a63003"
+ ],
+ "n_designs": 10,
+ "predictions": [
+  {
+   "claim": "C0 closes 0 of 10",
+   "correct": true,
+   "id": "P1",
+   "measured": "C0 closes 0 of 10"
+  },
+  {
+   "claim": "container required == committed within 0.001 ns on >= 9 of 10",
+   "correct": true,
+   "id": "P2",
+   "measured": "10 of 10 match; differ: []"
+  },
+  {
+   "claim": "C1 moves WNS < 0.05 ns on >= 8 of 10",
+   "correct": false,
+   "id": "P3",
+   "measured": "1 of 10"
+  },
+  {
+   "claim": "C2 closes >= 2 of the FANOUT designs",
+   "correct": false,
+   "id": "P4",
+   "measured": "1 of 3"
+  },
+  {
+   "claim": "C2 median WNS gain on DEPTH within +/-0.05 ns",
+   "correct": true,
+   "id": "P5",
+   "measured": "median -0.038"
+  },
+  {
+   "claim": "C3 improves WNS on >= 4 of the 5 DEPTH designs",
+   "correct": false,
+   "id": "P6",
+   "measured": "3 of 5"
+  },
+  {
+   "claim": "C4 closes >= max(C2, C3) applied uniformly",
+   "correct": true,
+   "id": "P7",
+   "measured": "C4 5, C2 1, C3 5"
+  },
+  {
+   "claim": "C5 median seed closes >= C4",
+   "correct": true,
+   "id": "P8",
+   "measured": "C5 median 5.0 (range 4-5), C4 5"
+  },
+  {
+   "claim": "every C2-C5 candidate that synthesises is CEC PROVEN",
+   "correct": false,
+   "id": "P9",
+   "measured": "201 of 390 PROVEN; not: [('cpu_fsm', 'S:buffer', 'TIMEOUT'), ('cpu_fsm', 'S:buffer+buffer', 'TIMEOUT'), ('cpu_fsm', 'S:buffer+upsize', 'TIMEOUT'), ('cpu_fsm', 'S:buffer+dnsize', 'TIMEOUT'), ('cpu_fsm', 'S:upsize+buffer', 'TIMEOUT'), ('cpu_fsm', 'S:dnsize+buffer', 'TIMEOUT')]"
+  },
+  {
+   "claim": "every candidate byte-identical across two runs",
+   "correct": true,
+   "id": "P10",
+   "measured": "410 of 410 identical; non-det []; incomplete []"
+  },
+  {
+   "claim": "classifier verdict == committed corrected verdict on 10 of 10",
+   "correct": true,
+   "id": "P11",
+   "measured": "10 of 10; differ: []"
+  }
+ ],
+ "table": {
+  "DSP": {
+   "arms": {
+    "C*": {
+     "area": 24264.5216,
+     "cand": "S:buffer+upsize+dnsize",
+     "cells": 2907,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 111,
+     "gain": 2.851,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 12.4,
+     "why": "LEGAL",
+     "wns": 0.984
+    },
+    "C0": {
+     "area": 23356.1504,
+     "cand": "C0",
+     "cells": 2891,
+     "closed": false,
+     "cls": "BASELINE",
+     "flops": 111,
+     "gain": 0.0,
+     "legal": true,
+     "tns": -8.99,
+     "wall_s": 15.4,
+     "why": "LEGAL",
+     "wns": -1.867
+    },
+    "C1": {
+     "area": 25750.9472,
+     "cand": "C1",
+     "cells": 3306,
+     "closed": false,
+     "cls": "CEC_UNRESOLVED",
+     "flops": 196,
+     "gain": 1.439,
+     "legal": false,
+     "tns": -1.036,
+     "wall_s": 7.9,
+     "why": "CEC_UNRESOLVED",
+     "wns": -0.428
+    },
+    "C2": {
+     "area": 24138.1504,
+     "cand": "S:buffer",
+     "cells": 2907,
+     "closed": false,
+     "cls": "IMPROVED",
+     "flops": 111,
+     "gain": 0.496,
+     "legal": true,
+     "tns": -5.242,
+     "wall_s": 14.7,
+     "why": "LEGAL",
+     "wns": -1.371
+    },
+    "C3": {
+     "area": 23718.9984,
+     "cand": "S:upsize+dnsize",
+     "cells": 2891,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 111,
+     "gain": 2.784,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 11.8,
+     "why": "LEGAL",
+     "wns": 0.917
+    },
+    "C4": {
+     "area": 23718.9984,
+     "cand": "S:upsize+dnsize",
+     "cells": 2891,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 111,
+     "gain": 2.784,
+     "legal": true,
+     "route": "sizing kept",
+     "tns": 0.0,
+     "wall_s": 11.8,
+     "why": "LEGAL",
+     "wns": 0.917
+    },
+    "oracle_C2_C3": {
+     "area": 23718.9984,
+     "cand": "S:upsize+dnsize",
+     "cells": 2891,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 111,
+     "gain": 2.784,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 11.8,
+     "why": "LEGAL",
+     "wns": 0.917
+    }
+   },
+   "period": 16.799,
+   "required": 18.666,
+   "tier": "DEPTH",
+   "verdict": "DEPTH_DOMINATED"
+  },
+  "aes": {
+   "arms": {
+    "C*": {
+     "area": 151152.4672,
+     "cand": "S:upsize+dnsize",
+     "cells": 3269,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 1419,
+     "gain": 1.586,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 14.4,
+     "why": "LEGAL",
+     "wns": 1.059
+    },
+    "C0": {
+     "area": 146945.9328,
+     "cand": "C0",
+     "cells": 3269,
+     "closed": false,
+     "cls": "BASELINE",
+     "flops": 1419,
+     "gain": 0.0,
+     "legal": true,
+     "tns": -67.259,
+     "wall_s": 15.9,
+     "why": "LEGAL",
+     "wns": -0.527
+    },
+    "C1": {
+     "area": 174991.5808,
+     "cand": "C1",
+     "cells": 18592,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 1419,
+     "gain": 2.487,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 33.5,
+     "why": "LEGAL",
+     "wns": 1.96
+    },
+    "C2": {
+     "area": 157295.8592,
+     "cand": "S:buffer",
+     "cells": 3285,
+     "closed": false,
+     "cls": "CEC_FAIL",
+     "flops": 1419,
+     "gain": 1.358,
+     "legal": false,
+     "tns": 0.0,
+     "wall_s": 15.2,
+     "why": "CEC_FAIL",
+     "wns": 0.831
+    },
+    "C3": {
+     "area": 151152.4672,
+     "cand": "S:upsize+dnsize",
+     "cells": 3269,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 1419,
+     "gain": 1.586,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 14.4,
+     "why": "LEGAL",
+     "wns": 1.059
+    },
+    "C4": {
+     "area": 151152.4672,
+     "cand": "S:upsize+dnsize",
+     "cells": 3269,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 1419,
+     "gain": 1.586,
+     "legal": true,
+     "route": "buffer reverted; sizing kept",
+     "tns": 0.0,
+     "wall_s": 14.4,
+     "why": "LEGAL",
+     "wns": 1.059
+    },
+    "oracle_C2_C3": {
+     "area": 151152.4672,
+     "cand": "S:upsize+dnsize",
+     "cells": 3269,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 1419,
+     "gain": 1.586,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 14.4,
+     "why": "LEGAL",
+     "wns": 1.059
+    }
+   },
+   "period": 4.74,
+   "required": 5.267,
+   "tier": "FANOUT",
+   "verdict": "FANOUT_DOMINATED"
+  },
+  "communication": {
+   "arms": {
+    "C*": {
+     "area": 3757.3536,
+     "cand": "S:buffer+upsize+dnsize",
+     "cells": 302,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 87,
+     "gain": 3.623,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 4.1,
+     "why": "LEGAL",
+     "wns": 3.042
+    },
+    "C0": {
+     "area": 3613.4656,
+     "cand": "C0",
+     "cells": 286,
+     "closed": false,
+     "cls": "BASELINE",
+     "flops": 87,
+     "gain": 0.0,
+     "legal": true,
+     "tns": -33.42,
+     "wall_s": 4.4,
+     "why": "LEGAL",
+     "wns": -0.581
+    },
+    "C1": {
+     "area": 3913.7536,
+     "cand": "C1",
+     "cells": 303,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 87,
+     "gain": 3.315,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 5.2,
+     "why": "LEGAL",
+     "wns": 2.734
+    },
+    "C2": {
+     "area": 3866.208,
+     "cand": "S:buffer",
+     "cells": 302,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 87,
+     "gain": 3.282,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 4.4,
+     "why": "LEGAL",
+     "wns": 2.701
+    },
+    "C3": {
+     "area": 3643.4944,
+     "cand": "S:upsize+dnsize",
+     "cells": 286,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 87,
+     "gain": 2.495,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 3.8,
+     "why": "LEGAL",
+     "wns": 1.914
+    },
+    "C4": {
+     "area": 3757.3536,
+     "cand": "S:buffer+upsize+dnsize",
+     "cells": 302,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 87,
+     "gain": 3.623,
+     "legal": true,
+     "route": "buffer kept; sizing kept",
+     "tns": 0.0,
+     "wall_s": 4.1,
+     "why": "LEGAL",
+     "wns": 3.042
+    },
+    "oracle_C2_C3": {
+     "area": 3866.208,
+     "cand": "S:buffer",
+     "cells": 302,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 87,
+     "gain": 3.282,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 4.4,
+     "why": "LEGAL",
+     "wns": 2.701
+    }
+   },
+   "period": 5.233,
+   "required": 5.814,
+   "tier": "FANOUT",
+   "verdict": "FANOUT_DOMINATED"
+  },
+  "cpu_fsm": {
+   "arms": {
+    "C*": {
+     "area": 160109.808,
+     "cand": "S:upsize",
+     "cells": 7883,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 4163,
+     "gain": 17.469,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 22.1,
+     "why": "LEGAL",
+     "wns": 11.708
+    },
+    "C0": {
+     "area": 159779.4912,
+     "cand": "C0",
+     "cells": 7883,
+     "closed": false,
+     "cls": "BASELINE",
+     "flops": 4163,
+     "gain": 0.0,
+     "legal": true,
+     "tns": -112.623,
+     "wall_s": 21.7,
+     "why": "LEGAL",
+     "wns": -5.761
+    },
+    "C1": {
+     "area": 170314.5952,
+     "cand": "C1",
+     "cells": 8414,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 4163,
+     "gain": 52.803,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 13.4,
+     "why": "LEGAL",
+     "wns": 47.042
+    },
+    "C2": {
+     "area": 164301.328,
+     "cand": "S:buffer",
+     "cells": 7968,
+     "closed": false,
+     "cls": "CEC_UNRESOLVED",
+     "flops": 4163,
+     "gain": 24.735,
+     "legal": false,
+     "tns": 0.0,
+     "wall_s": 22.1,
+     "why": "CEC_UNRESOLVED",
+     "wns": 18.974
+    },
+    "C3": {
+     "area": 159870.8288,
+     "cand": "S:upsize+dnsize",
+     "cells": 7883,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 4163,
+     "gain": 6.992,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 27.3,
+     "why": "LEGAL",
+     "wns": 1.231
+    },
+    "C4": {
+     "area": 159870.8288,
+     "cand": "S:upsize+dnsize",
+     "cells": 7883,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 4163,
+     "gain": 6.992,
+     "legal": true,
+     "route": "buffer reverted; sizing kept",
+     "tns": 0.0,
+     "wall_s": 27.3,
+     "why": "LEGAL",
+     "wns": 1.231
+    },
+    "oracle_C2_C3": {
+     "area": 159870.8288,
+     "cand": "S:upsize+dnsize",
+     "cells": 7883,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 4163,
+     "gain": 6.992,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 27.3,
+     "why": "LEGAL",
+     "wns": 1.231
+    }
+   },
+   "period": 51.849,
+   "required": 57.61,
+   "tier": "FANOUT",
+   "verdict": "FANOUT_DOMINATED"
+  },
+  "cpu_pipe": {
+   "arms": {
+    "C*": {
+     "area": 28188.2848,
+     "cand": "S:upsize",
+     "cells": 3476,
+     "closed": false,
+     "cls": "IMPROVED",
+     "flops": 364,
+     "gain": 0.648,
+     "legal": true,
+     "tns": -0.391,
+     "wall_s": 26.0,
+     "why": "LEGAL",
+     "wns": -0.202
+    },
+    "C0": {
+     "area": 27882.992,
+     "cand": "C0",
+     "cells": 3476,
+     "closed": false,
+     "cls": "BASELINE",
+     "flops": 364,
+     "gain": 0.0,
+     "legal": true,
+     "tns": -6.017,
+     "wall_s": 31.6,
+     "why": "LEGAL",
+     "wns": -0.85
+    },
+    "C1": {
+     "area": 31824.272,
+     "cand": "C1",
+     "cells": 3713,
+     "closed": false,
+     "cls": "CEC_UNRESOLVED",
+     "flops": 364,
+     "gain": 1.424,
+     "legal": false,
+     "tns": 0.0,
+     "wall_s": 19.3,
+     "why": "CEC_UNRESOLVED",
+     "wns": 0.574
+    },
+    "C2": {
+     "area": 29360.6592,
+     "cand": "S:buffer",
+     "cells": 3529,
+     "closed": false,
+     "cls": "CEC_UNRESOLVED",
+     "flops": 364,
+     "gain": -0.453,
+     "legal": false,
+     "tns": -7.134,
+     "wall_s": 31.5,
+     "why": "CEC_UNRESOLVED",
+     "wns": -1.303
+    },
+    "C3": {
+     "area": 28035.6384,
+     "cand": "S:upsize+dnsize",
+     "cells": 3476,
+     "closed": false,
+     "cls": "IMPROVED",
+     "flops": 364,
+     "gain": 0.621,
+     "legal": true,
+     "tns": -0.472,
+     "wall_s": 21.6,
+     "why": "LEGAL",
+     "wns": -0.229
+    },
+    "C4": {
+     "area": 28035.6384,
+     "cand": "S:upsize+dnsize",
+     "cells": 3476,
+     "closed": false,
+     "cls": "IMPROVED",
+     "flops": 364,
+     "gain": 0.621,
+     "legal": true,
+     "route": "sizing kept",
+     "tns": -0.472,
+     "wall_s": 21.6,
+     "why": "LEGAL",
+     "wns": -0.229
+    },
+    "oracle_C2_C3": {
+     "area": 28035.6384,
+     "cand": "S:upsize+dnsize",
+     "cells": 3476,
+     "closed": false,
+     "cls": "IMPROVED",
+     "flops": 364,
+     "gain": 0.621,
+     "legal": true,
+     "tns": -0.472,
+     "wall_s": 21.6,
+     "why": "LEGAL",
+     "wns": -0.229
+    }
+   },
+   "period": 7.65,
+   "required": 8.5,
+   "tier": "DEPTH",
+   "verdict": "DEPTH_DOMINATED"
+  },
+  "i2c": {
+   "arms": {
+    "C*": {
+     "area": 6402.3904,
+     "cand": "S:upsize",
+     "cells": 560,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 129,
+     "gain": 0.983,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 25.8,
+     "why": "LEGAL",
+     "wns": 0.587
+    },
+    "C0": {
+     "area": 6139.6384,
+     "cand": "C0",
+     "cells": 560,
+     "closed": false,
+     "cls": "BASELINE",
+     "flops": 129,
+     "gain": 0.0,
+     "legal": true,
+     "tns": -5.812,
+     "wall_s": 16.7,
+     "why": "LEGAL",
+     "wns": -0.396
+    },
+    "C1": {
+     "area": 7069.28,
+     "cand": "C1",
+     "cells": 634,
+     "closed": false,
+     "cls": "CEC_FAIL",
+     "flops": 129,
+     "gain": 0.582,
+     "legal": false,
+     "tns": 0.0,
+     "wall_s": 14.7,
+     "why": "CEC_FAIL",
+     "wns": 0.186
+    },
+    "C2": {
+     "area": 6406.144,
+     "cand": "S:buffer",
+     "cells": 574,
+     "closed": false,
+     "cls": "CEC_FAIL",
+     "flops": 129,
+     "gain": -0.135,
+     "legal": false,
+     "tns": -7.34,
+     "wall_s": 24.5,
+     "why": "CEC_FAIL",
+     "wns": -0.531
+    },
+    "C3": {
+     "area": 6297.2896,
+     "cand": "S:upsize+dnsize",
+     "cells": 560,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 129,
+     "gain": 0.98,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 13.1,
+     "why": "LEGAL",
+     "wns": 0.584
+    },
+    "C4": {
+     "area": 6297.2896,
+     "cand": "S:upsize+dnsize",
+     "cells": 560,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 129,
+     "gain": 0.98,
+     "legal": true,
+     "route": "sizing kept",
+     "tns": 0.0,
+     "wall_s": 13.1,
+     "why": "LEGAL",
+     "wns": 0.584
+    },
+    "oracle_C2_C3": {
+     "area": 6297.2896,
+     "cand": "S:upsize+dnsize",
+     "cells": 560,
+     "closed": true,
+     "cls": "CLOSED",
+     "flops": 129,
+     "gain": 0.98,
+     "legal": true,
+     "tns": 0.0,
+     "wall_s": 13.1,
+     "why": "LEGAL",
+     "wns": 0.584
+    }
+   },
+   "period": 3.56,
+   "required": 3.956,
+   "tier": "DEPTH",
+   "verdict": "DEPTH_DOMINATED"
+  },
+  "router": {
+   "arms": {
+    "C*": {
+     "area": 27141.0304,
+     "cand": "S:upsize+dnsize+dnsize",
+     "cells": 895,
+     "closed": false,
+     "cls": "IMPROVED",
+     "flops": 251,
+     "gain": 0.266,
+     "legal": true,
+     "tns": -1.409,
+     "wall_s": 12.1,
+     "why": "LEGAL",
+     "wns": -0.061
+    },
+    "C0": {
+     "area": 26755.6608,
+     "cand": "C0",
+     "cells": 895,
+     "closed": false,
+     "cls": "BASELINE",
+     "flops": 251,
+     "gain": 0.0,
+     "legal": true,
+     "tns": -7.852,
+     "wall_s": 7.3,
+     "why": "LEGAL",
+     "wns": -0.327
+    },
+    "C1": {
+     "area": 30523.024,
+     "cand": "C1",
+     "cells": 2240,
+     "closed": false,
+     "cls": "CEC_FAIL",
+     "flops": 607,
+     "gain": 0.778,
+     "legal": false,
+     "tns": 0.0,
+     "wall_s": 6.7,
+     "why": "CEC_FAIL",
+     "wns": 0.451
+    },
+    "C2": {
+     "area": 28189.536,
+     "cand": "S:buffer",
+     "cells": 905,
+     "closed": false,
+     "cls": "CEC_UNRESOLVED",
+     "flops": 251,
+     "gain": -0.041,
+     "legal": false,
+     "tns": -33.599,
+     "wall_s": 7.2,
+     "why": "CEC_UNRESOLVED",
+     "wns": -0.368
+    },
+    "C3": {
+     "area": 27189.8272,
+     "cand": "S:upsize+dnsize",
+     "cells": 895,
+     "closed": false,
+     "cls": "IMPROVED",
+     "flops": 251,
+     "gain": 0.101,
+     "legal": true,
+     "tns": -6.469,
+     "wall_s": 8.0,
+     "why": "LEGAL",
+     "wns": -0.226
+    },
+    "C4": {
+     "area": 27189.8272,
+     "cand": "S:upsize+dnsize",
+     "cells": 895,
+     "closed": false,
+     "cls": "IMPROVED",
+     "flops": 251,
+     "gain": 0.101,
+     "legal": true,
+     "route": "buffer reverted; sizing kept",
+     "tns": -6.469,
+     "wall_s": 8.0,
+     "why": "LEGAL",
+     "wns": -0.226
+    },
+    "oracle_C2_C3": {
+     "area": 27189.8272,
+     "cand": "S:upsize+dnsize",
+     "cells": 895,
+     "closed": false,
+     "cls": "IMPROVED",
+     "flops": 251,
+     "gain": 0.101,
+     "legal": true,
+     "tns": -6.469,
+     "wall_s": 8.0,
+     "why": "LEGAL",
+     "wns": -0.226
+    }
+   },
+   "period": 2.947,
+   "required": 3.274,
+   "tier": "MIXED",
+   "verdict": "MIXED"
+  },
+  "ticket_machine": {
+   "arms": {
+    "C*": {
+     "area": 233.9744,
+     "cand": "S:buffer+upsize",
+     "cells": 18,
+     "closed": false,
+     "cls": "IMPROVED",
+     "flops": 6,
+     "gain": 0.001,
+     "legal": true,
+     "tns": -0.201,
+     "wall_s": 3.9,
+     "why": "LEGAL",
+     "wns": -0.079
+    },
+    "C0": {
+     "area": 217.7088,
+     "cand": "C0",
+     "cells": 18,
+     "closed": false,
+     "cls": "BASELINE",
+     "flops": 6,
+     "gain": 0.0,
+     "legal": true,
+     "tns": -0.202,
+     "wall_s": 4.1,
+     "why": "LEGAL",
+     "wns": -0.08
+    },
+    "C1": {
+     "area": 255.2448,
+     "cand": "C1",
+     "cells": 22,
+     "closed": false,
+     "cls": "NO_IMPROVEMENT",
+     "flops": 6,
+     "gain": -0.095,
+     "legal": true,
+     "tns": -0.495,
+     "wall_s": 4.4,
+     "why": "LEGAL",
+     "wns": -0.175
+    },
+    "C2": {
+     "area": 227.7184,
+     "cand": "S:buffer",
+     "cells": 18,
+     "closed": false,
+     "cls": "NO_IMPROVEMENT",
+     "flops": 6,
+     "gain": -0.038,
+     "legal": true,
+     "tns": -0.277,
+     "wall_s": 3.3,
+     "why": "LEGAL",
+     "wns": -0.118
+    },
+    "C3": {
+     "area": 230.2208,
+     "cand": "S:upsize+dnsize",
+     "cells": 18,
+     "closed": false,
+     "cls": "NO_IMPROVEMENT",
+     "flops": 6,
+     "gain": 0.0,
+     "legal": true,
+     "tns": -0.202,
+     "wall_s": 4.8,
+     "why": "LEGAL",
+     "wns": -0.08
+    },
+    "C4": {
+     "area": 217.7088,
+     "cand": "C0",
+     "cells": 18,
+     "closed": false,
+     "cls": "BASELINE",
+     "flops": 6,
+     "gain": 0.0,
+     "legal": true,
+     "route": "sizing reverted",
+     "tns": -0.202,
+     "wall_s": 4.1,
+     "why": "LEGAL",
+     "wns": -0.08
+    },
+    "oracle_C2_C3": {
+     "area": 230.2208,
+     "cand": "S:upsize+dnsize",
+     "cells": 18,
+     "closed": false,
+     "cls": "NO_IMPROVEMENT",
+     "flops": 6,
+     "gain": 0.0,
+     "legal": true,
+     "tns": -0.202,
+     "wall_s": 4.8,
+     "why": "LEGAL",
+     "wns": -0.08
+    }
+   },
+   "period": 0.712,
+   "required": 0.791,
+   "tier": "DEPTH",
+   "verdict": "DEPTH_DOMINATED"
+  },
+  "tv80": {
+   "arms": {
+    "C*": {
+     "area": 32008.1984,
+     "cand": "S:upsize+dnsize",
+     "cells": 4023,
+     "closed": false,
+     "cls": "IMPROVED",
+     "flops": 359,
+     "gain": 0.234,
+     "legal": true,
+     "tns": -8.514,
+     "wall_s": 32.2,
+     "why": "LEGAL",
+     "wns": -0.746
+    },
+    "C0": {
+     "area": 31411.376,
+     "cand": "C0",
+     "cells": 4023,
+     "closed": false,
+     "cls": "BASELINE",
+     "flops": 359,
+     "gain": 0.0,
+     "legal": true,
+     "tns": -34.27,
+     "wall_s": 61.5,
+     "why": "LEGAL",
+     "wns": -0.98
+    },
+    "C1": {
+     "area": 39704.3296,
+     "cand": "C1",
+     "cells": 4506,
+     "closed": false,
+     "cls": "CEC_UNRESOLVED",
+     "flops": 359,
+     "gain": 2.004,
+     "legal": false,
+     "tns": 0.0,
+     "wall_s": 34.4,
+     "why": "CEC_UNRESOLVED",
+     "wns": 1.024
+    },
+    "C2": {
+     "area": 33893.7568,
+     "cand": "S:buffer",
+     "cells": 4152,
+     "closed": false,
+     "cls": "CEC_UNRESOLVED",
+     "flops": 359,
+     "gain": -0.151,
+     "legal": false,
+     "tns": -30.718,
+     "wall_s": 59.2,
+     "why": "CEC_UNRESOLVED",
+     "wns": -1.131
+    },
+    "C3": {
+     "area": 32008.1984,
+     "cand": "S:upsize+dnsize",
+     "cells": 4023,
+     "closed": false,
+     "cls": "IMPROVED",
+     "flops": 359,
+     "gain": 0.234,
+     "legal": true,
+     "tns": -8.514,
+     "wall_s": 32.2,
+     "why": "LEGAL",
+     "wns": -0.746
+    },
+    "C4": {
+     "area": 32008.1984,
+     "cand": "S:upsize+dnsize",
+     "cells": 4023,
+     "closed": false,
+     "cls": "IMPROVED",
+     "flops": 359,
+     "gain": 0.234,
+     "legal": true,
+     "route": "buffer reverted; sizing kept",
+     "tns": -8.514,
+     "wall_s": 32.2,
+     "why": "LEGAL",
+     "wns": -0.746
+    },
+    "oracle_C2_C3": {
+     "area": 32008.1984,
+     "cand": "S:upsize+dnsize",
+     "cells": 4023,
+     "closed": false,
+     "cls": "IMPROVED",
+     "flops": 359,
+     "gain": 0.234,
+     "legal": true,
+     "tns": -8.514,
+     "wall_s": 32.2,
+     "why": "LEGAL",
+     "wns": -0.746
+    }
+   },
+   "period": 8.817,
+   "required": 9.797,
+   "tier": "MIXED",
+   "verdict": "MIXED"
+  },
+  "vending_machine": {
+   "arms": {
+    "C*": null,
+    "C0": {
+     "area": 79546.2912,
+     "cand": "C0",
+     "cells": 13867,
+     "closed": false,
+     "cls": "BASELINE",
+     "flops": 7,
+     "gain": 0.0,
+     "legal": true,
+     "tns": -0.133,
+     "wall_s": 56.3,
+     "why": "LEGAL",
+     "wns": -0.077
+    },
+    "C1": {
+     "area": 82172.56,
+     "cand": "C1",
+     "cells": 13927,
+     "closed": false,
+     "cls": "CEC_UNRESOLVED",
+     "flops": 7,
+     "gain": 0.0,
+     "legal": false,
+     "tns": -0.133,
+     "wall_s": 22.6,
+     "why": "CEC_UNRESOLVED",
+     "wns": -0.077
+    },
+    "C2": {
+     "area": 82237.6224,
+     "cand": "S:buffer",
+     "cells": 13893,
+     "closed": false,
+     "cls": "CEC_UNRESOLVED",
+     "flops": 7,
+     "gain": 0.0,
+     "legal": false,
+     "tns": -0.101,
+     "wall_s": 49.1,
+     "why": "CEC_UNRESOLVED",
+     "wns": -0.077
+    },
+    "C3": {
+     "area": 83667.744,
+     "cand": "S:upsize+dnsize",
+     "cells": 13867,
+     "closed": false,
+     "cls": "CEC_UNRESOLVED",
+     "flops": 7,
+     "gain": 0.0,
+     "legal": false,
+     "tns": -0.133,
+     "wall_s": 80.6,
+     "why": "CEC_UNRESOLVED",
+     "wns": -0.077
+    },
+    "C4": {
+     "area": 79546.2912,
+     "cand": "C0",
+     "cells": 13867,
+     "closed": false,
+     "cls": "BASELINE",
+     "flops": 7,
+     "gain": 0.0,
+     "legal": true,
+     "route": "sizing reverted",
+     "tns": -0.133,
+     "wall_s": 56.3,
+     "why": "LEGAL",
+     "wns": -0.077
+    },
+    "oracle_C2_C3": null
+   },
+   "period": 0.695,
+   "required": 0.772,
+   "tier": "DEPTH",
+   "verdict": "DEPTH_DOMINATED"
+  }
+ },
+ "timing_only_closed": {
+  "C1": 7,
+  "C2": 3,
+  "C3": 5
+ },
+ "void": []
+}

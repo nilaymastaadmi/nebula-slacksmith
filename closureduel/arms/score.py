@@ -284,6 +284,8 @@ def main():
     summary = {"n_designs": n, "void": void, "closed": closed, "c5_closed_by_seed": c5_counts,
                "cec_by_design": {d: dict(c) for d, c in cec_by_design.items()},
                "cec_pattern": cec_pattern, "cex_control": cex_control,
+               "timing_only_closed": {a: sum(1 for d in table if table[d]["arms"][a].get("wns", -1) >= 0)
+                                      for a in ("C1", "C2", "C3")},
                "cstar_closed": cstar, "c4_ge_c5_median": c4_vs_c5, "c4_matches_oracle": c4_oracle,
                "predictions": [{"id": p, "claim": c, "correct": bool(ok), "measured": m} for p, c, ok, m in preds],
                "table": table, "c5": {d: [s.get("cand") for s in v] for d, v in c5dist.items()},
@@ -326,6 +328,14 @@ def write_md(s, c5dist):
     cs = s["c5_closed_by_seed"]
     L += [f"| C5 random, median of 10 seeds (min to max) | {statistics.median(cs)} ({min(cs)} to {max(cs)}) |",
           f"| C\\* lever-space ceiling (a bound, **not an arm**) | {s['cstar_closed']} |", ""]
+    rc = s["timing_only_closed"]
+    L += ["### Timing only, legality NOT applied (not the registered result)", "",
+          "WNS >= 0 counted regardless of whether equivalence was proven. This is the per-design WNS table "
+          "below, aggregated, so a reader can see how much of the ranking above is set by the legality gate "
+          "rather than by timing. Nothing in it is a legal closure.", "",
+          "| Arm | WNS >= 0, any legality | of which legal |", "|---|---|---|"]
+    L += [f"| {names[a]} | {rc[a]} | {s['closed'][a]} |" for a in ("C1", "C2", "C3")]
+    L += [""]
     L += [f"C4 against the trivial baselines: closes {'at least as many as' if s['c4_ge_c5_median'] else 'fewer than'} "
           f"C5's median seed; matches or beats the per-design oracle max(C2, C3) on "
           f"{s['c4_matches_oracle']} of {s['n_designs']} designs.", ""]

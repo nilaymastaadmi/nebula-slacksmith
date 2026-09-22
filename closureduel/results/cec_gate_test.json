@@ -1,0 +1,21 @@
+{
+  "control": {
+    "cec": "PROVEN",
+    "cec_s": 4.0,
+    "cec_unproven": 0
+  },
+  "design": "DSP",
+  "functional_defect": {
+    "cec": "NOT_PROVEN",
+    "cec_s": 154.7,
+    "cec_unproven": 13,
+    "lines_changed": 1,
+    "swap": "nand2_1->nor2_1"
+  },
+  "gate_can_fail": true,
+  "harness": "run_arms.cec / run_arms.netinfo",
+  "interface_defect": {
+    "renamed": "BCOut",
+    "signature_differs": true
+  }
+}

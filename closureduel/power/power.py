@@ -251,6 +251,12 @@ def write_md(o):
         L += [f"| {d} | {v['mean']:.4f} | {v['sd']:.4f} |" for d, v in sorted(a["per_design"].items())]
         L += ["", "This is a random policy's spread, not an agent's. It is an anchor, not an estimate of "
               "the agent SD; the agent arms measure their own.", ""]
+        if a["median_c5_sd"] < min(SIGMAS):
+            L += [f"**This anchor is uninformative here.** A median SD of {a['median_c5_sd']:.4f} is below the "
+                  f"smallest SD in the table ({min(SIGMAS)}): 8 random draws from 39 sequences almost always "
+                  "include the best-scoring one, so the random arm is nearly deterministic in outcome. Its trial "
+                  "counts say nothing about an agent, whose action space is far larger. Use the SD table above, "
+                  "and the pilot rule in `SPEC.md` 2.5.", ""]
     lim = o["design_count_limits"]
     L += ["## What the design count allows, whatever the trial count", "",
           f"The headline is a closure comparison across designs, and trials per design cannot rescue it. "
