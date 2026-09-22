@@ -73,7 +73,10 @@ def sby_cfg(gold, gate, miter, top):
     load = lambda net, nm: (f"read_liberty -ignore_miss_func -ignore_miss_dir {R.LIBERTY}\n"
                             f"read_verilog {net}\nhierarchy -top {top}\nflatten\n"
                             f"rename {top} {nm}\ndesign -stash {nm}\n")
-    return ("[options]\nmode prove\n"
+    # aigsmt none: report a FAIL without replaying the AIGER witness through an
+    # SMT solver; the first control run died in that replay (ERROR, "Could not
+    # determine aigsmt status") on a counterexample found in 7 s.
+    return ("[options]\nmode prove\naigsmt none\n"
             f"timeout {TIMEOUT}\n\n[engines]\nabc pdr\n\n[script]\n"
             + load(gold, "gold_dut") + load(gate, "gate_dut") +
             "design -copy-from gold_dut -as gold_dut gold_dut\n"
