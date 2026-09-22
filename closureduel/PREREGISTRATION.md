@@ -236,3 +236,44 @@ P1 to P11): no buffer-containing candidate yields a COUNTEREXAMPLE. High.
 
 **The registered verdict is unaffected by any of this**: a candidate that is
 not PROVEN is not legal, and the primary table scores it so.
+
+## Amendment 2, 2026-09-22: a second equivalence checker, PDR on a miter
+
+Written after all 400 registered checks and the scoring, **before this checker
+has run on any study candidate.** Seen when writing it: the registered results
+(`results/RESULTS_classical.md`), the aes diagnosis in amendment 1's outcome,
+and the counterexample-search control. Nothing from PDR on a study candidate.
+
+**The registered result is unchanged and stays the headline.** This adds a
+second opinion on the 195 candidates the registered gate did not prove (189
+lever sequences and 6 C1 netlists), reported in a separate table labelled as
+not the registered result.
+
+**Method:** the PDR checker already validated in `experiments/slackbench/`
+(`check_miter_pdr`: SBY `mode prove`, engine `abc pdr`, a Verilog miter module
+asserting every output equal), implemented in `arms/pdr_check.py`. Two
+adaptations for gate-level netlists: each side is read with liberty functional
+models and flattened before renaming; and the start state is all-zero on every
+flop in both copies (`setundef -zero -init`) rather than a forced reset,
+because reset ports differ in name and polarity across designs and both sides
+share one flop set. Timeout 600 s per check. Outcomes PROVEN, COUNTEREXAMPLE,
+UNRESOLVED, ERROR; ERROR is never read as a verdict.
+
+**Controls, which must all pass before any study candidate runs** (the script
+refuses otherwise): the planted DSP defect gives COUNTEREXAMPLE; the unmodified
+DSP pair (registered PROVEN) gives PROVEN; aes sizing-only (registered PROVEN)
+gives PROVEN.
+
+**Second table:** a candidate counts as legal there if it is registered PROVEN
+or PDR PROVEN, and meets the other three legality conditions. A PDR
+COUNTEREXAMPLE is reported prominently, as a real inequivalence in a
+candidate the committed levers produced.
+
+**Predictions, registered after seeing the gate's pattern, so weaker than P1
+to P11:**
+
+| # | Prediction | Confidence |
+|---|---|---|
+| P13 | No candidate gets a COUNTEREXAMPLE: ABC's buffering and sizing preserve function, and the registered failures are checker limits | high |
+| P14 | PDR settles (PROVEN or COUNTEREXAMPLE) at least half of the 195 within 600 s | medium-low |
+| P15 | Under the second table, C2 closes all 3 FANOUT designs, as its timing already shows | medium |
