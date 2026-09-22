@@ -1,0 +1,42 @@
+{
+  "candidate": "aes S:buffer",
+  "gate_sha256": "91f3feceaa1f49d53be7f0130d23ba92875160531d32ee6cfc09929e0226289d",
+  "gold_sha256": "a83e0fd217d7e633d453a4ebc63109efab8a1962d576b12c143303f1cf64a362",
+  "note": "Diagnostics, not verdicts. The registered legality result is unchanged. See PREREGISTRATION.md, amendment 2 outcome.",
+  "pdr_controls": {
+    "controls_pass": false,
+    "planted_defect": {
+      "detail": "SBY 10:23:19 [/work/pdr_control/pdr_planted/job] ERROR: engine_0: Could not determine aigsmt status.\nSBY 10:23:19 [/work/pdr_control/pdr_planted/job] DONE (ERROR, rc=16)",
+      "pdr": "ERROR",
+      "pdr_s": 7.3,
+      "sby_status": "ERROR"
+    },
+    "registered_proven_aes_sizing": {
+      "pdr": "PROVEN",
+      "pdr_s": 158.9,
+      "sby_status": "PASS"
+    },
+    "unmodified_dsp": {
+      "pdr": "UNRESOLVED",
+      "pdr_s": 601.5,
+      "sby_status": "TIMEOUT"
+    }
+  },
+  "pdr_o_done_only": {
+    "miter_asserts": 1,
+    "sby": [
+      "engine_0 (abc pdr) returned PASS",
+      "DONE (PASS, rc=0)",
+      "Elapsed clock time [H:MM:SS (secs)]: 0:00:29 (29)"
+    ]
+  },
+  "pdr_planted_rerun_aigsmt_none": [
+    "engine_0 (abc pdr) returned FAIL",
+    "DONE (FAIL, rc=2)"
+  ],
+  "registered_cec_induct4": "NOT_PROVEN: 1408 of 1409 $equiv proven; unproven: o_done (arms_raw.jsonl cec row, diagnosis log)",
+  "registered_recipe_induct16": [
+    "Of those cells 1408 are proven and 1 are unproven",
+    "Unproven $equiv $auto$equiv_make.cc:258:find_same_wires$78924: \\_3072_.IQ_gold \\_3090_.IQ_gate"
+  ]
+}

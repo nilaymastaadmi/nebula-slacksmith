@@ -277,3 +277,59 @@ to P11:**
 | P13 | No candidate gets a COUNTEREXAMPLE: ABC's buffering and sizing preserve function, and the registered failures are checker limits | high |
 | P14 | PDR settles (PROVEN or COUNTEREXAMPLE) at least half of the 195 within 600 s | medium-low |
 | P15 | Under the second table, C2 closes all 3 FANOUT designs, as its timing already shows | medium |
+
+### Amendment 2, outcome of its controls (2026-09-22)
+
+**The controls did not pass, so the all-candidate PDR run did not happen**
+(the script refuses it, by design). `results/pdr_control.json`:
+
+| Control | Required | Got |
+|---|---|---|
+| planted DSP defect | COUNTEREXAMPLE | ERROR in 7 s: SBY died replaying the witness ("Could not determine aigsmt status"). Rerun with `aigsmt none` (`aa7ff76`): **FAIL, a counterexample** |
+| unmodified DSP pair (registered PROVEN) | PROVEN | **TIMEOUT at 600 s** |
+| aes sizing-only (registered PROVEN) | PROVEN | PROVEN in 159 s |
+
+The timeout is the informative one. The whole-design PDR miter proves the
+sizing pair because sizing leaves structure intact and the two copies merge;
+on a buffered pair, which the registered gate proved in 4 s by matching names,
+it does not finish in 600 s. So a whole-design PDR miter fails on exactly the
+class it was brought in to settle, and is not a usable second checker at this
+scale.
+
+**Diagnostics on aes with `buffer`, evidence rather than verdicts**
+(`results/diag_aes_buffer.json`, drawn from the logs):
+
+- The registered recipe with `equiv_induct -seq 16` instead of 4: still 1,408
+  proven, 1 unproven (the same `o_done` flop pair). **Deeper induction does not
+  help**, which fits the explanation that induction fails at any depth when the
+  two copies' counter flops are not paired, and does not by itself exclude a
+  real difference.
+- **PDR on a miter asserting `o_done` alone** (1 assertion, checked), from the
+  common zero state: **PASS in 29 s.**
+- Together: `o_expanded_key` (1,408 bits) proven by the registered checker and
+  `o_done` proven by PDR. That is two separate proofs, not one end-to-end
+  proof, and it is the strongest evidence in this study that the registered
+  NOT_PROVEN verdicts on buffered candidates are checker limits.
+
+## Amendment 3, 2026-09-22: per-output PDR on what the gate left unproven
+
+Registered **before it has run on anything but the aes diagnostic above**,
+which is what motivated it. Not run in the session that wrote it.
+
+- **Scope.** For a registered NOT_PROVEN candidate, rerun the registered
+  recipe without `-q` to name its unproven outputs, then PDR (the
+  `arms/pdr_check.py` construction, `aigsmt none`) on a miter asserting only
+  those outputs, one output port per miter. For a registered TIMEOUT
+  candidate, whose unproven outputs are unknown, one miter per output port.
+  Timeout 600 s per miter.
+- **A candidate counts as proven in the second table only if every output is
+  covered**: registered-proven outputs plus PDR-proven outputs account for all
+  of them. Any COUNTEREXAMPLE is reported prominently.
+- **Controls, all required first, on the per-output construction:** the planted
+  DSP defect gives a COUNTEREXAMPLE on at least one output port; the unmodified
+  DSP pair gives PROVEN on every output port (this is the control the
+  whole-design miter failed); aes sizing-only gives PROVEN on every port.
+- **Reported beside the registered table, never in place of it.**
+- **P16:** every aes buffered candidate (25) is covered, with `o_done` proven by
+  PDR. High. **P17:** at least 2 of the 3 FANOUT designs have C2 legal in the
+  second table. Medium.

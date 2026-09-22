@@ -1,0 +1,19 @@
+{
+  "controls_pass": false,
+  "planted_defect": {
+    "detail": "SBY 10:23:19 [/work/pdr_control/pdr_planted/job] ERROR: engine_0: Could not determine aigsmt status.\nSBY 10:23:19 [/work/pdr_control/pdr_planted/job] DONE (ERROR, rc=16)",
+    "pdr": "ERROR",
+    "pdr_s": 7.3,
+    "sby_status": "ERROR"
+  },
+  "registered_proven_aes_sizing": {
+    "pdr": "PROVEN",
+    "pdr_s": 158.9,
+    "sby_status": "PASS"
+  },
+  "unmodified_dsp": {
+    "pdr": "UNRESOLVED",
+    "pdr_s": 601.5,
+    "sby_status": "TIMEOUT"
+  }
+}
