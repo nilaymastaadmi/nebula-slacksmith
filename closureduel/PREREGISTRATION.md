@@ -285,7 +285,7 @@ to P11:**
 
 | Control | Required | Got |
 |---|---|---|
-| planted DSP defect | COUNTEREXAMPLE | ERROR in 7 s: SBY died replaying the witness ("Could not determine aigsmt status"). Rerun with `aigsmt none` (`aa7ff76`): **FAIL, a counterexample** |
+| planted DSP defect | COUNTEREXAMPLE | ERROR in 7 s: SBY died replaying the witness ("Could not determine aigsmt status"). Rerun with `aigsmt none` (`d6993b7`): **FAIL, a counterexample** |
 | unmodified DSP pair (registered PROVEN) | PROVEN | **TIMEOUT at 600 s** |
 | aes sizing-only (registered PROVEN) | PROVEN | PROVEN in 159 s |
 
