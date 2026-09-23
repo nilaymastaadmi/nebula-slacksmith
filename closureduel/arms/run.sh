@@ -6,7 +6,7 @@
 #   bash closureduel/arms/run.sh [--designs ticket_machine ...] [--jobs 6]
 set -euo pipefail
 REPO=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
-DR=${DR_RTL:-/mnt/c/Users/toshn/Projects/Dr_RTL}
+DR=${DR_RTL:-$(dirname "$REPO")/Dr_RTL}   # the design clone, default beside this repo
 WORK=${CLOSUREDUEL_WORK:-$HOME/closureduel_work}
 RES="$REPO/closureduel/results"
 IMG=${IMG:-closureduel:dev}

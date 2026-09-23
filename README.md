@@ -122,6 +122,13 @@ the git history. The history was rewritten on 2026-09-14 to normalise authorship
 messages, with dates and order unchanged, so the video's beat 4 shows the earlier
 hashes `4ee45c22` and `7e3ab9b4`, now `04fa59c4` and `115fc03f`.
 
+## Follow-on: ClosureDuel
+
+[`closureduel/`](closureduel/README.md) takes the loop's classical levers and
+pits them, as a design-class-aware optimizer, against LLM agents on timing
+closure, pre-registered. The classical arms are run and scored; the agent arms
+are not built yet.
+
 ## Layout
 
 ```
@@ -136,6 +143,7 @@ tools/                     the loop, the classifier, the obligation gate, G0, G6
 experiments/               every result, each with its registration, sources, logs and NOTES
 docs/                      measurement methodology, path classification, the closed loop
 demo/                      the interactive explorer and the video's sources
+closureduel/               follow-on study: classical optimizer against LLM agents on timing closure
 ```
 
 ## Limits
